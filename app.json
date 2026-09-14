@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "enjoygo",
+    "slug": "enjoygo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#5aab4e"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.enjoygo.game",
+      "adaptiveIcon": {
+        "backgroundColor": "#5aab4e",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "name": "enjoygo - RPG Vertical"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "enjoygo-rpg"
+      }
+    }
+  }
+}
