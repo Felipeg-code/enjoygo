@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>enjoygo WEB - Tibia x Clash - Completo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;touch-action:none;user-select:none}
+body{background:#0a0a0f;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
+#gameWrapper{display:flex;gap:10px;align-items:flex-start;max-width:100vw;max-height:100vh;padding:10px}
+#gameContainer{position:relative;width:420px;height:800px;max-width:62vw;max-height:96vh;background:#1e1e24;border-radius:12px;overflow:hidden;box-shadow:0 0 0 3px #000,0 0 0 6px #3e2723,0 20px 60px rgba(0,0,0,0.8);border:2px solid #000;flex-shrink:0}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+#ui{position:absolute;inset:0;pointer-events:none}
+.topBar{position:absolute;top:0;left:0;right:0;height:58px;background:linear-gradient(#3a3a3a,#1e1e1e);display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:3px solid #000;pointer-events:auto;gap:4px}
+.res{display:flex;align-items:center;background:linear-gradient(#2a2a2a,#1a1a1a);border-radius:5px;padding:2px 6px 2px 2px;border:2px solid #000;box-shadow:inset 0 1px 0 rgba(255,255,255,0.15)}
+.resIcon{width:22px;height:22px;border-radius:3px;display:flex;justify-content:center;align-items:center;border:2px solid #000;font-size:11px;font-weight:900}
+.resVal{color:#FFD700;font-weight:900;font-size:11px;margin-left:4px;text-shadow:1px 1px 0 #000}
+.manaBar{width:40px;height:5px;background:#000;border-radius:2px;overflow:hidden;margin-left:4px;border:1px solid #000}
+.manaFill{height:100%;background:linear-gradient(#4a90e2,#1a3a8a);width:100%}
+.hpBar{width:40px;height:5px;background:#000;border-radius:2px;overflow:hidden;margin-left:4px;border:1px solid #000}
+.hpFill{height:100%;background:linear-gradient(#e74c3c,#8b0000);width:100%}
+
+#sidePanel{width:260px;max-height:96vh;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.panel{background:linear-gradient(#3e2723,#2a1a14);border-radius:8px;border:3px solid #000;box-shadow:0 3px 0 #000;padding:8px;pointer-events:auto}
+.panelTitle{color:#FFD700;font-weight:900;font-size:10px;text-align:center;margin-bottom:6px;letter-spacing:1px;text-shadow:1px 1px 0 #000}
+#questList{max-height:180px;overflow-y:auto}
+#questList::-webkit-scrollbar{width:4px}#questList::-webkit-scrollbar-thumb{background:#8d6e63;border-radius:2px}
+.qItem{background:linear-gradient(#e0d5c7,#c9b896);border-radius:5px;padding:4px;margin-bottom:4px;border:2px solid #000;cursor:pointer;display:flex;align-items:center;box-shadow:0 2px 0 #000}
+.qItem.done{opacity:0.5}
+.qIcon{width:22px;height:22px;background:#fff8e1;border-radius:3px;display:flex;justify-content:center;align-items:center;font-size:12px;border:2px solid #000}
+.qInfo{flex:1;margin-left:4px;overflow:hidden}
+.qName{font-size:8px;font-weight:900;color:#3e2723;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qDesc{font-size:6px;color:#5d4037;font-weight:700}
+.qGo{background:linear-gradient(#4caf50,#2e7d32);color:#fff;font-size:6px;font-weight:900;padding:1px 4px;border-radius:2px;display:inline-block;border:1px solid #000;margin-top:1px}
+
+/* Inventory Tibia style */
+#inventory{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.invSlot{width:100%;aspect-ratio:1;background:linear-gradient(#2a2a2a,#1a1a1a);border:2px solid #000;border-radius:4px;display:flex;justify-content:center;align-items:center;font-size:16px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),0 1px 0 #000;position:relative}
+.invSlot:hover{filter:brightness(1.2)}
+.invSlot.empty{background:repeating-linear-gradient(45deg,#1a1a1a,#1a1a1a 4px,#2a2a2a 4px,#2a2a2a 8px)}
+.invSlot .count{position:absolute;bottom:0;right:1px;font-size:7px;font-weight:900;color:#FFD700;text-shadow:1px 1px 0 #000}
+
+/* Spells */
+#spells{display:flex;gap:4px;justify-content:center}
+.spell{width:44px;height:44px;background:linear-gradient(#1e1e2a,#0f0f1a);border:2px solid #000;border-radius:6px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,0.1);position:relative;transition:transform 0.05s}
+.spell:active{transform:translateY(2px);box-shadow:0 0 0 #000}
+.spell.cooldown{opacity:0.4;filter:grayscale(1)}
+.spellIcon{font-size:18px}
+.spellName{font-size:6px;font-weight:900;color:#8d6e63;margin-top:1px}
+.spellMana{font-size:6px;color:#4a90e2;font-weight:900}
+.spellKey{position:absolute;top:-4px;right:-4px;background:#000;color:#FFD700;font-size:7px;font-weight:900;width:14px;height:14px;border-radius:7px;display:flex;justify-content:center;align-items:center;border:1px solid #FFD700}
+
+/* Outfit */
+#outfit{display:flex;gap:6px;align-items:center;justify-content:center;padding:4px;background:rgba(0,0,0,0.3);border-radius:5px;border:1px solid #000}
+.outfitPrev{width:40px;height:50px;background:linear-gradient(#2a2a2a,#1a1a1a);border:2px solid #000;border-radius:4px;display:flex;justify-content:center;align-items:center;font-size:24px}
+.outfitInfo{font-size:8px;color:#c9b896;line-height:1.3}
+.outfitInfo b{color:#FFD700}
+
+#joystick{position:absolute;bottom:14px;left:10px;width:108px;height:108px;pointer-events:auto}
+.joyBase{width:108px;height:108px;border-radius:54px;background:radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);border:3px solid #000;position:relative;box-shadow:0 4px 0 #000}
+.joyStick{width:44px;height:44px;border-radius:22px;background:radial-gradient(circle at 30% 30%, #8d6e63, #3e2723);border:3px solid #000;position:absolute;left:29px;top:29px;box-shadow:0 2px 0 #000}
+#actionBtns{position:absolute;bottom:14px;right:10px;pointer-events:auto;display:flex;flex-direction:column;gap:6px}
+.actBtn{width:48px;height:48px;border-radius:8px;border:3px solid #000;display:flex;justify-content:center;align-items:center;font-size:20px;cursor:pointer;box-shadow:0 3px 0 #000;transition:transform 0.05s}
+.actBtn:active{transform:translateY(3px);box-shadow:0 0 0 #000}
+.attack{background:linear-gradient(#c62828,#8b0000)}
+.map{background:linear-gradient(#1565c0,#0d47a1)}
+.potion{background:linear-gradient(#6a1b9a,#4a148c)}
+
+#autoBanner{position:absolute;top:64px;left:8px;right:8px;background:linear-gradient(#FFD700,#FFA500);border-radius:5px;padding:4px 8px;border:2px solid #000;box-shadow:0 2px 0 #000;font-size:8px;font-weight:900;color:#000;display:none;pointer-events:auto;text-align:center}
+#completePopup{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(#3e2723,#1a0f0a);border-radius:8px;padding:10px 16px;border:3px solid #FFD700;box-shadow:0 5px 0 #000,0 0 20px rgba(255,215,0,0.4);text-align:center;display:none;z-index:10;min-width:180px}
+#startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%, #3e2723, #0f0a08);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:20;text-align:center;padding:16px}
+#startScreen h1{font-size:32px;color:#FFD700;text-shadow:2px 2px 0 #000,0 0 20px rgba(255,215,0,0.5);letter-spacing:2px;font-weight:900;margin-bottom:2px}
+#startScreen h2{font-size:11px;color:#8d6e63;letter-spacing:3px;font-weight:900;margin-bottom:10px}
+.badge{display:inline-block;background:#1a1a1a;border:2px solid #000;color:#FFD700;font-size:7px;font-weight:900;padding:2px 6px;border-radius:3px;margin:2px}
+.startBtn{margin-top:14px;background:linear-gradient(#FFD700,#FFA500);color:#000;border:3px solid #000;padding:8px 22px;border-radius:6px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 4px 0 #000;letter-spacing:1px}
+.startBtn:active{transform:translateY(4px);box-shadow:0 0 0 #000}
+#controls{margin-top:12px;text-align:left;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;border:2px solid #000;max-width:300px}
+#controls div{font-size:9px;color:#c9b896;margin:2px 0} #controls b{color:#FFD700}
+
+@media (max-width:700px){
+  #gameWrapper{flex-direction:column;align-items:center}
+  #sidePanel{width:400px;max-width:96vw;flex-direction:row;flex-wrap:wrap}
+  #sidePanel .panel{flex:1;min-width:120px}
+  #gameContainer{max-width:96vw}
+}
+</style>
+</head>
+<body>
+<div id="gameWrapper">
+<div id="gameContainer">
+<canvas id="game" width="420" height="800"></canvas>
+<div id="ui">
+  <div class="topBar">
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#FFD700,#b8960c)">💰</div><div class="resVal" id="gold">250</div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#4a4a4a,#2a2a2a)">⚔️</div><div class="resVal">Lv<span id="level">5</span></div><div class="hpBar"><div class="hpFill" id="hpFill" style="width:100%"></div></div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#4a90e2,#1a3a8a)">🔮</div><div class="resVal" id="mana">100</div><div class="manaBar"><div class="manaFill" id="manaFill" style="width:100%"></div></div></div>
+  </div>
+  <div id="autoBanner"></div>
+  <div id="joystick"><div class="joyBase" id="joyBase"><div class="joyStick" id="joyStick"></div></div></div>
+  <div id="actionBtns">
+    <div class="actBtn attack" id="attackBtn">⚔️</div>
+    <div class="actBtn potion" id="potionBtn">🧪</div>
+    <div class="actBtn map" id="mapBtn">🗺️</div>
+  </div>
+  <div id="completePopup"><div style="color:#FFD700;font-weight:900;font-size:12px">✅ MISSÃO COMPLETA!</div><div id="completeName" style="color:#c9b896;font-weight:900;margin:3px 0;font-size:10px"></div><div id="completeReward" style="color:#000;background:linear-gradient(#FFD700,#FFA500);padding:2px 8px;border-radius:3px;font-size:9px;font-weight:900;border:2px solid #000;display:inline-block"></div></div>
+  <div id="startScreen">
+    <h1>ENJOYGO</h1>
+    <h2>WEB • TIBIA × CLASH</h2>
+    <div><span class="badge">INVENTÁRIO</span><span class="badge">MAGIAS</span><span class="badge">OUTFIT</span><span class="badge">DRAGÃO</span></div>
+    <p style="color:#c9b896;font-size:11px;margin-top:10px;font-weight:700">RPG Completo no Navegador</p>
+    <button class="startBtn" id="startBtn">▶ JOGAR NO NAVEGADOR</button>
+    <div id="controls">
+      <div><b>🕹️ Joystick:</b> Mover | <b>👆 Missão:</b> Auto-walk</div>
+      <div><b>⚔️:</b> Atacar | <b>🧪:</b> Poção | <b>🗺️:</b> Centro</div>
+      <div><b>1-4:</b> Magias | <b>Inventário:</b> Clique nos itens</div>
+      <div><b>Outfit:</b> Muda a cada level • <b>Mana:</b> Para magias</div>
+    </div>
+    <p style="font-size:8px;color:#5d4037;margin-top:8px">100% WEB • Sem instalação • Debian • Celular • PC</p>
+  </div>
+</div>
+</div>
+
+<div id="sidePanel">
+  <div class="panel">
+    <div class="panelTitle">📜 MISSÕES • TIBIA × CLASH</div>
+    <div id="questList"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">🎒 INVENTÁRIO • TIBIA STYLE</div>
+    <div id="inventory"></div>
+    <div style="margin-top:6px;display:flex;gap:4px">
+      <div style="flex:1;background:#1a1a1a;border:2px solid #000;border-radius:4px;padding:3px;text-align:center"><div style="font-size:7px;color:#8d6e63;font-weight:900">OURO</div><div style="font-size:10px;color:#FFD700;font-weight:900" id="invGold">250</div></div>
+      <div style="flex:1;background:#1a1a1a;border:2px solid #000;border-radius:4px;padding:3px;text-align:center"><div style="font-size:7px;color:#8d6e63;font-weight:900">PESO</div><div style="font-size:10px;color:#c9b896;font-weight:900" id="invWeight">12/100</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">🔮 MAGIAS • MANA <span id="manaPanel">100</span></div>
+    <div id="spells">
+      <div class="spell" data-key="1" id="spell1"><div class="spellKey">1</div><div class="spellIcon">🔥</div><div class="spellName">FIRE</div><div class="spellMana">20 MP</div></div>
+      <div class="spell" data-key="2" id="spell2"><div class="spellKey">2</div><div class="spellIcon">❄️</div><div class="spellName">ICE</div><div class="spellMana">25 MP</div></div>
+      <div class="spell" data-key="3" id="spell3"><div class="spellKey">3</div><div class="spellIcon">⚡</div><div class="spellName">ENERGY</div><div class="spellMana">30 MP</div></div>
+      <div class="spell" data-key="4" id="spell4"><div class="spellKey">4</div><div class="spellIcon">💚</div><div class="spellName">HEAL</div><div class="spellMana">15 MP</div></div>
+    </div>
+    <div style="margin-top:6px;background:#1a1a1a;border:2px solid #000;border-radius:4px;padding:4px">
+      <div style="font-size:7px;color:#8d6e63;font-weight:900;text-align:center">ÚLTIMA MAGIA</div>
+      <div style="font-size:8px;color:#4a90e2;font-weight:900;text-align:center" id="lastSpell">Nenhuma</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">👤 OUTFIT • LEVEL <span id="outfitLevel">5</span></div>
+    <div id="outfit">
+      <div class="outfitPrev" id="outfitPrev">🛡️</div>
+      <div class="outfitInfo">
+        <div><b id="outfitName">Knight Novato</b></div>
+        <div>Armadura: <span id="outfitArmor">Ferro</span></div>
+        <div>Cor: <span id="outfitColor">Cinza</span></div>
+        <div style="font-size:7px;color:#4caf50">Próx: Lv <span id="nextOutfitLv">10</span></div>
+      </div>
+    </div>
+    <div style="margin-top:4px;display:flex;gap:2px">
+      <div style="flex:1;height:4px;background:#000;border-radius:2px;overflow:hidden"><div id="xpBar" style="height:100%;background:linear-gradient(#FFD700,#FFA500);width:40%"></div></div>
+    </div>
+    <div style="font-size:7px;color:#8d6e63;text-align:center;margin-top:2px">XP <span id="xpText">40</span>/100</div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">👹 BESTIÁRIO</div>
+    <div style="font-size:7px;color:#c9b896;line-height:1.4">
+      <div>🟢 <b>Orc:</b> 60 HP • Fraco • Comum</div>
+      <div>💀 <b>Esqueleto:</b> 80 HP • Médio • +25% ouro</div>
+      <div>🐉 <b>Dragão:</b> 200 HP • Boss • Drop raro</div>
+      <div style="margin-top:4px;color:#FFD700;font-weight:900">Derrote para loot!</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// === ENJOYGO WEB FULL - TIBIA x CLASH ===
+const W=2600,H=2600,PS=190;
+let P={x:1300,y:1300,f:1,atk:0,hp:100,maxHp:100,mana:100,maxMana:100};
+let C={x:0,y:0},J={a:0,x:0,y:0},T=null;
+let gold=250,level=5,xp=40;
+let inventory=[
+  {id:'sword',icon:'⚔️',name:'Espada',count:1,weight:10},
+  {id:'shield',icon:'🛡️',name:'Escudo',count:1,weight:12},
+  {id:'potion',icon:'🧪',name:'Poção',count:5,weight:2},
+  {id:'mana',icon:'🔮',name:'Mana',count:3,weight:2},
+  {id:'gold',icon:'💰',name:'Moedas',count:25,weight:1},
+  {id:'meat',icon:'🍖',name:'Carne',count:2,weight:3},
+  {id:'empty',icon:'',name:'',count:0,weight:0},
+  {id:'empty',icon:'',name:'',count:0,weight:0},
+  {id:'empty',icon:'',name:'',count:0,weight:0},
+  {id:'empty',icon:'',name:'',count:0,weight:0},
+];
+let spellsCooldown={1:0,2:0,3:0,4:0};
+let lastSpell='Nenhuma';
+
+const outfits=[
+  {lv:1,name:'Knight Novato',armor:'Ferro',color:'Cinza',icon:'🛡️',col:'#6a6a6a'},
+  {lv:5,name:'Guerreiro',armor:'Aço',color:'Prata',icon:'⚔️',col:'#8a8a8a'},
+  {lv:10,name:'Guardião',armor:'Ouro Negro',color:'Dourado Negro',icon:'👑',col:'#4a3a0a'},
+  {lv:15,name:'Lorde Sombrio',armor:'Demoníaco',color:'Preto Vermelho',icon:'😈',col:'#2a0a0a'},
+  {lv:20,name:'Lenda Tibia',armor:'Divina',color:'Dourado Divino',icon:'✨',col:'#FFD700'},
+];
+
+const quests=[
+  {id:'q1',title:'Ferreiro Negro',desc:'Fale com ferreiro',x:600,y:500,icon:'⚒️',done:0,r:60,type:'house',loot:'sword'},
+  {id:'q2',title:'Madeira Amaldiçoada',desc:'Floresta sombria',x:1900,y:650,icon:'🌲',done:0,r:40,type:'tree',loot:'meat'},
+  {id:'q3',title:'Taverna do Dragão',desc:'Taverna medieval',x:1300,y:1700,icon:'🍺',done:0,r:80,type:'house',loot:'potion'},
+  {id:'q4',title:'Torre do Mago',desc:'Torre abandonada',x:450,y:1900,icon:'🗼',done:0,r:110,type:'tower',loot:'mana'},
+  {id:'q5',title:'Orc Rei',desc:'Derrote orc rei',x:2000,y:2000,icon:'👹',done:0,r:150,type:'boss',loot:'gold'},
+  {id:'q6',title:'Dragão Ancião',desc:'Mate o dragão',x:200,y:200,icon:'🐉',done:0,r:300,type:'dragon',loot:'gold'},
+];
+
+const worldObjects=[
+  {x:600,y:500,type:'house',w:90,h:70},{x:1300,y:1700,type:'house',w:90,h:70},{x:450,y:1900,type:'tower',w:70,h:90},
+  {x:1900,y:650,type:'tree'},{x:900,y:350,type:'tree'},{x:300,y:750,type:'tree'},{x:1800,y:400,type:'tree'},
+  {x:500,y:1250,type:'tree'},{x:1600,y:1150,type:'tree'},{x:750,y:2000,type:'tree'},{x:1400,y:350,type:'rock'},{x:850,y:950,type:'rock'},{x:1700,y:1350,type:'rock'},
+];
+
+let monsters=[
+  {id:'m1',x:2000,y:2000,type:'orc',hp:100,max:100,vx:0,vy:0,w:0,icon:'👹'},
+  {id:'m2',x:800,y:800,type:'skeleton',hp:80,max:80,vx:0,vy:0,w:0,icon:'💀'},
+  {id:'m3',x:1500,y:600,type:'orc',hp:60,max:60,vx:0,vy:0,w:0,icon:'👹'},
+  {id:'m4',x:200,y:200,type:'dragon',hp:200,max:200,vx:0,vy:0,w:0,icon:'🐉'},
+  {id:'m5',x:1200,y:400,type:'skeleton',hp:80,max:80,vx:0,vy:0,w:0,icon:'💀'},
+  {id:'m6',x:600,y:1500,type:'orc',hp:60,max:60,vx:0,vy:0,w:0,icon:'👹'},
+];
+
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+
+function getOutfit(lv){
+  let cur=outfits[0];
+  for(let o of outfits){if(lv>=o.lv) cur=o;}
+  let next=outfits.find(o=>o.lv>lv);
+  return {cur,next};
+}
+
+function renderQuests(){
+  const list=document.getElementById('questList'); list.innerHTML='';
+  quests.forEach(q=>{
+    const div=document.createElement('div'); div.className='qItem'+(q.done?' done':'');
+    const dist=Math.round(Math.hypot(P.x-q.x,P.y-q.y)/10);
+    div.innerHTML=`<div class="qIcon">${q.done?'✅':q.icon}</div><div class="qInfo"><div class="qName">${q.title}</div><div class="qDesc">${q.desc}</div>${!q.done?`<div class="qGo">IR ${dist}m • +${q.r}💰</div>`:''}</div>`;
+    if(!q.done) div.onclick=()=>{T={x:q.x,y:q.y,id:q.id}; document.getElementById('autoBanner').style.display='block'; document.getElementById('autoBanner').textContent=`🚶 ${q.title}...`;};
+    list.appendChild(div);
+  });
+}
+
+function renderInv(){
+  const inv=document.getElementById('inventory'); inv.innerHTML='';
+  let weight=0;
+  inventory.forEach((it,i)=>{
+    const slot=document.createElement('div'); slot.className='invSlot'+(it.id==='empty'?' empty':'');
+    if(it.id!=='empty'){
+      slot.innerHTML=`${it.icon}<span class="count">${it.count>1?it.count:''}</span>`;
+      slot.title=`${it.name} x${it.count}`;
+      weight+=it.weight*it.count;
+      slot.onclick=()=>{
+        if(it.id==='potion'){usePotion();}
+        else if(it.id==='mana'){useMana();}
+        else if(it.id==='meat'){useMeat();}
+      };
+    }
+    inv.appendChild(slot);
+  });
+  document.getElementById('invGold').textContent=gold;
+  document.getElementById('invWeight').textContent=`${weight}/100`;
+  document.getElementById('invGold').parentElement.parentElement.querySelector('#invGold')?.parentElement;
+}
+
+function addLoot(id){
+  let item=inventory.find(it=>it.id===id);
+  if(item && item.id!=='empty'){item.count++; renderInv(); return;}
+  let empty=inventory.find(it=>it.id==='empty');
+  if(empty){
+    const icons={sword:'⚔️',shield:'🛡️',potion:'🧪',mana:'🔮',gold:'💰',meat:'🍖'};
+    const names={sword:'Espada',shield:'Escudo',potion:'Poção',mana:'Mana',gold:'Moedas',meat:'Carne'};
+    const weights={sword:10,shield:12,potion:2,mana:2,gold:1,meat:3};
+    empty.id=id; empty.icon=icons[id]||'📦'; empty.name=names[id]||id; empty.count=1; empty.weight=weights[id]||1;
+    renderInv();
+  }
+}
+
+function usePotion(){
+  let pot=inventory.find(i=>i.id==='potion');
+  if(!pot||pot.count<=0){alert('Sem poção!'); return;}
+  if(P.hp>=P.maxHp) return;
+  pot.count--; if(pot.count<=0){pot.id='empty';pot.icon='';pot.name='';}
+  P.hp=Math.min(P.maxHp,P.hp+40);
+  renderInv(); updateBars();
+}
+function useMana(){
+  let m=inventory.find(i=>i.id==='mana');
+  if(!m||m.count<=0){alert('Sem mana potion!'); return;}
+  m.count--; if(m.count<=0){m.id='empty';m.icon='';m.name='';}
+  P.mana=Math.min(P.maxMana,P.mana+40);
+  renderInv(); updateBars();
+}
+function useMeat(){
+  let meat=inventory.find(i=>i.id==='meat');
+  if(!meat||meat.count<=0) return;
+  meat.count--; if(meat.count<=0){meat.id='empty';meat.icon='';meat.name='';}
+  P.hp=Math.min(P.maxHp,P.hp+15);
+  renderInv(); updateBars();
+}
+
+function updateBars(){
+  document.getElementById('hpFill').style.width=(P.hp/P.maxHp*100)+'%';
+  document.getElementById('manaFill').style.width=(P.mana/P.maxMana*100)+'%';
+  document.getElementById('manaPanel').textContent=Math.round(P.mana);
+  document.getElementById('mana').textContent=Math.round(P.mana);
+}
+
+function castSpell(num){
+  if(spellsCooldown[num]>0) return;
+  const costs={1:20,2:25,3:30,4:15};
+  const names={1:'Fireball 🔥',2:'Ice Wave ❄️',3:'Energy Beam ⚡',4:'Heal 💚'};
+  if(P.mana<costs[num]){alert('Sem mana!'); return;}
+  P.mana-=costs[num];
+  spellsCooldown[num]= {1:2,2:3,3:4,4:2}[num];
+  lastSpell=names[num];
+  document.getElementById('lastSpell').textContent=lastSpell;
+  updateBars();
+  // effects
+  if(num===1){ // fire - area damage
+    monsters.forEach(m=>{if(Math.hypot(m.x-P.x,m.y-P.y)<150){m.hp-=50; if(m.hp<=0) killMonster(m);}});
+    // visual
+    canvas.style.filter='sepia(1) hue-rotate(-30deg)';
+    setTimeout(()=>canvas.style.filter='',200);
+  } else if(num===2){ // ice - slow
+    monsters.forEach(m=>{if(Math.hypot(m.x-P.x,m.y-P.y)<130){m.vx*=0.2; m.vy*=0.2; m.hp-=30; if(m.hp<=0) killMonster(m);}});
+    canvas.style.filter='hue-rotate(180deg) brightness(1.2)';
+    setTimeout(()=>canvas.style.filter='',300);
+  } else if(num===3){ // energy - line
+    let closest=null, cd=Infinity;
+    monsters.forEach(m=>{let d=Math.hypot(m.x-P.x,m.y-P.y); if(d<cd){cd=d; closest=m;}});
+    if(closest){closest.hp-=80; if(closest.hp<=0) killMonster(closest);}
+    canvas.style.filter='brightness(1.5) hue-rotate(60deg)';
+    setTimeout(()=>canvas.style.filter='',150);
+  } else if(num===4){ // heal
+    P.hp=Math.min(P.maxHp,P.hp+50);
+    updateBars();
+    canvas.style.filter='brightness(1.3) hue-rotate(80deg)';
+    setTimeout(()=>canvas.style.filter='',250);
+  }
+}
+
+function killMonster(m){
+  gold+= m.type==='dragon'?100 : m.type==='skeleton'?25 : 15;
+  xp+= m.type==='dragon'?50 : 20;
+  if(xp>=100){level++; xp-=100; checkOutfit();}
+  document.getElementById('gold').textContent=gold;
+  document.getElementById('level').textContent=level;
+  document.getElementById('xpText').textContent=xp;
+  document.getElementById('xpBar').style.width=xp+'%';
+  // respawn
+  m.x=Math.random()*W; m.y=Math.random()*H; m.hp=m.max;
+  // loot
+  if(Math.random()<0.6) addLoot(['potion','mana','meat','gold'][Math.floor(Math.random()*4)]);
+}
+
+function checkOutfit(){
+  const {cur,next}=getOutfit(level);
+  document.getElementById('outfitLevel').textContent=level;
+  document.getElementById('outfitPrev').textContent=cur.icon;
+  document.getElementById('outfitName').textContent=cur.name;
+  document.getElementById('outfitArmor').textContent=cur.armor;
+  document.getElementById('outfitColor').textContent=cur.color;
+  document.getElementById('outfitPrev').style.background=`linear-gradient(${cur.col},#1a1a1a)`;
+  if(next) document.getElementById('nextOutfitLv').textContent=next.lv;
+  else document.getElementById('nextOutfitLv').textContent='MAX';
+}
+
+function completeQuest(id){
+  const q=quests.find(x=>x.id===id);
+  if(!q||q.done) return;
+  q.done=1; gold+=q.r; xp+=30;
+  if(xp>=100){level++; xp-=100; checkOutfit();}
+  document.getElementById('gold').textContent=gold;
+  document.getElementById('level').textContent=level;
+  document.getElementById('xpText').textContent=xp;
+  document.getElementById('xpBar').style.width=xp+'%';
+  document.getElementById('completeName').textContent=q.title;
+  document.getElementById('completeReward').textContent=`+${q.r} OURO • +${q.loot}`;
+  addLoot(q.loot);
+  const pop=document.getElementById('completePopup'); pop.style.display='block'; setTimeout(()=>pop.style.display='none',2200);
+  T=null; document.getElementById('autoBanner').style.display='none'; renderQuests();
+}
+
+// JOYSTICK
+const joyBase=document.getElementById('joyBase'), joyStick=document.getElementById('joyStick');
+function getJoyPos(e){
+  const r=joyBase.getBoundingClientRect();
+  const cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY;
+  let dx=cx-(r.left+r.width/2), dy=cy-(r.top+r.height/2), d=Math.hypot(dx,dy), m=30;
+  if(d>m){let a=Math.atan2(dy,dx);dx=Math.cos(a)*m;dy=Math.sin(a)*m}
+  return{dx,dy}
+}
+function joyStart(e){e.preventDefault();J.a=1;T=null;document.getElementById('autoBanner').style.display='none'}
+function joyMove(e){if(!J.a)return;e.preventDefault();let {dx,dy}=getJoyPos(e);joyStick.style.transform=`translate(${dx}px,${dy}px)`;J.x=dx/30;J.y=dy/30;if(Math.abs(J.x)>0.1)P.f=J.x>0?1:-1}
+function joyEnd(){J.a=0;J.x=0;J.y=0;joyStick.style.transform='translate(0,0)'}
+joyBase.addEventListener('touchstart',joyStart,{passive:false});
+joyBase.addEventListener('touchmove',joyMove,{passive:false});
+joyBase.addEventListener('touchend',joyEnd);
+joyBase.addEventListener('mousedown',joyStart);
+window.addEventListener('mousemove',joyMove);
+window.addEventListener('mouseup',joyEnd);
+canvas.addEventListener('click',e=>{
+  const r=canvas.getBoundingClientRect();
+  const x=(e.clientX-r.left)*(canvas.width/r.width), y=(e.clientY-r.top)*(canvas.height/r.height);
+  if(y>canvas.height-130 && x<130) return;
+  if(y>canvas.height-130 && x>270) return;
+  T={x:C.x+x,y:C.y+y,id:null};
+  document.getElementById('autoBanner').style.display='block';
+  document.getElementById('autoBanner').textContent='🚶 Indo para local...';
+});
+document.getElementById('mapBtn').onclick=()=>{P.x=W/2;P.y=H/2;T=null;document.getElementById('autoBanner').style.display='none';};
+document.getElementById('attackBtn').onclick=()=>{
+  P.atk=12;
+  monsters.forEach(m=>{if(Math.hypot(m.x-P.x,m.y-P.y)<80){m.hp-=35; if(m.hp<=0) killMonster(m);}});
+  canvas.style.transform='translate(2px,0)'; setTimeout(()=>canvas.style.transform='translate(0,0)',50);
+};
+document.getElementById('potionBtn').onclick=()=>usePotion();
+document.querySelectorAll('.spell').forEach(el=>{
+  el.onclick=()=>castSpell(parseInt(el.dataset.key));
+});
+window.addEventListener('keydown',e=>{
+  if(e.key>='1'&&e.key<='4') castSpell(parseInt(e.key));
+  if(e.key===' '){e.preventDefault(); document.getElementById('attackBtn').click();}
+});
+
+// LOOP
+let last=performance.now();
+let manaRegen=0;
+function loop(now){
+  const dt=(now-last)/1000; last=now;
+  // cooldowns
+  for(let k in spellsCooldown){if(spellsCooldown[k]>0){spellsCooldown[k]-=dt; if(spellsCooldown[k]<=0){spellsCooldown[k]=0; document.getElementById('spell'+k).classList.remove('cooldown');} else {document.getElementById('spell'+k).classList.add('cooldown');}}}
+  // mana regen
+  manaRegen+=dt; if(manaRegen>1){if(P.mana<P.maxMana){P.mana=Math.min(P.maxMana,P.mana+2); updateBars();} manaRegen=0;}
+  let mx=0,my=0;
+  if(J.a){mx=J.x;my=J.y}
+  else if(T){let dx=T.x-P.x,dy=T.y-P.y,d=Math.hypot(dx,dy);if(d<30){if(T.id)completeQuest(T.id);T=null;document.getElementById('autoBanner').style.display='none';}else{mx=dx/d;my=dy/d;if(Math.abs(mx)>0.1)P.f=mx>0?1:-1}}
+  if(mx||my){P.x=Math.max(30,Math.min(W-30,P.x+mx*PS*dt));P.y=Math.max(30,Math.min(H-30,P.y+my*PS*dt));}
+  if(P.atk>0) P.atk--;
+  // monsters
+  monsters.forEach(m=>{
+    m.w-=dt;
+    if(m.w<=0){m.vx=(Math.random()-0.5)*50; m.vy=(Math.random()-0.5)*50; m.w=2+Math.random()*3;}
+    m.x+=m.vx*dt; m.y+=m.vy*dt;
+    m.x=Math.max(20,Math.min(W-20,m.x)); m.y=Math.max(20,Math.min(H-20,m.y));
+    // attack player if close
+    if(Math.hypot(m.x-P.x,m.y-P.y)<45){
+      if(Math.random()<0.01){P.hp-= {orc:5,skeleton:8,dragon:15}[m.type]||5; if(P.hp<=0){P.hp=P.maxHp; P.x=W/2;P.y=H/2; gold=Math.max(0,gold-20);} updateBars();}
+    }
+  });
+  C.x=P.x-canvas.width/2; C.y=P.y-canvas.height/2;
+  C.x=Math.max(0,Math.min(W-canvas.width,C.x)); C.y=Math.max(0,Math.min(H-canvas.height,C.y));
+  draw(); requestAnimationFrame(loop);
+}
+
+function draw(){
+  // ground Tibia dark stone
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  // grass patches Clash bright
+  for(let i=0;i<250;i++){
+    const wx=(i*137)%W, wy=(i*241)%H;
+    const sx=wx-C.x, sy=wy-C.y;
+    if(sx<-30||sx>450||sy<-30||sy>830) continue;
+    ctx.fillStyle=i%4===0?'#3a5a2a':i%4===1?'#4a6a3a':'#4a7a4a';
+    ctx.fillRect(sx,sy,18+(i%3)*8,18+(i%2)*8);
+    if(i%5===0){ctx.fillStyle='#6a8a5a'; ctx.fillRect(sx+4,sy+4,3,3)}
+  }
+  // stone grid
+  ctx.strokeStyle='rgba(0,0,0,0.2)'; ctx.lineWidth=1;
+  let tile=64, sx0=-(C.x%tile), sy0=-(C.y%tile);
+  for(let x=sx0;x<canvas.width;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke()}
+  for(let y=sy0;y<canvas.height;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke()}
+  // roads
+  ctx.fillStyle='#5d4e37';
+  [{x:500,y:350,w:300,h:22},{x:900,y:850,w:400,h:22},{x:400,y:1350,w:700,h:22}].forEach(p=>{
+    const x=p.x-C.x,y=p.y-C.y;
+    ctx.fillStyle='#6d5d4a'; ctx.fillRect(x,y,p.w,p.h);
+    ctx.fillStyle='#4a3a2a'; ctx.fillRect(x,y,p.w,3);
+    for(let i=0;i<p.w;i+=14){ctx.fillStyle=i%28===0?'#5d4e37':'#7a6a57'; ctx.fillRect(x+i,y+3,12,16)}
+  });
+
+  worldObjects.forEach(o=>{
+    const x=o.x-C.x,y=o.y-C.y;
+    if(x<-100||x>520||y<-100||y>900) return;
+    if(o.type==='house'){
+      ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.beginPath(); ctx.ellipse(x,y+35,45,10,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#5a5a5a'; ctx.fillRect(x-45,y-25,90,55);
+      ctx.strokeStyle='#3a3a3a'; ctx.lineWidth=1;
+      for(let by=y-25;by<y+30;by+=11){for(let bx=x-45;bx<x+45;bx+=20){ctx.strokeRect(bx,by,20,11)}}
+      ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(x-50,y-25); ctx.lineTo(x,y-55); ctx.lineTo(x+50,y-25); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#5d4037'; ctx.beginPath(); ctx.moveTo(x-46,y-25); ctx.lineTo(x,y-50); ctx.lineTo(x+46,y-25); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#2a1a14'; ctx.fillRect(x-10,y+5,20,20);
+      ctx.fillStyle='#FF6F00'; ctx.fillRect(x-16,y+10,3,8); ctx.fillRect(x+13,y+10,3,8);
+      ctx.fillStyle='#FFD700'; ctx.fillRect(x-15,y+8,2,2); ctx.fillRect(x+13,y+8,2,2);
+      ctx.fillStyle='#FFA500'; ctx.fillRect(x+14,y-10,12,12); ctx.fillStyle='#FFD700'; ctx.fillRect(x+16,y-8,8,3);
+    } else if(o.type==='tower'){
+      ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.beginPath(); ctx.ellipse(x,y+40,24,7,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#4a4a4a'; ctx.fillRect(x-20,y-30,40,60);
+      for(let i=0;i<5;i++){ctx.fillStyle=i%2===0?'#5a5a5a':'#4a4a4a'; ctx.fillRect(x-20,y-30+i*12,40,6)}
+      ctx.fillStyle='#2a1a14'; ctx.beginPath(); ctx.moveTo(x-22,y-30); ctx.lineTo(x,y-48); ctx.lineTo(x+22,y-30); ctx.closePath(); ctx.fill();
+    } else if(o.type==='tree'){
+      ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+18,18,6,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#3e2723'; ctx.fillRect(x-5,y-10,10,24);
+      ctx.fillStyle='#2e7d32'; ctx.beginPath(); ctx.arc(x,y-14,20,0,6.28); ctx.fill();
+      ctx.fillStyle='#388e3c'; ctx.beginPath(); ctx.arc(x-4,y-16,12,0,6.28); ctx.fill();
+    } else if(o.type==='rock'){
+      ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+8,12,4,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#5a5a5a'; ctx.beginPath(); ctx.ellipse(x,y,14,10,0,0,6.28); ctx.fill();
+    }
+  });
+
+  monsters.forEach(m=>{
+    const x=m.x-C.x,y=m.y-C.y;
+    if(x<-60||x>480||y<-60||y>860) return;
+    ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+20,16,5,0,0,6.28); ctx.fill();
+    if(m.type==='dragon'){
+      ctx.fillStyle='#8b0000'; ctx.beginPath(); ctx.ellipse(x,y,22,20,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#c62828'; ctx.beginPath(); ctx.arc(x,y-8,16,0,6.28); ctx.fill();
+      ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x-5,y-10,4,0,6.28); ctx.arc(x+5,y-10,4,0,6.28); ctx.fill();
+      ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(x-5,y-10,2,0,6.28); ctx.arc(x+5,y-10,2,0,6.28); ctx.fill();
+      // wings
+      ctx.fillStyle='#5a0000'; ctx.beginPath(); ctx.ellipse(x-18,y-2,12,8, -0.3,0,6.28); ctx.ellipse(x+18,y-2,12,8,0.3,0,6.28); ctx.fill();
+    } else if(m.type==='skeleton'){
+      ctx.fillStyle='#e0d5c7'; ctx.beginPath(); ctx.ellipse(x,y,14,16,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y-6,10,0,6.28); ctx.fill();
+      ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(x-3,y-7,2,0,6.28); ctx.arc(x+3,y-7,2,0,6.28); ctx.fill();
+    } else {
+      ctx.fillStyle='#4a7a2a'; ctx.beginPath(); ctx.ellipse(x,y,15,16,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#5a8a3a'; ctx.beginPath(); ctx.arc(x,y-6,11,0,6.28); ctx.fill();
+      ctx.fillStyle='#ff0000'; ctx.beginPath(); ctx.arc(x-3,y-7,2.5,0,6.28); ctx.arc(x+3,y-7,2.5,0,6.28); ctx.fill();
+      ctx.fillStyle='#3e2723'; ctx.fillRect(x+10,y-3,3,14);
+    }
+    // hp
+    ctx.fillStyle='#000'; ctx.fillRect(x-16,y-26,32,6);
+    let col=m.hp/m.max>0.5?'#4caf50':m.hp/m.max>0.25?'#FFD700':'#e74c3c';
+    ctx.fillStyle=col; ctx.fillRect(x-15,y-25,30*(m.hp/m.max),4);
+  });
+
+  quests.forEach(q=>{
+    if(q.done) return;
+    const x=q.x-C.x,y=q.y-C.y;
+    if(x<-60||x>480||y<-80||y>880) return;
+    ctx.shadowColor='#FFD700'; ctx.shadowBlur=8+Math.sin(Date.now()/250)*4;
+    ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y-38,14,0,6.28); ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#000'; ctx.font='bold 12px sans-serif'; ctx.textAlign='center'; ctx.fillText(q.icon,x,y-34);
+    ctx.fillStyle='#FFA500'; ctx.beginPath(); ctx.moveTo(x-4,y-24); ctx.lineTo(x+4,y-24); ctx.lineTo(x,y-14); ctx.closePath(); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1; ctx.stroke();
+  });
+
+  if(T){
+    const x=T.x-C.x,y=T.y-C.y;
+    ctx.strokeStyle='#FFD700'; ctx.lineWidth=2; ctx.setLineDash([5,3]); ctx.beginPath(); ctx.arc(x,y,14,0,6.28); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y,3,0,6.28); ctx.fill();
+  }
+
+  // PLAYER - outfit based on level
+  const {cur}=getOutfit(level);
+  const px=P.x-C.x,py=P.y-C.y;
+  ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(px,py+20,13,4,0,0,6.28); ctx.fill();
+  ctx.save(); ctx.translate(px,py); ctx.scale(P.f,1);
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(-6,6,5,11); ctx.fillRect(1,6,5,11);
+  ctx.fillStyle=cur.col; ctx.fillRect(-9,-8,18,16);
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(-7,-6,14,8);
+  ctx.fillStyle='#FFD700'; ctx.fillRect(-2,-4,4,3);
+  ctx.fillStyle='#8b0000'; ctx.fillRect(-1,-3,2,1);
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(-13,-6,5,11); ctx.fillRect(8,-6,5,11);
+  if(P.atk>0){
+    ctx.save(); ctx.translate(11,0); ctx.rotate(-0.6 - P.atk*0.15);
+    ctx.fillStyle='#c0c0c0'; ctx.fillRect(0,-2,20,3);
+    ctx.fillStyle='#FFD700'; ctx.fillRect(-3,-4,5,8);
+    ctx.restore();
+  } else {
+    ctx.fillStyle='#c0c0c0'; ctx.fillRect(11,-2,16,3);
+    ctx.fillStyle='#FFD700'; ctx.fillRect(9,-4,4,7);
+  }
+  ctx.fillStyle='#1a1a1a'; ctx.beginPath(); ctx.ellipse(-11,1,8,11,0,0,6.28); ctx.fill();
+  ctx.strokeStyle='#FFD700'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.fillStyle='#FFD700'; ctx.font='bold 7px sans-serif'; ctx.textAlign='center'; ctx.fillText('💀',-11,4);
+  ctx.fillStyle='#2a2a2a'; ctx.beginPath(); ctx.arc(0,-13,10,0,6.28); ctx.fill();
+  ctx.fillStyle=cur.col; ctx.fillRect(-9,-19,18,4);
+  ctx.fillStyle='#FFD700'; ctx.fillRect(-7,-19,14,2);
+  ctx.fillStyle='#8b0000'; ctx.fillRect(-2,-21,4,3);
+  ctx.fillStyle='#000'; ctx.fillRect(-5,-11,3,2); ctx.fillRect(2,-11,3,2);
+  ctx.restore();
+  if(T){ctx.fillStyle='#FFD700'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center'; ctx.fillText('AUTO',px,py-32);}
+  // low hp flash
+  if(P.hp/P.maxHp<0.3 && Math.floor(Date.now()/300)%2===0){
+    ctx.fillStyle='rgba(255,0,0,0.15)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+}
+
+document.getElementById('startBtn').onclick=()=>{
+  document.getElementById('startScreen').style.display='none';
+  renderQuests(); renderInv(); checkOutfit(); updateBars();
+  requestAnimationFrame(loop);
+};
+renderQuests(); renderInv(); checkOutfit();
+</script>
+</body>
+</html>

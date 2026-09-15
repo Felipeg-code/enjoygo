@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>enjoygo - Champions of Norrath Edition</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;touch-action:none;user-select:none}
+body{background:#0a0a0f;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;color:#e0d5c7}
+#gameWrapper{display:flex;gap:8px;align-items:flex-start;max-width:100vw;max-height:100vh;padding:8px}
+#gameContainer{position:relative;width:480px;height:800px;max-width:62vw;max-height:96vh;background:#1a1a1e;border-radius:10px;overflow:hidden;box-shadow:0 0 0 3px #000,0 0 0 6px #3e2723,0 20px 60px rgba(0,0,0,0.9);border:2px solid #000;flex-shrink:0}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+#ui{position:absolute;inset:0;pointer-events:none}
+.topBar{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(#2a2a2a,#0f0f0f);display:flex;justify-content:space-between;align-items:center;padding:4px 8px;border-bottom:3px solid #000;pointer-events:auto;gap:4px}
+.res{display:flex;align-items:center;background:linear-gradient(#1a1a1a,#0a0a0a);border-radius:4px;padding:2px 5px 2px 2px;border:2px solid #000}
+.resIcon{width:20px;height:20px;border-radius:3px;display:flex;justify-content:center;align-items:center;border:2px solid #000;font-size:10px;font-weight:900}
+.resVal{color:#FFD700;font-weight:900;font-size:10px;margin-left:3px;text-shadow:1px 1px 0 #000}
+.bar{width:36px;height:4px;background:#000;border-radius:2px;overflow:hidden;margin-left:3px;border:1px solid #000}
+.fill{height:100%}
+#sidePanel{width:300px;max-height:96vh;display:flex;flex-direction:column;gap:6px;flex-shrink:0;overflow-y:auto}
+.panel{background:linear-gradient(#2a1a14,#1a0f0a);border-radius:8px;border:3px solid #000;box-shadow:0 3px 0 #000;padding:6px;pointer-events:auto}
+.panelTitle{color:#FFD700;font-weight:900;font-size:9px;text-align:center;margin-bottom:4px;letter-spacing:1px;text-shadow:1px 1px 0 #000}
+#classSelect{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.classCard{background:linear-gradient(#3a3a3a,#1a1a1a);border:2px solid #000;border-radius:6px;padding:6px;cursor:pointer;text-align:center;transition:all 0.1s;box-shadow:0 2px 0 #000}
+.classCard:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.classCard.selected{border-color:#FFD700;box-shadow:0 0 10px rgba(255,215,0,0.5),0 2px 0 #000}
+.classIcon{font-size:20px}
+.className{font-size:8px;font-weight:900;color:#FFD700;margin:2px 0}
+.classDesc{font-size:6px;color:#8d6e63;line-height:1.2}
+.attrRow{display:flex;justify-content:space-between;align-items:center;margin:2px 0;background:rgba(0,0,0,0.3);padding:2px 4px;border-radius:3px;border:1px solid #000}
+.attrName{font-size:7px;font-weight:900;color:#c9b896}
+.attrVal{font-size:8px;font-weight:900;color:#FFD700}
+.attrBtn{width:16px;height:16px;background:linear-gradient(#4a4a4a,#2a2a2a);border:1px solid #000;border-radius:3px;color:#FFD700;font-weight:900;font-size:10px;cursor:pointer;display:flex;justify-content:center;align-items:center}
+.skillTree{display:grid;grid-template-columns:1fr;gap:2px;max-height:120px;overflow-y:auto}
+.skill{ background:linear-gradient(#1a1a1a,#0f0f0f);border:1px solid #000;border-radius:4px;padding:3px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.skill.unlocked{border-color:#4caf50;background:linear-gradient(#2a3a2a,#1a2a1a)}
+.skill.locked{opacity:0.4}
+.skillName{font-size:7px;font-weight:700;color:#c9b896}
+.skillLv{font-size:7px;font-weight:900;color:#FFD700}
+.equipGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.equipSlot{aspect-ratio:1;background:linear-gradient(#1a1a1a,#0a0a0a);border:2px solid #000;border-radius:4px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:10px;cursor:pointer;position:relative}
+.equipSlot.hasItem{background:linear-gradient(#2a2a1a,#1a1a1a);border-color:#8d6e63}
+.equipSlot .slotName{font-size:5px;color:#8d6e63;font-weight:900;position:absolute;bottom:1px}
+.equipSlot .gems{position:absolute;top:1px;right:1px;display:flex;gap:1px}
+.gem{width:5px;height:5px;border-radius:1px;border:1px solid #000}
+.invGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;max-height:100px;overflow-y:auto}
+.invSlot{aspect-ratio:1;background:#1a1a1a;border:1px solid #000;border-radius:3px;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;position:relative}
+.invSlot.hasItem{background:#2a2a2a}
+.invSlot .count{position:absolute;bottom:0;right:1px;font-size:6px;font-weight:900;color:#FFD700}
+.act{width:100%;height:20px;background:linear-gradient(#4a4a4a,#2a2a2a);border:1px solid #000;border-radius:3px;display:flex;justify-content:center;align-items:center;font-size:7px;font-weight:900;color:#c9b896;cursor:pointer;margin-top:2px}
+#joystick{position:absolute;bottom:12px;left:10px;width:100px;height:100px;pointer-events:auto}
+.joyBase{width:100px;height:100px;border-radius:50px;background:radial-gradient(circle at 30% 30%,#3a3a3a,#0f0f0f);border:3px solid #000;position:relative;box-shadow:0 3px 0 #000}
+.joyStick{width:40px;height:40px;border-radius:20px;background:radial-gradient(circle at 30% 30%,#8d6e63,#2a1a14);border:3px solid #000;position:absolute;left:27px;top:27px}
+#actionBtns{position:absolute;bottom:12px;right:8px;pointer-events:auto;display:flex;flex-direction:column;gap:5px}
+.actBtn{width:44px;height:44px;border-radius:6px;border:3px solid #000;display:flex;justify-content:center;align-items:center;font-size:18px;cursor:pointer;box-shadow:0 3px 0 #000}
+.attack{background:linear-gradient(#8b0000,#4a0000)}
+.block{background:linear-gradient(#4a4a4a,#1a1a1a)}
+.potion{background:linear-gradient(#4a148c,#1a0a2a)}
+.map{background:linear-gradient(#0d47a1,#0a2a5a)}
+#spellsBar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:4px;pointer-events:auto;background:rgba(0,0,0,0.8);padding:4px 6px;border-radius:8px;border:2px solid #000}
+.spell{width:36px;height:36px;background:linear-gradient(#1a1a2a,#0a0a14);border:2px solid #000;border-radius:5px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;position:relative}
+.spell.cooldown{opacity:0.3}
+.spellIcon{font-size:14px}
+.spellKey{position:absolute;top:-5px;right:-5px;background:#000;color:#FFD700;font-size:6px;font-weight:900;width:12px;height:12px;border-radius:6px;display:flex;justify-content:center;align-items:center;border:1px solid #FFD700}
+#autoBanner{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:linear-gradient(#FFD700,#FFA500);border-radius:4px;padding:3px 8px;border:2px solid #000;font-size:7px;font-weight:900;color:#000;display:none;pointer-events:auto}
+#startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#2a1a14,#0a0503);display:flex;flex-direction:column;z-index:30;overflow-y:auto;padding:12px}
+#startScreen h1{font-size:28px;color:#FFD700;text-shadow:2px 2px 0 #000,0 0 15px rgba(255,215,0,0.5);letter-spacing:2px;font-weight:900;text-align:center;margin-top:10px}
+#startScreen h2{font-size:9px;color:#8d6e63;letter-spacing:2px;font-weight:900;text-align:center;margin-bottom:8px}
+.startBtn{margin:8px auto;background:linear-gradient(#FFD700,#FFA500);color:#000;border:3px solid #000;padding:8px 20px;border-radius:6px;font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 3px 0 #000;display:block}
+.badge{display:inline-block;background:#1a1a1a;border:1px solid #000;color:#FFD700;font-size:6px;font-weight:900;padding:2px 5px;border-radius:3px;margin:1px}
+#difficulty{display:flex;gap:4px;justify-content:center;margin:6px 0}
+.diffBtn{padding:4px 10px;background:linear-gradient(#2a2a2a,#1a1a1a);border:2px solid #000;border-radius:4px;color:#8d6e63;font-size:8px;font-weight:900;cursor:pointer}
+.diffBtn.selected{border-color:#FFD700;color:#FFD700;background:linear-gradient(#3a2a14,#2a1a0a)}
+@media (max-width:700px){#gameWrapper{flex-direction:column;align-items:center}#sidePanel{width:480px;max-width:96vw;flex-direction:row;flex-wrap:wrap}#sidePanel .panel{flex:1;min-width:140px}#gameContainer{max-width:96vw;width:96vw}}
+</style>
+</head>
+<body>
+<div id="gameWrapper">
+<div id="gameContainer">
+<canvas id="game" width="480" height="800"></canvas>
+<div id="ui">
+  <div class="topBar">
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#c62828,#8b0000)">❤️</div><div class="resVal" id="hpVal">100</div><div class="bar"><div class="fill" id="hpFill" style="width:100%;background:linear-gradient(#e74c3c,#8b0000)"></div></div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#4a90e2,#1a3a8a)">🔮</div><div class="resVal" id="manaVal">100</div><div class="bar"><div class="fill" id="manaFill" style="width:100%;background:linear-gradient(#4a90e2,#1a3a8a)"></div></div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#FFD700,#b8960c)">💰</div><div class="resVal" id="gold">250</div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#4a4a4a,#2a2a2a)">⚔️</div><div class="resVal">Lv<span id="level">1</span></div></div>
+  </div>
+  <div id="autoBanner"></div>
+  <div id="joystick"><div class="joyBase" id="joyBase"><div class="joyStick" id="joyStick"></div></div></div>
+  <div id="actionBtns">
+    <div class="actBtn attack" id="attackBtn">⚔️</div>
+    <div class="actBtn block" id="blockBtn">🛡️</div>
+    <div class="actBtn potion" id="potionBtn">🧪</div>
+    <div class="actBtn map" id="mapBtn">🗺️</div>
+  </div>
+  <div id="spellsBar">
+    <div class="spell" data-key="1" id="spell1"><div class="spellKey">1</div><div class="spellIcon">🔥</div></div>
+    <div class="spell" data-key="2" id="spell2"><div class="spellKey">2</div><div class="spellIcon">❄️</div></div>
+    <div class="spell" data-key="3" id="spell3"><div class="spellKey">3</div><div class="spellIcon">⚡</div></div>
+    <div class="spell" data-key="4" id="spell4"><div class="spellKey">4</div><div class="spellIcon">💚</div></div>
+  </div>
+  <div id="startScreen">
+    <h1>CHAMPIONS</h1>
+    <h2>OF NORRATH • ENJOYGO EDITION</h2>
+    <div style="text-align:center;margin:4px 0"><span class="badge">5 CLASSES</span><span class="badge">SKILL TREE</span><span class="badge">4 SLOTS GEM</span><span class="badge">RANDOM DUNGEON</span><span class="badge">3 DIFICULDADES</span></div>
+    
+    <div class="panel" style="margin:8px 0;max-width:460px">
+      <div class="panelTitle">⚔️ ESCOLHA SUA CLASSE - CHAMPIONS OF NORRATH</div>
+      <div id="classSelect">
+        <div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN WARRIOR</div><div class="classDesc">Tanque • Dano alto • Vida alta • Dual wield • Tornado spin</div></div>
+        <div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">WOOD ELF RANGER</div><div class="classDesc">Arqueiro • Tiros triplos • Fogo, gelo, veneno • Armadilhas</div></div>
+        <div class="classCard" data-class="cleric"><div class="classIcon">✨</div><div class="className">HIGH ELF CLERIC</div><div class="classDesc">Healer • Buff • Holy armor • Convert • Dismiss undead</div></div>
+        <div class="classCard" data-class="wizard"><div class="classIcon">🔮</div><div class="className">ERUDITE WIZARD</div><div class="classDesc">Mago • 17 skills • Fire storm • Frost • Lightning • Sem escudo</div></div>
+        <div class="classCard" data-class="shadowknight" style="grid-column:span 2"><div class="classIcon">💀</div><div class="className">DARK ELF SHADOW KNIGHT</div><div class="classDesc">Híbrido magia+melee • Veneno • Summon skeleton • Life tap • Mais rápido</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <div style="flex:1">
+          <div class="panelTitle">📊 ATRIBUTOS - 20 PONTOS</div>
+          <div id="attrList"></div>
+          <div style="font-size:7px;color:#8d6e63;text-align:center;margin-top:4px">Pontos restantes: <span id="attrPoints" style="color:#FFD700;font-weight:900">20</span></div>
+        </div>
+        <div style="flex:1">
+          <div class="panelTitle">🎭 APARÊNCIA</div>
+          <div style="display:flex;gap:4px;justify-content:center;margin:4px 0">
+            <div class="attrBtn" data-gender="male" style="background:#4a90e2">♂️</div>
+            <div class="attrBtn" data-gender="female">♀️</div>
+          </div>
+          <div style="font-size:7px;color:#c9b896;text-align:center">Gênero: <span id="genderVal">Masculino</span></div>
+          <div style="margin-top:6px;background:rgba(0,0,0,0.5);padding:4px;border-radius:4px;border:1px solid #000">
+            <div style="font-size:7px;color:#8d6e63;font-weight:900">CLASSE SELECIONADA:</div>
+            <div style="font-size:9px;color:#FFD700;font-weight:900" id="selectedClassName">Barbarian Warrior</div>
+            <div style="font-size:7px;color:#c9b896" id="selectedClassDesc">Tanque com dano alto e muita vida</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="max-width:460px">
+      <div class="panelTitle">⚔️ DIFICULDADE - CHAMPIONS SYSTEM</div>
+      <div id="difficulty">
+        <div class="diffBtn selected" data-diff="adventurous">ADVENTUROUS<br><span style="font-size:6px">Fácil • Lv1-20</span></div>
+        <div class="diffBtn" data-diff="courageous">COURAGEOUS<br><span style="font-size:6px">Médio • Lv20-40 • Import</span></div>
+        <div class="diffBtn" data-diff="champion">CHAMPION<br><span style="font-size:6px">Difícil • Lv40-50 • Import</span></div>
+      </div>
+      <div style="font-size:7px;color:#8d6e63;text-align:center">Importe seu personagem para dificuldades maiores com todo ouro e itens!</div>
+    </div>
+
+    <button class="startBtn" id="startBtn">▶ ENTRAR EM NORRATH</button>
+    <div style="font-size:7px;color:#5d4037;text-align:center;margin-top:6px;max-width:440px">
+      Inspirado em Champions of Norrath (2004) • 5 classes • Skill tree ramificada • 4 slots de gema por item • Dungeons aleatórias • Loot aleatório com prefix/suffix • Auto-mapping • 3 dificuldades • Até Lv50
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="sidePanel">
+  <div class="panel">
+    <div class="panelTitle">📜 MISSÕES • 5 ATOS • RANDOM DUNGEON</div>
+    <div id="questList" style="max-height:140px;overflow-y:auto"></div>
+    <div style="display:flex;gap:3px;margin-top:4px">
+      <div style="flex:1;background:#1a1a1a;border:1px solid #000;border-radius:3px;padding:2px;text-align:center"><div style="font-size:6px;color:#8d6e63">ATO</div><div style="font-size:9px;color:#FFD700;font-weight:900" id="actVal">1/5</div></div>
+      <div style="flex:1;background:#1a1a1a;border:1px solid #000;border-radius:3px;padding:2px;text-align:center"><div style="font-size:6px;color:#8d6e63">DUNGEON</div><div style="font-size:9px;color:#4a90e2;font-weight:900" id="dungeonVal">Faydark</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">⚔️ SKILL TREE - <span id="skillClass">BARBARIAN</span> • <span id="skillPoints">0</span> PTS</div>
+    <div class="skillTree" id="skillTree"></div>
+    <div style="font-size:6px;color:#8d6e63;text-align:center;margin-top:3px">Desbloqueie skills para liberar mais fortes na árvore!</div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">🛡️ EQUIPAMENTO • 4 SLOTS GEMA • VISUAL MUDA</div>
+    <div class="equipGrid" id="equipGrid"></div>
+    <div style="margin-top:4px;background:#1a1a1a;border:1px solid #000;border-radius:3px;padding:3px">
+      <div style="font-size:6px;color:#8d6e63;font-weight:900">ITEM SELECIONADO:</div>
+      <div style="font-size:8px;color:#FFD700;font-weight:900" id="selectedItemName">Nenhum</div>
+      <div style="font-size:6px;color:#c9b896" id="selectedItemStats">Clique em um slot</div>
+      <div style="display:flex;gap:2px;margin-top:2px" id="selectedItemGems"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">🎒 INVENTÁRIO • PESO • <span id="invWeight">0/100</span></div>
+    <div class="invGrid" id="inventory"></div>
+    <div style="display:flex;gap:2px;margin-top:3px">
+      <div class="act" id="dropBtn">DROP</div>
+      <div class="act" id="sellBtn">VENDER</div>
+      <div class="act" id="socketBtn">GEM +</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panelTitle">🗺️ AUTO-MAPPING • MINIMAPA</div>
+    <canvas id="minimap" width="120" height="80" style="width:100%;height:60px;background:#0a0a0a;border:2px solid #000;border-radius:4px"></canvas>
+    <div style="font-size:6px;color:#8d6e63;text-align:center;margin-top:2px">Mapa revela automaticamente • Corpos persistem</div>
+  </div>
+</div>
+</div>
+
+<script>
+// === CHAMPIONS OF NORRATH SYSTEMS ===
+const WORLD_W=2400,WORLD_H=2400;
+let player={x:1200,y:1200,f:1,atk:0,block:false,hp:100,maxHp:100,mana:100,maxMana:100,cls:'barbarian',gender:'male',attrs:{str:10,int:8,dex:8,sta:10},weight:0,maxWeight:100};
+let camera={x:0,y:0}, joystick={a:0,x:0,y:0}, autoTarget=null, gold=250, level=1, xp=0, skillPoints=0, act=1;
+let selectedClass='barbarian', selectedGender='male', attrPoints=20, difficulty='adventurous';
+
+const baseAttrs={str:8,int:8,dex:8,sta:8};
+let attrs={...baseAttrs};
+
+const classes={
+  barbarian:{name:'Barbarian Warrior',icon:'🪓',desc:'Tanque com dano alto e muita vida',weapons:['club','sword','mace','dagger','hammer'],skills:['Blunt Inc','Slash Inc','Regenerate','Endurance','Shield Bash','Dual Wield','Tornado Spin','Ancestral Call','Critical Hit']},
+  ranger:{name:'Wood Elf Ranger',icon:'🏹',desc:'Arqueiro com magias de arco',weapons:['bow','dagger','sword'],skills:['Bow Inc','Blunt Inc','Slash Inc','Endurance','Triple Shot','Regenerate','Poison Shot','Flaming Shot','Ice Shot','Entanglement','Explosive Shot','Dual Wield']},
+  cleric:{name:'High Elf Cleric',icon:'✨',desc:'Healer com buffs e suporte',weapons:['staff','hammer','club'],skills:['Blunt Inc','Shield Bash','Holy Strike','Healing','Blessed','Blinding Light','Convert Enemy','Endurance','Holy Armor','Undead Shield','Dismiss Undead']},
+  wizard:{name:'Erudite Wizard',icon:'🔮',desc:'Mago com 17 skills, sem escudo',weapons:['staff','mace'],skills:['Blunt Inc','Shock Frost','Frost Storm','Cold Weapons','Bolt Shock','Cone Frost','Wizard Beam','Lightning Weapons','Root','Shock Fire','Fire Flares','Fire Weapons','Fire Storm','Bind Wound','Concentration','Frost Nova','Meteor']},
+  shadowknight:{name:'Dark Elf Shadow Knight',icon:'💀',desc:'Híbrido magia+melee venenoso',weapons:['sword','dagger','bow','mace'],skills:['Disease Bolt','Disease Trail','Disease Shield','Shield Bash','Harm Touch','Slash Inc','Life Tap','Engulf Darkness','Summon Skeleton','Convert Undead','Bind Wound','Endurance','Riposte']},
+};
+
+const attrNames={str:'FORÇA',int:'INTELIGÊNCIA',dex:'DESTREZA',sta:'VIGOR'};
+const attrDesc={str:'Dano físico e peso',int:'Dano mágico e mana',dex:'Velocidade e crítico',sta:'Vida e resistência'};
+
+let skills=[];
+let inventory=[];
+let equipment={
+  weapon:{id:'rusty_sword',name:'Espada Enferrujada',icon:'🗡️',stats:{dmg:5},gems:[null,null,null,null],weight:8,lv:1},
+  shield:{id:'wood_shield',name:'Escudo Madeira',icon:'🛡️',stats:{def:3},gems:[null,null,null,null],weight:6,lv:1},
+  head:{id:'cloth_cap',name:'Gorro Pano',icon:'🎩',stats:{def:1},gems:[null,null,null,null],weight:2,lv:1},
+  chest:{id:'cloth_tunic',name:'Túnica Pano',icon:'👕',stats:{def:2},gems:[null,null,null,null],weight:4,lv:1},
+  arms:{id:'cloth_sleeves',name:'Mangas Pano',icon:'🦾',stats:{def:1},gems:[null,null,null,null],weight:2,lv:1},
+  legs:{id:'cloth_pants',name:'Calça Pano',icon:'👖',stats:{def:1},gems:[null,null,null,null],weight:3,lv:1},
+  feet:{id:'cloth_boots',name:'Botas Pano',icon:'👢',stats:{def:1},gems:[null,null,null,null],weight:2,lv:1},
+  ring1:{id:'empty',name:'Vazio',icon:'',stats:{},gems:[null,null,null,null],weight:0,lv:0},
+  ring2:{id:'empty',name:'Vazio',icon:'',stats:{},gems:[null,null,null,null],weight:0,lv:0},
+  amulet:{id:'empty',name:'Vazio',icon:'',stats:{},gems:[null,null,null,null],weight:0,lv:0},
+};
+
+let worldObjects=[], monsters=[], corpses=[], chests=[];
+let selectedEquipSlot=null, selectedInvSlot=null;
+
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+const minimap=document.getElementById('minimap');
+const mctx=minimap.getContext('2d');
+
+// INIT
+function initAttrs(){
+  const list=document.getElementById('attrList');
+  list.innerHTML='';
+  Object.keys(attrs).forEach(k=>{
+    const div=document.createElement('div');
+    div.className='attrRow';
+    div.innerHTML=`<div><div class="attrName">${attrNames[k]}</div><div style="font-size:5px;color:#5d4037">${attrDesc[k]}</div></div><div style="display:flex;align-items:center;gap:4px"><div class="attrBtn" data-k="${k}" data-d="-1">-</div><div class="attrVal" id="attr_${k}">${attrs[k]}</div><div class="attrBtn" data-k="${k}" data-d="1">+</div></div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('.attrBtn').forEach(b=>{
+    b.onclick=()=>{
+      const k=b.dataset.k, d=parseInt(b.dataset.d);
+      if(d===1 && attrPoints>0){attrs[k]++; attrPoints--;}
+      if(d===-1 && attrs[k]>baseAttrs[k]){attrs[k]--; attrPoints++;}
+      document.getElementById(`attr_${k}`).textContent=attrs[k];
+      document.getElementById('attrPoints').textContent=attrPoints;
+    };
+  });
+}
+
+function initClasses(){
+  document.querySelectorAll('.classCard').forEach(card=>{
+    card.onclick=()=>{
+      document.querySelectorAll('.classCard').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedClass=card.dataset.class;
+      document.getElementById('selectedClassName').textContent=classes[selectedClass].name;
+      document.getElementById('selectedClassDesc').textContent=classes[selectedClass].desc;
+    };
+  });
+  document.querySelectorAll('[data-gender]').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('[data-gender]').forEach(x=>x.style.background='');
+      b.style.background='#4a90e2';
+      selectedGender=b.dataset.gender;
+      document.getElementById('genderVal').textContent=selectedGender==='male'?'Masculino':'Feminino';
+    };
+  });
+  document.querySelectorAll('.diffBtn').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.diffBtn').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      difficulty=b.dataset.diff;
+    };
+  });
+}
+
+function initSkills(){
+  const cls=classes[selectedClass];
+  skills=cls.skills.map((name,i)=>({name,lv:0,unlocked:i<3, maxLv:20, mana:10+i*2, tier:Math.floor(i/3)}));
+  renderSkills();
+}
+
+function renderSkills(){
+  const tree=document.getElementById('skillTree');
+  tree.innerHTML='';
+  document.getElementById('skillClass').textContent=classes[selectedClass].name.split(' ')[0];
+  document.getElementById('skillPoints').textContent=skillPoints;
+  skills.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='skill '+(s.unlocked? (s.lv>0?'unlocked':'') : 'locked');
+    div.innerHTML=`<div><div class="skillName">${s.name}</div><div style="font-size:5px;color:#5d4037">Tier ${s.tier} • ${s.mana} MP</div></div><div class="skillLv">${s.lv}/${s.maxLv}</div>`;
+    div.onclick=()=>{
+      if(!s.unlocked){alert('Desbloqueie skills anteriores!'); return;}
+      if(skillPoints<=0){alert('Sem pontos de skill!'); return;}
+      if(s.lv>=s.maxLv) return;
+      s.lv++; skillPoints--;
+      // unlock next tier
+      if(s.lv>=1){
+        const nextTier=skills.filter(x=>x.tier===s.tier+1);
+        nextTier.forEach(n=>n.unlocked=true);
+      }
+      renderSkills();
+    };
+    tree.appendChild(div);
+  });
+}
+
+function renderEquip(){
+  const grid=document.getElementById('equipGrid');
+  grid.innerHTML='';
+  const slots=[
+    {k:'head',n:'Cabeça'},{k:'chest',n:'Peito'},{k:'arms',n:'Braços'},
+    {k:'legs',n:'Pernas'},{k:'feet',n:'Pés'},{k:'weapon',n:'Arma'},
+    {k:'shield',n:'Escudo'},{k:'ring1',n:'Anel 1'},{k:'amulet',n:'Amuleto'},{k:'ring2',n:'Anel 2'},
+  ];
+  slots.forEach(s=>{
+    const eq=equipment[s.k];
+    const div=document.createElement('div');
+    div.className='equipSlot'+(eq.id!=='empty'?' hasItem':'');
+    if(eq.id!=='empty'){
+      div.innerHTML=`<div style="font-size:14px">${eq.icon}</div><div class="slotName">${s.n}</div><div class="gems">${eq.gems.map(g=>`<div class="gem" style="background:${g?g.color:'#1a1a1a'}"></div>`).join('')}</div>`;
+    } else {
+      div.innerHTML=`<div style="font-size:8px;color:#5d4037">${s.n}</div>`;
+    }
+    div.onclick=()=>{
+      selectedEquipSlot=s.k;
+      document.getElementById('selectedItemName').textContent=eq.name;
+      document.getElementById('selectedItemStats').textContent=`Dmg:${eq.stats.dmg||0} Def:${eq.stats.def||0} Peso:${eq.weight} Lv:${eq.lv}`;
+      const gemsDiv=document.getElementById('selectedItemGems');
+      gemsDiv.innerHTML=eq.gems.map((g,i)=>`<div style="width:14px;height:14px;background:${g?g.color:'#1a1a1a'};border:1px solid #000;border-radius:2px;display:flex;justify-content:center;align-items:center;font-size:8px">${g?g.icon:''}</div>`).join('');
+    };
+    grid.appendChild(div);
+  });
+}
+
+function renderInv(){
+  const grid=document.getElementById('inventory');
+  grid.innerHTML='';
+  let w=0;
+  inventory.forEach((it,i)=>{
+    const div=document.createElement('div');
+    div.className='invSlot'+(it.id!=='empty'?' hasItem':'');
+    if(it.id!=='empty'){
+      div.innerHTML=`${it.icon}<span class="count">${it.count>1?it.count:''}</span>`;
+      w+=it.weight*it.count;
+    }
+    div.onclick=()=>{selectedInvSlot=i;};
+    div.ondblclick=()=>{
+      if(it.id==='empty') return;
+      // equip if possible
+      if(it.type && equipment[it.type]){
+        const old=equipment[it.type];
+        equipment[it.type]=it;
+        inventory[i]=old.id==='empty'?{id:'empty',icon:'',name:'',count:0,weight:0}:old;
+        renderEquip(); renderInv();
+      }
+    };
+    grid.appendChild(div);
+  });
+  document.getElementById('invWeight').textContent=`${w}/${player.maxWeight}`;
+  player.weight=w;
+}
+
+function generateDungeon(){
+  worldObjects=[];
+  const actNames=['Faydark','Cavernas Goblin','Deserto','Formigueiro','Cidade Dark Elf'];
+  const actName=actNames[act-1]||'Faydark';
+  document.getElementById('dungeonVal').textContent=actName;
+  document.getElementById('actVal').textContent=`${act}/5`;
+  // random houses, trees, chests
+  for(let i=0;i<8+act*2;i++){
+    const x=Math.random()*WORLD_W, y=Math.random()*WORLD_H;
+    const type=Math.random()<0.3?'house':Math.random()<0.6?'tree':'rock';
+    worldObjects.push({x,y,type,w:80,h:60});
+  }
+  // chests
+  chests=[];
+  for(let i=0;i<6;i++){
+    chests.push({x:Math.random()*WORLD_W,y:Math.random()*WORLD_H,opened:false});
+  }
+  // monsters
+  monsters=[];
+  const monsterCount=6+act*2;
+  for(let i=0;i<monsterCount;i++){
+    const types=['orc','skeleton','goblin'];
+    if(act>=3) types.push('vampire');
+    if(act>=5) types.push('dragon');
+    const type=types[Math.floor(Math.random()*types.length)];
+    const hp={orc:60,skeleton:80,goblin:50,vampire:120,dragon:200}[type]||60;
+    monsters.push({x:Math.random()*WORLD_W,y:Math.random()*WORLD_H,type,hp,max:hp,vx:0,vy:0,w:0,icon:{orc:'👹',skeleton:'💀',goblin:'👺',vampire:'🧛',dragon:'🐉'}[type]});
+  }
+  corpses=[];
+}
+
+function generateLoot(){
+  const prefixes=[' enferrujado',' afiado',' pesado',' leve',' flamejante',' gélido',' venenoso',' sagrado'];
+  const suffixes=[' de força',' de mana',' de vida',' do guerreiro',' do mago',' da sombra'];
+  const base=[
+    {name:'Espada',icon:'🗡️',type:'weapon',stats:{dmg:5+Math.floor(Math.random()*10)},weight:8},
+    {name:'Machado',icon:'🪓',type:'weapon',stats:{dmg:7+Math.floor(Math.random()*12)},weight:10},
+    {name:'Arco',icon:'🏹',type:'weapon',stats:{dmg:6+Math.floor(Math.random()*8)},weight:6},
+    {name:'Escudo',icon:'🛡️',type:'shield',stats:{def:3+Math.floor(Math.random()*5)},weight:7},
+    {name:'Elmo',icon:'⛑️',type:'head',stats:{def:2+Math.floor(Math.random()*4)},weight:3},
+    {name:'Armadura',icon:'🦺',type:'chest',stats:{def:4+Math.floor(Math.random()*6)},weight:10},
+    {name:'Anel',icon:'💍',type:'ring1',stats:{dmg:1,def:1},weight:1},
+  ];
+  const b=base[Math.floor(Math.random()*base.length)];
+  const pre=prefixes[Math.floor(Math.random()*prefixes.length)];
+  const suf=Math.random()<0.5?suffixes[Math.floor(Math.random()*suffixes.length)]:'';
+  const lv=level+Math.floor(Math.random()*5);
+  return {
+    id:Math.random().toString(36).substr(2,6),
+    name:b.name+pre+suf,
+    icon:b.icon,
+    type:b.type,
+    stats:b.stats,
+    weight:b.weight,
+    lv:lv,
+    gems:[null,null,null,null],
+    count:1
+  };
+}
+
+// GAME LOOP
+let last=performance.now();
+function loop(now){
+  const dt=Math.min((now-last)/1000,0.05); last=now;
+  // mana regen
+  if(player.mana<player.maxMana){player.mana=Math.min(player.maxMana,player.mana+8*dt); updateBars();}
+  let mx=0,my=0;
+  if(joystick.a){mx=joystick.x;my=joystick.y}
+  else if(autoTarget){let dx=autoTarget.x-player.x,dy=autoTarget.y-player.y,d=Math.hypot(dx,dy);if(d<30){if(autoTarget.id){let q=quests.find(x=>x.id===autoTarget.id); if(q&&!q.done){q.done=true; gold+=q.r; xp+=30; if(xp>=100){level++;xp-=100; skillPoints+=2; checkLevel();} document.getElementById('gold').textContent=gold; document.getElementById('level').textContent=level; const pop=document.getElementById('completePopup'); document.getElementById('completeName').textContent=q.title; document.getElementById('completeReward').textContent=`+${q.r} OURO`; pop.style.display='block'; setTimeout(()=>pop.style.display='none',2000); renderQuests();}} autoTarget=null; document.getElementById('autoBanner').style.display='none';}else{mx=dx/d;my=dy/d;if(Math.abs(mx)>0.1)player.f=mx>0?1:-1}}
+  // WASD
+  if(window.keys){if(keys.has('w')) my-=1; if(keys.has('s')) my+=1; if(keys.has('a')){mx-=1; player.f=-1} if(keys.has('d')){mx+=1; player.f=1}}
+  if(mx||my){let len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len} player.x=Math.max(30,Math.min(WORLD_W-30,player.x+mx*PLAYER_SPEED*dt)); player.y=Math.max(30,Math.min(WORLD_H-30,player.y+my*PLAYER_SPEED*dt));}
+  if(player.atk>0) player.atk--;
+  if(player.block) player.mana=Math.max(0,player.mana-10*dt);
+  // monsters
+  monsters.forEach(m=>{
+    m.w-=dt;
+    if(m.w<=0){m.vx=(Math.random()-0.5)*60; m.vy=(Math.random()-0.5)*60; m.w=2+Math.random()*3;}
+    m.x+=m.vx*dt; m.y+=m.vy*dt;
+    m.x=Math.max(20,Math.min(WORLD_W-20,m.x)); m.y=Math.max(20,Math.min(WORLD_H-20,m.y));
+    if(Math.hypot(m.x-player.x,m.y-player.y)<50 && !player.block && Math.random()<0.02){
+      let dmg={orc:6,skeleton:9,goblin:5,vampire:14,dragon:22}[m.type]||6;
+      player.hp=Math.max(0,player.hp-dmg);
+      if(player.hp<=0){player.hp=player.maxHp; player.x=WORLD_W/2; player.y=WORLD_H/2; gold=Math.max(0,gold-30);}
+      updateBars();
+    }
+  });
+  camera.x=player.x-canvas.width/2; camera.y=player.y-canvas.height/2;
+  camera.x=Math.max(0,Math.min(WORLD_W-canvas.width,camera.x));
+  camera.y=Math.max(0,Math.min(WORLD_H-canvas.height,camera.y));
+  draw(); drawMinimap();
+  requestAnimationFrame(loop);
+}
+
+function updateBars(){
+  document.getElementById('hpVal').textContent=Math.round(player.hp);
+  document.getElementById('manaVal').textContent=Math.round(player.mana);
+  document.getElementById('hpFill').style.width=(player.hp/player.maxHp*100)+'%';
+  document.getElementById('manaFill').style.width=(player.mana/player.maxMana*100)+'%';
+}
+
+function checkLevel(){
+  document.getElementById('level').textContent=level;
+  // increase stats
+  player.maxHp=80+player.attrs.sta*6+level*5;
+  player.maxMana=60+player.attrs.int*6+level*4;
+  player.maxWeight=80+player.attrs.str*4;
+  if(player.hp>player.maxHp) player.hp=player.maxHp;
+  // outfit changes visual in draw
+}
+
+function draw(){
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  // grass patches
+  for(let i=0;i<200;i++){
+    const wx=(i*137)%WORLD_W, wy=(i*241)%WORLD_H;
+    const sx=wx-camera.x, sy=wy-camera.y;
+    if(sx<-30||sx>510||sy<-30||sy>830) continue;
+    ctx.fillStyle=i%3===0?'#3a5a2a':'#4a6a3a';
+    ctx.fillRect(sx,sy,22,22);
+  }
+  // grid
+  ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=1;
+  let tile=64, sx0=-(camera.x%tile), sy0=-(camera.y%tile);
+  for(let x=sx0;x<canvas.width;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke()}
+  for(let y=sy0;y<canvas.height;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke()}
+  // roads
+  ctx.fillStyle='#5d4e37';
+  [{x:500,y:350,w:300,h:20},{x:900,y:850,w:400,h:20},{x:400,y:1350,w:700,h:20}].forEach(p=>{
+    const x=p.x-camera.x,y=p.y-camera.y;
+    ctx.fillStyle='#6d5d4a'; ctx.fillRect(x,y,p.w,p.h);
+    for(let i=0;i<p.w;i+=14){ctx.fillStyle=i%28===0?'#5d4e37':'#7a6a57'; ctx.fillRect(x+i,y+2,12,14)}
+  });
+
+  worldObjects.forEach(o=>{
+    const x=o.x-camera.x,y=o.y-camera.y;
+    if(x<-100||x>580||y<-100||y>900) return;
+    ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x,y+30,40,9,0,0,6.28); ctx.fill();
+    if(o.type==='house'){
+      ctx.fillStyle='#5a5a5a'; ctx.fillRect(x-40,y-20,80,50);
+      ctx.strokeStyle='#3a3a3a'; for(let by=y-20;by<y+30;by+=10){for(let bx=x-40;bx<x+40;bx+=18){ctx.strokeRect(bx,by,18,10)}}
+      ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(x-45,y-20); ctx.lineTo(x,y-48); ctx.lineTo(x+45,y-20); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#2a1a14'; ctx.fillRect(x-8,y+2,16,18);
+      ctx.fillStyle='#FF6F00'; ctx.fillRect(x-14,y+6,2,6); ctx.fillRect(x+12,y+6,2,6);
+    } else if(o.type==='tower'){
+      ctx.fillStyle='#4a4a4a'; ctx.fillRect(x-18,y-28,36,56);
+      ctx.fillStyle='#2a1a14'; ctx.beginPath(); ctx.moveTo(x-20,y-28); ctx.lineTo(x,y-44); ctx.lineTo(x+20,y-28); ctx.closePath(); ctx.fill();
+    } else {
+      ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+16,16,5,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#3e2723'; ctx.fillRect(x-4,y-8,8,20);
+      ctx.fillStyle='#2e7d32'; ctx.beginPath(); ctx.arc(x,y-10,18,0,6.28); ctx.fill();
+    }
+  });
+
+  chests.forEach(ch=>{
+    const x=ch.x-camera.x,y=ch.y-camera.y;
+    if(x<-30||x>510||y<-30||y>830) return;
+    ctx.fillStyle=ch.opened?'#3a3a3a':'#8d6e63';
+    ctx.fillRect(x-12,y-8,24,16);
+    ctx.strokeStyle='#000'; ctx.strokeRect(x-12,y-8,24,16);
+    if(!ch.opened){
+      ctx.fillStyle='#FFD700'; ctx.fillRect(x-2,y-4,4,4);
+    }
+  });
+
+  corpses.forEach(c=>{
+    const x=c.x-camera.x,y=c.y-camera.y;
+    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y,12,4,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#5a3a2a'; ctx.fillRect(x-8,y-2,16,4);
+  });
+
+  monsters.forEach(m=>{
+    const x=m.x-camera.x,y=m.y-camera.y;
+    if(x<-60||x>540||y<-60||y>860) return;
+    ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+18,14,4,0,0,6.28); ctx.fill();
+    if(m.type==='dragon'){
+      ctx.fillStyle='#8b0000'; ctx.beginPath(); ctx.ellipse(x,y,20,18,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#c62828'; ctx.beginPath(); ctx.arc(x,y-6,14,0,6.28); ctx.fill();
+      ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x-4,y-8,3,0,6.28); ctx.arc(x+4,y-8,3,0,6.28); ctx.fill();
+    } else if(m.type==='skeleton'){
+      ctx.fillStyle='#e0d5c7'; ctx.beginPath(); ctx.ellipse(x,y,12,14,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y-5,9,0,6.28); ctx.fill();
+      ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(x-2,y-6,2,0,6.28); ctx.arc(x+2,y-6,2,0,6.28); ctx.fill();
+    } else {
+      ctx.fillStyle='#4a7a2a'; ctx.beginPath(); ctx.ellipse(x,y,13,14,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#ff0000'; ctx.beginPath(); ctx.arc(x-3,y-6,2,0,6.28); ctx.arc(x+3,y-6,2,0,6.28); ctx.fill();
+    }
+    ctx.fillStyle='#000'; ctx.fillRect(x-14,y-22,28,5);
+    let col=m.hp/m.max>0.5?'#4caf50':m.hp/m.max>0.25?'#FFD700':'#e74c3c';
+    ctx.fillStyle=col; ctx.fillRect(x-13,y-21,26*(m.hp/m.max),3);
+    ctx.fillStyle='#fff'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText(m.icon,x,y-28);
+  });
+
+  quests.forEach(q=>{
+    if(q.done) return;
+    const x=q.x-camera.x,y=q.y-camera.y;
+    if(x<-60||x>540||y<-80||y>880) return;
+    ctx.shadowColor='#FFD700'; ctx.shadowBlur=8;
+    ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y-36,13,0,6.28); ctx.fill();
+    ctx.shadowBlur=0; ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#000'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center'; ctx.fillText(q.icon,x,y-32);
+  });
+
+  if(autoTarget){
+    const x=autoTarget.x-camera.x,y=autoTarget.y-camera.y;
+    ctx.strokeStyle='#FFD700'; ctx.lineWidth=2; ctx.setLineDash([5,3]); ctx.beginPath(); ctx.arc(x,y,12,0,6.28); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // PLAYER - visual changes with level (outfit)
+  const px=player.x-camera.x, py=player.y-camera.y;
+  ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(px,py+18,12,4,0,0,6.28); ctx.fill();
+  ctx.save(); ctx.translate(px,py); ctx.scale(player.f,1);
+  const outfitCol=level<10?'#6a6a6a':level<15?'#4a3a0a':level<20?'#2a0a0a':'#FFD700';
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(-5,6,4,10); ctx.fillRect(1,6,4,10);
+  ctx.fillStyle=outfitCol; ctx.fillRect(-9,-8,18,16);
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(-12,-6,4,10); ctx.fillRect(8,-6,4,10);
+  if(player.atk>0){
+    ctx.save(); ctx.translate(10,0); ctx.rotate(-0.6 - player.atk*0.15);
+    ctx.fillStyle='#c0c0c0'; ctx.fillRect(0,-2,18,3); ctx.fillStyle='#FFD700'; ctx.fillRect(-3,-4,4,8); ctx.restore();
+  } else {
+    ctx.fillStyle='#c0c0c0'; ctx.fillRect(10,-2,14,3);
+  }
+  if(player.block){
+    ctx.fillStyle='#4a4a4a'; ctx.beginPath(); ctx.ellipse(-11,0,7,10,0,0,6.28); ctx.fill(); ctx.strokeStyle='#FFD700'; ctx.lineWidth=1; ctx.stroke();
+  } else {
+    ctx.fillStyle='#2a2a2a'; ctx.beginPath(); ctx.ellipse(-11,0,7,10,0,0,6.28); ctx.fill(); ctx.strokeStyle='#FFD700'; ctx.lineWidth=1; ctx.stroke();
+  }
+  ctx.fillStyle='#2a2a2a'; ctx.beginPath(); ctx.arc(0,-12,9,0,6.28); ctx.fill();
+  ctx.fillStyle=outfitCol; ctx.fillRect(-8,-18,16,3);
+  ctx.fillStyle='#000'; ctx.fillRect(-4,-10,2,2); ctx.fillRect(2,-10,2,2);
+  ctx.restore();
+  if(autoTarget){ctx.fillStyle='#FFD700'; ctx.font='bold 7px sans-serif'; ctx.textAlign='center'; ctx.fillText('AUTO',px,py-30);}
+}
+
+function drawMinimap(){
+  mctx.fillStyle='#0a0a0a'; mctx.fillRect(0,0,minimap.width,minimap.height);
+  // draw explored area simple
+  mctx.fillStyle='#2a2a2a';
+  mctx.fillRect(0,0,minimap.width,minimap.height);
+  // player
+  mctx.fillStyle='#FFD700';
+  mctx.fillRect((player.x/WORLD_W)*minimap.width-2, (player.y/WORLD_H)*minimap.height-2, 4,4);
+  // quests
+  mctx.fillStyle='#FF0000';
+  quests.forEach(q=>{if(!q.done){mctx.fillRect((q.x/WORLD_W)*minimap.width-1,(q.y/WORLD_H)*minimap.height-1,2,2)}});
+  // monsters
+  mctx.fillStyle='#00FF00';
+  monsters.forEach(m=>{mctx.fillRect((m.x/WORLD_W)*minimap.width-1,(m.y/WORLD_H)*minimap.height-1,2,2)});
+}
+
+// INIT UI
+initAttrs(); initClasses();
+document.getElementById('startBtn').onclick=()=>{
+  // apply attrs
+  player.attrs={...attrs};
+  player.cls=selectedClass;
+  player.gender=selectedGender;
+  player.maxHp=80+attrs.sta*6;
+  player.maxMana=60+attrs.int*6;
+  player.maxWeight=80+attrs.sta*3+attrs.str*3;
+  player.hp=player.maxHp; player.mana=player.maxMana;
+  level=1; xp=0; skillPoints=2;
+  // init skills for class
+  const cls=classes[selectedClass];
+  skills=cls.skills.map((name,i)=>({name,lv:0,unlocked:i<3,maxLv:20,mana:10+i*2,tier:Math.floor(i/3)}));
+  // inventory weight based
+  inventory=[];
+  for(let i=0;i<10;i++) inventory.push({id:'empty',icon:'',name:'',count:0,weight:0,lv:0});
+  inventory[0]={id:'sword',icon:'🗡️',name:'Espada Curta',count:1,weight:8,type:'weapon',stats:{dmg:6},gems:[null,null,null,null],lv:1};
+  inventory[1]={id:'potion',icon:'🧪',name:'Poção Vida',count:3,weight:2,count:3};
+  inventory[2]={id:'mana',icon:'🔮',name:'Poção Mana',count:2,weight:2,count:2};
+  document.getElementById('startScreen').style.display='none';
+  generateDungeon();
+  renderQuests(); renderEquip(); renderInv(); checkLevel(); updateBars();
+  requestAnimationFrame(loop);
+  // keyboard
+  window.keys=new Set();
+  window.addEventListener('keydown',e=>{keys.add(e.key.toLowerCase()); if(e.key>='1'&&e.key<='4'){let n=parseInt(e.key); if(spellsCooldown[n]<=0 && player.mana>= [20,25,30,15][n-1]){player.mana-=[20,25,30,15][n-1]; spellsCooldown[n]=[2,3,4,2][n-1]; if(n===4){player.hp=Math.min(player.maxHp,player.hp+50);} else {monsters.forEach(m=>{if(Math.hypot(m.x-player.x,m.y-player.y)<120){m.hp-=40; if(m.hp<=0){gold+=15; xp+=10; if(xp>=100){level++;xp-=100;skillPoints++; checkLevel();} let loot=generateLoot(); let empty=inventory.find(it=>it.id==='empty'); if(empty) Object.assign(empty,loot); renderInv(); m.x=Math.random()*WORLD_W; m.y=Math.random()*WORLD_H; m.hp=m.max;}}});} updateBars();}}});
+  window.addEventListener('keyup',e=>{keys.delete(e.key.toLowerCase());});
+};
+
+function renderEquip(){
+  const grid=document.getElementById('equipGrid'); grid.innerHTML='';
+  const slots=[{k:'head',n:'Cabeça'},{k:'chest',n:'Peito'},{k:'arms',n:'Braços'},{k:'legs',n:'Pernas'},{k:'feet',n:'Pés'},{k:'weapon',n:'Arma'},{k:'shield',n:'Escudo'},{k:'ring1',n:'Anel1'},{k:'ring2',n:'Anel2'},{k:'amulet',n:'Amuleto'}];
+  slots.forEach(s=>{
+    const eq=equipment[s.k];
+    const div=document.createElement('div'); div.className='equipSlot'+(eq.id!=='empty'?' hasItem':'');
+    div.innerHTML=eq.id!=='empty'?`<div style="font-size:12px">${eq.icon}</div><div class="slotName">${s.n}</div><div class="gems">${eq.gems.map(g=>`<div class="gem" style="background:${g?g.color:'#1a1a1a'}"></div>`).join('')}</div>`:`<div style="font-size:6px;color:#5d4037">${s.n}</div>`;
+    div.onclick=()=>{selectedEquipSlot=s.k; document.getElementById('selectedItemName').textContent=eq.name; document.getElementById('selectedItemStats').textContent=`Dmg:${eq.stats.dmg||0} Def:${eq.stats.def||0} Lv:${eq.lv} Peso:${eq.weight}`; document.getElementById('selectedItemGems').innerHTML=eq.gems.map((g,i)=>`<div style="width:12px;height:12px;background:${g?g.color:'#1a1a1a'};border:1px solid #000;border-radius:2px;font-size:7px;display:flex;justify-content:center;align-items:center">${g?g.icon:''}</div>`).join('');};
+    grid.appendChild(div);
+  });
+}
+function renderInv(){
+  const grid=document.getElementById('inventory'); grid.innerHTML='';
+  let w=0;
+  inventory.forEach((it,i)=>{
+    const div=document.createElement('div'); div.className='invSlot'+(it.id!=='empty'?' hasItem':'');
+    if(it.id!=='empty'){div.innerHTML=`${it.icon}<span class="count">${it.count>1?it.count:''}</span>`; w+=it.weight*it.count;}
+    div.onclick=()=>{selectedInvSlot=i;};
+    div.ondblclick=()=>{
+      if(it.id==='empty') return;
+      if(it.type && equipment[it.type]){let old=equipment[it.type]; equipment[it.type]=it; inventory[i]=old.id==='empty'?{id:'empty',icon:'',name:'',count:0,weight:0}:old; renderEquip(); renderInv();}
+    };
+    grid.appendChild(div);
+  });
+  document.getElementById('invWeight').textContent=`${w}/${player.maxWeight}`;
+}
+
+let player={x:1200,y:1200,f:1,atk:0,block:false,hp:100,maxHp:100,mana:100,maxMana:100,attrs:{str:10,int:8,dex:8,sta:10},maxWeight:100,weight:0};
+
+// joystick
+const joyBase=document.getElementById('joyBase'), joyStick=document.getElementById('joyStick');
+function getJoyPos(e){const r=joyBase.getBoundingClientRect();const cx=e.touches?e.touches[0].clientX:e.clientX,cy=e.touches?e.touches[0].clientY:e.clientY;let dx=cx-(r.left+r.width/2),dy=cy-(r.top+r.height/2),d=Math.hypot(dx,dy),m=30;if(d>m){let a=Math.atan2(dy,dx);dx=Math.cos(a)*m;dy=Math.sin(a)*m}return{dx,dy}}
+function joyStart(e){e.preventDefault();joystick.a=1;autoTarget=null;document.getElementById('autoBanner').style.display='none'}
+function joyMove(e){if(!joystick.a)return;e.preventDefault();let {dx,dy}=getJoyPos(e);joyStick.style.transform=`translate(${dx}px,${dy}px)`;joystick.x=dx/30;joystick.y=dy/30;if(Math.abs(joystick.x)>0.1)player.f=joystick.x>0?1:-1}
+function joyEnd(){joystick.a=0;joystick.x=0;joystick.y=0;joyStick.style.transform='translate(0,0)'}
+joyBase.addEventListener('touchstart',joyStart,{passive:false});joyBase.addEventListener('touchmove',joyMove,{passive:false});joyBase.addEventListener('touchend',joyEnd);
+joyBase.addEventListener('mousedown',joyStart);window.addEventListener('mousemove',joyMove);window.addEventListener('mouseup',joyEnd);
+canvas.addEventListener('click',e=>{
+  const r=canvas.getBoundingClientRect();const x=(e.clientX-r.left)*(canvas.width/r.width),y=(e.clientY-r.top)*(canvas.height/r.height);
+  if(y>canvas.height-120&&x<120)return;if(y>canvas.height-120&&x>300)return;
+  if(y<60)return;
+  autoTarget={x:camera.x+x,y:camera.y+y,id:null};
+  document.getElementById('autoBanner').style.display='block';
+  document.getElementById('autoBanner').textContent='🚶 Indo para local...';
+});
+document.getElementById('attackBtn').onclick=()=>{player.atk=12; monsters.forEach(m=>{if(Math.hypot(m.x-player.x,m.y-player.y)<80){m.hp-=35; if(m.hp<=0){gold+=15; xp+=10; if(xp>=100){level++;xp-=100;skillPoints++;} let loot=generateLoot(); let empty=inventory.find(it=>it.id==='empty'); if(empty) Object.assign(empty,loot); renderInv(); m.x=Math.random()*WORLD_W; m.y=Math.random()*WORLD_H; m.hp=m.max;}}});};
+document.getElementById('blockBtn').onmousedown=()=>{player.block=true};document.getElementById('blockBtn').onmouseup=()=>{player.block=false};document.getElementById('blockBtn').ontouchstart=(e)=>{e.preventDefault();player.block=true};document.getElementById('blockBtn').ontouchend=()=>{player.block=false};
+document.getElementById('potionBtn').onclick=()=>{let pot=inventory.find(i=>i.id==='potion'); if(pot&&pot.count>0){pot.count--; if(pot.count<=0){pot.id='empty';pot.icon='';} player.hp=Math.min(player.maxHp,player.hp+40); renderInv(); updateBars();}};
+document.getElementById('mapBtn').onclick=()=>{player.x=WORLD_W/2;player.y=WORLD_H/2;autoTarget=null;};
+</script>
+</body>
+</html>

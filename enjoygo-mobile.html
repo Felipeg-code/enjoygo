@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>enjoygo MOBILE - Champions</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;touch-action:none;user-select:none;-webkit-tap-highlight-color:transparent}
+body{background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;font-family:-apple-system,system-ui,sans-serif;overflow:hidden}
+#gameContainer{position:relative;width:100vw;height:100vh;height:100dvh;max-width:480px;max-height:960px;background:#1a1a1e;overflow:hidden;box-shadow:0 0 0 3px #000}
+@media (min-width:500px){#gameContainer{width:400px;height:800px;border-radius:16px;border:3px solid #000;box-shadow:0 0 0 3px #000,0 0 0 6px #3e2723,0 20px 60px rgba(0,0,0,0.9)}}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+#ui{position:absolute;inset:0;pointer-events:none}
+/* TOP BAR - MOBILE GRANDE */
+.topBar{position:absolute;top:0;left:0;right:0;height:64px;background:linear-gradient(#2a2a2a,#0f0f0f);display:flex;justify-content:space-between;align-items:center;padding:0 8px;border-bottom:3px solid #000;pointer-events:auto;gap:4px;padding-top:env(safe-area-inset-top)}
+.res{display:flex;align-items:center;background:#000;border-radius:8px;padding:3px 8px 3px 3px;border:2px solid #000;flex:1;justify-content:center;min-width:0}
+.resIcon{width:28px;height:28px;min-width:28px;border-radius:6px;display:flex;justify-content:center;align-items:center;border:2px solid #000;font-size:14px;font-weight:900;flex-shrink:0}
+.resVal{color:#FFD700;font-weight:900;font-size:13px;margin-left:4px;text-shadow:1px 1px 0 #000;white-space:nowrap}
+.bar{flex:1;height:6px;max-width:50px;background:#000;border-radius:3px;overflow:hidden;margin-left:4px;border:1px solid #000;min-width:20px}
+.fill{height:100%}
+
+/* QUEST - BOTÃO GIGANTE PRO DEDO */
+#questPanel{position:absolute;top:70px;right:6px;width:168px;max-width:42vw;background:linear-gradient(#3e2723,#1a0f0a);border-radius:10px;padding:6px;border:3px solid #000;box-shadow:0 4px 0 #000;pointer-events:auto;max-height:36vh;overflow-y:auto}
+.qTitle{color:#FFD700;font-weight:900;font-size:10px;text-align:center;margin-bottom:5px;letter-spacing:1px}
+.qItem{background:linear-gradient(#e0d5c7,#c9b896);border-radius:8px;padding:8px;margin-bottom:6px;border:3px solid #000;cursor:pointer;display:flex;align-items:center;box-shadow:0 3px 0 #000;min-height:48px;transition:transform 0.05s}
+.qItem:active{transform:translateY(3px);box-shadow:0 0 0 #000}
+.qItem.done{opacity:0.5}
+.qIcon{width:32px;height:32px;min-width:32px;background:#fff8e1;border-radius:6px;display:flex;justify-content:center;align-items:center;font-size:18px;border:2px solid #000;flex-shrink:0}
+.qInfo{flex:1;margin-left:6px;overflow:hidden;min-width:0}
+.qName{font-size:10px;font-weight:900;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+.qDist{font-size:9px;font-weight:900;color:#fff;background:#2e7d32;padding:2px 6px;border-radius:10px;border:2px solid #000;display:inline-block;margin-top:2px}
+
+/* JOYSTICK GIGANTE MOBILE */
+#joystick{position:absolute;bottom:16px;left:12px;width:140px;height:140px;pointer-events:auto;z-index:5}
+.joyBase{width:140px;height:140px;border-radius:70px;background:radial-gradient(circle at 30% 30%,#4a4a4a,#0f0f0f);border:4px solid #000;position:relative;box-shadow:0 6px 0 #000, inset 0 2px 0 rgba(255,255,255,0.15)}
+.joyStick{width:56px;height:56px;border-radius:28px;background:radial-gradient(circle at 30% 30%,#FFD700,#b8960c);border:4px solid #000;position:absolute;left:38px;top:38px;box-shadow:0 4px 0 #000, inset 0 2px 0 rgba(255,255,255,0.4);display:flex;justify-content:center;align-items:center;font-size:20px}
+.joyStick::after{content:'🕹️';font-size:22px}
+.joyLabel{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:8px;font-weight:900;padding:2px 8px;border-radius:10px;border:2px solid #FFD700;white-space:nowrap;letter-spacing:1px}
+
+/* BOTÕES AÇÃO GIGANTES */
+#actionBtns{position:absolute;bottom:16px;right:10px;pointer-events:auto;display:flex;flex-direction:column;gap:10px;z-index:5}
+.actBtn{width:64px;height:64px;min-width:64px;min-height:64px;border-radius:16px;border:4px solid #000;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 6px 0 #000, inset 0 2px 0 rgba(255,255,255,0.2);transition:transform 0.05s;position:relative}
+.actBtn:active{transform:translateY(6px);box-shadow:0 0 0 #000}
+.actBtn .icon{font-size:26px;line-height:1}
+.actBtn .label{font-size:7px;font-weight:900;color:#fff;text-shadow:1px 1px 0 #000;margin-top:1px;letter-spacing:0.5px}
+.actBtn.attack{background:linear-gradient(#d32f2f,#6a0000)}
+.actBtn.block{background:linear-gradient(#4a4a4a,#1a1a1a)}
+.actBtn.potion{background:linear-gradient(#6a1b9a,#2a0a4a)}
+.actBtn.map{background:linear-gradient(#1565c0,#0a2a5a)}
+
+/* SPELLS - BOTÕES GIGANTES MOBILE */
+#spellsBar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:auto;background:rgba(0,0,0,0.85);padding:6px 10px;border-radius:16px;border:3px solid #000;box-shadow:0 4px 0 #000;z-index:5}
+.spell{width:52px;height:52px;min-width:52px;min-height:52px;background:linear-gradient(#2a2a3a,#0f0f1a);border:3px solid #000;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;position:relative;box-shadow:0 3px 0 #000;transition:transform 0.05s}
+.spell:active{transform:translateY(3px);box-shadow:0 0 0 #000}
+.spell.cooldown{opacity:0.35;filter:grayscale(1)}
+.spellIcon{font-size:22px;line-height:1}
+.spellKey{position:absolute;top:-8px;right:-8px;background:#FFD700;color:#000;font-size:9px;font-weight:900;width:20px;height:20px;border-radius:10px;display:flex;justify-content:center;align-items:center;border:2px solid #000;box-shadow:0 2px 0 #000}
+.spellMana{font-size:6px;font-weight:900;color:#4a90e2;position:absolute;bottom:1px}
+
+/* AUTO BANNER GRANDE */
+#autoBanner{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(#FFD700,#FFA500);border-radius:20px;padding:8px 16px;border:3px solid #000;box-shadow:0 4px 0 #000;font-size:11px;font-weight:900;color:#000;display:none;pointer-events:auto;text-align:center;max-width:80vw;z-index:10}
+#autoBanner .cancel{font-size:9px;background:#000;color:#FFD700;padding:2px 8px;border-radius:10px;margin-left:6px;border:1px solid #FFD700}
+
+/* INVENTÁRIO MOBILE - GAVETA */
+#invDrawer{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#2a1a14,#1a0f0a);border-top:4px solid #000;border-radius:16px 16px 0 0;padding:10px 10px calc(10px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:auto;z-index:15;max-height:55vh;overflow-y:auto;box-shadow:0 -10px 30px rgba(0,0,0,0.8)}
+#invDrawer.open{transform:translateY(0)}
+#invHandle{width:40px;height:5px;background:#5d4037;border-radius:3px;margin:0 auto 8px auto}
+.invGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.invSlot{aspect-ratio:1;background:linear-gradient(#1a1a1a,#0a0a0a);border:3px solid #000;border-radius:8px;display:flex;justify-content:center;align-items:center;font-size:22px;cursor:pointer;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),0 2px 0 #000;min-height:48px}
+.invSlot.hasItem{background:linear-gradient(#3a3a3a,#1a1a1a);border-color:#8d6e63}
+.invSlot:active{transform:translateY(2px);box-shadow:0 0 0 #000}
+.invSlot .count{position:absolute;bottom:2px;right:4px;font-size:10px;font-weight:900;color:#FFD700;text-shadow:1px 1px 0 #000;background:#000;padding:1px 4px;border-radius:8px;border:1px solid #FFD700}
+.invActions{display:flex;gap:6px;margin-top:8px}
+.invBtn{flex:1;height:44px;background:linear-gradient(#3a3a3a,#1a1a1a);border:3px solid #000;border-radius:8px;color:#fff;font-weight:900;font-size:11px;display:flex;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 3px 0 #000}
+.invBtn:active{transform:translateY(3px);box-shadow:0 0 0 #000}
+
+/* BOTÃO INVENTÁRIO */
+#invToggle{position:absolute;top:70px;left:8px;width:48px;height:48px;background:linear-gradient(#5d4037,#3e2723);border:3px solid #000;border-radius:10px;display:flex;justify-content:center;align-items:center;font-size:22px;cursor:pointer;pointer-events:auto;box-shadow:0 4px 0 #000;z-index:6}
+#invToggle:active{transform:translateY(4px);box-shadow:0 0 0 #000}
+
+/* START SCREEN MOBILE GRANDE */
+#startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#3e2723,#0a0503);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:30;text-align:center;padding:20px;overflow-y:auto}
+#startScreen h1{font-size:36px;color:#FFD700;text-shadow:3px 3px 0 #000,0 0 20px rgba(255,215,0,0.5);letter-spacing:2px;font-weight:900;margin-bottom:2px;line-height:1}
+#startScreen h2{font-size:12px;color:#FFA500;letter-spacing:3px;font-weight:900;margin-bottom:12px}
+.classGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:360px;margin:10px 0}
+.classCard{background:linear-gradient(#3a3a3a,#1a1a1a);border:3px solid #000;border-radius:12px;padding:10px;cursor:pointer;text-align:center;box-shadow:0 4px 0 #000;min-height:80px;display:flex;flex-direction:column;justify-content:center;transition:transform 0.05s}
+.classCard:active{transform:translateY(4px);box-shadow:0 0 0 #000}
+.classCard.selected{border-color:#FFD700;box-shadow:0 0 15px rgba(255,215,0,0.6),0 4px 0 #000;transform:scale(1.02)}
+.classIcon{font-size:28px}
+.className{font-size:9px;font-weight:900;color:#FFD700;margin:4px 0 2px 0;line-height:1.1}
+.classDesc{font-size:7px;color:#c9b896;line-height:1.2}
+.startBtn{margin-top:16px;background:linear-gradient(#FFD700,#FFA500);color:#000;border:4px solid #000;padding:14px 36px;border-radius:12px;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 6px 0 #000;letter-spacing:1px;min-width:200px;min-height:54px}
+.startBtn:active{transform:translateY(6px);box-shadow:0 0 0 #000}
+.badge{display:inline-block;background:#000;border:2px solid #5d4037;color:#FFD700;font-size:8px;font-weight:900;padding:4px 8px;border-radius:6px;margin:2px}
+#tip{position:absolute;bottom:140px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#FFD700;font-size:11px;font-weight:900;padding:8px 16px;border-radius:20px;border:2px solid #FFD700;pointer-events:none;white-space:nowrap;box-shadow:0 3px 0 #000;max-width:90vw;text-align:center}
+</style>
+</head>
+<body>
+<div id="gameContainer">
+<canvas id="game" width="400" height="800"></canvas>
+<div id="ui">
+  <div class="topBar">
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#c62828,#4a0000)">❤️</div><div class="resVal" id="hpVal">100</div><div class="bar"><div class="fill" id="hpFill" style="width:100%;background:linear-gradient(#e74c3c,#8b0000)"></div></div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#4a90e2,#1a3a8a)">🔮</div><div class="resVal" id="manaVal">100</div><div class="bar"><div class="fill" id="manaFill" style="width:100%;background:linear-gradient(#4a90e2,#1a3a8a)"></div></div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#FFD700,#b8960c)">💰</div><div class="resVal" id="gold">250</div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#4a4a4a,#1a1a1a)">⚔️</div><div class="resVal">Lv<span id="level">1</span></div></div>
+  </div>
+
+  <div id="invToggle">🎒</div>
+  <div id="questPanel"><div class="qTitle">📜 MISSÕES</div><div id="questList"></div></div>
+  <div id="autoBanner">🚶 Indo... <span class="cancel">CANCELAR ✕</span></div>
+  <div id="joystick"><div class="joyBase" id="joyBase"><div class="joyStick" id="joyStick"></div></div><div class="joyLabel">MOVER</div></div>
+  <div id="actionBtns">
+    <div class="actBtn attack" id="attackBtn"><span class="icon">⚔️</span><span class="label">ATACAR</span></div>
+    <div class="actBtn potion" id="potionBtn"><span class="icon">🧪</span><span class="label">VIDA</span></div>
+    <div class="actBtn map" id="mapBtn"><span class="icon">🗺️</span><span class="label">MAPA</span></div>
+  </div>
+  <div id="spellsBar">
+    <div class="spell" data-key="1" id="spell1"><div class="spellKey">1</div><div class="spellIcon">🔥</div></div>
+    <div class="spell" data-key="2" id="spell2"><div class="spellKey">2</div><div class="spellIcon">❄️</div></div>
+    <div class="spell" data-key="3" id="spell3"><div class="spellKey">3</div><div class="spellIcon">⚡</div></div>
+    <div class="spell" data-key="4" id="spell4"><div class="spellKey">4</div><div class="spellIcon">💚</div></div>
+  </div>
+  <div id="tip">💡 Toque na missão para ir sozinho!</div>
+
+  <div id="invDrawer">
+    <div id="invHandle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="color:#FFD700;font-weight:900;font-size:12px">🎒 INVENTÁRIO • TIBIA STYLE</div>
+      <div style="color:#8d6e63;font-size:10px;font-weight:900" id="invWeight">12/100</div>
+    </div>
+    <div class="invGrid" id="inventory"></div>
+    <div class="invActions">
+      <div class="invBtn" id="useBtn">USAR</div>
+      <div class="invBtn" id="dropBtn">DROP</div>
+      <div class="invBtn" id="closeInvBtn">FECHAR ✕</div>
+    </div>
+    <div style="margin-top:8px;background:#000;border:2px solid #5d4037;border-radius:6px;padding:6px">
+      <div style="font-size:8px;color:#8d6e63;font-weight:900">DICA MOBILE:</div>
+      <div style="font-size:9px;color:#c9b896">Toque no item para selecionar • Duplo toque para equipar • Botão USAR para poção</div>
+    </div>
+  </div>
+
+  <div id="startScreen">
+    <h1>ENJOYGO</h1>
+    <h2>MOBILE • TIBIA × CLASH</h2>
+    <div style="text-align:center;margin:6px 0"><span class="badge">BOTÕES GIGANTES</span><span class="badge">JOYSTICK 140PX</span><span class="badge">AUTO-WALK</span></div>
+    <div style="color:#c9b896;font-size:11px;font-weight:700;margin:8px 0">Escolha sua classe - Otimizado pro dedo!</div>
+    <div class="classGrid" id="classGrid">
+      <div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Tanque • Vida alta • Dano alto</div></div>
+      <div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Arqueiro • Tiros triplos</div></div>
+      <div class="classCard" data-class="cleric"><div class="classIcon">✨</div><div class="className">CLERIC</div><div class="classDesc">Healer • Buffs • Suporte</div></div>
+      <div class="classCard" data-class="wizard"><div class="classIcon">🔮</div><div class="className">WIZARD</div><div class="classDesc">Mago • 17 magias • Sem escudo</div></div>
+      <div class="classCard" data-class="shadowknight" style="grid-column:span 2"><div class="classIcon">💀</div><div class="className">SHADOW KNIGHT • Híbrido venenoso + Summon</div></div>
+    </div>
+    <button class="startBtn" id="startBtn">▶ JOGAR AGORA</button>
+    <div style="margin-top:12px;background:rgba(0,0,0,0.6);padding:8px;border-radius:8px;border:2px solid #000;max-width:360px">
+      <div style="font-size:9px;color:#FFD700;font-weight:900">📱 CONTROLES MOBILE OTIMIZADOS:</div>
+      <div style="font-size:9px;color:#c9b896;text-align:left;line-height:1.4;margin-top:4px">
+        • <b>Joystick 140px</b> canto inferior esquerdo - gigante pro dedo<br>
+        • <b>Botões 64px</b> canto inferior direito - fácil de acertar<br>
+        • <b>Missões 48px altura</b> - toque fácil, mostra distância<br>
+        • <b>Magias 52px</b> centro inferior - 4 magias com tecla 1-4<br>
+        • <b>Inventário gaveta</b> - desliza de baixo, slots 48px<br>
+        • <b>Auto-walk</b> - toque na missão e vai sozinho!
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// MOBILE OPTIMIZED - CHAMPIONS
+const W=2400,H=2400,PS=200;
+let P={x:1200,y:1200,f:1,atk:0,hp:100,maxHp:100,mana:100,maxMana:100,cls:'barbarian'};
+let C={x:0,y:0},J={a:0,x:0,y:0},T=null,G=250,Lv=1,Xp=0;
+let selClass='barbarian', selInv=-1;
+
+const quests=[
+  {id:'q1',t:'Ferreiro Negro',x:600,y:500,i:'⚒️',done:0,r:60},
+  {id:'q2',t:'Madeira',x:1800,y:600,i:'🌲',done:0,r:40},
+  {id:'q3',t:'Taverna Dragão',x:1200,y:1600,i:'🍺',done:0,r:80},
+  {id:'q4',t:'Torre Mago',x:400,y:1800,i:'🗼',done:0,r:110},
+  {id:'q5',t:'Orc Rei',x:1900,y:1900,i:'👹',done:0,r:150},
+];
+
+const objs=[
+  {x:600,y:500,t:'house'},{x:1200,y:1600,t:'house'},{x:400,y:1800,t:'tower'},
+  {x:1800,y:600,t:'tree'},{x:900,y:300,t:'tree'},{x:300,y:700,t:'tree'},
+];
+
+let mons=[
+  {x:1900,y:1900,t:'orc',hp:100,max:100,vx:0,vy:0,w:0},
+  {x:800,y:800,t:'skel',hp:80,max:80,vx:0,vy:0,w:0},
+  {x:1400,y:600,t:'orc',hp:60,max:60,vx:0,vy:0,w:0},
+];
+
+let inv=[
+  {id:'sword',ic:'🗡️',n:'Espada',c:1,w:8},{id:'shield',ic:'🛡️',n:'Escudo',c:1,w:6},
+  {id:'potion',ic:'🧪',n:'Poção Vida',c:5,w:2},{id:'mana',ic:'🔮',n:'Poção Mana',c:3,w:2},
+  {id:'gold',ic:'💰',n:'Ouro',c:25,w:1},{id:'meat',ic:'🍖',n:'Carne',c:2,w:3},
+  {id:'empty',ic:'',n:'',c:0,w:0},{id:'empty',ic:'',n:'',c:0,w:0},{id:'empty',ic:'',n:'',c:0,w:0},{id:'empty',ic:'',n:'',c:0,w:0},
+];
+
+const cv=document.getElementById('game'), ctx=cv.getContext('2d');
+
+function rq(){
+  const l=document.getElementById('questList'); l.innerHTML='';
+  quests.forEach(q=>{
+    const d=document.createElement('div'); d.className='qItem'+(q.done?' done':'');
+    const dist=Math.round(Math.hypot(P.x-q.x,P.y-q.y)/10);
+    d.innerHTML=`<div class="qIcon">${q.done?'✅':q.i}</div><div class="qInfo"><div class="qName">${q.t}</div><div class="qDist">${dist}m • +${q.r}💰</div></div>`;
+    if(!q.done) d.onclick=()=>{T={x:q.x,y:q.y,id:q.id}; document.getElementById('autoBanner').style.display='block'; document.getElementById('autoBanner').innerHTML=`🚶 ${q.t}... <span class="cancel" onclick="T=null;this.parentElement.style.display='none'">CANCELAR ✕</span>`;};
+    l.appendChild(d);
+  });
+}
+
+function ri(){
+  const g=document.getElementById('inventory'); g.innerHTML=''; let w=0;
+  inv.forEach((it,i)=>{
+    const d=document.createElement('div'); d.className='invSlot'+(it.id!=='empty'?' hasItem':'')+(selInv===i?' selected':'');
+    if(it.id!=='empty'){d.innerHTML=`${it.ic}<span class="count">${it.c>1?it.c:''}</span>`; w+=it.w*it.c;}
+    d.style.borderColor=selInv===i?'#FFD700':'#000';
+    d.onclick=()=>{selInv=i; ri();};
+    d.ondblclick=()=>{if(it.id==='potion') usePotion(); if(it.id==='mana') useMana();};
+    g.appendChild(d);
+  });
+  document.getElementById('invWeight').textContent=w+'/100';
+}
+
+function usePotion(){
+  let it=inv.find(x=>x.id==='potion');
+  if(!it||it.c<=0) return;
+  it.c--; if(it.c<=0){it.id='empty';it.ic='';}
+  P.hp=Math.min(P.maxHp,P.hp+40); updateBars(); ri();
+}
+function useMana(){
+  let it=inv.find(x=>x.id==='mana');
+  if(!it||it.c<=0) return;
+  it.c--; if(it.c<=0){it.id='empty';it.ic='';}
+  P.mana=Math.min(P.maxMana,P.mana+40); updateBars(); ri();
+}
+
+function updateBars(){
+  document.getElementById('hpVal').textContent=Math.round(P.hp);
+  document.getElementById('manaVal').textContent=Math.round(P.mana);
+  document.getElementById('hpFill').style.width=(P.hp/P.maxHp*100)+'%';
+  document.getElementById('manaFill').style.width=(P.mana/P.maxMana*100)+'%';
+}
+
+function comp(id){
+  const q=quests.find(x=>x.id===id);
+  if(!q||q.done) return;
+  q.done=1; G+=q.r; Xp+=30;
+  if(Xp>=100){Lv++;Xp-=100;}
+  document.getElementById('gold').textContent=G;
+  document.getElementById('level').textContent=Lv;
+  T=null; document.getElementById('autoBanner').style.display='none'; rq();
+  // popup
+  const pop=document.createElement('div');
+  pop.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(#FFD700,#FFA500);border:4px solid #000;border-radius:12px;padding:12px 20px;font-weight:900;color:#000;box-shadow:0 6px 0 #000;z-index:20;text-align:center';
+  pop.innerHTML=`✅ ${q.t}<br><span style="font-size:10px">+${q.r} ouro</span>`;
+  document.getElementById('gameContainer').appendChild(pop);
+  setTimeout(()=>pop.remove(),2000);
+}
+
+// JOYSTICK MOBILE GIGANTE
+const jb=document.getElementById('joyBase'), js=document.getElementById('joyStick');
+function gp(e){
+  const r=jb.getBoundingClientRect();
+  const cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY;
+  let dx=cx-(r.left+r.width/2), dy=cy-(r.top+r.height/2), d=Math.hypot(dx,dy), m=34;
+  if(d>m){let a=Math.atan2(dy,dx);dx=Math.cos(a)*m;dy=Math.sin(a)*m}
+  return{dx,dy}
+}
+function jsS(e){e.preventDefault();J.a=1;T=null;document.getElementById('autoBanner').style.display='none'}
+function jsM(e){if(!J.a)return;e.preventDefault();let {dx,dy}=gp(e);js.style.transform=`translate(${dx}px,${dy}px)`;J.x=dx/34;J.y=dy/34;if(Math.abs(J.x)>0.1)P.f=J.x>0?1:-1}
+function jsE(){J.a=0;J.x=0;J.y=0;js.style.transform='translate(0,0)'}
+jb.addEventListener('touchstart',jsS,{passive:false}); jb.addEventListener('touchmove',jsM,{passive:false}); jb.addEventListener('touchend',jsE);
+jb.addEventListener('mousedown',jsS); window.addEventListener('mousemove',jsM); window.addEventListener('mouseup',jsE);
+
+// MAP CLICK
+cv.addEventListener('click',e=>{
+  const r=cv.getBoundingClientRect();
+  const x=(e.clientX-r.left)*(cv.width/r.width), y=(e.clientY-r.top)*(cv.height/r.height);
+  if(y>cv.height-130 && x<150) return;
+  if(y>cv.height-130 && x>250) return;
+  if(y<60) return;
+  T={x:C.x+x,y:C.y+y,id:null};
+  document.getElementById('autoBanner').style.display='block';
+  document.getElementById('autoBanner').innerHTML=`🚶 Indo para local... <span class="cancel" onclick="T=null;this.parentElement.style.display='none'">CANCELAR ✕</span>`;
+});
+cv.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1) return;
+  const r=cv.getBoundingClientRect();
+  const x=(e.touches[0].clientX-r.left)*(cv.width/r.width), y=(e.touches[0].clientY-r.top)*(cv.height/r.height);
+  if(y>cv.height-130 && x<150) return;
+  if(y>cv.height-130 && x>250) return;
+  if(y<60) return;
+}, {passive:false});
+
+// BUTTONS
+document.getElementById('mapBtn').onclick=()=>{P.x=W/2;P.y=H/2;T=null;document.getElementById('autoBanner').style.display='none';};
+document.getElementById('attackBtn').onclick=()=>{
+  P.atk=12;
+  mons.forEach(m=>{if(Math.hypot(m.x-P.x,m.y-P.y)<85){m.hp-=40; if(m.hp<=0){G+=15; document.getElementById('gold').textContent=G; m.x=Math.random()*W; m.y=Math.random()*H; m.hp=m.max;}}});
+  cv.style.transform='translate(3px,0)'; setTimeout(()=>cv.style.transform='',60);
+};
+document.getElementById('potionBtn').onclick=()=>usePotion();
+document.getElementById('invToggle').onclick=()=>document.getElementById('invDrawer').classList.add('open');
+document.getElementById('closeInvBtn').onclick=()=>document.getElementById('invDrawer').classList.remove('open');
+document.getElementById('useBtn').onclick=()=>{
+  if(selInv<0) return;
+  const it=inv[selInv];
+  if(it.id==='potion') usePotion();
+  if(it.id==='mana') useMana();
+  if(it.id==='meat'){it.c--; if(it.c<=0){it.id='empty';it.ic='';} P.hp=Math.min(P.maxHp,P.hp+15); updateBars(); ri();}
+};
+document.getElementById('dropBtn').onclick=()=>{
+  if(selInv<0) return;
+  const it=inv[selInv];
+  if(it.id!=='empty'){it.id='empty';it.ic='';it.c=0; selInv=-1; ri();}
+};
+document.querySelectorAll('.spell').forEach(el=>{
+  el.onclick=()=>{
+    if(P.mana<20){return;}
+    P.mana-=20; updateBars();
+    const icon=el.querySelector('.spellIcon').textContent;
+    mons.forEach(m=>{if(Math.hypot(m.x-P.x,m.y-P.y)<140){m.hp-=50; if(m.hp<=0){G+=15; document.getElementById('gold').textContent=G; m.x=Math.random()*W; m.y=Math.random()*H; m.hp=m.max;}}});
+    cv.style.filter='brightness(1.4)'; setTimeout(()=>cv.style.filter='',150);
+  };
+});
+
+// CLASS SELECT
+document.querySelectorAll('.classCard').forEach(c=>{
+  c.onclick=()=>{
+    document.querySelectorAll('.classCard').forEach(x=>x.classList.remove('selected'));
+    c.classList.add('selected');
+    selClass=c.dataset.class;
+  };
+});
+
+// LOOP
+let last=performance.now();
+function loop(now){
+  const dt=Math.min((now-last)/1000,0.05); last=now;
+  let mx=0,my=0;
+  if(J.a){mx=J.x;my=J.y}
+  else if(T){let dx=T.x-P.x,dy=T.y-P.y,d=Math.hypot(dx,dy);if(d<30){if(T.id){let q=quests.find(x=>x.id===T.id); if(q&&!q.done){q.done=true; G+=q.r; document.getElementById('gold').textContent=G; T=null; document.getElementById('autoBanner').style.display='none'; rq(); const pop=document.createElement('div'); pop.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(#FFD700,#FFA500);border:4px solid #000;border-radius:12px;padding:12px 20px;font-weight:900;color:#000;box-shadow:0 6px 0 #000;z-index:20'; pop.textContent=`✅ ${q.t} +${q.r} ouro`; document.getElementById('gameContainer').appendChild(pop); setTimeout(()=>pop.remove(),2000);}}else{T=null;document.getElementById('autoBanner').style.display='none';}}else{mx=dx/d;my=dy/d;if(Math.abs(mx)>0.1)P.f=mx>0?1:-1}}
+  if(mx||my){P.x=Math.max(20,Math.min(W-20,P.x+mx*200*dt));P.y=Math.max(20,Math.min(H-20,P.y+my*200*dt));}
+  if(P.atk>0)P.atk--;
+  mons.forEach(m=>{m.w-=dt; if(m.w<=0){m.vx=(Math.random()-0.5)*50; m.vy=(Math.random()-0.5)*50; m.w=2+Math.random()*2;} m.x+=m.vx*dt; m.y+=m.vy*dt; m.x=Math.max(20,Math.min(W-20,m.x)); m.y=Math.max(20,Math.min(H-20,m.y));});
+  C.x=P.x-cv.width/2; C.y=P.y-cv.height/2;
+  C.x=Math.max(0,Math.min(W-cv.width,C.x)); C.y=Math.max(0,Math.min(H-cv.height,C.y));
+  draw(); requestAnimationFrame(loop);
+}
+
+function draw(){
+  ctx.fillStyle='#3a3a3a'; ctx.fillRect(0,0,cv.width,cv.height);
+  for(let i=0;i<180;i++){
+    const wx=(i*137)%W, wy=(i*241)%H;
+    const sx=wx-C.x, sy=wy-C.y;
+    if(sx<-20||sx>420||sy<-20||sy>820) continue;
+    ctx.fillStyle=i%2===0?'#4a7a4a':'#5a8a4a';
+    ctx.fillRect(sx,sy,20,20);
+  }
+  ctx.strokeStyle='rgba(0,0,0,0.15)'; let tile=64, sx0=-(C.x%tile), sy0=-(C.y%tile);
+  for(let x=sx0;x<cv.width;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke()}
+  for(let y=sy0;y<cv.height;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke()}
+  objs.forEach(o=>{
+    const x=o.x-C.x,y=o.y-C.y;
+    if(x<-80||x>480||y<-80||y>880) return;
+    ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+22,22,6,0,0,6.28); ctx.fill();
+    if(o.t==='house'){ctx.fillStyle='#8d6e63';ctx.fillRect(x-35,y-20,70,45);ctx.fillStyle='#5d4037';ctx.beginPath();ctx.moveTo(x-40,y-20);ctx.lineTo(x,y-45);ctx.lineTo(x+40,y-20);ctx.closePath();ctx.fill()}
+    else{ctx.fillStyle='#5d4037';ctx.fillRect(x-4,y-8,8,20);ctx.fillStyle='#2e7d32';ctx.beginPath();ctx.arc(x,y-10,16,0,6.28);ctx.fill()}
+  });
+  mons.forEach(m=>{
+    const x=m.x-C.x,y=m.y-C.y;
+    if(x<-50||x>450||y<-50||y>850) return;
+    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+16,14,4,0,0,6.28); ctx.fill();
+    ctx.fillStyle=m.t==='orc'?'#4a7a2a':'#e0d5c7'; ctx.beginPath(); ctx.ellipse(x,y,13,14,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#ff0000'; ctx.beginPath(); ctx.arc(x-3,y-5,2,0,6.28); ctx.arc(x+3,y-5,2,0,6.28); ctx.fill();
+    ctx.fillStyle='#000'; ctx.fillRect(x-14,y-20,28,5);
+    ctx.fillStyle='#4caf50'; ctx.fillRect(x-13,y-19,26*(m.hp/m.max),3);
+  });
+  quests.forEach(q=>{
+    if(q.done) return;
+    const x=q.x-C.x,y=q.y-C.y;
+    if(x<-50||x>450||y<-80||y>880) return;
+    ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y-30,14,0,6.28); ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
+    ctx.fillStyle='#000'; ctx.font='bold 12px sans-serif'; ctx.textAlign='center'; ctx.fillText(q.i,x,y-26);
+  });
+  if(T){const x=T.x-C.x,y=T.y-C.y;ctx.strokeStyle='#FFD700';ctx.lineWidth=3;ctx.setLineDash([6,3]);ctx.beginPath();ctx.arc(x,y,14,0,6.28);ctx.stroke();ctx.setLineDash([])}
+  const px=P.x-C.x,py=P.y-C.y;
+  ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(px,py+16,12,4,0,0,6.28); ctx.fill();
+  ctx.save(); ctx.translate(px,py); ctx.scale(P.f,1);
+  ctx.fillStyle='#3a3a3a'; ctx.fillRect(-8,-8,16,16);
+  ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-12,8,0,6.28); ctx.fill();
+  if(P.atk>0){ctx.save();ctx.translate(10,0);ctx.rotate(-0.6-P.atk*0.12);ctx.fillStyle='#c0c0c0';ctx.fillRect(0,-2,18,3);ctx.restore()}else{ctx.fillStyle='#c0c0c0';ctx.fillRect(10,-2,14,3)}
+  ctx.restore();
+  if(T){ctx.fillStyle='#FFD700';ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.fillText('AUTO',px,py-28)}
+}
+
+document.getElementById('startBtn').onclick=()=>{
+  const cls=document.querySelector('.classCard.selected').dataset.class;
+  P.cls=cls;
+  document.getElementById('startScreen').style.display='none';
+  rq(); ri();
+  requestAnimationFrame(loop);
+};
+rq(); ri();
+</script>
+</body>
+</html>
