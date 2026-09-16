@@ -2,1660 +2,336 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>NORRATH CLASH V5 REAL JOGÁVEL - CLASH STYLE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NORRATH CLASH V6 ULTRA JOGÁVEL</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent} html,body{touch-action:manipulation}
-body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
-#gc{position:relative;width:100vw;height:100vh;height:100dvh;max-width:480px;max-height:960px;background:#1a1a1e;overflow:hidden;box-shadow:0 0 0 3px #000}
-@media(min-width:500px){#gc{width:420px;height:860px;border-radius:20px;border:4px solid #000;box-shadow:0 0 0 3px #000,0 0 0 7px #3e2723,0 30px 80px rgba(0,0,0,0.9)}}
-canvas{width:100%;height:100%;display:block;image-rendering:pixelated;touch-action:none;pointer-events:auto}
-#gc{touch-action:none}
-#game{touch-action:none}
-#ui{position:absolute;inset:0;pointer-events:none}
-.topBar{position:absolute;top:0;left:0;right:0;height:72px;background:linear-gradient(#2a1a0f,#0f0a05);display:flex;justify-content:space-between;align-items:center;padding:6px 6px 0 6px;border-bottom:4px solid #000;pointer-events:auto;gap:3px;padding-top:max(6px,env(safe-area-inset-top));z-index:10}
-.res{display:flex;align-items:center;background:linear-gradient(#2a2a2a,#0a0a0a);border-radius:12px;padding:2px 5px 2px 2px;border:3px solid #000;flex:1;min-width:0;box-shadow:0 3px 0 #000}
-.resIcon{width:30px;height:30px;min-width:30px;border-radius:8px;display:flex;justify-content:center;align-items:center;border:3px solid #000;font-size:14px;font-weight:900;flex-shrink:0}
-.resVal{color:#FFD700;font-weight:900;font-size:11px;margin-left:3px;text-shadow:1px 1px 0 #000;white-space:nowrap}
-.bar{flex:1;height:7px;max-width:52px;background:#000;border-radius:4px;overflow:hidden;margin-left:3px;border:2px solid #000;min-width:16px}
-.fill{height:100%;transition:width 0.3s}
-.xpBar{position:absolute;bottom:0;left:0;right:0;height:4px;background:#000;overflow:hidden;z-index:11}
-.xpFill{height:100%;background:linear-gradient(#FFD700,#FF8f00);transition:width 0.5s;box-shadow:0 0 6px #FFD700}
-#minimap{position:absolute;top:78px;left:6px;width:88px;height:88px;background:rgba(0,0,0,0.85);border:3px solid #000;border-radius:12px;overflow:hidden;pointer-events:auto;z-index:6;box-shadow:0 3px 0 #000}
-#minimap canvas{width:100%;height:100%}
-#minimapLabel{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.8);color:#FFD700;font-size:6px;font-weight:900;text-align:center;padding:2px}
-#questPanel{position:absolute;top:78px;right:6px;width:168px;max-width:42vw;background:linear-gradient(#4e342e,#2a1a14);border-radius:14px;padding:6px;border:4px solid #000;box-shadow:0 5px 0 #000;pointer-events:auto;max-height:32vh;overflow-y:auto;z-index:6}
-.qTitle{color:#FFD700;font-weight:900;font-size:10px;text-align:center;margin-bottom:6px;letter-spacing:1.5px}
-.qItem{background:linear-gradient(#f5f0e1,#d7c9a9);border-radius:10px;padding:7px;margin-bottom:6px;border:3px solid #000;cursor:pointer;display:flex;align-items:center;box-shadow:0 3px 0 #000;min-height:50px;transition:transform 0.05s;position:relative}
-.qItem:active{transform:translateY(3px);box-shadow:0 0 0 #000}
-.qIcon{width:34px;height:34px;min-width:34px;background:linear-gradient(#fff8e1,#ffecb3);border-radius:8px;display:flex;justify-content:center;align-items:center;font-size:19px;border:3px solid #000;flex-shrink:0}
-.qInfo{flex:1;margin-left:6px;overflow:hidden;min-width:0}
-.qName{font-size:9px;font-weight:900;color:#3e2723;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qDist{font-size:8px;font-weight:900;color:#fff;background:linear-gradient(#2e7d32,#1b5e20);padding:2px 6px;border-radius:10px;border:2px solid #000;display:inline-block;margin-top:2px}
-.qProgress{position:absolute;bottom:0;left:3px;right:3px;height:4px;background:#000;border-radius:2px;overflow:hidden}
-.qProgFill{height:100%;background:linear-gradient(#4caf50,#2e7d32)}
-#joystick{position:absolute;bottom:10px;left:10px;width:180px;height:180px;pointer-events:auto;z-index:20;touch-action:none}
-#joystick *{touch-action:none}
-.joyBase{width:160px;height:160px;border-radius:80px;background:radial-gradient(circle at 30% 30%,#5a5a5a,#1a1a1a);border:5px solid #000;position:relative;box-shadow:0 7px 0 #000,0 0 20px rgba(0,0,0,0.5);touch-action:none;pointer-events:auto}
-.joyBase:active{transform:scale(0.98)}
-.joyStick{width:68px;height:68px;border-radius:34px;background:radial-gradient(circle at 30% 30%,#FFD700,#b8960c);border:4px solid #000;position:absolute;left:41px;top:41px;box-shadow:0 5px 0 #000;display:flex;justify-content:center;align-items:center;transition:transform 0.05s;touch-action:none;pointer-events:none}
-.joyStick::after{content:'🕹️';font-size:26px}
-.joyLabel{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:8px;font-weight:900;padding:3px 10px;border-radius:12px;border:2px solid #FFD700;white-space:nowrap}
-#actionBtns{position:absolute;bottom:18px;right:12px;pointer-events:auto;display:flex;flex-direction:column;gap:10px;z-index:20;touch-action:none}
-.actBtn{width:66px;height:66px;min-width:66px;min-height:66px;border-radius:18px;border:4px solid #000;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 6px 0 #000;transition:transform 0.05s;position:relative}
-.actBtn:active{transform:translateY(6px);box-shadow:0 0 0 #000}
-.actBtn .icon{font-size:28px;line-height:1}
-.actBtn .label{font-size:6px;font-weight:900;color:#fff;text-shadow:1px 1px 0 #000;margin-top:1px}
-.actBtn.attack{background:linear-gradient(#e53935,#7f0000)}
-.actBtn.potion{background:linear-gradient(#8e24aa,#4a148c)}
-.actBtn.hero{background:linear-gradient(#616161,#212121)}
-.actBtn.shop{background:linear-gradient(#ff8f00,#e65100)}
-.actBtn.tower{background:linear-gradient(#9c27b0,#4a148c);display:none}
-#spellsBar{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;pointer-events:auto;background:rgba(0,0,0,0.9);padding:6px 10px;border-radius:16px;border:4px solid #000;box-shadow:0 5px 0 #000;z-index:20;touch-action:none}
-.spell{width:54px;height:54px;min-width:54px;min-height:54px;background:linear-gradient(#3a3a4a,#1a1a2a);border:4px solid #000;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;position:relative;box-shadow:0 3px 0 #000;transition:transform 0.05s}
-.spell:active{transform:translateY(3px);box-shadow:0 0 0 #000}
-.spell.cooldown{opacity:0.35;filter:grayscale(1)}
-.spellIcon{font-size:24px}
-.spellKey{position:absolute;top:-9px;right:-9px;background:linear-gradient(#FFD700,#FFA500);color:#000;font-size:9px;font-weight:900;width:20px;height:20px;border-radius:10px;display:flex;justify-content:center;align-items:center;border:3px solid #000;box-shadow:0 2px 0 #000}
-.spellMana{font-size:6px;font-weight:900;color:#64b5f6;position:absolute;bottom:1px}
-.spellCd{position:absolute;inset:0;background:rgba(0,0,0,0.7);border-radius:8px;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:13px}
-#autoBanner{position:absolute;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(#FFD700,#FFA500);border-radius:20px;padding:9px 16px;border:4px solid #000;box-shadow:0 4px 0 #000;font-size:11px;font-weight:900;color:#000;display:none;pointer-events:auto;text-align:center;max-width:82vw;z-index:10}
-#autoBanner .cancel{font-size:9px;background:#000;color:#FFD700;padding:2px 8px;border-radius:10px;margin-left:6px;border:2px solid #FFD700;cursor:pointer}
-#invDrawer{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#3e2723,#1a0f0a);border-top:5px solid #000;border-radius:20px 20px 0 0;padding:12px 12px calc(12px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:auto;z-index:20;max-height:72vh;overflow-y:auto;box-shadow:0 -12px 40px rgba(0,0,0,0.9)}
-#invDrawer.open{transform:translateY(0)}
-#invHandle{width:48px;height:6px;background:#8d6e63;border-radius:3px;margin:0 auto 10px auto}
-.invHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.invTitle{color:#FFD700;font-weight:900;font-size:12px}
-.invWeight{color:#a1887f;font-size:10px;font-weight:900;background:#000;padding:3px 8px;border-radius:10px;border:2px solid #5d4037}
-.equipGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px;background:rgba(0,0,0,0.3);padding:8px;border-radius:12px;border:3px solid #000}
-.equipSlot{aspect-ratio:1;background:linear-gradient(#2a1a14,#1a0f0a);border:3px solid #5d4037;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:20px;cursor:pointer;position:relative;box-shadow:0 2px 0 #000;min-height:50px}
-.equipSlot.hasItem{border-color:#8d6e63;background:linear-gradient(#4a3a32,#2a1a14)}
-.equipSlot .slotLabel{position:absolute;top:2px;left:3px;font-size:6px;font-weight:900;color:#8d6e63}
-.gemDots{position:absolute;bottom:2px;left:2px;right:2px;display:flex;gap:1px;justify-content:center}
-.gemDot{width:7px;height:7px;border-radius:4px;border:1px solid #000}
-.invGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.invSlot{aspect-ratio:1;background:linear-gradient(#1e1e1e,#0a0a0a);border:3px solid #000;border-radius:10px;display:flex;justify-content:center;align-items:center;font-size:20px;cursor:pointer;position:relative;box-shadow:0 3px 0 #000;min-height:50px}
-.invSlot.hasItem{background:linear-gradient(#3a3a3a,#1a1a1a);border-color:#5d4037}
-.invSlot.selected{border-color:#FFD700;box-shadow:0 0 12px rgba(255,215,0,0.6),0 3px 0 #000}
-.invSlot .count{position:absolute;bottom:2px;right:4px;font-size:10px;font-weight:900;color:#FFD700;background:#000;padding:1px 4px;border-radius:8px;border:2px solid #FFD700}
-.invActions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.invBtn{flex:1;min-width:68px;height:46px;background:linear-gradient(#4a4a4a,#2a2a2a);border:4px solid #000;border-radius:10px;color:#fff;font-weight:900;font-size:9px;display:flex;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 3px 0 #000;transition:transform 0.05s}
-.invBtn:active{transform:translateY(3px);box-shadow:0 0 0 #000}
-.invBtn.use{background:linear-gradient(#2e7d32,#1b5e20)}
-.invBtn.equip{background:linear-gradient(#1565c0,#0d47a1)}
-.invBtn.gem{background:linear-gradient(#8e24aa,#4a148c)}
-#gemModal{position:absolute;inset:0;background:rgba(0,0,0,0.85);z-index:30;display:none;flex-direction:column;justify-content:center;align-items:center;padding:16px;pointer-events:auto}
-.gemBox{background:linear-gradient(#4e342e,#2a1a14);border:5px solid #000;border-radius:20px;padding:16px;width:100%;max-width:380px;box-shadow:0 10px 0 #000;max-height:85vh;overflow-y:auto}
-.gemTitle{color:#FFD700;font-weight:900;font-size:14px;text-align:center;margin-bottom:12px}
-.gemItem{font-size:12px;font-weight:900;color:#FFD700;text-align:center;margin-bottom:8px}
-.gemSlots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
-.gemSlot{aspect-ratio:1;background:linear-gradient(#1a1a1a,#0a0a0a);border:3px solid #5d4037;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;position:relative;box-shadow:0 3px 0 #000;min-height:64px}
-.gemSlot.hasGem{border-color:#FFD700;box-shadow:0 0 10px rgba(255,215,0,0.5),0 3px 0 #000}
-.gemSlot .gemIcon{font-size:24px}
-.gemSlot .gemName{font-size:7px;font-weight:900;color:#c9b896;margin-top:2px;text-align:center;line-height:1.1}
-.gemInventory{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:160px;overflow-y:auto;background:rgba(0,0,0,0.3);padding:8px;border-radius:12px;border:3px solid #000;margin-top:10px}
-.gemInvSlot{aspect-ratio:1;background:linear-gradient(#2a2a2a,#1a1a1a);border:3px solid #000;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;min-height:52px;box-shadow:0 2px 0 #000}
-.gemInvSlot.hasGem{border-color:#8d6e63}
-#craftModal{position:absolute;inset:0;background:rgba(0,0,0,0.9);z-index:31;display:none;flex-direction:column;justify-content:center;align-items:center;padding:16px;pointer-events:auto}
-.craftBox{background:linear-gradient(#4e342e,#2a1a14);border:5px solid #FFD700;border-radius:20px;padding:16px;width:100%;max-width:380px;box-shadow:0 10px 0 #000}
-#shopModal{position:absolute;inset:0;background:linear-gradient(#3e2723,#0a0503);z-index:25;display:none;flex-direction:column;padding:10px;padding-top:max(10px,env(safe-area-inset-top));pointer-events:auto;overflow-y:auto}
-.shopHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.shopTitle{color:#FFD700;font-weight:900;font-size:16px;letter-spacing:1px}
-.shopGold{color:#FFD700;font-weight:900;font-size:12px;background:#000;padding:6px 12px;border-radius:10px;border:3px solid #5d4037}
-.shopTabs{display:flex;gap:6px;margin-bottom:12px}
-.shopTab{flex:1;height:44px;background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:12px;color:#c9b896;font-weight:900;font-size:11px;display:flex;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 3px 0 #000}
-.shopTab.active{background:linear-gradient(#FFD700,#FF8f00);color:#000;border-color:#000}
-.shopGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.shopItem{background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:14px;padding:10px;box-shadow:0 4px 0 #000;cursor:pointer;transition:transform 0.05s;position:relative}
-.shopItem:active{transform:translateY(4px);box-shadow:0 0 0 #000}
-.shopItemIcon{font-size:28px;text-align:center}
-.shopItemName{font-size:10px;font-weight:900;color:#FFD700;text-align:center;margin:4px 0;line-height:1.2}
-.shopItemStats{font-size:8px;color:#d7ccc8;line-height:1.3;background:rgba(0,0,0,0.4);padding:4px;border-radius:6px;border:2px solid #000;margin:4px 0}
-.shopItemPrice{font-size:11px;font-weight:900;color:#4caf50;text-align:center;background:#000;padding:3px;border-radius:8px;border:2px solid #2e7d32;margin-top:6px}
-.closeBtn{width:44px;height:44px;background:#000;border:4px solid #FFD700;border-radius:12px;display:flex;justify-content:center;align-items:center;color:#FFD700;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 3px 0 #000}
-#charScreen{position:absolute;inset:0;background:linear-gradient(#3e2723,#0a0503);z-index:24;display:none;flex-direction:column;padding:10px;padding-top:max(10px,env(safe-area-inset-top));pointer-events:auto;overflow-y:auto}
-.charTop{display:flex;gap:10px;margin-bottom:10px}
-.charAvatar{width:100px;height:100px;background:linear-gradient(#5d4037,#3e2723);border:4px solid #000;border-radius:16px;display:flex;justify-content:center;align-items:center;font-size:48px;box-shadow:0 4px 0 #000;position:relative}
-.charInfo{flex:1;background:rgba(0,0,0,0.4);border:3px solid #000;border-radius:12px;padding:8px}
-.charName{color:#FFD700;font-weight:900;font-size:14px}
-.charLevel{color:#fff;font-size:11px;font-weight:900;margin-top:4px;background:#000;padding:2px 8px;border-radius:10px;display:inline-block;border:2px solid #5d4037}
-.attrGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
-.attrCard{background:linear-gradient(#4a3a32,#2a1a14);border:3px solid #000;border-radius:12px;padding:8px;box-shadow:0 3px 0 #000}
-.attrName{color:#8d6e63;font-size:8px;font-weight:900}
-.attrVal{color:#FFD700;font-size:18px;font-weight:900}
-.skillList{display:flex;flex-direction:column;gap:6px}
-.skillRow{background:linear-gradient(#2a2a3a,#1a1a2a);border:3px solid #000;border-radius:10px;padding:8px;display:flex;align-items:center;box-shadow:0 2px 0 #000}
-.skillIcon{width:40px;height:40px;background:linear-gradient(#4a4a5a,#2a2a3a);border:3px solid #000;border-radius:8px;display:flex;justify-content:center;align-items:center;font-size:20px;flex-shrink:0}
-.skillInfo{flex:1;margin-left:8px}
-.skillName{color:#fff;font-weight:900;font-size:11px}
-.skillDesc{color:#9e9e9e;font-size:8px;line-height:1.2;margin-top:1px}
-.skillLevel{color:#FFD700;font-weight:900;font-size:10px;background:#000;padding:2px 6px;border-radius:8px;border:2px solid #5d4037}
-#startScreen{position:absolute;inset:0;background:radial-gradient;pointer-events:auto;touch-action:manipulation(circle at 50% 15%,#5d4037,#1a0f0a 60%,#000);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;z-index:30;text-align:center;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));overflow-y:auto}
-.logo{font-size:42px;font-weight:900;color:#FFD700;text-shadow:4px 4px 0 #000,0 0 30px rgba(255,215,0,0.6);letter-spacing:3px;line-height:1;margin-top:10px}
-.logo2{font-size:14px;font-weight:900;color:#FFA500;letter-spacing:6px;margin-top:2px;text-shadow:2px 2px 0 #000}
-.sublogo{font-size:11px;color:#FFA500;letter-spacing:4px;font-weight:900;margin:4px 0 10px 0}
-.badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
-.badge{background:#000;border:3px solid #5d4037;color:#FFD700;font-size:8px;font-weight:900;padding:5px 10px;border-radius:8px;box-shadow:0 2px 0 #000}
-.classGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin:12px 0}
-.classCard{background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:16px;padding:12px;cursor:pointer;text-align:center;box-shadow:0 5px 0 #000;min-height:110px;display:flex;flex-direction:column;justify-content:center;transition:transform 0.05s;position:relative;pointer-events:auto;touch-action:manipulation;-webkit-user-select:none;z-index:5}
-.classCard:active{transform:translateY(5px);box-shadow:0 0 0 #000}
-.classCard.selected{border-color:#FFD700;box-shadow:0 0 20px rgba(255,215,0,0.7),0 5px 0 #000;transform:scale(1.03)}
-.classIcon{font-size:36px}
-.className{font-size:10px;font-weight:900;color:#FFD700;margin:6px 0 3px 0;line-height:1.1}
-.classDesc{font-size:8px;color:#d7ccc8;line-height:1.3;font-weight:600}
-.startBtn{margin-top:14px;background:linear-gradient(#FFD700,#FF8f00);color:#000;border:5px solid #000;padding:16px 44px;border-radius:16px;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 7px 0 #000;letter-spacing:1.5px;min-width:240px;min-height:60px;transition:transform 0.05s;pointer-events:auto;touch-action:manipulation;z-index:10;position:relative}
-.startBtn:active{transform:translateY(7px);box-shadow:0 0 0 #000}
-.infoBox{margin-top:14px;background:rgba(0,0,0,0.6);padding:10px;border-radius:12px;border:3px solid #000;max-width:400px;width:100%;box-shadow:0 3px 0 #000}
-.infoTitle{font-size:10px;color:#FFD700;font-weight:900;letter-spacing:1px;margin-bottom:6px}
-.infoText{font-size:9px;color:#bcaaa4;text-align:left;line-height:1.5;font-weight:600}
-#tip{position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);color:#FFD700;font-size:11px;font-weight:900;padding:10px 18px;border-radius:22px;border:3px solid #FFD700;pointer-events:none;white-space:nowrap;box-shadow:0 4px 0 #000;max-width:90vw;text-align:center;z-index:4;animation:float 2s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}
-.lootPopup{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:linear-gradient(#3e2723,#1a0f0a);border:5px solid #000;border-radius:16px;padding:14px;box-shadow:0 8px 0 #000;z-index:22;min-width:280px;max-width:90vw;text-align:center;animation:pop 0.4s cubic-bezier(0.34,1.56,0.64,1)}
-@keyframes pop{0%{transform:translate(-50%,-50%) scale(0.8)}50%{transform:translate(-50%,-50%) scale(1.05)}100%{transform:translate(-50%,-50%) scale(1)}}
-.lootRarity{font-size:8px;font-weight:900;letter-spacing:2px;padding:3px 10px;border-radius:10px;display:inline-block;margin-bottom:6px;border:2px solid #000}
-.lootName{font-size:14px;font-weight:900;color:#FFD700;text-shadow:1px 1px 0 #000;margin:4px 0}
-.lootStats{font-size:9px;color:#d7ccc8;line-height:1.4;margin:6px 0;background:rgba(0,0,0,0.4);padding:6px;border-radius:8px;border:2px solid #000;text-align:left}
-.lootBtns{display:flex;gap:8px;margin-top:10px}
-.lootBtn{flex:1;height:44px;border:4px solid #000;border-radius:10px;font-weight:900;font-size:11px;cursor:pointer;box-shadow:0 4px 0 #000;display:flex;justify-content:center;align-items:center;transition:transform 0.05s}
-.lootBtn:active{transform:translateY(4px);box-shadow:0 0 0 #000}
-.lootBtn.equip{background:linear-gradient(#2e7d32,#1b5e20);color:#fff}
-.lootBtn.take{background:linear-gradient(#1565c0,#0d47a1);color:#fff}
-#bossBar{position:absolute;top:78px;left:50%;transform:translateX(-50%);width:70%;max-width:300px;height:22px;background:#000;border:4px solid #000;border-radius:12px;display:none;pointer-events:none;z-index:9;box-shadow:0 3px 0 #000;overflow:hidden}
-#bossFill{height:100%;background:linear-gradient(#d32f2f,#7f0000);transition:width 0.2s}
-#bossName{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:10px;text-shadow:1px 1px 0 #000;letter-spacing:1px}
-#actTransition{position:absolute;inset:0;background:#000;z-index:40;display:none;flex-direction:column;justify-content:center;align-items:center;color:#FFD700;text-align:center;pointer-events:auto}
-#paragonInfo{position:absolute;top:174px;left:6px;background:linear-gradient(#1a0f0a,#2a1a14);border:4px solid #FFD700;border-radius:12px;padding:8px;pointer-events:auto;z-index:6;box-shadow:0 4px 0 #000;display:none;max-width:160px}
-.paragonTitle{color:#FFD700;font-weight:900;font-size:9px;text-align:center;letter-spacing:1px}
-.paragonLevel{color:#fff;font-weight:900;font-size:14px;text-align:center;margin:4px 0}
-.paragonDesc{color:#c9b896;font-size:7px;line-height:1.3;text-align:center}
-#saveIndicator{position:absolute;top:78px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#4caf50;font-size:9px;font-weight:900;padding:4px 12px;border-radius:12px;border:2px solid #4caf50;display:none;z-index:12}
+*{margin:0;padding:0;box-sizing:border-box;touch-action:none;user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;touch-action:none;position:fixed}
+#gc{position:relative;width:100vw;height:100vh;background:#7CB342;overflow:hidden;touch-action:none}
+canvas{width:100%;height:100%;display:block;touch-action:none;position:absolute;top:0;left:0}
+#gameCanvas{width:100%;height:100%;background:#7CB342;z-index:1}
 
-/* V5 JOGÁVEL REAL - SEM MENUS BLOQUEANDO - CLASH STYLE */
-#startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#8d6e63 0%,#4e342e 30%,#1a0f0a 70%,#000 100%);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;z-index:100;text-align:center;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));overflow-y:auto;pointer-events:auto;touch-action:manipulation}
-#startScreen.hidden{display:none !important; pointer-events:none !important; z-index:-1 !important}
-#actTransition{position:absolute;inset:0;background:#000;z-index:90;display:none;flex-direction:column;justify-content:center;align-items:center;color:#FFD700;text-align:center;pointer-events:none}
-#actTransition.show{display:flex; pointer-events:auto}
-#ui{position:absolute;inset:0;pointer-events:none;z-index:10}
-.topBar{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(#5d4037,#3e2723);display:flex;justify-content:space-between;align-items:center;padding:4px 4px 0 4px;border-bottom:4px solid #000;pointer-events:auto;gap:2px;padding-top:max(4px,env(safe-area-inset-top));z-index:15;box-shadow:0 4px 0 #000}
-.topBar.collapsed{transform:translateY(-100%); transition:transform 0.3s}
-#minimap{position:absolute;top:62px;left:6px;width:90px;height:90px;background:rgba(0,0,0,0.9);border:4px solid #000;border-radius:14px;overflow:hidden;pointer-events:auto;z-index:12;box-shadow:0 4px 0 #000,0 0 0 3px #FFD700}
-#minimap.collapsed{display:none}
-#questPanel{position:absolute;top:62px;right:6px;width:150px;max-width:38vw;background:linear-gradient(#fff8e1,#ffecb3);border-radius:14px;padding:6px;border:4px solid #000;box-shadow:0 5px 0 #000;pointer-events:auto;max-height:28vh;overflow-y:auto;z-index:12}
-#questPanel.collapsed{display:none}
-#joystick{position:absolute;bottom:20px;left:20px;width:140px;height:140px;pointer-events:auto;z-index:25;touch-action:none;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);border-radius:50%}
-.joyBase{width:140px;height:140px;border-radius:70px;background:radial-gradient(circle at 30% 30%,#8d8d8d,#2a2a2a);border:5px solid #000;position:relative;box-shadow:0 8px 0 #000,0 0 30px rgba(0,0,0,0.6),inset 0 0 20px rgba(255,255,255,0.2);touch-action:none;pointer-events:auto}
-.joyStick{width:60px;height:60px;border-radius:30px;background:radial-gradient(circle at 30% 30%,#FFEB3B,#FF9800);border:4px solid #000;position:absolute;left:35px;top:35px;box-shadow:0 6px 0 #000,0 0 15px rgba(255,215,0,0.5);display:flex;justify-content:center;align-items:center;touch-action:none;pointer-events:none;transition:transform 0.05s, box-shadow 0.1s}
-.joyStick::after{content:'🕹️';font-size:24px}
-.joyLabel{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:7px;font-weight:900;padding:4px 10px;border-radius:20px;border:2px solid #FFD700;white-space:nowrap;box-shadow:0 2px 0 #000;pointer-events:none}
-#actionBtns{position:absolute;bottom:20px;right:16px;pointer-events:auto;display:flex;flex-direction:column;gap:12px;z-index:25;touch-action:none}
-.actBtn{width:70px;height:70px;min-width:70px;min-height:70px;border-radius:20px;border:4px solid #000;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 6px 0 #000;transition:transform 0.05s;position:relative;touch-action:none;pointer-events:auto}
-.actBtn:active{transform:translateY(6px);box-shadow:0 0 0 #000}
-#spellsBar{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:auto;background:rgba(0,0,0,0.85);padding:8px 12px;border-radius:20px;border:4px solid #000;box-shadow:0 6px 0 #000;z-index:25;touch-action:none}
-#game{width:100%;height:100%;display:block;image-rendering:pixelated;touch-action:none;pointer-events:auto;background:#2e7d32}
-#gc{position:relative;width:100vw;height:100vh;height:100dvh;max-width:480px;max-height:960px;background:#2e7d32;overflow:hidden;box-shadow:0 0 0 4px #000;touch-action:none}
-.uiToggle{position:absolute;top:62px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:8px;font-weight:900;padding:4px 10px;border-radius:12px;border:2px solid #FFD700;pointer-events:auto;z-index:20;cursor:pointer;box-shadow:0 2px 0 #000}
-#moveHint{position:absolute;bottom:180px;left:20px;background:rgba(0,0,0,0.85);color:#FFD700;font-size:10px;font-weight:900;padding:8px 14px;border-radius:20px;border:3px solid #FFD700;pointer-events:none;z-index:15;animation:float 2s infinite;max-width:200px;text-align:center}
+/* V6 JOYSTICK GIGANTE - FORA DE QUALQUER UI - Z-INDEX 999 */
+#joystickV6{position:absolute;bottom:30px;left:30px;width:160px;height:160px;z-index:999;touch-action:none;pointer-events:auto;background:radial-gradient(circle,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.1) 60%,transparent 100%);border-radius:50%;border:3px dashed rgba(255,215,0,0.5)}
+#joyBaseV6{width:160px;height:160px;border-radius:80px;background:radial-gradient(circle at 30% 30%,#9e9e9e,#424242);border:6px solid #000;position:relative;box-shadow:0 10px 0 #000,0 0 40px rgba(0,0,0,0.8);touch-action:none;pointer-events:auto}
+#joyStickV6{width:70px;height:70px;border-radius:35px;background:radial-gradient(circle at 30% 30%,#FFEB3B,#FF9800);border:5px solid #000;position:absolute;left:40px;top:40px;box-shadow:0 8px 0 #000,0 0 20px #FFD700;display:flex;justify-content:center;align-items:center;font-size:28px;touch-action:none;pointer-events:none;transition:transform 0.05s}
+#joyLabelV6{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:9px;font-weight:900;padding:6px 14px;border-radius:20px;border:3px solid #FFD700;white-space:nowrap;box-shadow:0 3px 0 #000}
 
+/* ATTACK BUTTON GIGANTE */
+#attackV6{position:absolute;bottom:30px;right:30px;width:90px;height:90px;z-index:999;touch-action:none;pointer-events:auto;background:radial-gradient(circle at 30% 30%,#ef5350,#b71c1c);border:6px solid #000;border-radius:25px;box-shadow:0 8px 0 #000;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:40px;cursor:pointer}
+#attackV6:active{transform:translateY(8px);box-shadow:0 0 0 #000}
+#attackLabel{font-size:8px;font-weight:900;color:#fff;margin-top:2px;text-shadow:1px 1px 0 #000}
+
+/* TOP BAR MINIMAL */
+#topBarV6{position:absolute;top:0;left:0;right:0;height:50px;background:linear-gradient(#5d4037,#3e2723);border-bottom:4px solid #000;z-index:900;display:flex;align-items:center;padding:0 10px;gap:8px;pointer-events:auto;touch-action:manipulation}
+.topItem{background:#000;border:3px solid #FFD700;border-radius:12px;padding:4px 10px;color:#FFD700;font-weight:900;font-size:12px;display:flex;align-items:center;gap:4px;box-shadow:0 3px 0 #000}
+#debugV6{position:absolute;top:60px;left:10px;background:rgba(0,0,0,0.8);color:#0f0;font-size:9px;font-weight:900;padding:6px 10px;border-radius:10px;border:2px solid #0f0;z-index:900;pointer-events:none;max-width:200px;word-break:break-all}
+
+/* START SCREEN - WILL BE REMOVED */
+#startScreenV6{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#8d6e63 0%,#4e342e 30%,#1a0f0a 70%,#000 100%);z-index:10000;display:flex;flex-direction:column;align-items:center;padding:20px;overflow-y:auto;pointer-events:auto;touch-action:manipulation}
+.logoV6{font-size:48px;font-weight:900;color:#FFD700;text-shadow:5px 5px 0 #000,0 0 30px #FFD700;letter-spacing:4px;margin-top:20px}
+.subV6{color:#FFA500;font-weight:900;letter-spacing:5px;font-size:12px;margin:5px 0 15px 0}
+.classGridV6{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:400px;margin:15px 0}
+.classCardV6{background:linear-gradient(#5d4037,#3e2723);border:5px solid #000;border-radius:18px;padding:14px;text-align:center;box-shadow:0 6px 0 #000;cursor:pointer;pointer-events:auto;touch-action:manipulation;min-height:100px}
+.classCardV6.selected{border-color:#FFD700;box-shadow:0 0 25px #FFD700,0 6px 0 #000;transform:scale(1.05)}
+.classIconV6{font-size:40px}
+.classNameV6{color:#FFD700;font-weight:900;font-size:11px;margin:6px 0 2px 0}
+.classDescV6{color:#d7ccc8;font-size:8px;line-height:1.2}
+.startBtnV6{margin-top:20px;background:linear-gradient(#FFD700,#FF8f00);color:#000;border:6px solid #000;padding:18px 50px;border-radius:20px;font-weight:900;font-size:20px;box-shadow:0 8px 0 #000;cursor:pointer;min-width:260px;pointer-events:auto;touch-action:manipulation}
+.startBtnV6:active{transform:translateY(8px);box-shadow:0 0 0 #000}
+#moveHintV6{position:absolute;bottom:220px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);color:#FFD700;font-size:12px;font-weight:900;padding:12px 20px;border-radius:25px;border:4px solid #FFD700;z-index:800;pointer-events:none;text-align:center;animation:float 2s infinite;max-width:90vw}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
 </style>
 </head>
 <body>
 <div id="gc">
-<canvas id="game" width="420" height="860"></canvas>
-<div id="moveHint">👇 ARRASTE AQUI PARA ANDAR 👇<br><span style="font-size:8px">Toque no mapa = auto-walk</span></div>
-<div class="uiToggle" id="uiToggle" onclick="toggleUI()">👁️ UI</div>
+<canvas id="gameCanvas" width="420" height="860"></canvas>
 <canvas id="texAtlas" width="512" height="512" style="display:none"></canvas>
-<div id="ui">
-  <div class="topBar">
-    <div class="res"><div class="resIcon" style="background:linear-gradient(#e53935,#7f0000)">❤️</div><div class="resVal" id="hpVal">120</div><div class="bar"><div class="fill" id="hpFill" style="width:100%;background:linear-gradient(#ff5252,#b71c1c)"></div></div></div>
-    <div class="res"><div class="resIcon" style="background:linear-gradient(#42a5f5,#0d47a1)">🔮</div><div class="resVal" id="manaVal">80</div><div class="bar"><div class="fill" id="manaFill" style="width:100%;background:linear-gradient(#64b5f6,#1565c0)"></div></div></div>
-    <div class="res"><div class="resIcon" style="background:linear-gradient(#FFD700,#b8960c)">💰</div><div class="resVal" id="gold">500</div></div>
-    <div class="res"><div class="resIcon" style="background:linear-gradient(#9c27b0,#4a148c)">⭐</div><div class="resVal" id="level">1</div></div>
-  </div>
-  <div class="xpBar"><div class="xpFill" id="xpFill" style="width:0%"></div></div>
-  <div id="saveIndicator">💾 SALVO!</div>
-  <div id="minimap"><canvas id="miniCanvas" width="88" height="88"></canvas><div id="minimapLabel">MAPA</div></div>
-  <div id="paragonInfo"><div class="paragonTitle">♾️ PARAGON</div><div class="paragonLevel" id="paragonLevel">Lv1</div><div class="paragonDesc" id="paragonDesc">+1% dano/defesa por nível<br>Infinito!</div></div>
-  <div id="questPanel"><div class="qTitle">📜 MISSÕES • V2</div><div id="questList"></div></div>
-  <div id="bossBar"><div id="bossFill" style="width:100%"></div><div id="bossName">👹 BOSS</div></div>
-  <div id="autoBanner">🚶 Indo... <span class="cancel" id="cancelAuto">CANCELAR ✕</span></div>
-  <div id="joystick"><div class="joyBase" id="joyBase"><div class="joyStick" id="joyStick"></div></div><div class="joyLabel">MOVER • SEGURE E ARRASTE</div></div>
-  <div id="actionBtns">
-    <div class="actBtn attack" id="attackBtn"><span class="icon">⚔️</span><span class="label">ATACAR</span></div>
-    <div class="actBtn potion" id="potionBtn"><span class="icon">🧪</span><span class="label">CURA</span></div>
-    <div class="actBtn tower" id="towerBtn"><span class="icon">🏰</span><span class="label">TORRE</span></div>
-    <div class="actBtn hero" id="charBtn"><span class="icon">👤</span><span class="label">HERÓI</span></div>
-    <div class="actBtn shop" id="shopBtnTop"><span class="icon">🏪</span><span class="label">LOJA</span></div>
-  </div>
-  <div id="spellsBar">
-    <div class="spell" id="spell1"><div class="spellKey">1</div><div class="spellIcon">🔥</div><div class="spellMana">10</div></div>
-    <div class="spell" id="spell2"><div class="spellKey">2</div><div class="spellIcon">❄️</div><div class="spellMana">12</div></div>
-    <div class="spell" id="spell3"><div class="spellKey">3</div><div class="spellIcon">⚡</div><div class="spellMana">15</div></div>
-    <div class="spell" id="spell4"><div class="spellKey">4</div><div class="spellIcon">💚</div><div class="spellMana">20</div></div>
-  </div>
-  <div id="tip">💡 V5 REAL: SEM MENUS NA FRENTE! Joystick gigante esquerda, toque mapa para andar, ⚔️ direita ataca! Gráfico Clash!</div>
 
-  <div id="invDrawer">
-    <div id="invHandle"></div>
-    <div class="invHeader"><div class="invTitle">🎒 INVENTÁRIO V2 • CRAFT GEMAS</div><div class="invWeight" id="invWeight">0/100</div></div>
-    <div style="color:#8d6e63;font-size:8px;font-weight:900;margin-bottom:6px">EQUIPADO - VISUAL MUDA! CLIQUE PRA GEMAS</div>
-    <div class="equipGrid" id="equipGrid"></div>
-    <div style="color:#8d6e63;font-size:8px;font-weight:900;margin:10px 0 6px 0">MOCHILA - DUPLO CLIQUE EQUIPA</div>
-    <div class="invGrid" id="inventory"></div>
-    <div class="invActions">
-      <div class="invBtn use" id="useBtn">USAR</div>
-      <div class="invBtn equip" id="equipBtn">EQUIPAR</div>
-      <div class="invBtn gem" id="gemBtn">💎 GEMAS</div>
-      <div class="invBtn" id="craftBtn" style="background:linear-gradient(#ff8f00,#e65100)">🔨 CRAFT</div>
-      <div class="invBtn" id="dropBtn">DROP</div>
-      <div class="invBtn" id="closeInvBtn">FECHAR ✕</div>
-    </div>
-  </div>
+<div id="topBarV6">
+<div class="topItem">❤️ <span id="hpValV6">120</span></div>
+<div class="topItem">💰 <span id="goldV6">500</span></div>
+<div class="topItem">⭐ Lv<span id="levelV6">1</span></div>
+<div class="topItem" id="posV6">📍 0,0</div>
+</div>
 
-  <div id="gemModal">
-    <div class="gemBox">
-      <div class="gemTitle">💎 GEMAS - 4 SLOTS + CRAFT</div>
-      <div class="gemItem" id="gemItemName">Espada</div>
-      <div class="gemSlots" id="gemSlots"></div>
-      <div style="color:#FFD700;font-size:9px;font-weight:900;margin-top:12px">🎒 SUAS GEMAS (clique no slot vazio depois na gema):</div>
-      <div class="gemInventory" id="gemInventory"></div>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <div class="invBtn" id="closeGemBtn" style="flex:1">FECHAR ✕</div>
-        <div class="invBtn gem" id="removeAllGems" style="flex:1">REMOVER TODAS</div>
-      </div>
-    </div>
-  </div>
+<div id="debugV6">V6 ULTRA JOGÁVEL<br>Joystick: 0,0<br>Pos: 1600,1600<br>Monstros: 0</div>
 
-  <div id="craftModal">
-    <div class="craftBox">
-      <div style="color:#FFD700;font-weight:900;font-size:14px;text-align:center;margin-bottom:12px">🔨 CRAFT DE GEMAS V2</div>
-      <div style="color:#d7ccc8;font-size:9px;line-height:1.4;background:rgba(0,0,0,0.4);padding:8px;border-radius:8px;border:2px solid #000;margin-bottom:10px">
-        • 3 gemas iguais = 1 gema superior (+50% stats)<br>
-        • Superior → Flawless → Perfeita → Lendária<br>
-        • Lendária: +100% stats, brilho dourado!
-      </div>
-      <div id="craftGems" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:200px;overflow-y:auto;background:rgba(0,0,0,0.3);padding:8px;border-radius:12px;border:3px solid #000"></div>
-      <div id="craftResult" style="margin-top:10px;background:linear-gradient(#1a1a1a,#2a2a2a);border:3px solid #FFD700;border-radius:12px;padding:10px;text-align:center;display:none"></div>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <div class="invBtn" id="closeCraftBtn" style="flex:1">FECHAR ✕</div>
-        <div class="invBtn" id="doCraftBtn" style="flex:1;background:linear-gradient(#ff8f00,#e65100)">🔨 CRAFTAR</div>
-      </div>
-    </div>
-  </div>
+<div id="moveHintV6">👇 SEGURE E ARRASTE O JOYSTICK PARA ANDAR 👇<br><span style="font-size:9px">Toque no mapa = vai até lá | Botão vermelho = ataca</span></div>
 
-  <div id="shopModal">
-    <div class="shopHeader">
-      <div class="shopTitle">🏪 MERCADOR V2</div>
-      <div style="display:flex;gap:8px;align-items:center"><div class="shopGold" id="shopGold">💰 500</div><div class="closeBtn" id="closeShop">✕</div></div>
-    </div>
-    <div class="shopTabs">
-      <div class="shopTab active" data-tab="buy">COMPRAR</div>
-      <div class="shopTab" data-tab="sell">VENDER</div>
-      <div class="shopTab" data-tab="gems">💎 GEMAS</div>
-    </div>
-    <div class="shopGrid" id="shopGrid"></div>
-    <div style="margin-top:12px;display:flex;gap:8px">
-      <div class="invBtn" id="rerollShop" style="flex:1;background:linear-gradient(#ff8f00,#e65100)">🎲 REROLL 50💰</div>
-      <div class="invBtn" id="craftFromShop" style="flex:1;background:linear-gradient(#9c27b0,#4a148c)">🔨 CRAFT GEMAS</div>
-    </div>
-  </div>
+<div id="joystickV6">
+<div id="joyBaseV6"><div id="joyStickV6">🕹️</div></div>
+<div id="joyLabelV6">ARRASTE PARA ANDAR</div>
+</div>
 
-  <div id="charScreen">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <div style="color:#FFD700;font-weight:900;font-size:14px">👤 HERÓI V2 • MINIMAPA + TORRE</div>
-      <div id="closeChar" style="width:40px;height:40px;background:#000;border:3px solid #FFD700;border-radius:10px;display:flex;justify-content:center;align-items:center;color:#FFD700;font-weight:900;cursor:pointer">✕</div>
-    </div>
-    <div class="charTop">
-      <div class="charAvatar" id="charAvatar">🪓</div>
-      <div class="charInfo">
-        <div class="charName" id="charName">Barbarian</div>
-        <div class="charLevel" id="charLevel">Lv1 • 0/80 XP</div>
-        <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
-          <span style="font-size:7px;background:#000;padding:2px 6px;border-radius:6px;border:2px solid #5d4037;color:#FFD700;font-weight:900" id="charHp">HP 120</span>
-          <span style="font-size:7px;background:#000;padding:2px 6px;border-radius:6px;border:2px solid #5d4037;color:#64b5f6;font-weight:900" id="charMana">MANA 80</span>
-          <span style="font-size:7px;background:#000;padding:2px 6px;border-radius:6px;border:2px solid #5d4037;color:#4caf50;font-weight:900" id="charStats">Dmg 10</span>
-          <span style="font-size:7px;background:linear-gradient(#9c27b0,#4a148c);padding:2px 6px;border-radius:6px;border:2px solid #FFD700;color:#fff;font-weight:900" id="charParagon">Paragon 0</span>
-        </div>
-      </div>
-    </div>
-    <div class="attrGrid" id="attrGrid"></div>
-    <div style="color:#FFD700;font-size:10px;font-weight:900;margin:12px 0 6px 0">🌟 SKILL TREE • V2 BALANCEADO</div>
-    <div class="skillList" id="skillList"></div>
-    <div style="margin-top:12px;background:rgba(156,39,176,0.2);border:3px solid #9c27b0;border-radius:12px;padding:10px">
-      <div style="color:#ce93d8;font-size:9px;font-weight:900;text-align:center">♾️ V2 MELHORIAS:</div>
-      <div style="color:#bcaaa4;font-size:8px;line-height:1.4;margin-top:6px">
-        • <b>Minimap:</b> Veja monstros, baús, mercador em tempo real<br>
-        • <b>Craft Gemas:</b> 3 iguais = superior (+50% stats) até Lendária<br>
-        • <b>Torre 100:</b> Após Lv20, andares infinitos, loot lendário<br>
-        • <b>Save Auto:</b> Progresso salvo a cada 10s + ao fechar<br>
-        • <b>Visual Equip:</b> Arma e armadura mudam sprite do herói<br>
-        • <b>Colisão melhor:</b> Desliza nas paredes, auto-walk inteligente
-      </div>
-    </div>
-    <div style="margin-top:12px;display:flex;gap:8px">
-      <div class="invBtn" id="invOpenFromChar" style="flex:1">🎒 INVENTÁRIO</div>
-      <div class="invBtn" id="shopBtnFromChar" style="flex:1;background:linear-gradient(#FFD700,#FF8f00);color:#000">🏪 LOJA</div>
-    </div>
-    <div style="margin-top:8px;display:flex;gap:8px">
-      <div class="invBtn" id="saveBtn" style="flex:1;background:linear-gradient(#2e7d32,#1b5e20)">💾 SALVAR</div>
-      <div class="invBtn" id="resetBtn" style="flex:1;background:linear-gradient(#c62828,#7f0000)">🗑️ RESETAR</div>
-    </div>
-  </div>
+<div id="attackV6"><span>⚔️</span><span id="attackLabel">ATACAR</span></div>
 
-  <div id="actTransition">
-    <div style="font-size:48px" id="actIcon">🌲</div>
-    <div style="font-size:24px;font-weight:900;margin:12px 0" id="actTitle">ATO 1</div>
-    <div style="font-size:12px;color:#c9b896;max-width:80%" id="actDesc">Faydark Forest</div>
-    <div style="margin-top:20px;width:60%;height:6px;background:#333;border-radius:3px;overflow:hidden"><div id="actBar" style="height:100%;background:#FFD700;width:0%"></div></div>
-  </div>
-
-  <div id="startScreen">
-    <div class="logo">NORRATH</div>
-    <div class="logo2">CLASH V2</div>
-    <div class="sublogo">V4 JOGÁVEL • JOYSTICK FIX • CHAMPIONS STYLE</div>
-    <div class="badges"><span class="badge">V2 MELHORADO</span><span class="badge">MINIMAPA</span><span class="badge">CRAFT GEMAS</span><span class="badge">TORRE 100</span><span class="badge">SAVE AUTO</span></div>
-    <div style="color:#d7ccc8;font-size:11px;font-weight:700;margin:8px 0">Melhorado enquanto você testa!</div>
-    <div class="classGrid" id="classGrid">
-      <div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">STR alta, fácil upar, tank</div></div>
-      <div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">DEX alta, tiro triplo, crítico</div></div>
-      <div class="classCard" data-class="cleric"><div class="classIcon">✨</div><div class="className">CLERIC</div><div class="classDesc">Cura, buff, imortal</div></div>
-      <div class="classCard" data-class="wizard"><div class="classIcon">🔮</div><div class="className">WIZARD</div><div class="classDesc">17 magias, dano explosivo</div></div>
-      <div class="classCard" data-class="shadowknight" style="grid-column:span 2"><div class="classIcon">💀</div><div class="className">SHADOW KNIGHT - Summon + Life Tap</div></div>
-    </div>
-    <button class="startBtn" id="startBtn">▶ JOGAR V2 - MELHORADO</button>
-    <div id="continueBtn" style="display:none;margin-top:10px;background:linear-gradient(#2e7d32,#1b5e20);color:#fff;border:4px solid #000;padding:12px 32px;border-radius:12px;font-weight:900;font-size:14px;cursor:pointer;box-shadow:0 4px 0 #000">💾 CONTINUAR SAVE</div>
-    <div class="infoBox">
-      <div class="infoTitle">⭐ V2 NOVIDADES:</div>
-      <div class="infoText">
-        ✅ <b>Minimap real-time</b> - Monstros vermelhos, baús amarelos, mercador laranja<br>
-        ✅ <b>Craft Gemas:</b> 3 iguais = superior, até Lendária (+100% stats)<br>
-        ✅ <b>Torre 100:</b> Após Lv20, andares infinitos com loot lendário<br>
-        ✅ <b>Save Auto:</b> A cada 10s + ao fechar, não perde progresso<br>
-        ✅ <b>Visual muda:</b> Arma, elmo, peitoral aparecem no herói<br>
-        ✅ <b>Colisão inteligente:</b> Desliza nas paredes, auto-walk não trava
-      </div>
-    </div>
-  </div>
+<div id="startScreenV6">
+<div class="logoV6">NORRATH</div>
+<div class="subV6">CLASH V6 ULTRA JOGÁVEL</div>
+<div style="color:#FFD700;font-size:10px;font-weight:900;background:#000;padding:6px 12px;border-radius:12px;border:2px solid #FFD700;margin:10px 0">🔥 ZERO MENUS NA FRENTE • SÓ MAPA + JOYSTICK 🔥</div>
+<div class="classGridV6" id="classGridV6">
+<div class="classCardV6 selected" data-class="barbarian"><div class="classIconV6">🪓</div><div class="classNameV6">BARBARIAN</div><div class="classDescV6">Forte, tank, fácil</div></div>
+<div class="classCardV6" data-class="ranger"><div class="classIconV6">🏹</div><div class="classNameV6">RANGER</div><div class="classDescV6">Rápido, crítico</div></div>
+<div class="classCardV6" data-class="cleric"><div class="classIconV6">✨</div><div class="classNameV6">CLERIC</div><div class="classDescV6">Cura, imortal</div></div>
+<div class="classCardV6" data-class="wizard"><div class="classIconV6">🔮</div><div class="classNameV6">WIZARD</div><div class="classDescV6">Magia forte</div></div>
+</div>
+<button class="startBtnV6" id="startBtnV6">▶ JOGAR AGORA - SEM MENUS!</button>
+<div style="margin-top:15px;background:rgba(0,0,0,0.7);padding:10px;border-radius:12px;border:3px solid #000;max-width:400px">
+<div style="color:#FFD700;font-size:9px;font-weight:900;text-align:center;margin-bottom:6px">✅ V6 ULTRA - O QUE MUDOU:</div>
+<div style="color:#d7ccc8;font-size:8px;line-height:1.4;text-align:left">
+• Menu some 100% - removido do DOM, não só escondido<br>
+• Só 3 coisas na tela: mapa, joystick, atacar<br>
+• Joystick gigante fora de qualquer UI, z-index 999<br>
+• Gráfico Clash cartoon brilhante<br>
+• Anda livre 3200x3200 sem travar
+</div>
+</div>
 </div>
 </div>
 
 <script>
-// APK WebView fix - force enable
-console.log('NORRATH CLASH V2 APK - JS running');
-window.onerror=function(m,s,l,c,e){ console.log('JS Error: '+m+' at '+s+':'+l); };
-
-// ===== NORRATH CLASH V2 - MELHORADO =====
+console.log('V6 ULTRA JOGÁVEL - START');
 const W=3200,H=3200;
-let act=1,towerFloor=0,inTower=false;
-let P={x:1600,y:1600,f:1,atk:0,block:0,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,xp:0,maxXp:80,gold:500,attr:{STR:18,INT:10,DEX:12,STA:16},attrPts:0,skillPts:0,paragon:0,paragonXp:0,paragonMaxXp:100};
-let C={x:0,y:0},J={a:0,x:0,y:0},T=null,selInv=-1,selClass='barbarian',inDungeon=false,selGemItem=null,selGemSlot=-1,shopTab='buy',fps=60,frameCount=0,lastFpsTime=0,craftSelected=[];
-let selectedCraftType=null;
+let P={x:1600,y:1600,f:1,atk:0,hp:120,maxHp:120,cls:'barbarian',lvl:1,gold:500,attr:{STR:18,DEX:14}};
+let C={x:0,y:0}, J={a:0,x:0,y:0}, T=null, selClass='barbarian';
+let act=1, gameStarted=false;
 
 const CLASSES={
-  barbarian:{name:'Barbarian',icon:'🪓',base:{STR:18,INT:8,DEX:12,STA:16},hp:30,mana:5,tex:'heavy_metal',skills:[
-    {id:'bash',n:'Bash',d:'Golpe esmagador',icon:'💥',tier:0,mana:10,cd:3,req:[],max:20},
-    {id:'dual',n:'Dual Wield',d:'Dois machados',icon:'🪓',tier:1,mana:15,cd:5,req:['bash'],max:20},
-    {id:'tornado',n:'Tornado Spin',d:'Gira com machados',icon:'🌪️',tier:2,mana:25,cd:8,req:['dual'],max:20},
-  ]},
-  ranger:{name:'Ranger',icon:'🏹',base:{STR:14,INT:10,DEX:18,STA:12},hp:20,mana:10,tex:'leather',skills:[
-    {id:'powershot',n:'Power Shot',d:'Tiro potente',icon:'🎯',tier:0,mana:10,cd:2,req:[],max:20},
-    {id:'triple',n:'Triple Shot',d:'3 flechas',icon:'🏹',tier:1,mana:18,cd:4,req:['powershot'],max:20},
-  ]},
-  cleric:{name:'Cleric',icon:'✨',base:{STR:12,INT:16,DEX:10,STA:16},hp:22,mana:18,tex:'holy_cloth',skills:[
-    {id:'holy',n:'Holy Strike',d:'Golpe sagrado',icon:'✨',tier:0,mana:12,cd:3,req:[],max:20},
-    {id:'heal',n:'Blessed Healing',d:'Cura forte',icon:'💚',tier:1,mana:20,cd:5,req:['holy'],max:20},
-  ]},
-  wizard:{name:'Wizard',icon:'🔮',base:{STR:8,INT:20,DEX:14,STA:10},hp:15,mana:30,tex:'arcane_cloth',skills:[
-    {id:'fire',n:'Fire Bolt',d:'Bola de fogo',icon:'🔥',tier:0,mana:10,cd:1.5,req:[],max:20},
-    {id:'frost',n:'Frost Nova',d:'Explosão gelo',icon:'❄️',tier:0,mana:15,cd:4,req:[],max:20},
-  ]},
-  shadowknight:{name:'Shadow Knight',icon:'💀',base:{STR:16,INT:16,DEX:10,STA:14},hp:24,mana:14,tex:'bone_shadow',skills:[
-    {id:'disease',n:'Disease Bolt',d:'Raio doente',icon:'🤢',tier:0,mana:12,cd:2.5,req:[],max:20},
-    {id:'skeleton',n:'Summon Skeleton',d:'Invoca esqueleto',icon:'🦴',tier:1,mana:25,cd:15,req:['disease'],max:20},
-  ]},
+barbarian:{name:'Barbarian',icon:'🪓',base:{STR:18,DEX:12}},
+ranger:{name:'Ranger',icon:'🏹',base:{STR:14,DEX:18}},
+cleric:{name:'Cleric',icon:'✨',base:{STR:12,DEX:10}},
+wizard:{name:'Wizard',icon:'🔮',base:{STR:8,DEX:14}},
 };
 
-let playerSkills={};
-function initSkills(){playerSkills={}; CLASSES[P.cls].skills.forEach(s=>playerSkills[s.id]={lvl:0,cd:0});}
-initSkills();
-
-// TEXTURE ATLAS - MELHORADO COM MAIS DETALHES CLASH STYLE
+// TEXTURES CLASH
 const texCanvas=document.getElementById('texAtlas');
 const texCtx=texCanvas.getContext('2d');
 let textures={};
 function createTexture(name,x,y,w,h,drawFn){textures[name]={x,y,w,h};texCtx.save();texCtx.translate(x,y);drawFn(texCtx,w,h);texCtx.restore();}
 function genTextures(){
-  texCtx.fillStyle='#000'; texCtx.fillRect(0,0,512,512);
-  // V5 CLASH STYLE TEXTURES - mais cartoon, brilhante, Clash of Clans
-
-  createTexture('grass_faydark',0,0,64,64,(ctx,w,h)=>{
-    // Clash style grass - bright, cartoon, with flowers
-    ctx.fillStyle='#7CB342'; ctx.fillRect(0,0,w,h);
-    // Darker grass patches
-    for(let i=0;i<60;i++){
-      ctx.fillStyle=i%4==0?'#8BC34A':i%4==1?'#689F38':i%4==2?'#9CCC65':'#558B2F';
-      let x=Math.random()*w, y=Math.random()*h, s=2+Math.random()*4;
-      ctx.fillRect(x,y,s,s);
-    }
-    // Clash flowers small
-    for(let i=0;i<8;i++){
-      let x=Math.random()*w, y=Math.random()*h;
-      ctx.fillStyle=['#FFEB3B','#FF9800','#E91E63','#FFFFFF'][Math.floor(Math.random()*4)];
-      ctx.beginPath(); ctx.arc(x,y,1.5,0,6.28); ctx.fill();
-      ctx.fillStyle='#4CAF50'; ctx.fillRect(x-0.5,y+1,1,2);
-    }
-    // Light shine
-    ctx.fillStyle='rgba(255,255,255,0.15)'; for(let i=0;i<12;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,Math.random()*1.5,0,6.28); ctx.fill();}
-  });
-  createTexture('stone',64,0,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#616161'; ctx.fillRect(0,0,w,h);
-    for(let i=0;i<60;i++){let c=90+Math.random()*90; ctx.fillStyle=`rgb(${c},${c},${c})`; ctx.fillRect(Math.random()*w,Math.random()*h,3+Math.random()*10,2+Math.random()*8);}
-    ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.lineWidth=1; ctx.strokeRect(0,0,w,h);
-  });
-  createTexture('wood',128,0,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#5d4037'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#8d6e63'; for(let i=0;i<h;i+=8){ctx.fillRect(0,i,w,2); ctx.fillStyle=i%2?'#6d4c41':'#8d6e63';}
-    ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,w,3); ctx.fillRect(0,h-3,w,3);
-  });
-  createTexture('roof',192,0,64,64,(ctx,w,h)=>{
-    // Clash of Clans style roof - bright red/orange, cartoon
-    ctx.fillStyle='#E53935'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#B71C1C'; for(let y=0;y<h;y+=10){for(let x=0;x<w;x+=14){ctx.fillRect(x+1,y+1,11,7);}}
-    ctx.fillStyle='#FF5252'; for(let y=0;y<h;y+=10){for(let x=0;x<w;x+=14){ctx.fillRect(x+1,y+1,11,2);}}
-    ctx.fillStyle='#FF8A65'; ctx.fillRect(0,0,w,3);
-    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(0,0,w,h);
-  });
-  createTexture('heavy_metal',256,0,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#424242'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#757575'; ctx.fillRect(4,4,w-8,8); ctx.fillRect(4,h-12,w-8,8);
-    ctx.fillStyle='#9e9e9e'; ctx.fillRect(6,6,w-12,2); ctx.fillRect(6,h-10,w-12,2);
-    ctx.fillStyle='rgba(255,215,0,0.3)'; ctx.fillRect(0,0,w,4);
-  });
-  createTexture('leather',320,0,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#8d6e63'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#5d4037'; for(let i=0;i<40;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,1+Math.random()*2,0,6.28); ctx.fill();}
-    ctx.strokeStyle='#3e2723'; ctx.lineWidth=1; ctx.strokeRect(2,2,w-4,h-4);
-  });
-  createTexture('holy_cloth',384,0,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#fff8e1'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#FFD700'; ctx.fillRect(w/2-2,0,4,h); ctx.fillRect(0,h/2-2,w,4);
-    ctx.fillStyle='rgba(255,215,0,0.2)'; ctx.beginPath(); ctx.arc(w/2,h/2,20,0,6.28); ctx.fill();
-  });
-  createTexture('arcane_cloth',0,64,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#1a237e'; ctx.fillRect(0,0,w,h);
-    for(let i=0;i<30;i++){ctx.fillStyle=`rgba(100,150,255,${0.2+Math.random()*0.6})`; ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,1+Math.random()*4,0,6.28); ctx.fill();}
-    ctx.fillStyle='#3949ab'; ctx.fillRect(0,0,w,3); ctx.fillRect(0,h-3,w,3);
-  });
-  createTexture('bone_shadow',64,64,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#212121'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#e0d5c7'; ctx.fillRect(10,10,w-20,8); ctx.fillRect(10,30,w-20,8);
-    ctx.fillStyle='#9e9e9e'; ctx.fillRect(12,12,w-24,2);
-  });
-  createTexture('foliage',128,64,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#1b5e20'; ctx.beginPath(); ctx.arc(w/2+2,h/2+2,w/2-2,0,6.28); ctx.fill();
-    ctx.fillStyle='#2e7d32'; ctx.beginPath(); ctx.arc(w/2,h/2,w/2-4,0,6.28); ctx.fill();
-    ctx.fillStyle='#4caf50'; ctx.beginPath(); ctx.arc(w/2-4,h/2-4,8,0,6.28); ctx.fill();
-  });
-  createTexture('trunk',192,64,32,64,(ctx,w,h)=>{
-    ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#5d4037'; ctx.fillRect(4,0,w-8,h);
-    ctx.fillStyle='#8d6e63'; ctx.fillRect(6,0,2,h);
-  });
-  createTexture('wall',256,64,64,64,(ctx,w,h)=>{
-    // Clash style wall - beige cartoon with strong outline
-    ctx.fillStyle='#FFF8E1'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#FFECB3'; ctx.fillRect(3,3,w-6,h-6);
-    ctx.fillStyle='#FFE082'; ctx.fillRect(0,0,w,5); ctx.fillRect(0,h-5,w,5); ctx.fillRect(0,0,5,h); ctx.fillRect(w-5,0,5,h);
-    ctx.fillStyle='#D7CCC8'; for(let y=0;y<h;y+=14){for(let x=0;x<w;x+=18){ctx.fillRect(x+4,y+8,12,2);}}
-    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(0,0,w,h);
-  });
-  createTexture('dungeon_floor',320,64,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#4e342e'; ctx.fillRect(2,2,w-4,h-4);
-    ctx.fillStyle='#5d4037'; ctx.fillRect(4,4,w-8,2); ctx.fillRect(4,h-6,w-8,2);
-    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(0,0,w,8); ctx.fillRect(0,h-8,w,8);
-  });
-  createTexture('weapon_metal',384,64,64,16,(ctx,w,h)=>{
-    ctx.fillStyle='#b0bec5'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#eceff1'; ctx.fillRect(0,0,w,3);
-    ctx.fillStyle='#78909c'; ctx.fillRect(0,h-3,w,3);
-  });
-  createTexture('grass_desert',0,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#c19a5a'; ctx.fillRect(0,0,w,h); for(let i=0;i<30;i++){ctx.fillStyle='#d7b26e'; ctx.fillRect(Math.random()*w,Math.random()*h,2,2);}});
-  createTexture('water',64,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#0277bd'; ctx.fillRect(0,0,w,h); ctx.fillStyle='rgba(255,255,255,0.2)'; for(let i=0;i<10;i++){ctx.fillRect(Math.random()*w,Math.random()*h,10,2);}});
-  createTexture('lava',128,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#bf360c'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#ff6f00'; for(let i=0;i<20;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,2+Math.random()*6,0,6.28); ctx.fill();}});
-  createTexture('ice',192,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#e1f5fe'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#81d4fa'; for(let i=0;i<20;i++){ctx.fillRect(Math.random()*w,Math.random()*h,3,3);}});
+texCtx.fillStyle='#000'; texCtx.fillRect(0,0,512,512);
+createTexture('grass',0,0,64,64,(ctx,w,h)=>{
+ctx.fillStyle='#7CB342'; ctx.fillRect(0,0,w,h);
+for(let i=0;i<70;i++){ctx.fillStyle=i%4==0?'#8BC34A':i%4==1?'#689F38':i%4==2?'#9CCC65':'#558B2F'; ctx.fillRect(Math.random()*w,Math.random()*h,2+Math.random()*3,2+Math.random()*3);}
+for(let i=0;i<10;i++){let x=Math.random()*w,y=Math.random()*h; ctx.fillStyle=['#FFEB3B','#FF9800','#E91E63','#fff'][Math.floor(Math.random()*4)]; ctx.beginPath(); ctx.arc(x,y,1.8,0,6.28); ctx.fill();}
+});
+createTexture('stone',64,0,64,64,(ctx,w,h)=>{ctx.fillStyle='#9e9e9e'; ctx.fillRect(0,0,w,h); for(let i=0;i<50;i++){let c=100+Math.random()*80; ctx.fillStyle=`rgb(${c},${c},${c})`; ctx.fillRect(Math.random()*w,Math.random()*h,4+Math.random()*8,3+Math.random()*6);} ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(0,0,w,h);});
+createTexture('wall',128,0,64,64,(ctx,w,h)=>{ctx.fillStyle='#FFF8E1'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#FFECB3'; ctx.fillRect(4,4,w-8,h-8); ctx.fillStyle='#FFE082'; ctx.fillRect(0,0,w,6); ctx.fillRect(0,h-6,w,6); ctx.fillRect(0,0,6,h); ctx.fillRect(w-6,0,6,h); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(0,0,w,h);});
+createTexture('roof',192,0,64,64,(ctx,w,h)=>{ctx.fillStyle='#E53935'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#B71C1C'; for(let y=0;y<h;y+=10){for(let x=0;x<w;x+=14){ctx.fillRect(x+1,y+1,11,7);}} ctx.fillStyle='#FF5252'; for(let y=0;y<h;y+=10){ctx.fillRect(x+1,y+1,11,2);} ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(0,0,w,h);});
+createTexture('trunk',256,0,32,64,(ctx,w,h)=>{ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#5d4037'; ctx.fillRect(4,0,w-8,h);});
+createTexture('foliage',288,0,64,64,(ctx,w,h)=>{ctx.fillStyle='#1b5e20'; ctx.beginPath(); ctx.arc(w/2+2,h/2+2,w/2-2,0,6.28); ctx.fill(); ctx.fillStyle='#2e7d32'; ctx.beginPath(); ctx.arc(w/2,h/2,w/2-5,0,6.28); ctx.fill(); ctx.fillStyle='#4caf50'; ctx.beginPath(); ctx.arc(w/2-5,h/2-5,10,0,6.28); ctx.fill();});
 }
 genTextures();
 
-const GEM_TYPES=[
-  {id:'ruby',name:'Rubi Flamejante',icon:'🔴',color:'#d32f2f',stats:{fire:8,dmg:3},desc:'+8 fogo',price:120,tier:1},
-  {id:'sapphire',name:'Safira Gélida',icon:'🔵',color:'#1976d2',stats:{ice:8,def:3},desc:'+8 gelo',price:120,tier:1},
-  {id:'emerald',name:'Esmeralda Vida',icon:'🟢',color:'#388e3c',stats:{hp:15,STA:2},desc:'+15 HP',price:140,tier:1},
-  {id:'diamond',name:'Diamante Crítico',icon:'💎',color:'#e1f5fe',stats:{crit:8,dmg:4},desc:'+8% crit',price:200,tier:1},
-  {id:'topaz',name:'Topázio Veloz',icon:'🟡',color:'#fbc02d',stats:{speed:5,DEX:2},desc:'+5 vel',price:150,tier:1},
-];
-const GEM_TIERS=['',' Superior',' Flawless',' Perfeita',' Lendária'];
-const GEM_TIER_MULT=[1,1.5,2.2,3,5];
-
-function genGem(tier=1, specificType=null){
-  let t=specificType?GEM_TYPES.find(g=>g.id===specificType):GEM_TYPES[Math.floor(Math.random()*GEM_TYPES.length)];
-  let mult=GEM_TIER_MULT[tier-1]||1;
-  let stats={}; Object.entries(t.stats).forEach(([k,v])=>stats[k]=Math.floor(v*mult));
-  return {id:'gem_'+Math.random().toString(36).substr(2,6),name:t.name+GEM_TIERS[tier-1],icon:t.icon,type:'gem',gemType:t.id,color:t.color,stats,desc:t.desc+` x${mult.toFixed(1)}`,price:Math.floor(t.price*mult),weight:1,count:1,rarity:tier>=4?'legendary':tier>=3?'rare':tier>=2?'magic':'common',tier};
-}
-
-let equip={weapon:null,shield:null,head:null,chest:null,arms:null,legs:null,feet:null,ring1:null,ring2:null,amulet:null};
-let inv=[];
-
-function initInv(){
-  inv=[
-    genItem('weapon','common',1), genItem('shield','common',1),
-    {id:'potion_hp',name:'Poção Vida',icon:'🧪',type:'potion',rarity:'common',stats:{hp:50},count:8,weight:1,level:1},
-    {id:'potion_mana',name:'Poção Mana',icon:'🔮',type:'potion',rarity:'common',stats:{mana:50},count:6,weight:1,level:1},
-    genGem(1), genGem(1),
-    genItem('head','common',1), genItem('chest','common',1),
-    {id:'empty',name:'',icon:'',type:'empty',count:0,weight:0},{id:'empty',name:'',icon:'',type:'empty',count:0,weight:0},
-  ];
-  // Fill rest empty
-  while(inv.length<20) inv.push({id:'empty',name:'',icon:'',type:'empty',count:0,weight:0});
-}
-
-const PREFIXES=[{n:'Forte',s:{STR:2}},{n:'Sábio',s:{INT:2}},{n:'Ágil',s:{DEX:2}},{n:'Robusto',s:{STA:3}},{n:'Mortal',s:{crit:3}}];
-const SUFFIXES=[{n:'do Poder',s:{dmg:4}},{n:'da Proteção',s:{def:4}},{n:'da Vida',s:{hp:10}},{n:'da Mana',s:{mana:10}},{n:'da Fúria',s:{dmg:3,crit:2}}];
-const RARITIES={common:{c:'#9e9e9e',m:1}, magic:{c:'#42a5f5',m:1.5}, rare:{c:'#FFD700',m:2.2}, legendary:{c:'#ff6d00',m:3.5}};
-
-function genItem(slotType, rarity, lvl){
-  const rar=rarity||(['common','common','magic','rare'][Math.floor(Math.random()*4)]);
-  const mult=RARITIES[rar].m;
-  let base={weapon:{icon:['🗡️','🪓','🏹'][Math.floor(Math.random()*3)],w:8,dmg:5+Math.floor(lvl*2*mult)}, shield:{icon:'🛡️',w:6,def:3+Math.floor(lvl*1.5*mult)}, head:{icon:'⛑️',w:3,def:2+Math.floor(lvl*mult)}, chest:{icon:'🦺',w:6,def:4+Math.floor(lvl*1.2*mult)}, arms:{icon:'💪',w:3,def:1+Math.floor(lvl*mult)}, legs:{icon:'🦵',w:4,def:2+Math.floor(lvl*mult)}, feet:{icon:'👢',w:3,def:1+Math.floor(lvl*mult)}, ring:{icon:'💍',w:1,stats:{crit:2}}, amulet:{icon:'📿',w:1,stats:{hp:5}}};
-  let type=slotType==='weapon'||slotType==='shield'||slotType==='head'||slotType==='chest'||slotType==='arms'||slotType==='legs'||slotType==='feet'?slotType:(slotType==='ring1'||slotType==='ring2'?'ring':'amulet');
-  let b=base[type]||base.ring;
-  let pre=Math.random()<0.6?PREFIXES[Math.floor(Math.random()*PREFIXES.length)]:null;
-  let suf=Math.random()<0.6?SUFFIXES[Math.floor(Math.random()*SUFFIXES.length)]:null;
-  let name=`${pre?pre.n+' ':''}${type.charAt(0).toUpperCase()+type.slice(1)}${suf?' '+suf.n:''}`;
-  let stats={...b}; if(pre) Object.assign(stats,pre.s); if(suf) Object.assign(stats,suf.s);
-  if(b.dmg) stats.dmg=(b.dmg||0)+Math.floor(Math.random()*3*mult);
-  if(b.def) stats.def=(b.def||0)+Math.floor(Math.random()*2*mult);
-  return {id:Math.random().toString(36).substr(2,6),name,icon:b.icon,type,slot:slotType,rarity:rar,stats,gems:[null,null,null,null],level:Math.max(1,lvl+Math.floor(Math.random()*3)-1),weight:b.w||2,count:1};
-}
-
-const ACTS=[
-  {id:1,name:'Faydark Forest',icon:'🌲',desc:'Floresta élfica',color:'#2e7d32',tex:'grass_faydark',monsters:['orc','goblin'],boss:'Orc Rei'},
-  {id:2,name:'Caverna Goblin',icon:'🕳️',desc:'Cavernas escuras',color:'#5d4037',tex:'stone',monsters:['goblin','bat'],boss:'Goblin Xamã'},
-  {id:3,name:'Deserto Ardente',icon:'🏜️',desc:'Deserto',color:'#ff8f00',tex:'grass_desert',monsters:['scorpion','skeleton'],boss:'Escorpião Rei'},
-  {id:4,name:'Formigueiro',icon:'🐜',desc:'Formigueiro',color:'#4e342e',tex:'stone',monsters:['ant','beetle'],boss:'Rainha Formiga'},
-  {id:5,name:'Cidade Dark Elf',icon:'🏰',desc:'Fortaleza final',color:'#4a148c',tex:'dungeon_floor',monsters:['darkelf','demon'],boss:'Lorde Dark Elf'},
-];
-
-let objs=[], mons=[], chests=[], dungeonWalls=[], projectiles=[], particles=[], summons=[], merchants=[], lootBeams=[];
-
+let objs=[], mons=[], chests=[], dungeonWalls=[];
 function genWorld(){
-  objs=[]; mons=[]; chests=[]; dungeonWalls=[]; projectiles=[]; particles=[]; summons=[]; merchants=[]; lootBeams=[];
-  // Houses with better placement avoiding overlap
-  for(let i=0;i<8;i++){
-    let tries=0,x,y,ok;
-    do{
-      x=400+Math.random()*2400; y=400+Math.random()*2400;
-      ok=!objs.some(o=>Math.hypot(o.x-x,o.y-y)<150);
-      tries++;
-    }while(!ok&&tries<20);
-    objs.push({x,y,t:'house',w:80,h:70,collision:true});
-  }
-  for(let i=0;i<40;i++){let x=Math.random()*W, y=Math.random()*H; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<100)) objs.push({x,y,t:'tree',w:32,h:32,collision:true});}
-  for(let i=0;i<25;i++){let x=Math.random()*W, y=Math.random()*H; objs.push({x,y,t:'rock',w:24,h:24,collision:true});}
-  merchants.push({x:1000,y:1000,act:act,shop:genShopInventory()});
-  if(act>1) merchants.push({x:2000+Math.random()*800,y:2000+Math.random()*800,act:act,shop:genShopInventory()});
-  let count=10+act*3;
-  for(let i=0;i<count;i++){let x=300+Math.random()*2600, y=300+Math.random()*2600; let type=ACTS[act-1].monsters[Math.floor(Math.random()*2)]; mons.push({x,y,type,hp:60+act*20,max:60+act*20,vx:0,vy:0,w:0,atkCd:0,alive:true,level:act});}
-  let bx=1600+Math.cos(act)*800, by=1600+Math.sin(act)*800;
-  mons.push({x:bx,y:by,type:'boss',bossName:ACTS[act-1].boss,hp:300+act*100,max:300+act*100,vx:0,vy:0,w:0,atkCd:0,alive:true,isBoss:true,level:act+2});
-  for(let i=0;i<8;i++){let x=200+Math.random()*2800, y=200+Math.random()*2800; let isGem=Math.random()<0.4; let loot=isGem?genGem(Math.random()<0.2?2:1):genItem('weapon',['magic','rare'][Math.floor(Math.random()*2)],act+Math.floor(Math.random()*3)); chests.push({x,y,opened:false,loot}); if(loot.rarity==='rare'||loot.rarity==='legendary'||loot.tier>1) lootBeams.push({x,y,rarity:loot.rarity||'magic',color:loot.color||RARITIES[loot.rarity]?.c||'#42a5f5'});}
-  if(act>1){objs.push({x:1600,y:1600,t:'dungeon',w:90,h:90,collision:true,isDungeon:true,dungeonAct:act});}
-  if(P.lvl>=20 && !inTower){objs.push({x:2600,y:400,t:'tower',w:80,h:100,collision:true,isTower:true});}
+objs=[]; mons=[]; chests=[]; dungeonWalls=[];
+for(let i=0;i<10;i++){let x=400+Math.random()*2400,y=400+Math.random()*2400; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<180)) objs.push({x,y,t:'house',w:90,h:80});}
+for(let i=0;i<50;i++){let x=Math.random()*W,y=Math.random()*H; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<90)) objs.push({x,y,t:'tree',w:36,h:36});}
+for(let i=0;i<30;i++){let x=Math.random()*W,y=Math.random()*H; objs.push({x,y,t:'rock',w:28,h:28});}
+for(let i=0;i<12;i++){let x=300+Math.random()*2600,y=300+Math.random()*2600; mons.push({x,y,type:['orc','goblin'][Math.floor(Math.random()*2)],hp:60,max:60,alive:true});}
+mons.push({x:2000,y:2000,type:'boss',bossName:'ORC REI',hp:300,max:300,alive:true,isBoss:true});
+for(let i=0;i<10;i++){let x=200+Math.random()*2800,y=200+Math.random()*2800; chests.push({x,y,opened:false});}
+}
+function checkCollision(nx,ny,r=20){
+for(let o of objs){if(nx+r>o.x-o.w/2 && nx-r<o.x+o.w/2 && ny+r>o.y-o.h/2 && ny-r<o.y+o.h/2) return true;}
+return false;
+}
+function checkSlide(px,py,nx,ny,r=20){
+if(!checkCollision(nx,ny,r)) return {x:nx,y:ny};
+if(!checkCollision(nx,py,r)) return {x:nx,y:py};
+if(!checkCollision(px,ny,r)) return {x:px,y:ny};
+return {x:px,y:py};
 }
 
-function genShopInventory(){
-  let items=[];
-  for(let i=0;i<5;i++){items.push(genItem(['weapon','head','chest','shield','legs'][i%5],['magic','rare'][Math.floor(Math.random()*2)],act+Math.floor(Math.random()*2)));}
-  for(let i=0;i<5;i++){items.push(genGem(Math.random()<0.3?2:1));}
-  items.push({id:'potion_hp',name:'Poção Vida',icon:'🧪',type:'potion',rarity:'common',stats:{hp:80},count:1,weight:1,level:1,price:25});
-  items.push({id:'potion_mana',name:'Poção Mana',icon:'🔮',type:'potion',rarity:'common',stats:{mana:80},count:1,weight:1,level:1,price:25});
-  return items;
-}
-
-function genDungeon(actId){
-  dungeonWalls=[]; objs=[]; mons=[]; chests=[]; merchants=[]; lootBeams=[];
-  inDungeon=true; inTower=false;
-  let rooms=[]; let roomCount=6+actId;
-  for(let i=0;i<roomCount;i++){
-    let rw=220+Math.random()*220, rh=170+Math.random()*170; let rx=200+Math.random()*(W-rw-400), ry=200+Math.random()*(H-rh-400);
-    rooms.push({x:rx,y:ry,w:rw,h:rh});
-    dungeonWalls.push({x:rx,y:ry,w:rw,h:12},{x:rx,y:ry+rh-12,w:rw,h:12},{x:rx,y:ry,w:12,h:rh},{x:rx+rw-12,y:ry,w:12,h:rh});
-    let mCount=2+Math.floor(Math.random()*3);
-    for(let j=0;j<mCount;j++){let mx=rx+40+Math.random()*(rw-80), my=ry+40+Math.random()*(rh-80); mons.push({x:mx,y:my,type:ACTS[actId-1].monsters[Math.floor(Math.random()*2)],hp:50+actId*15,max:50+actId*15,vx:0,vy:0,w:0,atkCd:0,alive:true,level:actId});}
-    if(Math.random()<0.8){let loot=Math.random()<0.4?genGem(Math.random()<0.3?2:1):genItem('weapon',['magic','rare','legendary'][Math.floor(Math.random()*3)],actId+2); chests.push({x:rx+rw/2,y:ry+rh/2,opened:false,loot}); if(loot.rarity==='rare'||loot.rarity==='legendary') lootBeams.push({x:rx+rw/2,y:ry+rh/2,rarity:loot.rarity,color:RARITIES[loot.rarity].c});}
-  }
-  for(let i=0;i<rooms.length-1;i++){let r1=rooms[i], r2=rooms[i+1]; let x1=r1.x+r1.w/2, y1=r1.y+r1.h/2, x2=r2.x+r2.w/2, y2=r2.y+r2.h/2; dungeonWalls.push({x:Math.min(x1,x2),y:y1-6,w:Math.abs(x2-x1),h:12},{x:x2-6,y:Math.min(y1,y2),w:12,h:Math.abs(y2-y1)});}
-  let last=rooms[rooms.length-1]; objs.push({x:last.x+last.w/2,y:last.y+last.h/2,t:'exit',w:60,h:60,collision:false});
-  mons.push({x:last.x+last.w/2+50,y:last.y+last.h/2,type:'boss',bossName:ACTS[actId-1].boss+' da Dungeon',hp:400+actId*120,max:400+actId*120,vx:0,vy:0,w:0,atkCd:0,alive:true,isBoss:true,level:actId+3});
-}
-
-function genTower(floor){
-  dungeonWalls=[]; objs=[]; mons=[]; chests=[]; merchants=[]; lootBeams=[];
-  inTower=true; inDungeon=false; towerFloor=floor;
-  let size=400+floor*10;
-  let rx=W/2-size/2, ry=H/2-size/2;
-  dungeonWalls.push({x:rx,y:ry,w:size,h:16},{x:rx,y:ry+size-16,w:size,h:16},{x:rx,y:ry,w:16,h:size},{x:rx+size-16,y:ry,w:16,h:size});
-  // Add inner walls for maze
-  for(let i=0;i<3+Math.floor(floor/5);i++){
-    let wx=rx+60+Math.random()*(size-120), wy=ry+60+Math.random()*(size-120), ww=80+Math.random()*120, hh=16;
-    if(Math.random()<0.5){ww=16; hh=80+Math.random()*120;}
-    dungeonWalls.push({x:wx,y:wy,w:ww,h:hh});
-  }
-  let mCount=4+Math.floor(floor*0.8);
-  for(let i=0;i<mCount;i++){
-    let mx=rx+40+Math.random()*(size-80), my=ry+40+Math.random()*(size-80);
-    let types=['orc','goblin','scorpion','darkelf','demon']; let type=types[Math.min(floor-1,4)];
-    mons.push({x:mx,y:my,type,hp:80+floor*25,max:80+floor*25,vx:0,vy:0,w:0,atkCd:0,alive:true,level:floor, isTower:true});
-  }
-  // Boss every 5 floors
-  if(floor%5===0){
-    mons.push({x:W/2+60,y:H/2,type:'boss',bossName:`Guardião Torre ${floor}`,hp:500+floor*150,max:500+floor*150,vx:0,vy:0,w:0,atkCd:0,alive:true,isBoss:true,level:floor+3,isTower:true});
-  }
-  let chestCount=2+Math.floor(floor/5);
-  for(let i=0;i<chestCount;i++){
-    let cx=rx+60+Math.random()*(size-120), cy=ry+60+Math.random()*(size-120);
-    let tier=Math.floor(floor/10)+1; let isGem=Math.random()<0.5;
-    let loot=isGem?genGem(Math.min(5,Math.max(1,tier))):genItem(['weapon','chest','head'][Math.floor(Math.random()*3)],floor>20?'legendary':floor>10?'rare':'magic',floor+Math.floor(Math.random()*3));
-    chests.push({x:cx,y:cy,opened:false,loot});
-    if(loot.rarity==='legendary'||loot.tier>=3) lootBeams.push({x:cx,y:cy,rarity:loot.rarity||'legendary',color:'#ff6d00'});
-  }
-  objs.push({x:W/2,y:H/2+size/2-40,t:'exit',w:60,h:60,collision:false,isTowerExit:true});
-  if(floor>1) objs.push({x:W/2,y:H/2-size/2+40,t:'exit',w:60,h:60,collision:false,isTowerPrev:true});
-  merchants.push({x:W/2-80,y:H/2,act:act,shop:genShopInventory()});
-}
-
-let quests=[];
-function initQuests(){
-  quests=[
-    {id:'q1',t:'Fale com Mercador',x:1000,y:1000,i:'🏪',done:0,r:80,act:1,obj:'Fale mercador',progress:0,total:1},
-    {id:'q2',t:'Mate 5 Orcs',x:0,y:0,i:'👹',done:0,r:120,act:1,obj:'Orcs mortos',progress:0,total:5,killType:'orc'},
-    {id:'q3',t:'Colete 2 Gemas',x:0,y:0,i:'💎',done:0,r:100,act:1,obj:'Gemas',progress:0,total:2,gem:true},
-    {id:'q4',t:'Derrote Orc Rei',x:0,y:0,i:'👑',done:0,r:250,act:1,obj:'Boss',progress:0,total:1,isBoss:true},
-    {id:'q5',t:'Entre na Caverna',x:1600,y:1600,i:'🕳️',done:0,r:100,act:2,obj:'Entrar dungeon',progress:0,total:1,isDungeon:true},
-    {id:'q6',t:'Mate Goblins',x:0,y:0,i:'👺',done:0,r:140,act:2,obj:'Goblins',progress:0,total:6,killType:'goblin'},
-    {id:'q7',t:'Ache 3 Baús',x:0,y:0,i:'📦',done:0,r:180,act:2,obj:'Baús',progress:0,total:3,chest:true},
-    {id:'q8',t:'Boss Caverna',x:0,y:0,i:'💀',done:0,r:300,act:2,obj:'Boss',progress:0,total:1,isBoss:true},
-    {id:'q9',t:'Deserto - Escorpiões',x:0,y:0,i:'🦂',done:0,r:200,act:3,obj:'Escorpiões',progress:0,total:5,killType:'scorpion'},
-    {id:'q10',t:'Formigueiro - Rainha',x:0,y:0,i:'🐜',done:0,r:350,act:4,obj:'Boss',progress:0,total:1,isBoss:true},
-    {id:'q11',t:'Cidade Dark Elf',x:0,y:0,i:'🏰',done:0,r:400,act:5,obj:'Chegar final',progress:0,total:1},
-    {id:'q12',t:'LORDE FINAL',x:0,y:0,i:'😈',done:0,r:1000,act:5,obj:'Boss final',progress:0,total:1,isBoss:true,final:true},
-  ];
-  if(P.lvl>=20){
-    quests.push({id:'qtower',t:`Torre Andar ${towerFloor+1}`,x:2600,y:400,i:'🏰',done:0,r:100+towerFloor*20,act:act,obj:`Torre ${towerFloor+1}`,progress:0,total:1,isTower:true});
-  }
-}
-
-function checkCollision(nx,ny,radius=18){
-  for(let o of objs){if(!o.collision) continue; if(nx+radius>o.x-o.w/2 && nx-radius<o.x+o.w/2 && ny+radius>o.y-o.h/2 && ny-radius<o.y+o.h/2) return true;}
-  for(let w of dungeonWalls){if(nx+radius>w.x && nx-radius<w.x+w.w && ny+radius>w.y && ny-radius<w.y+w.h) return true;}
-  return false;
-}
-
-// Melhor colisão com deslizamento
-function checkCollisionSlide(px,py,nx,ny,radius=18){
-  if(!checkCollision(nx,ny,radius)) return {x:nx,y:ny};
-  // Tenta deslizar em X
-  if(!checkCollision(nx,py,radius)) return {x:nx,y:py};
-  // Tenta deslizar em Y
-  if(!checkCollision(px,ny,radius)) return {x:px,y:ny};
-  return {x:px,y:py};
-}
-
-function rq(){
-  const l=document.getElementById('questList'); l.innerHTML='';
-  let visible=quests.filter(q=>q.act===act && !q.done);
-  if(inTower) visible=quests.filter(q=>q.isTower && !q.done);
-  visible.slice(0,4).forEach(q=>{
-    const d=document.createElement('div'); d.className='qItem';
-    const dist=q.x?Math.round(Math.hypot(P.x-q.x,P.y-q.y)/10):0;
-    d.innerHTML=`<div class="qIcon">${q.i}</div><div class="qInfo"><div class="qName">${q.t}</div><div class="qDist">${q.progress}/${q.total} • ${q.r}💰 ${dist?dist+'m':''}</div></div><div class="qProgress"><div class="qProgFill" style="width:${(q.progress/q.total*100)}%"></div></div>`;
-    if(q.x) d.onclick=()=>{T={x:q.x,y:q.y,id:q.id}; document.getElementById('autoBanner').style.display='block'; document.getElementById('autoBanner').innerHTML=`🚶 ${q.t}... <span class="cancel" id="cancelAuto">CANCELAR ✕</span>`; document.getElementById('cancelAuto').onclick=()=>{T=null;document.getElementById('autoBanner').style.display='none'};};
-    l.appendChild(d);
-  });
-}
-
-function calcTotalStats(){
-  let total={dmg:0,def:0,STR:0,INT:0,DEX:0,STA:0,hp:0,mana:0,fire:0,ice:0,light:0,crit:0,speed:0,lifesteal:0};
-  Object.values(equip).forEach(it=>{
-    if(!it) return;
-    Object.entries(it.stats||{}).forEach(([k,v])=>{if(total[k]!==undefined) total[k]+=v; else if(k==='dmg'||k==='def') total[k]+=v;});
-    (it.gems||[]).forEach(g=>{if(g){Object.entries(g.stats||{}).forEach(([k,v])=>{if(total[k]!==undefined) total[k]+=v; else total[k]=v;});}});
-  });
-  total.dmg+=Math.floor(P.paragon*0.5);
-  total.def+=Math.floor(P.paragon*0.5);
-  total.hp+=P.paragon*2;
-  total.mana+=P.paragon*2;
-  return total;
-}
-
-function ri(){
-  const eg=document.getElementById('equipGrid'); eg.innerHTML='';
-  const slots=[['weapon','Arma'],['shield','Escudo'],['head','Elmo'],['chest','Peito'],['arms','Braços'],['legs','Pernas'],['feet','Pés'],['ring1','Anel'],['ring2','Anel'],['amulet','Amuleto']];
-  slots.forEach(([s,label])=>{
-    const d=document.createElement('div'); d.className='equipSlot'+(equip[s]?' hasItem':'');
-    d.innerHTML=`<span class="slotLabel">${label}</span><span style="font-size:22px">${equip[s]?equip[s].icon:'➕'}</span>`;
-    if(equip[s]&&equip[s].gems){
-      let dots=document.createElement('div'); dots.className='gemDots';
-      equip[s].gems.forEach(g=>{
-        let dot=document.createElement('div'); dot.className='gemDot';
-        if(g){dot.style.background=g.color; if(g.tier>=4) dot.style.boxShadow='0 0 4px '+g.color;} else {dot.style.background='#1a1a1a'; dot.style.border='1px dashed #5d4037';}
-        dots.appendChild(dot);
-      });
-      d.appendChild(dots);
-    }
-    d.onclick=()=>{if(equip[s]){selGemItem=equip[s]; selGemSlot=-1; openGemModal();}};
-    eg.appendChild(d);
-  });
-  const g=document.getElementById('inventory'); g.innerHTML=''; let w=0;
-  inv.forEach((it,i)=>{
-    const d=document.createElement('div'); d.className='invSlot'+(it.type!=='empty'?' hasItem':'')+(selInv===i?' selected':'');
-    if(it.type!=='empty'){
-      d.innerHTML=`${it.icon}<span class="count">${it.count>1?it.count:''}</span>`;
-      w+=it.weight*it.count;
-      if(it.rarity) d.style.borderColor=RARITIES[it.rarity].c;
-      if(it.type==='gem'){d.style.borderColor=it.color; if(it.tier>=4) d.style.boxShadow='0 0 8px '+it.color;}
-    }
-    d.onclick=()=>{selInv=i; ri();};
-    d.ondblclick=()=>{if(it.type==='potion') useItem(i); else if(it.type!=='empty'&&it.type!=='gold'&&it.type!=='gem') equipItem(i);};
-    g.appendChild(d);
-  });
-  const maxW=40+P.attr.STR*4;
-  document.getElementById('invWeight').textContent=w+'/'+maxW;
-}
-
-function openGemModal(){
-  if(!selGemItem) return;
-  document.getElementById('gemModal').style.display='flex';
-  document.getElementById('gemItemName').textContent=`${selGemItem.icon} ${selGemItem.name} • Lv${selGemItem.level}`;
-  const slotsDiv=document.getElementById('gemSlots'); slotsDiv.innerHTML='';
-  selGemItem.gems.forEach((g,idx)=>{
-    const d=document.createElement('div'); d.className='gemSlot'+(g?' hasGem':'');
-    if(g){d.innerHTML=`<div class="gemIcon">${g.icon}</div><div class="gemName">${g.name.split(' ')[0]}${g.tier>1?` T${g.tier}`:''}</div>`; d.style.borderColor=g.color;}
-    else{d.innerHTML=`<div class="gemIcon">➕</div><div class="gemName">VAZIO</div>`;}
-    d.onclick=()=>{
-      if(g){addToInv(g); selGemItem.gems[idx]=null; openGemModal(); ri(); updateCharVisual(); showPopup(`💎 ${g.name} removida`,'#FFD700'); saveGame();}
-      else{selGemSlot=idx; document.querySelectorAll('.gemSlot').forEach(x=>x.style.borderColor='#5d4037'); d.style.borderColor='#FFD700';}
-    };
-    slotsDiv.appendChild(d);
-  });
-  const gemInvDiv=document.getElementById('gemInventory'); gemInvDiv.innerHTML='';
-  let gemsInInv=inv.filter(it=>it.type==='gem');
-  if(gemsInInv.length===0){gemInvDiv.innerHTML='<div style="grid-column:span 4;color:#8d6e63;font-size:9px;text-align:center;padding:10px">Nenhuma gema - compre no mercador!</div>';}
-  gemsInInv.forEach((gem)=>{
-    const origIdx=inv.indexOf(gem);
-    const d=document.createElement('div'); d.className='gemInvSlot hasGem';
-    d.innerHTML=`<div style="font-size:20px">${gem.icon}</div><div style="font-size:6px;font-weight:900;color:${gem.color}">${gem.name.split(' ')[0]}${gem.tier>1?` T${gem.tier}`:''}</div>`;
-    d.style.borderColor=gem.color;
-    d.onclick=()=>{
-      if(selGemSlot<0){showPopup('Selecione slot vazio!','#ff5252'); return;}
-      selGemItem.gems[selGemSlot]=gem;
-      inv[origIdx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0};
-      selGemSlot=-1; openGemModal(); ri(); updateCharVisual(); showPopup(`💎 ${gem.name} equipada!`,'#4caf50'); saveGame();
-    };
-    gemInvDiv.appendChild(d);
-  });
-}
-
-function openCraftModal(){
-  document.getElementById('craftModal').style.display='flex';
-  renderCraftGems();
-}
-
-function renderCraftGems(){
-  const div=document.getElementById('craftGems'); div.innerHTML='';
-  let gemsByType={};
-  inv.forEach((it,i)=>{
-    if(it.type==='gem'){
-      let key=it.gemType+'_'+it.tier;
-      if(!gemsByType[key]) gemsByType[key]={type:it.gemType,tier:it.tier,gems:[],example:it};
-      gemsByType[key].gems.push({item:it,index:i});
-    }
-  });
-  Object.values(gemsByType).forEach(group=>{
-    const d=document.createElement('div');
-    d.className='gemInvSlot hasGem';
-    d.style.borderColor=group.example.color;
-    d.innerHTML=`<div style="font-size:20px">${group.example.icon}</div><div style="font-size:7px;font-weight:900;color:${group.example.color}">${group.example.gemType} T${group.tier}</div><div style="font-size:9px;background:#000;padding:1px 4px;border-radius:6px;margin-top:2px">x${group.gems.length}</div>`;
-    if(group.gems.length>=3) d.style.boxShadow='0 0 8px '+group.example.color;
-    d.onclick=()=>{
-      document.querySelectorAll('#craftGems .gemInvSlot').forEach(x=>x.style.borderColor=x.style.borderColor);
-      if(group.gems.length<3){showPopup('Precisa 3 gemas iguais!','#ff5252'); return;}
-      selectedCraftType=group;
-      document.querySelectorAll('#craftGems .gemInvSlot').forEach(x=>x.style.outline='');
-      d.style.outline='3px solid #FFD700';
-      const resultDiv=document.getElementById('craftResult');
-      resultDiv.style.display='block';
-      let nextTier=group.tier+1;
-      if(nextTier>5){resultDiv.innerHTML=`<div style="color:#ff5252;font-weight:900">Já é Lendária máxima!</div>`; return;}
-      let mult=GEM_TIER_MULT[nextTier-1];
-      resultDiv.innerHTML=`
-        <div style="color:#FFD700;font-weight:900">🔨 CRAFT: 3x ${group.example.name} T${group.tier} → 1x T${nextTier}</div>
-        <div style="font-size:24px;margin:6px 0">${group.example.icon} → <span style="color:${group.example.color};text-shadow:0 0 8px ${group.example.color}">${group.example.icon}</span></div>
-        <div style="font-size:9px;color:#d7ccc8">Stats x${mult} • ${GEM_TIERS[nextTier-1]}<br>Valor: ${Math.floor(group.example.price*mult)}💰</div>
-      `;
-    };
-    div.appendChild(d);
-  });
-  if(Object.keys(gemsByType).length===0){
-    div.innerHTML='<div style="grid-column:span 4;color:#8d6e63;font-size:10px;text-align:center;padding:20px">Nenhuma gema para craft!<br>Mate monstros e abra baús.</div>';
-  }
-}
-
-function doCraft(){
-  if(!selectedCraftType || selectedCraftType.gems.length<3){showPopup('Selecione 3 gemas iguais!','#ff5252'); return;}
-  let toRemove=selectedCraftType.gems.slice(0,3);
-  toRemove.sort((a,b)=>b.index-a.index).forEach(g=>{inv[g.index]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0};});
-  let nextTier=selectedCraftType.tier+1;
-  if(nextTier>5) nextTier=5;
-  let newGem=genGem(nextTier, selectedCraftType.type);
-  addToInv(newGem);
-  ri();
-  showPopup(`🔨 CRAFT! ${newGem.name} criada!`,'#FFD700');
-  particles.push({x:P.x,y:P.y-30,text:`CRAFT! ${newGem.icon}`,life:1.5,color:'#FFD700'});
-  selectedCraftType=null;
-  document.getElementById('craftResult').style.display='none';
-  renderCraftGems();
-  saveGame();
-}
-
-function addToInv(item){
-  for(let i=0;i<inv.length;i++){if(inv[i].type==='empty'){inv[i]=item; return true;}}
-  inv.push(item); return true;
-}
-
-function equipItem(idx){
-  const it=inv[idx]; if(!it||it.type==='empty'||it.type==='gold'||it.type==='potion'||it.type==='gem') return;
-  let slot=it.slot||it.type; if(slot==='ring'){slot=equip.ring1? (equip.ring2?'ring1':'ring2') : 'ring1';}
-  if(equip[slot]) addToInv(equip[slot]);
-  equip[slot]=it;
-  inv[idx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0};
-  selInv=-1; ri(); updateCharVisual(); showPopup(`✅ Equipado: ${it.name}`,'#4caf50'); saveGame();
-}
-
-function useItem(idx){
-  const it=inv[idx]; if(!it) return;
-  if(it.id==='potion_hp'){P.hp=Math.min(P.maxHp,P.hp+it.stats.hp); it.count--; if(it.count<=0) inv[idx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0}; updateBars(); ri(); showPopup(`💚 +${it.stats.hp} HP`,'#4caf50'); saveGame();}
-  if(it.id==='potion_mana'){P.mana=Math.min(P.maxMana,P.mana+it.stats.mana); it.count--; if(it.count<=0) inv[idx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0}; updateBars(); ri(); showPopup(`🔮 +${it.stats.mana} MANA`,'#42a5f5'); saveGame();}
-}
-
-function updateBars(){
-  document.getElementById('hpVal').textContent=Math.round(P.hp);
-  document.getElementById('manaVal').textContent=Math.round(P.mana);
-  document.getElementById('hpFill').style.width=(P.hp/P.maxHp*100)+'%';
-  document.getElementById('manaFill').style.width=(P.mana/P.maxMana*100)+'%';
-  let tot=calcTotalStats();
-  document.getElementById('charHp').textContent=`HP ${Math.round(P.hp)}/${P.maxHp} (+${P.paragon*2})`;
-  document.getElementById('charMana').textContent=`MANA ${Math.round(P.mana)}/${P.maxMana} (+${P.paragon*2})`;
-  document.getElementById('charStats').textContent=`Dmg ${10+tot.dmg} Def ${tot.def} Paragon+${P.paragon}%`;
-  document.getElementById('charParagon').textContent=`Paragon ${P.paragon}`;
-  document.getElementById('xpFill').style.width=(P.lvl<20?(P.xp/P.maxXp*100):(P.paragonXp/P.paragonMaxXp*100))+'%';
-  if(P.lvl>=20){
-    document.getElementById('paragonInfo').style.display='block';
-    document.getElementById('towerBtn').style.display='flex';
-    document.getElementById('paragonLevel').textContent=`Paragon ${P.paragon} • ${P.paragonXp}/${P.paragonMaxXp}`;
-    document.getElementById('paragonDesc').innerHTML=`+${P.paragon}% dano/defesa<br>+${P.paragon*2} HP/Mana<br>Torre ${towerFloor+1}`;
-  }
-}
-
-function updateCharVisual(){
-  const avatar=document.getElementById('charAvatar');
-  let icon=CLASSES[P.cls].icon; if(equip.weapon) icon=equip.weapon.icon; avatar.textContent=icon;
-  document.getElementById('charName').textContent=`${CLASSES[P.cls].name} ${P.lvl>=20?`Paragon ${P.paragon}`:`Lv${P.lvl}`}`;
-  document.getElementById('charLevel').textContent=P.lvl<20?`Lv${P.lvl} • ${P.xp}/${P.maxXp} XP • ${P.lvl}/20 para Paragon`:`Paragon ${P.paragon} • ${P.paragonXp}/${P.paragonMaxXp} XP • +${P.paragon}% bonus • Torre ${towerFloor}`;
-}
-
-function showPopup(text,color='#FFD700'){
-  const p=document.createElement('div');
-  p.style.cssText=`position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(#3e2723,#1a0f0a);border:4px solid ${color};border-radius:12px;padding:10px 18px;font-weight:900;color:${color};box-shadow:0 6px 0 #000;z-index:22;text-align:center;animation:pop 0.4s;max-width:80vw`;
-  p.textContent=text; document.getElementById('gc').appendChild(p); setTimeout(()=>p.remove(),2000);
-}
-
-function showLoot(item){
-  const d=document.createElement('div'); d.className='lootPopup';
-  const isGem=item.type==='gem';
-  const rar=isGem?{c:item.color}:{c:RARITIES[item.rarity||'common'].c};
-  d.innerHTML=`
-    <div class="lootRarity" style="background:${rar.c};color:${isGem?'#000':'#fff'}">${isGem?`GEMA T${item.tier||1}`:(item.rarity||'common').toUpperCase()}</div>
-    <div class="lootName" style="color:${rar.c}">${item.icon} ${item.name}</div>
-    <div class="lootStats">${isGem?`💎 ${item.desc}<br>Tier ${item.tier||1} • ${GEM_TIERS[item.tier-1]}<br>Preço: ${item.price}💰`:`Lv ${item.level} • ${item.rarity}<br>${item.stats.dmg?`⚔️ Dano: +${item.stats.dmg}<br>`:''}${item.stats.def?`🛡️ Def: +${item.stats.def}<br>`:''}${item.gems?`💎 Slots: ${item.gems.filter(g=>g).length}/4`:''}`}</div>
-    <div class="lootBtns"><div class="lootBtn equip" id="lootEquip">${isGem?'GUARDAR':'EQUIPAR'}</div><div class="lootBtn take" id="lootTake">PEGAR</div></div>
-  `;
-  document.getElementById('gc').appendChild(d);
-  d.querySelector('#lootEquip').onclick=()=>{if(addToInv(item)){if(!isGem){let idx=inv.findIndex(x=>x.id===item.id); if(idx>=0) equipItem(idx);} ri();} d.remove(); saveGame();};
-  d.querySelector('#lootTake').onclick=()=>{addToInv(item); ri(); d.remove(); showPopup(`📦 ${item.name}`,'#42a5f5'); if(item.type==='gem'){quests.forEach(q=>{if(!q.done&&q.gem){q.progress++; if(q.progress>=q.total){q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; showPopup(`✅ ${q.t}`,'#FFD700');} rq();}});} saveGame();};
-  setTimeout(()=>{if(d.parentElement) d.remove();},8000);
-}
-
-function gainXp(amount){
-  if(P.lvl<20){
-    P.xp+=amount;
-    while(P.xp>=P.maxXp && P.lvl<20){
-      P.xp-=P.maxXp;
-      P.lvl++;
-      P.attrPts+=3; P.skillPts+=1;
-      P.maxXp=Math.floor(80 + P.lvl*5);
-      P.maxHp+=CLASSES[P.cls].hp; P.maxMana+=CLASSES[P.cls].mana; P.hp=P.maxHp; P.mana=P.maxMana;
-      updateBars(); showPopup(`⬆️ LEVEL UP! Lv${P.lvl} ${P.lvl==20?'PARAGON DESBLOQUEADO!':''}`,'#FFD700'); updateCharScreen();
-      if(P.lvl==20){
-        showPopup('♾️ PARAGON DESBLOQUEADO! Torre liberada!','#9c27b0');
-        document.getElementById('paragonInfo').style.display='block';
-        document.getElementById('towerBtn').style.display='flex';
-        quests.push({id:'qtower',t:`Torre Andar 1`,x:2600,y:400,i:'🏰',done:0,r:100,act:act,obj:`Torre 1`,progress:0,total:1,isTower:true});
-        rq();
-      }
-      saveGame();
-    }
-    document.getElementById('level').textContent=P.lvl;
-  } else {
-    P.paragonXp+=amount;
-    while(P.paragonXp>=P.paragonMaxXp){
-      P.paragonXp-=P.paragonMaxXp;
-      P.paragon++;
-      P.paragonMaxXp=Math.floor(100 + P.paragon*10);
-      P.maxHp+=2; P.maxMana+=2; P.hp=P.maxHp; P.mana=P.maxMana;
-      showPopup(`♾️ PARAGON UP! ${P.paragon} (+${P.paragon}% bonus)`,'#9c27b0');
-      updateBars(); updateCharScreen(); saveGame();
-    }
-  }
-}
-
-function doAttack(){
-  P.atk=14; P.block=0;
-  let hit=false;
-  mons.forEach(m=>{
-    if(!m.alive) return;
-    let dist=Math.hypot(m.x-P.x,m.y-P.y);
-    if(dist<95){
-      let tot=calcTotalStats();
-      let dmg=12+Math.floor(P.attr.STR*0.8)+tot.dmg+Math.floor(Math.random()*6);
-      let crit=Math.random()*100 < (5+tot.crit); if(crit) dmg=Math.floor(dmg*1.8);
-      m.hp-=dmg; hit=true;
-      particles.push({x:m.x,y:m.y-20,text:crit?`CRIT! -${dmg}`:`-${dmg}`,life:1,color:crit?'#FFD700':'#ff5252'});
-      // Lifesteal
-      if(tot.lifesteal>0){P.hp=Math.min(P.maxHp,P.hp+Math.floor(dmg*tot.lifesteal/100)); updateBars();}
-      if(m.hp<=0){
-        m.alive=false; m.respawn=10;
-        let goldGain=12+act*5+Math.floor(Math.random()*10)+(inTower?towerFloor*3:0); P.gold+=goldGain; document.getElementById('gold').textContent=P.gold;
-        gainXp(25+act*3+(inTower?towerFloor*2:0));
-        quests.forEach(q=>{if(!q.done&&q.killType&&m.type.includes(q.killType)){q.progress++; if(q.progress>=q.total){q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; gainXp(60); showPopup(`✅ ${q.t} +${q.r} ouro +60 XP`,'#FFD700');} rq();}});
-        if(m.isBoss){
-          quests.forEach(q=>{if(!q.done&&q.isBoss&&q.act===act){q.progress=1;q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; gainXp(100); showPopup(`👑 BOSS DERROTADO! +${q.r} ouro +100 XP`,'#FFD700'); if(q.final){showActTransition(5,true);} else if(act<5){setTimeout(()=>{act++; genWorld(); initQuests(); rq(); showActTransition(act);},1500);} rq();}});
-          if(m.isTower){towerFloor++; showPopup(`🏰 Torre ${towerFloor} completo! Próximo: ${towerFloor+1}`,'#9c27b0'); setTimeout(()=>{genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);},1200);}
-          let tierBonus=Math.floor(towerFloor/10)+1;
-          let loot=Math.random()<0.6?genItem('weapon',['rare','legendary'][Math.floor(Math.random()*2)],act+3+tierBonus):genGem(Math.min(5,tierBonus+1));
-          setTimeout(()=>showLoot(loot),800);
-        } else if(Math.random()<0.5){
-          let loot=Math.random()<0.35?genGem(Math.random()<0.2?2:1):genItem(['weapon','head','chest'][Math.floor(Math.random()*3)],Math.random()<0.7?'common':'magic',act+Math.floor(Math.random()*2)+(inTower?Math.floor(towerFloor/3):0));
-          if(loot.type==='gem'){addToInv(loot); ri(); quests.forEach(q=>{if(!q.done&&q.gem){q.progress++; if(q.progress>=q.total){q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; gainXp(60); showPopup(`✅ ${q.t}`,'#FFD700');} rq();}});}
-          else{addToInv(loot); ri();}
-          if(loot.rarity==='rare'||loot.rarity==='legendary'||loot.tier>=2) lootBeams.push({x:m.x,y:m.y,rarity:loot.rarity,color:loot.color||'#FFD700',life:3});
-        }
-        saveGame();
-      }
-    }
-  });
-  chests.forEach(ch=>{
-    if(!ch.opened && Math.hypot(ch.x-P.x,ch.y-P.y)<75){
-      ch.opened=true; showLoot(ch.loot); gainXp(20);
-      lootBeams=lootBeams.filter(b=>Math.hypot(b.x-ch.x,b.y-ch.y)>10);
-      quests.forEach(q=>{if(!q.done&&q.chest){q.progress++; if(q.progress>=q.total){q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; gainXp(60); showPopup(`✅ ${q.t}`,'#FFD700');} rq();}});
-      saveGame();
-    }
-  });
-  merchants.forEach(mer=>{
-    if(Math.hypot(mer.x-P.x,mer.y-P.y)<80){openShop(mer);}
-  });
-  if(hit){
-    document.getElementById('game').style.transform='translate(4px,0)'; setTimeout(()=>document.getElementById('game').style.transform='',70);
-    if(navigator.vibrate) navigator.vibrate(30);
-  }
-}
-
-function doSkill(id){
-  const skill=CLASSES[P.cls].skills.find(s=>s.id===id);
-  if(!skill||playerSkills[id].cd>0||P.mana<skill.mana) return;
-  if(playerSkills[id].lvl===0) return;
-  P.mana-=skill.mana; playerSkills[id].cd=skill.cd; updateBars();
-  let tot=calcTotalStats();
-  if(id==='bash'||id==='holy'||id==='disease'){
-    mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<110){let dmg=30+P.attr.INT+tot.fire+tot.light; m.hp-=dmg; particles.push({x:m.x,y:m.y-20,text:`-${dmg}`,life:1,color:'#ff9800'}); if(m.hp<=0){m.alive=false;m.respawn=8; gainXp(25);}}});
-  }
-  if(id==='fire'||id==='powershot'){
-    let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0];
-    if(target){projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:400,dmg:40+P.attr.INT+tot.fire,icon:'🔥',life:2});}
-  }
-  if(id==='frost'){
-    mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<150){m.hp-=25+P.attr.INT+tot.ice; m.frozen=2.5; particles.push({x:m.x,y:m.y-10,text:'❄️',life:1,color:'#42a5f5'});}});
-  }
-  if(id==='triple'){
-    for(let i=0;i<3;i++){let t=mons.filter(m=>m.alive)[i]; if(t) projectiles.push({x:P.x,y:P.y,tx:t.x+(Math.random()-0.5)*40,ty:t.y+(Math.random()-0.5)*40,speed:500,dmg:25+P.attr.DEX+tot.dmg,icon:'🏹',life:2});}
-  }
-  if(id==='heal'){P.hp=Math.min(P.maxHp,P.hp+60+P.attr.INT*2+tot.hp); updateBars(); showPopup(`💚 +${60+P.attr.INT*2} HP`,'#4caf50');}
-  if(id==='armor'){P.block=10; showPopup('🛡️ Escudo sagrado 10s','#42a5f5');}
-  if(id==='skeleton'){summons.push({x:P.x+40,y:P.y,type:'skeleton',hp:80,max:80,life:30,atkCd:0}); showPopup('🦴 Esqueleto invocado','#9e9e9e');}
-  document.getElementById('game').style.filter='brightness(1.5)'; setTimeout(()=>document.getElementById('game').style.filter='',150);
-  if(navigator.vibrate) navigator.vibrate(20);
-  saveGame();
-}
-
-function updateCharScreen(){
-  const grid=document.getElementById('attrGrid'); grid.innerHTML='';
-  Object.entries(P.attr).forEach(([k,v])=>{
-    const d=document.createElement('div'); d.className='attrCard';
-    const descs={STR:'Dano físico + peso',INT:'Dano mágico + mana',DEX:'Velocidade + crítico',STA:'Vida + resistência'};
-    d.innerHTML=`<div class="attrName">${k}</div><div class="attrVal">${v}</div><div style="font-size:7px;color:#a1887f">${descs[k]}</div>${P.attrPts>0?`<div style="margin-top:6px;background:#FFD700;color:#000;font-weight:900;font-size:9px;padding:4px;border-radius:6px;border:2px solid #000;cursor:pointer;text-align:center" onclick="addAttr('${k}')">+ ADICIONAR ( ${P.attrPts} pts)</div>`:''}`;
-    grid.appendChild(d);
-  });
-  const sl=document.getElementById('skillList'); sl.innerHTML='';
-  CLASSES[P.cls].skills.forEach(s=>{
-    const ps=playerSkills[s.id]; const canUnlock=s.req.every(r=>playerSkills[r]&&playerSkills[r].lvl>0);
-    const d=document.createElement('div'); d.className='skillRow'; d.style.opacity=canUnlock||ps.lvl>0?1:0.4;
-    d.innerHTML=`<div class="skillIcon">${s.icon}</div><div class="skillInfo"><div class="skillName">${s.n} ${ps.lvl>0?`Lv${ps.lvl}`:''}</div><div class="skillDesc">${s.d} • ${s.mana} mana • ${s.cd}s • Tier ${s.tier+1}</div></div><div class="skillLevel">${ps.lvl}/${s.max} ${P.skillPts>0&&canUnlock&&ps.lvl<s.max?`<div style="background:#FFD700;color:#000;padding:2px 6px;border-radius:6px;margin-top:3px;cursor:pointer;border:2px solid #000" onclick="addSkill('${s.id}')">+ UP</div>`:''}</div>`;
-    sl.appendChild(d);
-  });
-  document.getElementById('charLevel').textContent=P.lvl<20?`Lv${P.lvl} • ${P.xp}/${P.maxXp} XP • ${P.lvl}/20 para Paragon • ${Math.floor((P.lvl/20)*100)}%`:`Paragon ${P.paragon} • ${P.paragonXp}/${P.paragonMaxXp} XP • +${P.paragon}% bonus • Torre ${towerFloor}`;
-}
-window.addAttr=(k)=>{if(P.attrPts>0){P.attr[k]++;P.attrPts--; if(k==='STA'){P.maxHp+=8;P.hp+=8;} if(k==='INT'){P.maxMana+=8;P.mana+=8;} updateBars(); updateCharScreen(); ri(); saveGame();}};
-window.addSkill=(id)=>{if(P.skillPts>0){playerSkills[id].lvl++;P.skillPts--; updateCharScreen(); updateSpellBar(); saveGame();}};
-
-function updateSpellBar(){
-  const spells=[CLASSES[P.cls].skills[0],CLASSES[P.cls].skills[1],CLASSES[P.cls].skills[2],CLASSES[P.cls].skills[3]].filter(Boolean);
-  spells.forEach((s,i)=>{
-    const el=document.getElementById(`spell${i+1}`);
-    if(s){el.querySelector('.spellIcon').textContent=s.icon; el.querySelector('.spellMana').textContent=s.mana; el.style.display='flex'; el.dataset.skill=s.id; if(playerSkills[s.id].lvl===0) el.classList.add('cooldown'); else el.classList.remove('cooldown');}
-    else el.style.display='none';
-  });
-}
-
-function showActTransition(newAct,isFinal=false,isTower=false){
-  const t=document.getElementById('actTransition'); t.style.display='flex'; t.classList.add('show');
-  if(isFinal){
-    document.getElementById('actIcon').textContent='🏆'; document.getElementById('actTitle').textContent='VITÓRIA! PARAGON ∞ + TORRE DESBLOQUEADA!'; document.getElementById('actDesc').textContent='Você zerou NORRATH CLASH! Agora Paragon infinito, Torre 100 andares e Boss Rush!';
-  } else if(isTower){
-    document.getElementById('actIcon').textContent='🏰'; document.getElementById('actTitle').textContent=`TORRE ANDAR ${newAct}`; document.getElementById('actDesc').textContent=`Andar ${newAct} - Dificuldade crescente, loot lendário!`;
-  } else {
-    const ad=ACTS[newAct-1]; document.getElementById('actIcon').textContent=ad.icon; document.getElementById('actTitle').textContent=`ATO ${newAct} - ${ad.name}`; document.getElementById('actDesc').textContent=ad.desc;
-  }
-  let w=0; const iv=setInterval(()=>{w+=2; document.getElementById('actBar').style.width=w+'%'; if(w>=100){clearInterval(iv); setTimeout(()=>{t.style.display='none'; if(!isFinal&&!isTower){act=newAct; genWorld(); rq();}},800);}},30);
-}
-
-let currentMerchant=null;
-function openShop(merchant=null){
-  currentMerchant=merchant||merchants[0];
-  if(!currentMerchant) return;
-  document.getElementById('shopModal').style.display='flex';
-  document.getElementById('shopGold').textContent=`💰 ${P.gold}`;
-  renderShop();
-}
-
-function renderShop(){
-  const grid=document.getElementById('shopGrid'); grid.innerHTML='';
-  let items=[];
-  if(shopTab==='buy'){items=currentMerchant.shop.filter(it=>it.type!=='gem');}
-  else if(shopTab==='gems'){items=currentMerchant.shop.filter(it=>it.type==='gem');}
-  else if(shopTab==='sell'){items=inv.filter(it=>it.type!=='empty'&&it.type!=='gold');}
-  
-  items.forEach((it)=>{
-    const d=document.createElement('div'); d.className='shopItem';
-    const price=shopTab==='sell'?Math.floor((it.price||it.level*15||20)*0.6):(it.price||it.level*20||50);
-    const canBuy=P.gold>=price;
-    let statsText='';
-    if(it.type==='gem'){statsText=`${it.desc} T${it.tier||1}<br>💎 ${it.gemType} ${GEM_TIERS[it.tier-1]}`;}
-    else{statsText=`Lv${it.level} • ${it.rarity||'common'}<br>${it.stats.dmg?`⚔️+${it.stats.dmg} `:''}${it.stats.def?`🛡️+${it.stats.def} `:''}${it.gems?`💎 ${it.gems.filter(g=>g).length}/4`:''}`;}
-    d.innerHTML=`
-      <div class="shopItemIcon">${it.icon}</div>
-      <div class="shopItemName" style="${it.rarity?`color:${RARITIES[it.rarity].c}`:''}${it.type==='gem'?`color:${it.color}`:''}">${it.name}</div>
-      <div class="shopItemStats">${statsText}</div>
-      <div class="shopItemPrice ${shopTab!=='sell'&&!canBuy?'cant':''}">${shopTab==='sell'?`Vender: ${price}💰`:`${price}💰 ${!canBuy?'❌':''}`}</div>
-    `;
-    d.onclick=()=>{
-      if(shopTab==='sell'){
-        let invIdx=inv.indexOf(it);
-        if(invIdx>=0){
-          P.gold+=price; inv[invIdx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0};
-          document.getElementById('gold').textContent=P.gold; document.getElementById('shopGold').textContent=`💰 ${P.gold}`;
-          showPopup(`💰 Vendeu ${it.name} +${price} ouro`,'#4caf50');
-          renderShop(); ri(); saveGame();
-        }
-      } else {
-        if(!canBuy){showPopup('💰 Ouro insuficiente!','#ff5252'); return;}
-        P.gold-=price; document.getElementById('gold').textContent=P.gold; document.getElementById('shopGold').textContent=`💰 ${P.gold}`;
-        let bought={...it, id:Math.random().toString(36).substr(2,6)};
-        if(bought.gems) bought.gems=[null,null,null,null];
-        addToInv(bought); ri();
-        showPopup(`🛒 Comprou ${it.name}`,'#FFD700');
-        let shopIdx=currentMerchant.shop.indexOf(it);
-        if(shopIdx>=0) currentMerchant.shop.splice(shopIdx,1);
-        renderShop(); saveGame();
-      }
-    };
-    grid.appendChild(d);
-  });
-  if(items.length===0){
-    grid.innerHTML=`<div style="grid-column:span 2;color:#8d6e63;font-size:11px;text-align:center;padding:20px">${shopTab==='sell'?'Mochila vazia':'Loja vazia! Reroll?'}</div>`;
-  }
-}
-
-// SAVE SYSTEM V2
-function safeLocalStorage(){ try { return localStorage; } catch(e){ return {getItem:()=>null,setItem:()=>{},removeItem:()=>{}}; } }
-function saveGame(){ try { let ls=safeLocalStorage();
-  try{
-    let saveData={
-      P,act,towerFloor,inTower,equip,inv,quests,playerSkills,version:'v2',
-      timestamp:Date.now()
-    };
-    ls.setItem('norrath_v2_save', JSON.stringify(saveData));
-    document.getElementById('saveIndicator').style.display='block';
-    setTimeout(()=>document.getElementById('saveIndicator').style.display='none',1500);
-  }catch(e){console.log('save fail',e);}
-}
-function loadGame(){ try { let ls=safeLocalStorage();
-  try{
-    let data=ls.getItem('norrath_v2_save');
-    if(!data) return false;
-    let save=JSON.parse(data);
-    if(!save.P) return false;
-    P=save.P; act=save.act||1; towerFloor=save.towerFloor||0; equip=save.equip||equip; inv=save.inv||inv; quests=save.quests||[]; playerSkills=save.playerSkills||playerSkills;
-    if(inv.length<20) while(inv.length<20) inv.push({id:'empty',name:'',icon:'',type:'empty',count:0,weight:0});
-    return true;
-  }catch(e){return false;}
-}
-function hasSave(){ try { let ls=safeLocalStorage(); return !!ls.getItem('norrath_v2_save'); } catch(e){ return false; } }
-
-// INPUTS V4 JOGÁVEL - Champions of Norrath style - ROBUSTO WebView
-const jb=document.getElementById('joyBase'), js=document.getElementById('joyStick'), joystickContainer=document.getElementById('joystick');
-let activeTouchId=null;
-function gp(e){
-  let clientX, clientY;
-  if(e.touches && e.touches.length>0){
-    // Find active touch or first
-    let touch = null;
-    if(activeTouchId!==null){
-      for(let t of e.touches){ if(t.identifier===activeTouchId){ touch=t; break; } }
-    }
-    if(!touch) touch=e.touches[0];
-    clientX=touch.clientX; clientY=touch.clientY;
-  } else if(e.changedTouches && e.changedTouches.length>0){
-    clientX=e.changedTouches[0].clientX; clientY=e.changedTouches[0].clientY;
-  } else {
-    clientX=e.clientX; clientY=e.clientY;
-  }
-  const r=jb.getBoundingClientRect();
-  let dx=clientX-(r.left+r.width/2), dy=clientY-(r.top+r.height/2), d=Math.hypot(dx,dy), m=55;
-  if(d>m){let a=Math.atan2(dy,dx);dx=Math.cos(a)*m;dy=Math.sin(a)*m; d=m}
-  return{dx,dy,d,clientX,clientY}
-}
-function jsS(e){
-  e.preventDefault(); e.stopPropagation();
-  if(e.touches && e.touches.length>0) activeTouchId=e.touches[0].identifier;
-  J.a=1; T=null;
-  let banner=document.getElementById('autoBanner'); if(banner) banner.style.display='none';
-  js.style.transform='scale(1.15)'; js.style.boxShadow='0 8px 0 #000,0 0 20px #FFD700';
-  if(navigator.vibrate) navigator.vibrate(20);
-}
-function jsM(e){
-  if(!J.a) return;
-  e.preventDefault(); e.stopPropagation();
-  let {dx,dy,d}=gp(e);
-  if(d<10){ J.x=0; J.y=0; js.style.transform=`translate(0px,0px) scale(1.15)`; return; }
-  js.style.transform=`translate(${dx}px,${dy}px) scale(1.15)`;
-  J.x=dx/55; J.y=dy/55;
-  if(Math.abs(J.x)>0.1) P.f=J.x>0?1:-1;
-  // Debug tip
-  if(Math.random()<0.05) console.log('Joystick move', J.x.toFixed(2), J.y.toFixed(2));
-}
-function jsE(e){
-  if(e) { e.preventDefault(); e.stopPropagation(); }
-  J.a=0; J.x=0; J.y=0; activeTouchId=null;
-  js.style.transform='translate(0,0) scale(1)'; js.style.boxShadow='0 5px 0 #000';
-}
-function setupJoystickV4(){
-  let elems=[jb, joystickContainer];
-  elems.forEach(el=>{
-    if(!el) return;
-    el.addEventListener('touchstart', jsS, {passive:false, capture:true});
-    el.addEventListener('touchmove', jsM, {passive:false, capture:true});
-    el.addEventListener('touchend', jsE, {passive:false, capture:true});
-    el.addEventListener('touchcancel', jsE, {passive:false, capture:true});
-  });
-  // Mouse fallback for desktop testing
-  jb.addEventListener('mousedown', (e)=>{ activeTouchId=null; jsS(e); });
-  document.addEventListener('mousemove', (e)=>{ if(J.a && activeTouchId===null) jsM(e); });
-  document.addEventListener('mouseup', (e)=>{ if(activeTouchId===null) jsE(e); });
-  // Prevent context menu on joystick
-  jb.addEventListener('contextmenu', e=>e.preventDefault());
-  joystickContainer.addEventListener('contextmenu', e=>e.preventDefault());
-  console.log('Joystick V4 setup OK - Champions style');
-}
-setupJoystickV4();
-
-
-const cv=document.getElementById('game'), ctx=cv.getContext('2d');
-const miniCanvas=document.getElementById('miniCanvas'), miniCtx=miniCanvas.getContext('2d');
-
-function drawTexture(name,sx,sy,sw,sh){
-  let t=textures[name];
-  if(!t) return;
-  ctx.drawImage(texCanvas,t.x,t.y,t.w,t.h,sx,sy,sw,sh);
-}
-
-function handleMapTap(clientX, clientY, isTouch=false){
-  const r=cv.getBoundingClientRect();
-  const x=(clientX-r.left)*(cv.width/r.width), y=(clientY-r.top)*(cv.height/r.height);
-  if(y>cv.height-170) return false; // avoid joystick area
-  if(y<80) return false; // avoid top bar
-  if(x<90 && y<170) return false; // avoid minimap
-  if(x>cv.width-180 && y<200) return false; // avoid quest panel
-  let clickedObj=objs.find(o=>{let ox=o.x-C.x, oy=o.y-C.y; return Math.hypot(ox-x,oy-y)<60;});
-  if(clickedObj&&clickedObj.isDungeon){genDungeon(clickedObj.dungeonAct||act); showActTransition(act); quests.forEach(q=>{if(q.isDungeon&&q.act===act&&!q.done){q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; gainXp(60); rq();}}); saveGame(); return true;}
-  if(clickedObj&&clickedObj.isTower){genTower(towerFloor+1); showActTransition(towerFloor+1,false,true); return true;}
-  if(clickedObj&&clickedObj.t==='exit'){
-    if(clickedObj.isTowerExit){towerFloor++; genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);}
-    else if(clickedObj.isTowerPrev){if(towerFloor>0){towerFloor--; genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);}}
-    else{inDungeon=false; inTower=false; genWorld(); showActTransition(act);}
-    saveGame(); return true;
-  }
-  let clickedMer=merchants.find(m=>{let mx=m.x-C.x, my=m.y-C.y; return Math.hypot(mx-x,my-y)<65;});
-  if(clickedMer){openShop(clickedMer); return true;}
-  // Champions of Norrath style: tap to walk
-  T={x:C.x+x,y:C.y+y,id:null};
-  let banner=document.getElementById('autoBanner');
-  if(banner){ banner.style.display='block'; banner.innerHTML=`🚶 Indo para destino... <span class="cancel" id="cancelAuto2">CANCELAR ✕</span>`; 
-    let cancelBtn=document.getElementById('cancelAuto2');
-    if(cancelBtn) cancelBtn.onclick=()=>{T=null;banner.style.display='none';};
-  }
-  if(isTouch && navigator.vibrate) navigator.vibrate(15);
-  return true;
-}
-cv.addEventListener('click',e=>{
-  handleMapTap(e.clientX, e.clientY, false);
-});
-cv.addEventListener('touchstart',e=>{
-  if(J.a) return; // joystick active, ignore map tap
-  if(e.touches.length!==1) return;
-  let t=e.touches[0];
-  // Only handle taps on upper 70% of screen
-  if(t.clientY > window.innerHeight*0.75) return;
-  e.preventDefault();
-  handleMapTap(t.clientX, t.clientY, true);
-},{passive:false});
-
-
-function setupActionBtn(id, fn){
-  let el=document.getElementById(id);
-  if(!el) return;
-  el.addEventListener('click', fn);
-  el.addEventListener('touchstart', (e)=>{ e.preventDefault(); e.stopPropagation(); fn(); if(navigator.vibrate) navigator.vibrate(20); }, {passive:false});
-  el.addEventListener('contextmenu', e=>e.preventDefault());
-}
-setupActionBtn('attackBtn', ()=>doAttack());
-
-setupActionBtn('towerBtn', ()=>{if(P.lvl>=20){genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);} else showPopup('🔒 Precisa Lv20!','#ff5252');});
-setupActionBtn('potionBtn', ()=>{ let it=inv.find(x=>x.id==='potion_hp'&&x.count>0); if(it){it.count--; if(it.count<=0) inv[inv.indexOf(it)]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0}; P.hp=Math.min(P.maxHp,P.hp+80); updateBars(); ri(); saveGame();} });
-/* potion now handled by setupActionBtn */
-setupActionBtn('charBtn', ()=>{document.getElementById('charScreen').style.display='flex'; updateCharScreen();});
-setupActionBtn('shopBtnTop', ()=>openShop());
-document.getElementById('closeChar').onclick=()=>document.getElementById('charScreen').style.display='none';
-document.getElementById('invOpenFromChar').onclick=()=>{document.getElementById('charScreen').style.display='none'; document.getElementById('invDrawer').classList.add('open');};
-document.getElementById('shopBtnFromChar').onclick=()=>{document.getElementById('charScreen').style.display='none'; openShop();};
-document.getElementById('saveBtn').onclick=()=>{saveGame(); showPopup('💾 Jogo salvo!','#4caf50');};
-document.getElementById('resetBtn').onclick=()=>{if(confirm('Resetar tudo?')){try { safeLocalStorage().removeItem('norrath_v2_save'); } catch(e){}; location.reload();}};
-document.getElementById('closeShop').onclick=()=>document.getElementById('shopModal').style.display='none';
-document.getElementById('rerollShop').onclick=()=>{
-  if(P.gold<50){showPopup('Precisa 50 ouro!','#ff5252'); return;}
-  P.gold-=50; document.getElementById('gold').textContent=P.gold; document.getElementById('shopGold').textContent=`💰 ${P.gold}`;
-  currentMerchant.shop=genShopInventory(); renderShop(); showPopup('🎲 Loja rerollada!','#FFD700'); saveGame();
-};
-document.getElementById('craftFromShop').onclick=()=>{document.getElementById('shopModal').style.display='none'; openCraftModal();};
-document.querySelectorAll('.shopTab').forEach(tab=>{
-  tab.onclick=()=>{document.querySelectorAll('.shopTab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); shopTab=tab.dataset.tab; renderShop();};
-});
-document.getElementById('cancelAuto').onclick=()=>{T=null;document.getElementById('autoBanner').style.display='none'};
-document.querySelectorAll('.spell').forEach(el=>{
-  let fn=()=>{let sid=el.dataset.skill; if(sid) doSkill(sid);};
-  el.addEventListener('click', fn);
-  el.addEventListener('touchstart', (e)=>{ e.preventDefault(); e.stopPropagation(); fn(); }, {passive:false});
-});
-document.getElementById('closeInvBtn').onclick=()=>document.getElementById('invDrawer').classList.remove('open');
-document.getElementById('useBtn').onclick=()=>{if(selInv>=0) useItem(selInv);};
-document.getElementById('equipBtn').onclick=()=>{if(selInv>=0) equipItem(selInv);};
-document.getElementById('gemBtn').onclick=()=>{if(selInv>=0&&inv[selInv].type!=='empty'&&inv[selInv].type!=='gem'&&inv[selInv].type!=='potion'){selGemItem=inv[selInv]; openGemModal();} else {showPopup('Selecione arma/armadura pra gemas!','#FFD700');}};
-document.getElementById('craftBtn').onclick=()=>openCraftModal();
-document.getElementById('closeCraftBtn').onclick=()=>document.getElementById('craftModal').style.display='none';
-document.getElementById('doCraftBtn').onclick=()=>doCraft();
-document.getElementById('dropBtn').onclick=()=>{if(selInv>=0){inv[selInv]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0}; selInv=-1; ri(); saveGame();}};
-document.getElementById('invHandle').onclick=()=>document.getElementById('invDrawer').classList.remove('open');
-document.getElementById('closeGemBtn').onclick=()=>document.getElementById('gemModal').style.display='none';
-document.getElementById('removeAllGems').onclick=()=>{
-  if(!selGemItem) return;
-  selGemItem.gems.forEach(g=>{if(g) addToInv(g);});
-  selGemItem.gems=[null,null,null,null];
-  openGemModal(); ri(); updateCharVisual(); showPopup('💎 Todas gemas removidas','#FFD700'); saveGame();
-};
-
-function selectClass(card){ document.querySelectorAll('.classCard').forEach(x=>x.classList.remove('selected')); card.classList.add('selected'); selClass=card.dataset.class; console.log('Class selected: '+selClass); if(navigator.vibrate) navigator.vibrate(20); }
-document.querySelectorAll('.classCard').forEach(c=>{
-  c.addEventListener('click', ()=>selectClass(c));
-  c.addEventListener('touchstart', (e)=>{ e.preventDefault(); selectClass(c); }, {passive:false});
-  c.addEventListener('touchend', (e)=>{ e.preventDefault(); }, {passive:false});
-});
-
-function startGame(isContinue=false){
-  console.log('V5 START GAME', isContinue, selClass);
-  // Hide all blocking menus FOR REAL
-  let ss=document.getElementById('startScreen');
-  ss.classList.add('hidden');
-  ss.style.display='none';
-  ss.style.pointerEvents='none';
-  ss.style.zIndex='-1';
-  document.getElementById('actTransition').style.display='none';
-  document.getElementById('actTransition').classList.remove('show');
-  document.getElementById('moveHint').style.display='block';
-  setTimeout(()=>{ let mh=document.getElementById('moveHint'); if(mh) mh.style.display='none'; }, 5000);
-
-  if(isContinue && loadGame()){
-    updateBars(); rq(); ri(); updateCharVisual(); updateCharScreen(); updateSpellBar();
-    document.getElementById('level').textContent=P.lvl; document.getElementById('gold').textContent=P.gold;
-    genWorld();
-    showPopup('💾 Save carregado!',' #4caf50');
-    if(!window.gameLoopStarted){ window.gameLoopStarted=true; requestAnimationFrame(loop); }
-    return;
-  }
-  P.cls=selClass; let cls=CLASSES[P.cls];
-  P.attr={...cls.base}; P.maxHp=80+cls.base.STA*2+cls.hp; P.hp=P.maxHp; P.maxMana=40+cls.base.INT*2+cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=500; P.attrPts=0; P.skillPts=2; P.paragon=0; P.paragonXp=0; P.paragonMaxXp=100; P.x=W/2; P.y=H/2; towerFloor=0; inTower=false;
-  initSkills(); initInv(); initQuests(); genWorld(); act=1; inDungeon=false;
-  updateBars(); rq(); ri(); updateCharVisual(); updateCharScreen(); updateSpellBar();
-  document.getElementById('level').textContent=P.lvl; document.getElementById('gold').textContent=P.gold;
-  // No blocking transition on first start - direct gameplay
-  showPopup('🎮 V5 JOGÁVEL! Arraste joystick para andar!',' #FFD700');
-  saveGame();
-  if(!window.gameLoopStarted){ window.gameLoopStarted=true; requestAnimationFrame(loop); }
-}
-window.toggleUI = function(){
-  document.getElementById('minimap').classList.toggle('collapsed');
-  document.getElementById('questPanel').classList.toggle('collapsed');
-  document.getElementById('paragonInfo').classList.toggle('collapsed');
-  let hint=document.getElementById('moveHint');
-  if(hint) hint.style.display = hint.style.display==='none' ? 'block' : 'none';
-}
-
-function handleStart(isContinue){ console.log('Start clicked, continue='+isContinue); startGame(isContinue); }
-const startBtn=document.getElementById('startBtn');
-startBtn.addEventListener('click', ()=>handleStart(false));
-startBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); handleStart(false); }, {passive:false});
-const contBtn=document.getElementById('continueBtn');
-if(contBtn){ contBtn.addEventListener('click', ()=>handleStart(true)); contBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); handleStart(true); }, {passive:false}); }
-
-
-// Check save on load
-if(hasSave()){
-  document.getElementById('continueBtn').style.display='block';
-  document.getElementById('startBtn').textContent='▶ NOVO JOGO V2';
-}
-
-let last=performance.now();
-function loop(now){
-  const dt=Math.min((now-last)/1000,0.05); last=now;
-  frameCount++; if(now-lastFpsTime>1000){fps=frameCount; frameCount=0; lastFpsTime=now;}
-  
-  Object.keys(playerSkills).forEach(k=>{if(playerSkills[k].cd>0) playerSkills[k].cd=Math.max(0,playerSkills[k].cd-dt);});
-  document.querySelectorAll('.spell').forEach(el=>{
-    let sid=el.dataset.skill; if(sid&&playerSkills[sid]){let cd=playerSkills[sid].cd; let cdEl=el.querySelector('.spellCd'); if(cd>0){if(!cdEl){cdEl=document.createElement('div');cdEl.className='spellCd';el.appendChild(cdEl);} cdEl.textContent=Math.ceil(cd);} else if(cdEl) cdEl.remove();}
-  });
-  let mx=0,my=0;
-  if(J.a){mx=J.x;my=J.y}
-  else if(T){let dx=T.x-P.x,dy=T.y-P.y,d=Math.hypot(dx,dy);if(d<28){T=null;document.getElementById('autoBanner').style.display='none';}else{mx=dx/d;my=dy/d;if(Math.abs(mx)>0.1)P.f=mx>0?1:-1}}
-  if(mx||my){
-    let tot=calcTotalStats();
-    let speed=200+Math.floor(P.attr.DEX*2.5)+(tot.speed||0)*6;
-    let nx=P.x+mx*speed*dt, ny=P.y+my*speed*dt;
-    let result=checkCollisionSlide(P.x,P.y,nx,ny,18);
-    P.x=result.x; P.y=result.y;
-    P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));
-  }
-  if(P.atk>0) P.atk--; if(P.block>0) P.block-=dt;
-  // Auto regen
-  if(P.hp<P.maxHp && Math.random()<0.02){P.hp=Math.min(P.maxHp,P.hp+0.3); updateBars();}
-  if(P.mana<P.maxMana && Math.random()<0.03){P.mana=Math.min(P.maxMana,P.mana+0.5); updateBars();}
-  
-  mons.forEach(m=>{
-    if(!m.alive){m.respawn-=dt; if(m.respawn<=0){m.alive=true; m.hp=m.max; m.x=300+Math.random()*2600; m.y=300+Math.random()*2600;} return;}
-    m.w-=dt; m.atkCd-=dt;
-    let dist=Math.hypot(m.x-P.x,m.y-P.y);
-    if(dist<320){
-      if(m.frozen>0){m.frozen-=dt;}
-      else{
-        let ang=Math.atan2(P.y-m.y,P.x-m.x);
-        let sp=m.isBoss?65:45+act*5+(m.isTower?towerFloor*2:0);
-        let nmx=m.x+Math.cos(ang)*sp*dt, nmy=m.y+Math.sin(ang)*sp*dt;
-        let res=checkCollisionSlide(m.x,m.y,nmx,nmy,14);
-        m.x=res.x; m.y=res.y;
-        if(dist<52&&m.atkCd<=0){
-          let tot=calcTotalStats();
-          let dmg=Math.max(1,(m.isBoss?28:10+act*2+(m.isTower?towerFloor:0))-Math.floor(tot.def/3));
-          if(P.block>0) dmg=Math.floor(dmg*0.3);
-          P.hp-=dmg; m.atkCd=1.2; updateBars(); particles.push({x:P.x,y:P.y-20,text:`-${dmg}`,life:1,color:'#ff5252'});
-          if(P.hp<=0){P.hp=P.maxHp*0.5; P.x=W/2; P.y=H/2; P.gold=Math.max(0,P.gold-50); document.getElementById('gold').textContent=P.gold; showPopup('💀 Você morreu! -50 ouro','#ff5252'); saveGame();}
-        }
-      }
-    } else if(m.w<=0){m.vx=(Math.random()-0.5)*50; m.vy=(Math.random()-0.5)*50; m.w=2+Math.random()*3;}
-    if(m.w>0&&dist>=320&&!m.frozen){let nmx=m.x+m.vx*dt, nmy=m.y+m.vy*dt; let res=checkCollisionSlide(m.x,m.y,nmx,nmy,14); m.x=res.x; m.y=res.y;}
-  });
-  summons.forEach((s,i)=>{
-    s.life-=dt; s.atkCd-=dt; if(s.life<=0){summons.splice(i,1); return;}
-    let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-s.x,a.y-s.y)-Math.hypot(b.x-s.x,b.y-s.y))[0];
-    if(target){let ang=Math.atan2(target.y-s.y,target.x-s.x); s.x+=Math.cos(ang)*80*dt; s.y+=Math.sin(ang)*80*dt; if(Math.hypot(s.x-target.x,s.y-target.y)<40&&s.atkCd<=0){target.hp-=15; s.atkCd=1; if(target.hp<=0){target.alive=false;target.respawn=8; gainXp(25);}}}
-  });
-  projectiles.forEach((pr,i)=>{
-    let ang=Math.atan2(pr.ty-pr.y,pr.tx-pr.x); pr.x+=Math.cos(ang)*pr.speed*dt; pr.y+=Math.sin(ang)*pr.speed*dt; pr.life-=dt;
-    if(pr.life<=0){projectiles.splice(i,1); return;}
-    mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-pr.x,m.y-pr.y)<30){m.hp-=pr.dmg; particles.push({x:m.x,y:m.y-15,text:`-${pr.dmg}`,life:1,color:'#ff9800'}); projectiles.splice(i,1); if(m.hp<=0){m.alive=false;m.respawn=8; let g=10+act*3; P.gold+=g; document.getElementById('gold').textContent=P.gold; gainXp(25);}}});
-    if(Math.hypot(pr.x-P.x,pr.y-P.y)>600) projectiles.splice(i,1);
-  });
-  particles.forEach((p,i)=>{p.life-=dt; p.y-=20*dt; if(p.life<=0) particles.splice(i,1);});
-  lootBeams.forEach((b,i)=>{if(b.life){b.life-=dt; if(b.life<=0) lootBeams.splice(i,1);}});
-  
-  let boss=mons.find(m=>m.isBoss&&m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<400);
-  if(boss){document.getElementById('bossBar').style.display='block'; document.getElementById('bossFill').style.width=(boss.hp/boss.max*100)+'%'; document.getElementById('bossName').textContent=`👑 ${boss.bossName} Lv${boss.level}${boss.isTower?` Torre ${towerFloor+1}`:''}`;}
-  else document.getElementById('bossBar').style.display='none';
-  C.x=P.x-cv.width/2; C.y=P.y-cv.height/2; C.x=Math.max(0,Math.min(W-cv.width,C.x)); C.y=Math.max(0,Math.min(H-cv.height,C.y));
-  draw(); drawMinimap(); requestAnimationFrame(loop);
-}
-
-function drawMinimap(){
-  miniCtx.fillStyle='#1a1a1a'; miniCtx.fillRect(0,0,88,88);
-  miniCtx.fillStyle='#2e7d32'; miniCtx.fillRect(0,0,88,88);
-  // Draw objects simplified
-  objs.forEach(o=>{
-    let x=((o.x/W)*88), y=((o.y/H)*88);
-    if(o.t==='house'){miniCtx.fillStyle='#d7ccc8'; miniCtx.fillRect(x-2,y-2,4,4);}
-    else if(o.t==='tree'){miniCtx.fillStyle='#388e3c'; miniCtx.fillRect(x-1,y-1,2,2);}
-    else if(o.t==='dungeon'){miniCtx.fillStyle='#ff6d00'; miniCtx.fillRect(x-2,y-2,4,4);}
-    else if(o.t==='tower'){miniCtx.fillStyle='#9c27b0'; miniCtx.fillRect(x-3,y-3,6,6);}
-  });
-  merchants.forEach(m=>{let x=(m.x/W)*88, y=(m.y/H)*88; miniCtx.fillStyle='#ff8f00'; miniCtx.fillRect(x-2,y-2,4,4);});
-  chests.forEach(ch=>{if(!ch.opened){let x=(ch.x/W)*88, y=(ch.y/H)*88; miniCtx.fillStyle='#FFD700'; miniCtx.fillRect(x-1,y-1,3,3);}});
-  mons.forEach(m=>{if(m.alive){let x=(m.x/W)*88, y=(m.y/H)*88; miniCtx.fillStyle=m.isBoss?'#ff0000':'#ff5252'; miniCtx.fillRect(x-1,y-1,m.isBoss?3:2,m.isBoss?3:2);}});
-  // Player
-  let px=(P.x/W)*88, py=(P.y/H)*88;
-  miniCtx.fillStyle='#42a5f5'; miniCtx.beginPath(); miniCtx.arc(px,py,3,0,6.28); miniCtx.fill();
-  miniCtx.strokeStyle='#fff'; miniCtx.lineWidth=1; miniCtx.stroke();
-  // Target
-  if(T){let tx=(T.x/W)*88, ty=(T.y/H)*88; miniCtx.strokeStyle='#FFD700'; miniCtx.lineWidth=1; miniCtx.setLineDash([2,2]); miniCtx.beginPath(); miniCtx.arc(tx,ty,4,0,6.28); miniCtx.stroke(); miniCtx.setLineDash([]);}
-}
+// CANVAS AND DRAW
+const cv=document.getElementById('gameCanvas');
+const ctx=cv.getContext('2d');
+function drawTexture(name,sx,sy,sw,sh){let t=textures[name]; if(!t) return; ctx.drawImage(texCanvas,t.x,t.y,t.w,t.h,sx,sy,sw,sh);}
 
 function draw(){
-  let actTex=ACTS[act-1].tex;
-  if(inTower) actTex='dungeon_floor';
-  ctx.fillStyle='#000'; ctx.fillRect(0,0,cv.width,cv.height);
-  let tileSize=64;
-  let startX=Math.floor(C.x/tileSize)*tileSize, startY=Math.floor(C.y/tileSize)*tileSize;
-  for(let x=startX;x<C.x+cv.width+tileSize;x+=tileSize){
-    for(let y=startY;y<C.y+cv.height+tileSize;y+=tileSize){
-      let sx=x-C.x, sy=y-C.y;
-      if(inDungeon||inTower) drawTexture('dungeon_floor',sx,sy,tileSize,tileSize);
-      else drawTexture(actTex,sx,sy,tileSize,tileSize);
-    }
-  }
-  ctx.strokeStyle='rgba(0,0,0,0.12)'; ctx.lineWidth=1;
-  let gx0=-(C.x%tileSize), gy0=-(C.y%tileSize);
-  for(let x=gx0;x<cv.width;x+=tileSize){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke()}
-  for(let y=gy0;y<cv.height;y+=tileSize){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke()}
-  // Loot beams
-  lootBeams.forEach(b=>{
-    let x=b.x-C.x, y=b.y-C.y; if(x<-50||x>470||y<-100||y>900) return;
-    ctx.save(); ctx.globalAlpha=0.6+Math.sin(Date.now()*0.01)*0.4;
-    ctx.strokeStyle=b.color||'#FFD700'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y-60); ctx.stroke();
-    ctx.fillStyle=b.color||'#FFD700'; ctx.beginPath(); ctx.arc(x,y-65,4,0,6.28); ctx.fill();
-    ctx.restore();
-  });
-  dungeonWalls.forEach(w=>{
-    let x=w.x-C.x,y=w.y-C.y; if(x<-100||x>500||y<-100||y>960) return;
-    drawTexture('stone',x,y,w.w,w.h);
-    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x,y,w.w,w.h);
-  });
-  objs.forEach(o=>{
-    let x=o.x-C.x,y=o.y-C.y; if(x<-100||x>520||y<-100||y>960) return;
-    ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+o.h/2+4,o.w/2+4,8,0,0,6.28); ctx.fill();
-    if(o.t==='house'){
-      drawTexture('wall',x-o.w/2,y-o.h/2,o.w,o.h);
-      drawTexture('roof',x-o.w/2-6,y-o.h/2-28,o.w+12,28);
-      ctx.fillStyle='#3e2723'; ctx.fillRect(x-10,y-4,20,18);
-      ctx.fillStyle='#ff8f00'; ctx.fillRect(x-8,y-2,4,6); ctx.fillRect(x+4,y-2,4,6);
-      ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);
-    } else if(o.t==='tree'){
-      drawTexture('trunk',x-8,y-6,16,24);
-      drawTexture('foliage',x-24,y-32,48,40);
-    } else if(o.t==='rock'){
-      drawTexture('stone',x-14,y-10,28,20);
-    } else if(o.t==='dungeon'){
-      ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-o.w/2,y-o.h/2,o.w,o.h);
-      ctx.fillStyle='#ff6d00'; ctx.beginPath(); ctx.arc(x,y,16,0,6.28); ctx.fill();
-      ctx.fillStyle='#000'; ctx.font='bold 20px sans-serif'; ctx.textAlign='center'; ctx.fillText('🕳️',x,y+6);
-      ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);
-    } else if(o.t==='tower'){
-      ctx.fillStyle='#4a148c'; ctx.fillRect(x-o.w/2,y-o.h/2,o.w,o.h);
-      ctx.fillStyle='#9c27b0'; ctx.fillRect(x-o.w/2,y-o.h/2,o.w,20);
-      ctx.fillStyle='#ce93d8'; for(let i=0;i<3;i++){ctx.fillRect(x-o.w/2+10+i*20,y-o.h/2+30,8,12);}
-      ctx.fillStyle='#FFD700'; ctx.font='bold 12px sans-serif'; ctx.textAlign='center'; ctx.fillText(`TORRE ${towerFloor+1}`,x,y-o.h/2-8);
-      ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);
-    } else if(o.t==='exit'){
-      ctx.fillStyle=o.isTowerExit||o.isTowerPrev?'#9c27b0':'#4caf50'; ctx.beginPath(); ctx.arc(x,y,22,0,6.28); ctx.fill();
-      ctx.fillStyle='#fff'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.fillText(o.isTowerPrev?'⬇️':'🚪',x,y+6);
-      ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(x,y,22,0,6.28); ctx.stroke();
-    }
-  });
-  merchants.forEach(m=>{
-    let x=m.x-C.x,y=m.y-C.y; if(x<-50||x>470||y<-50||y>910) return;
-    ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+20,20,6,0,0,6.28); ctx.fill();
-    ctx.fillStyle='#ff8f00'; ctx.beginPath(); ctx.ellipse(x,y,18,20,0,0,6.28); ctx.fill();
-    ctx.fillStyle='#fff8e1'; ctx.beginPath(); ctx.arc(x,y-8,10,0,6.28); ctx.fill();
-    ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(x,y,18,20,0,0,6.28); ctx.stroke();
-    ctx.fillStyle='#000'; ctx.fillRect(x-20,y-30,40,14); ctx.fillStyle='#FFD700'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center'; ctx.fillText('MERCADOR',x,y-21);
-  });
-  chests.forEach(ch=>{
-    let x=ch.x-C.x,y=ch.y-C.y; if(x<-40||x>460||y<-40||y>900) return;
-    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+10,16,4,0,0,6.28); ctx.fill();
-    if(ch.opened){ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-4,28,10);}
-    else{drawTexture('wood',x-16,y-8,32,18); ctx.fillStyle='#FFD700'; ctx.fillRect(x-3,y-2,6,6); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-16,y-8,32,18);}
-  });
-  mons.forEach(m=>{
-    if(!m.alive) return;
-    let x=m.x-C.x,y=m.y-C.y; if(x<-60||x>480||y<-60||y>920) return;
-    ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+18,18,5,0,0,6.28); ctx.fill();
-    let col=m.type==='orc'?'#4a7a2a':m.type==='goblin'?'#8bc34a':m.type==='scorpion'?'#ff8f00':m.type==='darkelf'?'#7b1fa2':m.type==='boss'?'#d32f2f':'#9e9e9e';
-    if(m.frozen) col='#81d4fa';
-    if(m.isTower) col='#9c27b0';
-    ctx.fillStyle=col; ctx.beginPath(); ctx.ellipse(x,y,16+m.level,18+m.level,0,0,6.28); ctx.fill();
-    ctx.strokeStyle='#000'; ctx.lineWidth=m.isBoss?4:3; ctx.stroke();
-    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x-5,y-4,5,0,6.28); ctx.arc(x+5,y-4,5,0,6.28); ctx.fill();
-    ctx.fillStyle=m.isBoss?'#ff0000':'#000'; ctx.beginPath(); ctx.arc(x-5,y-4,2.5,0,6.28); ctx.arc(x+5,y-4,2.5,0,6.28); ctx.fill();
-    ctx.fillStyle='#000'; ctx.fillRect(x-18,y-26,36,7); ctx.fillStyle=m.isBoss?'#ff5252':'#4caf50'; ctx.fillRect(x-17,y-25,34*(m.hp/m.max),5);
-    if(m.isBoss){ctx.fillStyle='#FFD700'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center'; ctx.fillText(m.bossName,x,y-30);}
-  });
-  summons.forEach(s=>{
-    let x=s.x-C.x,y=s.y-C.y; ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+12,10,3,0,0,6.28); ctx.fill();
-    ctx.fillStyle='#9e9e9e'; ctx.beginPath(); ctx.arc(x,y,10,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
-    ctx.fillStyle='#fff'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center'; ctx.fillText('🦴',x,y+3);
-  });
-  // Player with visual equipment
-  let px=P.x-C.x,py=P.y-C.y;
-  ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(px,py+20,16,5,0,0,6.28); ctx.fill();
-  ctx.save(); ctx.translate(px,py); ctx.scale(P.f,1);
-  // Feet
-  if(equip.feet) drawTexture('heavy_metal',-8,16,8,5); else drawTexture('leather',-8,16,8,5);
-  if(equip.feet) drawTexture('heavy_metal',0,16,8,5); else drawTexture('leather',0,16,8,5);
-  // Legs
-  if(equip.legs) drawTexture(equip.legs.rarity==='legendary'?'heavy_metal':'leather',-7,6,6,12); else drawTexture('leather',-7,6,6,12);
-  if(equip.legs) drawTexture(equip.legs.rarity==='legendary'?'heavy_metal':'leather',1,6,6,12); else drawTexture('leather',1,6,6,12);
-  // Chest - visual changes by rarity
-  let chestTex=CLASSES[P.cls].tex;
-  if(equip.chest){
-    if(equip.chest.rarity==='legendary') chestTex='heavy_metal';
-    else if(equip.chest.rarity==='rare') chestTex='wall';
-    else chestTex=CLASSES[P.cls].tex;
-  }
-  drawTexture(chestTex,-10,-6,20,16);
-  ctx.strokeStyle=equip.chest&&equip.chest.rarity==='legendary'?'#FFD700':'#000'; ctx.lineWidth=equip.chest&&equip.chest.rarity==='legendary'?3:3; ctx.strokeRect(-10,-6,20,16);
-  // Arms
-  drawTexture('leather',-14,-2,5,10); drawTexture('leather',9,-2,5,10);
-  // Head
-  ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,10,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
-  if(equip.head){
-    drawTexture(equip.head.rarity==='legendary'?'heavy_metal':'wall',-12,-22,24,12);
-    if(equip.head.rarity==='legendary'){ctx.strokeStyle='#FFD700'; ctx.lineWidth=2; ctx.strokeRect(-12,-22,24,12);}
-  }
-  // Weapon - different visuals
-  if(P.atk>0){
-    ctx.save();ctx.translate(12,0);ctx.rotate(-0.8-P.atk*0.15);
-    if(equip.weapon&&equip.weapon.icon==='🪓'){ctx.fillStyle='#5d4037'; ctx.fillRect(0,-2,6,14); ctx.fillStyle='#9e9e9e'; ctx.fillRect(6,-6,14,8);}
-    else if(equip.weapon&&equip.weapon.icon==='🏹'){ctx.fillStyle='#8d6e63'; ctx.fillRect(0,-2,18,3);}
-    else drawTexture('weapon_metal',0,-3,22,4);
-    ctx.restore();
-  } else {
-    if(equip.weapon&&equip.weapon.icon==='🪓'){ctx.fillStyle='#5d4037'; ctx.fillRect(12,-2,4,10); ctx.fillStyle='#9e9e9e'; ctx.fillRect(16,-5,10,6);}
-    else if(equip.weapon&&equip.weapon.icon==='🏹'){ctx.fillStyle='#8d6e63'; ctx.fillRect(12,-1,14,2);}
-    else drawTexture('weapon_metal',12,-3,18,4);
-  }
-  // Shield
-  if(equip.shield&&P.block<=0){ctx.fillStyle=equip.shield.rarity==='legendary'?'#FFD700':'#42a5f5'; ctx.beginPath(); ctx.ellipse(-14,2,6,8,0,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();}
-  if(P.block>0){ctx.fillStyle='rgba(66,165,245,0.5)'; ctx.beginPath(); ctx.arc(0,0,28,0,6.28); ctx.fill(); ctx.strokeStyle='#42a5f5'; ctx.lineWidth=3; ctx.stroke();}
-  ctx.restore();
-  projectiles.forEach(pr=>{
-    let x=pr.x-C.x,y=pr.y-C.y; ctx.fillStyle='#ff9800'; ctx.beginPath(); ctx.arc(x,y,4,0,6.28); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText(pr.icon,x,y+3);
-  });
-  particles.forEach(p=>{
-    let x=p.x-C.x,y=p.y-C.y; ctx.fillStyle=p.color; ctx.font='bold 14px sans-serif'; ctx.textAlign='center'; ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeText(p.text,x,y); ctx.fillText(p.text,x,y);
-  });
-  if(T){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.setLineDash([8,4]); ctx.beginPath(); ctx.arc(x,y,18,0,6.28); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y,4,0,6.28); ctx.fill();}
-  quests.filter(q=>!q.done&&q.x).forEach(q=>{
-    let x=q.x-C.x,y=q.y-C.y; if(x<-50||x>470||y<-50||y>910) return;
-    ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y-36,16,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
-    ctx.fillStyle='#000'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center'; ctx.fillText(q.i,x,y-31);
-  });
+ctx.fillStyle='#7CB342'; ctx.fillRect(0,0,cv.width,cv.height);
+let tile=64;
+let startX=Math.floor(C.x/tile)*tile, startY=Math.floor(C.y/tile)*tile;
+for(let x=startX;x<C.x+cv.width+tile;x+=tile){for(let y=startY;y<C.y+cv.height+tile;y+=tile){let sx=x-C.x,sy=y-C.y; drawTexture('grass',sx,sy,tile,tile);}}
+ctx.strokeStyle='rgba(0,0,0,0.08)'; ctx.lineWidth=1;
+for(let x=-(C.x%tile);x<cv.width;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke()}
+for(let y=-(C.y%tile);y<cv.height;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke()}
+
+objs.forEach(o=>{
+let x=o.x-C.x,y=o.y-C.y; if(x<-120||x>540||y<-120||y>980) return;
+ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+o.h/2+6,o.w/2+6,10,0,0,6.28); ctx.fill();
+if(o.t==='house'){drawTexture('wall',x-o.w/2,y-o.h/2,o.w,o.h); drawTexture('roof',x-o.w/2-8,y-o.h/2-32,o.w+16,32); ctx.fillStyle='#3e2723'; ctx.fillRect(x-12,y-6,24,20); ctx.fillStyle='#FF8F00'; ctx.fillRect(x-10,y-2,6,8); ctx.fillRect(x+4,y-2,6,8); ctx.strokeStyle='#000'; ctx.lineWidth=5; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);}
+else if(o.t==='tree'){drawTexture('trunk',x-10,y-8,20,28); drawTexture('foliage',x-28,y-38,56,48);}
+else if(o.t==='rock'){drawTexture('stone',x-16,y-12,32,24); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-16,y-12,32,24);}
+});
+chests.forEach(ch=>{let x=ch.x-C.x,y=ch.y-C.y; if(x<-40||x>460||y<-40||y>900) return; if(!ch.opened){ctx.fillStyle='#8d6e63'; ctx.fillRect(x-18,y-10,36,22); ctx.fillStyle='#FFD700'; ctx.fillRect(x-4,y-2,8,8); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-18,y-10,36,22);} else {ctx.fillStyle='#5d4037'; ctx.fillRect(x-18,y-2,36,10);}});
+mons.forEach(m=>{if(!m.alive) return; let x=m.x-C.x,y=m.y-C.y; if(x<-60||x>480||y<-60||y>920) return; ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+20,20,6,0,0,6.28); ctx.fill(); let col=m.isBoss?'#d32f2f':m.type==='orc'?'#4a7a2a':'#8bc34a'; ctx.fillStyle=col; ctx.beginPath(); ctx.ellipse(x,y,18,22,0,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=m.isBoss?5:4; ctx.stroke(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x-6,y-5,6,0,6.28); ctx.arc(x+6,y-5,6,0,6.28); ctx.fill(); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(x-6,y-5,3,0,6.28); ctx.arc(x+6,y-5,3,0,6.28); ctx.fill(); ctx.fillStyle='#000'; ctx.fillRect(x-20,y-30,40,8); ctx.fillStyle=m.isBoss?'#ff5252':'#4caf50'; ctx.fillRect(x-19,y-29,38*(m.hp/m.max),6); if(m.isBoss){ctx.fillStyle='#FFD700'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center'; ctx.fillText(m.bossName,x,y-36);}});
+let px=P.x-C.x,py=P.y-C.y;
+ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(px,py+22,18,6,0,0,6.28); ctx.fill();
+ctx.save(); ctx.translate(px,py); ctx.scale(P.f,1);
+ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,12,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.stroke();
+ctx.fillStyle='#5d4037'; ctx.fillRect(-12,-6,24,18); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(-12,-6,24,18);
+if(P.atk>0){ctx.save();ctx.translate(14,0);ctx.rotate(-0.8-P.atk*0.12);ctx.fillStyle='#9e9e9e'; ctx.fillRect(0,-4,26,6); ctx.fillStyle='#5d4037'; ctx.fillRect(0,-2,8,14); ctx.restore();} else {ctx.fillStyle='#9e9e9e'; ctx.fillRect(14,-4,20,6);}
+ctx.restore();
+if(T){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=5; ctx.setLineDash([10,6]); ctx.beginPath(); ctx.arc(x,y,22,0,6.28); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y,6,0,6.28); ctx.fill();}
 }
 
-function drawTexture(name,sx,sy,sw,sh){
-  let t=textures[name];
-  if(!t) return;
-  ctx.drawImage(texCanvas,t.x,t.y,t.w,t.h,sx,sy,sw,sh);
+// JOYSTICK V6 ULTRA ROBUSTO
+const jb=document.getElementById('joyBaseV6'), js=document.getElementById('joyStickV6'), joyCont=document.getElementById('joystickV6');
+let activeTouch=null;
+function getPos(e){
+let cx,cy;
+if(e.touches && e.touches.length>0){
+let t=e.touches[0];
+if(activeTouch!==null){for(let tt of e.touches){if(tt.identifier===activeTouch){t=tt;break;}}}
+cx=t.clientX; cy=t.clientY;
+} else if(e.changedTouches && e.changedTouches.length>0){cx=e.changedTouches[0].clientX; cy=e.changedTouches[0].clientY;}
+else {cx=e.clientX; cy=e.clientY;}
+let r=jb.getBoundingClientRect();
+let dx=cx-(r.left+r.width/2), dy=cy-(r.top+r.height/2), d=Math.hypot(dx,dy), m=60;
+if(d>m){let a=Math.atan2(dy,dx); dx=Math.cos(a)*m; dy=Math.sin(a)*m; d=m;}
+return {dx,dy,d,cx,cy};
 }
+function joyStart(e){
+e.preventDefault(); e.stopPropagation();
+if(e.touches && e.touches[0]) activeTouch=e.touches[0].identifier;
+J.a=1; T=null;
+let banner=document.getElementById('moveHintV6'); if(banner) banner.style.display='none';
+js.style.transform='scale(1.2)'; js.style.boxShadow='0 10px 0 #000,0 0 30px #FFD700';
+if(navigator.vibrate) navigator.vibrate(20);
+console.log('JOY START');
+}
+function joyMove(e){
+if(!J.a) return;
+e.preventDefault(); e.stopPropagation();
+let {dx,dy,d}=getPos(e);
+if(d<12){J.x=0;J.y=0; js.style.transform='translate(0px,0px) scale(1.2)'; return;}
+js.style.transform=`translate(${dx}px,${dy}px) scale(1.2)`;
+J.x=dx/60; J.y=dy/60;
+if(Math.abs(J.x)>0.1) P.f=J.x>0?1:-1;
+}
+function joyEnd(e){
+if(e){e.preventDefault(); e.stopPropagation();}
+J.a=0; J.x=0; J.y=0; activeTouch=null;
+js.style.transform='translate(0,0) scale(1)'; js.style.boxShadow='0 8px 0 #000,0 0 20px #FFD700';
+console.log('JOY END');
+}
+function setupJoyV6(){
+[joyCont, jb].forEach(el=>{
+el.addEventListener('touchstart', joyStart, {passive:false});
+el.addEventListener('touchmove', joyMove, {passive:false});
+el.addEventListener('touchend', joyEnd, {passive:false});
+el.addEventListener('touchcancel', joyEnd, {passive:false});
+el.addEventListener('contextmenu', e=>e.preventDefault());
+});
+jb.addEventListener('mousedown', (e)=>{activeTouch=null; joyStart(e);});
+document.addEventListener('mousemove', (e)=>{if(J.a && activeTouch===null) joyMove(e);});
+document.addEventListener('mouseup', (e)=>{if(activeTouch===null) joyEnd(e);});
+console.log('JOY V6 SETUP OK');
+}
+setupJoyV6();
 
-// Auto save every 10s
-setInterval(()=>{if(document.getElementById('startScreen').style.display==='none') saveGame();},10000);
-window.addEventListener('beforeunload',()=>{saveGame();});
+// MAP TAP FOR AUTO-WALK
+function handleTap(cx,cy){
+let r=cv.getBoundingClientRect();
+let x=(cx-r.left)*(cv.width/r.width), y=(cy-r.top)*(cv.height/r.height);
+if(y<60) return false; // top bar
+if(x<180 && y>cv.height-200) return false; // joystick area
+if(x>cv.width-120 && y>cv.height-200) return false; // attack area
+T={x:C.x+x, y:C.y+y};
+console.log('TAP TO WALK', T.x, T.y);
+if(navigator.vibrate) navigator.vibrate(10);
+return true;
+}
+cv.addEventListener('click', (e)=>{handleTap(e.clientX,e.clientY);});
+cv.addEventListener('touchstart', (e)=>{
+if(J.a) return;
+if(e.touches.length!==1) return;
+let t=e.touches[0];
+if(t.clientY>window.innerHeight*0.7 && (t.clientX<200 || t.clientX>window.innerWidth-200)) return;
+e.preventDefault();
+handleTap(t.clientX,t.clientY);
+},{passive:false});
 
-initInv();
+// ATTACK
+function doAttack(){
+P.atk=15;
+let hit=false;
+mons.forEach(m=>{
+if(!m.alive) return;
+let d=Math.hypot(m.x-P.x,m.y-P.y);
+if(d<100){
+m.hp-=20+Math.floor(Math.random()*10);
+hit=true;
+if(m.hp<=0){m.alive=false; setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=300+Math.random()*2600; m.y=300+Math.random()*2600;},8000); P.gold+=20; document.getElementById('goldV6').textContent=P.gold;}
+}
+});
+chests.forEach(ch=>{if(!ch.opened && Math.hypot(ch.x-P.x,ch.y-P.y)<80){ch.opened=true; P.gold+=50; document.getElementById('goldV6').textContent=P.gold;}});
+if(hit){cv.style.transform='translate(3px,0)'; setTimeout(()=>cv.style.transform='',60); if(navigator.vibrate) navigator.vibrate(30);}
+}
+function setupAttack(){
+let el=document.getElementById('attackV6');
+el.addEventListener('click', doAttack);
+el.addEventListener('touchstart', (e)=>{e.preventDefault(); e.stopPropagation(); doAttack(); if(navigator.vibrate) navigator.vibrate(20);},{passive:false});
+}
+setupAttack();
+
+// SELECT CLASS
+let selCard=document.querySelector('.classCardV6.selected');
+document.querySelectorAll('.classCardV6').forEach(card=>{
+card.addEventListener('click', ()=>{
+document.querySelectorAll('.classCardV6').forEach(c=>c.classList.remove('selected'));
+card.classList.add('selected'); selClass=card.dataset.class; selCard=card;
+if(navigator.vibrate) navigator.vibrate(15);
+});
+card.addEventListener('touchstart', (e)=>{e.preventDefault(); document.querySelectorAll('.classCardV6').forEach(c=>c.classList.remove('selected')); card.classList.add('selected'); selClass=card.dataset.class;},{passive:false});
+});
+
+// START GAME - REMOVE MENU FROM DOM
+function startGameV6(){
+console.log('START V6', selClass);
+P.cls=selClass;
+P.x=W/2; P.y=H/2; P.hp=P.maxHp; P.gold=500; P.lvl=1;
+genWorld();
+let ss=document.getElementById('startScreenV6');
+if(ss){ss.remove(); console.log('START SCREEN REMOVED FROM DOM');}
+document.getElementById('moveHintV6').style.display='block';
+setTimeout(()=>{let h=document.getElementById('moveHintV6'); if(h) h.style.display='none';},6000);
+if(!gameStarted){gameStarted=true; requestAnimationFrame(loop); console.log('LOOP STARTED');}
+}
+document.getElementById('startBtnV6').addEventListener('click', startGameV6);
+document.getElementById('startBtnV6').addEventListener('touchstart', (e)=>{e.preventDefault(); startGameV6();},{passive:false});
+
+// GAME LOOP
+let last=performance.now();
+function loop(now){
+let dt=Math.min((now-last)/1000,0.05); last=now;
+let mx=0,my=0;
+if(J.a){mx=J.x; my=J.y;}
+else if(T){let dx=T.x-P.x, dy=T.y-P.y, d=Math.hypot(dx,dy); if(d<30){T=null;} else {mx=dx/d; my=dy/d; if(Math.abs(mx)>0.1) P.f=mx>0?1:-1;}}
+if(mx||my){
+let speed=220;
+let nx=P.x+mx*speed*dt, ny=P.y+my*speed*dt;
+let res=checkSlide(P.x,P.y,nx,ny,22);
+P.x=res.x; P.y=res.y;
+P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));
+}
+if(P.atk>0) P.atk--;
+C.x=P.x-cv.width/2; C.y=P.y-cv.height/2;
+C.x=Math.max(0,Math.min(W-cv.width,C.x)); C.y=Math.max(0,Math.min(H-cv.height,C.y));
+draw();
+// debug
+let dbg=document.getElementById('debugV6');
+if(dbg){dbg.innerHTML=`V6 ULTRA<br>Joy: ${J.x.toFixed(2)},${J.y.toFixed(2)} ${J.a?'ATIVO':'-'}<br>Pos: ${Math.floor(P.x)},${Math.floor(P.y)}<br>Monstros: ${mons.filter(m=>m.alive).length}<br>T: ${T?Math.floor(Math.hypot(T.x-P.x,T.y-P.y))+'m':'-'}`;}
+document.getElementById('hpValV6').textContent=Math.floor(P.hp);
+document.getElementById('posV6').textContent=`📍 ${Math.floor(P.x/100)},${Math.floor(P.y/100)}`;
+requestAnimationFrame(loop);
+}
+genWorld();
+draw();
+console.log('V6 READY - WAITING START');
 </script>
 </body>
 </html>
