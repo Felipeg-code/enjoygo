@@ -20,19 +20,17 @@ jobs:
           mkdir -p webview-apk/app/src/main/assets
           mkdir -p webview-apk/app/src/main/res/values
           
-          # Copy game HTML
           cp norrath-clash.html webview-apk/app/src/main/assets/ 2>/dev/null || cp enjoygo/norrath-clash.html webview-apk/app/src/main/assets/ 2>/dev/null || true
-          if [ ! -f webview-apk/app/src/main/assets/norrath-clash.html ]; then
-            echo "Trying to find HTML..."
-            find . -name "norrath-clash.html" -type f | head -n 5
-            find . -name "*.html" | grep norrath | head -n 5
-            # Create from base64 if needed - fallback
-            ls -lh .
-          fi
           ls -lh webview-apk/app/src/main/assets/
           
           cat > webview-apk/settings.gradle << 'GRADLE'
           include ':app'
+          GRADLE
+          
+          cat > webview-apk/gradle.properties << 'GRADLE'
+          android.useAndroidX=true
+          android.enableJetifier=true
+          org.gradle.jvmargs=-Xmx4g
           GRADLE
           
           cat > webview-apk/build.gradle << 'GRADLE'
@@ -52,8 +50,8 @@ jobs:
               applicationId "com.norrathclash"
               minSdk 21
               targetSdk 34
-              versionCode 2
-              versionName "2.0-V2-NATIVO"
+              versionCode 3
+              versionName "3.0-V2-FINAL"
             }
             buildTypes {
               release { minifyEnabled false; shrinkResources false }
@@ -138,30 +136,30 @@ jobs:
       - name: Build APK with Gradle
         run: |
           cd webview-apk
-          gradle wrapper --gradle-version 8.5 || echo "wrapper fail, trying with gradle directly"
+          gradle wrapper --gradle-version 8.5 || true
           chmod +x gradlew || true
           if [ -f gradlew ]; then
-            ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx4g" --stacktrace
+            ./gradlew assembleDebug --no-daemon --stacktrace
           else
-            gradle assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx4g" --stacktrace || /opt/gradle/bin/gradle assembleDebug --no-daemon || gradle-8.5/bin/gradle assembleDebug
+            gradle assembleDebug --no-daemon --stacktrace
           fi
-          ls -lh app/build/outputs/apk/debug/ || find . -name "*.apk" -type f
+          ls -lh app/build/outputs/apk/debug/ || find . -name "*.apk" -type f -exec ls -lh {} \;
           python3 -c "
-          import zipfile, os
+          import zipfile, os, glob
           apk='app/build/outputs/apk/debug/app-debug.apk'
           if not os.path.exists(apk):
-              import glob
               apks=glob.glob('**/*.apk', recursive=True)
               print(f'Found APKs: {apks}')
               if apks:
                   apk=apks[0]
+          print(f'Using APK: {apk}')
           with zipfile.ZipFile(apk) as z:
               files=z.namelist()
               has_html='assets/norrath-clash.html' in files
               print(f'HAS HTML: {has_html}')
               if has_html:
                   info=z.getinfo('assets/norrath-clash.html')
-                  print(f'HTML size: {info.file_size} bytes')
+                  print(f'HTML size: {info.file_size} bytes - OK!' if info.file_size>50000 else f'HTML too small: {info.file_size}')
               print(f'Total files: {len(files)}')
           "
 
@@ -181,9 +179,9 @@ jobs:
           body: |
             🎮 **NORRATH CLASH V2 - APK WEBVIEW 100% NATIVO - SEM METRO!**
             
-            ✅ **RESOLVIDO DEFINITIVO:** APK puro WebView, sem React Native, sem Metro!
+            ✅ **RESOLVIDO DEFINITIVO:** APK puro WebView, sem React Native!
             ✅ Carrega HTML direto de assets, 100% offline!
-            ✅ V2: Minimapa + Craft Gemas + Torre 100 + Save Auto + Visual Equip
+            ✅ V2: Minimapa + Craft Gemas + Torre 100 + Save Auto
             
             📱 **INSTALAR (AGORA VAI!):**
             1. Baixe app-debug.apk
