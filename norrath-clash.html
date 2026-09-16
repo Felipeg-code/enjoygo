@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>NORRATH CLASH V2 - Melhorado</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;touch-action:none;user-select:none;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent} html,body{touch-action:manipulation}
 body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
 #gc{position:relative;width:100vw;height:100vh;height:100dvh;max-width:480px;max-height:960px;background:#1a1a1e;overflow:hidden;box-shadow:0 0 0 3px #000}
 @media(min-width:500px){#gc{width:420px;height:860px;border-radius:20px;border:4px solid #000;box-shadow:0 0 0 3px #000,0 0 0 7px #3e2723,0 30px 80px rgba(0,0,0,0.9)}}
@@ -126,20 +126,20 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
 .skillName{color:#fff;font-weight:900;font-size:11px}
 .skillDesc{color:#9e9e9e;font-size:8px;line-height:1.2;margin-top:1px}
 .skillLevel{color:#FFD700;font-weight:900;font-size:10px;background:#000;padding:2px 6px;border-radius:8px;border:2px solid #5d4037}
-#startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 15%,#5d4037,#1a0f0a 60%,#000);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;z-index:30;text-align:center;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));overflow-y:auto}
+#startScreen{position:absolute;inset:0;background:radial-gradient;pointer-events:auto;touch-action:manipulation(circle at 50% 15%,#5d4037,#1a0f0a 60%,#000);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;z-index:30;text-align:center;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));overflow-y:auto}
 .logo{font-size:42px;font-weight:900;color:#FFD700;text-shadow:4px 4px 0 #000,0 0 30px rgba(255,215,0,0.6);letter-spacing:3px;line-height:1;margin-top:10px}
 .logo2{font-size:14px;font-weight:900;color:#FFA500;letter-spacing:6px;margin-top:2px;text-shadow:2px 2px 0 #000}
 .sublogo{font-size:11px;color:#FFA500;letter-spacing:4px;font-weight:900;margin:4px 0 10px 0}
 .badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
 .badge{background:#000;border:3px solid #5d4037;color:#FFD700;font-size:8px;font-weight:900;padding:5px 10px;border-radius:8px;box-shadow:0 2px 0 #000}
 .classGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin:12px 0}
-.classCard{background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:16px;padding:12px;cursor:pointer;text-align:center;box-shadow:0 5px 0 #000;min-height:110px;display:flex;flex-direction:column;justify-content:center;transition:transform 0.05s;position:relative}
+.classCard{background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:16px;padding:12px;cursor:pointer;text-align:center;box-shadow:0 5px 0 #000;min-height:110px;display:flex;flex-direction:column;justify-content:center;transition:transform 0.05s;position:relative;pointer-events:auto;touch-action:manipulation;-webkit-user-select:none;z-index:5}
 .classCard:active{transform:translateY(5px);box-shadow:0 0 0 #000}
 .classCard.selected{border-color:#FFD700;box-shadow:0 0 20px rgba(255,215,0,0.7),0 5px 0 #000;transform:scale(1.03)}
 .classIcon{font-size:36px}
 .className{font-size:10px;font-weight:900;color:#FFD700;margin:6px 0 3px 0;line-height:1.1}
 .classDesc{font-size:8px;color:#d7ccc8;line-height:1.3;font-weight:600}
-.startBtn{margin-top:14px;background:linear-gradient(#FFD700,#FF8f00);color:#000;border:5px solid #000;padding:16px 44px;border-radius:16px;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 7px 0 #000;letter-spacing:1.5px;min-width:240px;min-height:60px;transition:transform 0.05s}
+.startBtn{margin-top:14px;background:linear-gradient(#FFD700,#FF8f00);color:#000;border:5px solid #000;padding:16px 44px;border-radius:16px;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 7px 0 #000;letter-spacing:1.5px;min-width:240px;min-height:60px;transition:transform 0.05s;pointer-events:auto;touch-action:manipulation;z-index:10;position:relative}
 .startBtn:active{transform:translateY(7px);box-shadow:0 0 0 #000}
 .infoBox{margin-top:14px;background:rgba(0,0,0,0.6);padding:10px;border-radius:12px;border:3px solid #000;max-width:400px;width:100%;box-shadow:0 3px 0 #000}
 .infoTitle{font-size:10px;color:#FFD700;font-weight:900;letter-spacing:1px;margin-bottom:6px}
@@ -315,7 +315,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
     <div style="margin-top:20px;width:60%;height:6px;background:#333;border-radius:3px;overflow:hidden"><div id="actBar" style="height:100%;background:#FFD700;width:0%"></div></div>
   </div>
 
-  <div id="startScreen">
+  <div id="startScreen" style="pointer-events:auto">
     <div class="logo">NORRATH</div>
     <div class="logo2">CLASH V2</div>
     <div class="sublogo">MINIMAPA + CRAFT + TORRE 100 + SAVE</div>
@@ -1200,11 +1200,11 @@ document.getElementById('removeAllGems').onclick=()=>{
   openGemModal(); ri(); updateCharVisual(); showPopup('💎 Todas gemas removidas','#FFD700'); saveGame();
 };
 
+function selectClass(card){ document.querySelectorAll('.classCard').forEach(x=>x.classList.remove('selected')); card.classList.add('selected'); selClass=card.dataset.class; console.log('Class selected: '+selClass); if(navigator.vibrate) navigator.vibrate(20); }
 document.querySelectorAll('.classCard').forEach(c=>{
-  c.onclick=()=>{
-    document.querySelectorAll('.classCard').forEach(x=>x.classList.remove('selected'));
-    c.classList.add('selected'); selClass=c.dataset.class;
-  };
+  c.addEventListener('click', ()=>selectClass(c));
+  c.addEventListener('touchstart', (e)=>{ e.preventDefault(); selectClass(c); }, {passive:false});
+  c.addEventListener('touchend', (e)=>{ e.preventDefault(); }, {passive:false});
 });
 
 function startGame(isContinue=false){
@@ -1227,8 +1227,13 @@ function startGame(isContinue=false){
   saveGame();
   requestAnimationFrame(loop);
 }
-document.getElementById('startBtn').onclick=()=>startGame(false);
-document.getElementById('continueBtn').onclick=()=>startGame(true);
+function handleStart(isContinue){ console.log('Start clicked, continue='+isContinue); startGame(isContinue); }
+const startBtn=document.getElementById('startBtn');
+startBtn.addEventListener('click', ()=>handleStart(false));
+startBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); handleStart(false); }, {passive:false});
+const contBtn=document.getElementById('continueBtn');
+if(contBtn){ contBtn.addEventListener('click', ()=>handleStart(true)); contBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); handleStart(true); }, {passive:false}); }
+
 
 // Check save on load
 if(hasSave()){
