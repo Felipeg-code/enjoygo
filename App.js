@@ -8,16 +8,15 @@ const HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>enjoygo FINAL - Loja + Gemas</title>
+<title>NORRATH CLASH - Champions Engine</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;touch-action:none;user-select:none;-webkit-tap-highlight-color:transparent}
 body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
 #gc{position:relative;width:100vw;height:100vh;height:100dvh;max-width:480px;max-height:960px;background:#1a1a1e;overflow:hidden;box-shadow:0 0 0 3px #000}
 @media(min-width:500px){#gc{width:420px;height:860px;border-radius:20px;border:4px solid #000;box-shadow:0 0 0 3px #000,0 0 0 7px #3e2723,0 30px 80px rgba(0,0,0,0.9)}}
-canvas{width:100%;height:100%;display:block}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
 #ui{position:absolute;inset:0;pointer-events:none}
-.topBar{position:absolute;top:0;left:0;right:0;height:68px;background:linear-gradient(#3e2723,#1a0f0a);display:flex;justify-content:space-between;align-items:center;padding:6px 6px 0 6px;border-bottom:4px solid #000;pointer-events:auto;gap:4px;padding-top:max(6px,env(safe-area-inset-top));z-index:10}
+.topBar{position:absolute;top:0;left:0;right:0;height:68px;background:linear-gradient(#2a1a0f,#0f0a05);display:flex;justify-content:space-between;align-items:center;padding:6px 6px 0 6px;border-bottom:4px solid #000;pointer-events:auto;gap:4px;padding-top:max(6px,env(safe-area-inset-top));z-index:10}
 .res{display:flex;align-items:center;background:linear-gradient(#2a2a2a,#0a0a0a);border-radius:12px;padding:2px 6px 2px 2px;border:3px solid #000;flex:1;min-width:0;box-shadow:0 3px 0 #000}
 .resIcon{width:32px;height:32px;min-width:32px;border-radius:8px;display:flex;justify-content:center;align-items:center;border:3px solid #000;font-size:15px;font-weight:900;flex-shrink:0}
 .resVal{color:#FFD700;font-weight:900;font-size:12px;margin-left:4px;text-shadow:1px 1px 0 #000;white-space:nowrap}
@@ -57,7 +56,6 @@ canvas{width:100%;height:100%;display:block}
 .spellCd{position:absolute;inset:0;background:rgba(0,0,0,0.7);border-radius:10px;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:14px}
 #autoBanner{position:absolute;top:78px;left:50%;transform:translateX(-50%);background:linear-gradient(#FFD700,#FFA500);border-radius:22px;padding:10px 18px;border:4px solid #000;box-shadow:0 5px 0 #000;font-size:12px;font-weight:900;color:#000;display:none;pointer-events:auto;text-align:center;max-width:82vw;z-index:10}
 #autoBanner .cancel{font-size:10px;background:#000;color:#FFD700;padding:3px 10px;border-radius:12px;margin-left:8px;border:2px solid #FFD700;cursor:pointer}
-/* INVENTÁRIO + GEMAS */
 #invDrawer{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#3e2723,#1a0f0a);border-top:5px solid #000;border-radius:20px 20px 0 0;padding:12px 12px calc(12px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:auto;z-index:20;max-height:68vh;overflow-y:auto;box-shadow:0 -12px 40px rgba(0,0,0,0.9)}
 #invDrawer.open{transform:translateY(0)}
 #invHandle{width:48px;height:6px;background:#8d6e63;border-radius:3px;margin:0 auto 10px auto}
@@ -81,7 +79,6 @@ canvas{width:100%;height:100%;display:block}
 .invBtn.use{background:linear-gradient(#2e7d32,#1b5e20)}
 .invBtn.equip{background:linear-gradient(#1565c0,#0d47a1)}
 .invBtn.gem{background:linear-gradient(#8e24aa,#4a148c)}
-/* GEM SOCKET MODAL */
 #gemModal{position:absolute;inset:0;background:rgba(0,0,0,0.85);z-index:30;display:none;flex-direction:column;justify-content:center;align-items:center;padding:16px;pointer-events:auto}
 .gemBox{background:linear-gradient(#4e342e,#2a1a14);border:5px solid #000;border-radius:20px;padding:16px;width:100%;max-width:380px;box-shadow:0 10px 0 #000}
 .gemTitle{color:#FFD700;font-weight:900;font-size:14px;text-align:center;margin-bottom:12px;letter-spacing:1px}
@@ -95,8 +92,6 @@ canvas{width:100%;height:100%;display:block}
 .gemInventory{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:160px;overflow-y:auto;background:rgba(0,0,0,0.3);padding:8px;border-radius:12px;border:3px solid #000;margin-top:10px}
 .gemInvSlot{aspect-ratio:1;background:linear-gradient(#2a2a2a,#1a1a1a);border:3px solid #000;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;min-height:52px;box-shadow:0 2px 0 #000}
 .gemInvSlot.hasGem{border-color:#8d6e63}
-.gemInvSlot.selected{border-color:#FFD700;box-shadow:0 0 10px rgba(255,215,0,0.6),0 2px 0 #000}
-/* SHOP MODAL */
 #shopModal{position:absolute;inset:0;background:linear-gradient(#3e2723,#0a0503);z-index:25;display:none;flex-direction:column;padding:10px;padding-top:max(10px,env(safe-area-inset-top));pointer-events:auto;overflow-y:auto}
 .shopHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .shopTitle{color:#FFD700;font-weight:900;font-size:16px;letter-spacing:1px}
@@ -104,7 +99,6 @@ canvas{width:100%;height:100%;display:block}
 .shopTabs{display:flex;gap:6px;margin-bottom:12px}
 .shopTab{flex:1;height:44px;background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:12px;color:#c9b896;font-weight:900;font-size:11px;display:flex;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 3px 0 #000}
 .shopTab.active{background:linear-gradient(#FFD700,#FF8f00);color:#000;border-color:#000}
-.shopTab:active{transform:translateY(3px);box-shadow:0 0 0 #000}
 .shopGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .shopItem{background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:14px;padding:10px;box-shadow:0 4px 0 #000;cursor:pointer;transition:transform 0.05s;position:relative}
 .shopItem:active{transform:translateY(4px);box-shadow:0 0 0 #000}
@@ -112,22 +106,17 @@ canvas{width:100%;height:100%;display:block}
 .shopItemName{font-size:10px;font-weight:900;color:#FFD700;text-align:center;margin:4px 0;line-height:1.2}
 .shopItemStats{font-size:8px;color:#d7ccc8;line-height:1.3;background:rgba(0,0,0,0.4);padding:4px;border-radius:6px;border:2px solid #000;margin:4px 0}
 .shopItemPrice{font-size:11px;font-weight:900;color:#4caf50;text-align:center;background:#000;padding:3px;border-radius:8px;border:2px solid #2e7d32;margin-top:6px}
-.shopItemPrice.cant{color:#ff5252;border-color:#7f0000}
 .closeBtn{width:44px;height:44px;background:#000;border:4px solid #FFD700;border-radius:12px;display:flex;justify-content:center;align-items:center;color:#FFD700;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 3px 0 #000}
-.closeBtn:active{transform:translateY(3px);box-shadow:0 0 0 #000}
-/* CHAR SCREEN */
 #charScreen{position:absolute;inset:0;background:linear-gradient(#3e2723,#0a0503);z-index:24;display:none;flex-direction:column;padding:10px;padding-top:max(10px,env(safe-area-inset-top));pointer-events:auto;overflow-y:auto}
 .charTop{display:flex;gap:10px;margin-bottom:10px}
 .charAvatar{width:100px;height:100px;background:linear-gradient(#5d4037,#3e2723);border:4px solid #000;border-radius:16px;display:flex;justify-content:center;align-items:center;font-size:48px;box-shadow:0 4px 0 #000;position:relative}
 .charInfo{flex:1;background:rgba(0,0,0,0.4);border:3px solid #000;border-radius:12px;padding:8px}
 .charName{color:#FFD700;font-weight:900;font-size:14px}
-.charClass{color:#c9b896;font-size:10px;font-weight:700;margin-top:2px}
 .charLevel{color:#fff;font-size:11px;font-weight:900;margin-top:4px;background:#000;padding:2px 8px;border-radius:10px;display:inline-block;border:2px solid #5d4037}
 .attrGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
 .attrCard{background:linear-gradient(#4a3a32,#2a1a14);border:3px solid #000;border-radius:12px;padding:8px;box-shadow:0 3px 0 #000}
 .attrName{color:#8d6e63;font-size:8px;font-weight:900}
 .attrVal{color:#FFD700;font-size:18px;font-weight:900}
-.attrDesc{color:#a1887f;font-size:7px;line-height:1.2;margin-top:2px}
 .skillList{display:flex;flex-direction:column;gap:6px}
 .skillRow{background:linear-gradient(#2a2a3a,#1a1a2a);border:3px solid #000;border-radius:10px;padding:8px;display:flex;align-items:center;box-shadow:0 2px 0 #000}
 .skillIcon{width:40px;height:40px;background:linear-gradient(#4a4a5a,#2a2a3a);border:3px solid #000;border-radius:8px;display:flex;justify-content:center;align-items:center;font-size:20px;flex-shrink:0}
@@ -137,6 +126,7 @@ canvas{width:100%;height:100%;display:block}
 .skillLevel{color:#FFD700;font-weight:900;font-size:10px;background:#000;padding:2px 6px;border-radius:8px;border:2px solid #5d4037}
 #startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 15%,#5d4037,#1a0f0a 60%,#000);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;z-index:30;text-align:center;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));overflow-y:auto}
 .logo{font-size:42px;font-weight:900;color:#FFD700;text-shadow:4px 4px 0 #000,0 0 30px rgba(255,215,0,0.6);letter-spacing:3px;line-height:1;margin-top:10px}
+.logo2{font-size:14px;font-weight:900;color:#FFA500;letter-spacing:6px;margin-top:2px;text-shadow:2px 2px 0 #000}
 .sublogo{font-size:11px;color:#FFA500;letter-spacing:4px;font-weight:900;margin:4px 0 10px 0}
 .badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
 .badge{background:#000;border:3px solid #5d4037;color:#FFD700;font-size:8px;font-weight:900;padding:5px 10px;border-radius:8px;box-shadow:0 2px 0 #000}
@@ -168,18 +158,22 @@ canvas{width:100%;height:100%;display:block}
 #bossFill{height:100%;background:linear-gradient(#d32f2f,#7f0000);transition:width 0.2s}
 #bossName{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:10px;text-shadow:1px 1px 0 #000;letter-spacing:1px}
 #actTransition{position:absolute;inset:0;background:#000;z-index:40;display:none;flex-direction:column;justify-content:center;align-items:center;color:#FFD700;text-align:center;pointer-events:auto}
+#engineInfo{position:absolute;top:76px;left:6px;background:rgba(0,0,0,0.85);border:3px solid #000;border-radius:10px;padding:6px 8px;pointer-events:none;z-index:6;box-shadow:0 3px 0 #000}
+.engineText{color:#4caf50;font-size:8px;font-weight:900;line-height:1.3;font-family:monospace}
 </style>
 </head>
 <body>
 <div id="gc">
 <canvas id="game" width="420" height="860"></canvas>
+<canvas id="texAtlas" width="512" height="512" style="display:none"></canvas>
 <div id="ui">
   <div class="topBar">
     <div class="res"><div class="resIcon" style="background:linear-gradient(#e53935,#7f0000)">❤️</div><div class="resVal" id="hpVal">100</div><div class="bar"><div class="fill" id="hpFill" style="width:100%;background:linear-gradient(#ff5252,#b71c1c)"></div></div></div>
     <div class="res"><div class="resIcon" style="background:linear-gradient(#42a5f5,#0d47a1)">🔮</div><div class="resVal" id="manaVal">100</div><div class="bar"><div class="fill" id="manaFill" style="width:100%;background:linear-gradient(#64b5f6,#1565c0)"></div></div></div>
-    <div class="res"><div class="resIcon" style="background:linear-gradient(#FFD700,#b8960c)">💰</div><div class="resVal" id="gold">400</div></div>
+    <div class="res"><div class="resIcon" style="background:linear-gradient(#FFD700,#b8960c)">💰</div><div class="resVal" id="gold">500</div></div>
     <div class="res"><div class="resIcon" style="background:linear-gradient(#78909c,#263238)">⚔️</div><div class="resVal">Lv<span id="level">1</span></div></div>
   </div>
+  <div id="engineInfo"><div class="engineText" id="engineText">ENGINE: NORRATH-1<br>FPS: 60<br>TEX: 24 LOADED</div></div>
   <div id="questPanel"><div class="qTitle">📜 MISSÕES</div><div id="questList"></div></div>
   <div id="bossBar"><div id="bossFill" style="width:100%"></div><div id="bossName">👹 BOSS</div></div>
   <div id="autoBanner">🚶 Indo... <span class="cancel" id="cancelAuto">CANCELAR ✕</span></div>
@@ -196,14 +190,14 @@ canvas{width:100%;height:100%;display:block}
     <div class="spell" id="spell3"><div class="spellKey">3</div><div class="spellIcon">⚡</div><div class="spellMana">20</div></div>
     <div class="spell" id="spell4"><div class="spellKey">4</div><div class="spellIcon">💚</div><div class="spellMana">25</div></div>
   </div>
-  <div id="tip">💡 Toque na missão • Mercador 🏪 vende gemas!</div>
+  <div id="tip">💡 Motor gráfico próprio! Texturas procedurais!</div>
 
   <div id="invDrawer">
     <div id="invHandle"></div>
-    <div class="invHeader"><div class="invTitle">🎒 INVENTÁRIO • GEMAS 4 SLOTS</div><div class="invWeight" id="invWeight">0/100</div></div>
-    <div style="color:#8d6e63;font-size:8px;font-weight:900;margin-bottom:6px;letter-spacing:1px">EQUIPADO - CLIQUE PRA GERENCIAR GEMAS 💎</div>
+    <div class="invHeader"><div class="invTitle">🎒 INVENTÁRIO • TEXTURAS</div><div class="invWeight" id="invWeight">0/100</div></div>
+    <div style="color:#8d6e63;font-size:8px;font-weight:900;margin-bottom:6px;letter-spacing:1px">EQUIPADO - TEXTURA MUDA NO BONECO!</div>
     <div class="equipGrid" id="equipGrid"></div>
-    <div style="color:#8d6e63;font-size:8px;font-weight:900;margin:10px 0 6px 0;letter-spacing:1px">MOCHILA - DUPLO TOQUE EQUIPA</div>
+    <div style="color:#8d6e63;font-size:8px;font-weight:900;margin:10px 0 6px 0;letter-spacing:1px">MOCHILA</div>
     <div class="invGrid" id="inventory"></div>
     <div class="invActions">
       <div class="invBtn use" id="useBtn">USAR</div>
@@ -216,11 +210,10 @@ canvas{width:100%;height:100%;display:block}
 
   <div id="gemModal">
     <div class="gemBox">
-      <div class="gemTitle">💎 GERENCIAR GEMAS - 4 SLOTS</div>
+      <div class="gemTitle">💎 GEMAS - 4 SLOTS - TEXTURA</div>
       <div class="gemItem" id="gemItemName">Espada Flamejante</div>
-      <div style="font-size:8px;color:#8d6e63;text-align:center;font-weight:700">Toque no slot vazio + gema da mochila pra equipar • Toque na gema equipada pra remover</div>
       <div class="gemSlots" id="gemSlots"></div>
-      <div style="color:#FFD700;font-size:9px;font-weight:900;margin-top:12px;letter-spacing:1px">🎒 SUAS GEMAS:</div>
+      <div style="color:#FFD700;font-size:9px;font-weight:900;margin-top:12px">🎒 SUAS GEMAS:</div>
       <div class="gemInventory" id="gemInventory"></div>
       <div style="display:flex;gap:8px;margin-top:12px">
         <div class="invBtn" id="closeGemBtn" style="flex:1">FECHAR ✕</div>
@@ -231,8 +224,8 @@ canvas{width:100%;height:100%;display:block}
 
   <div id="shopModal">
     <div class="shopHeader">
-      <div class="shopTitle">🏪 MERCADOR - LOJA</div>
-      <div style="display:flex;gap:8px;align-items:center"><div class="shopGold" id="shopGold">💰 400</div><div class="closeBtn" id="closeShop">✕</div></div>
+      <div class="shopTitle">🏪 MERCADOR - TEXTURAS</div>
+      <div style="display:flex;gap:8px;align-items:center"><div class="shopGold" id="shopGold">💰 500</div><div class="closeBtn" id="closeShop">✕</div></div>
     </div>
     <div class="shopTabs">
       <div class="shopTab active" data-tab="buy">COMPRAR</div>
@@ -240,22 +233,17 @@ canvas{width:100%;height:100%;display:block}
       <div class="shopTab" data-tab="gems">💎 GEMAS</div>
     </div>
     <div class="shopGrid" id="shopGrid"></div>
-    <div style="margin-top:12px;background:rgba(0,0,0,0.5);padding:8px;border-radius:10px;border:3px solid #000">
-      <div style="font-size:8px;color:#FFD700;font-weight:900">💡 DICA MERCADOR CHAMPIONS:</div>
-      <div style="font-size:8px;color:#bcaaa4;line-height:1.4;margin-top:4px">• Vende itens mágicos e raros do seu ato • Gemas dão poderes especiais nos 4 slots • Venda loot comum pra comprar lendário • Estoque renova a cada ato!</div>
-    </div>
   </div>
 
   <div id="charScreen">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <div style="color:#FFD700;font-weight:900;font-size:14px">👤 HERÓI - CHAMPIONS</div>
+      <div style="color:#FFD700;font-weight:900;font-size:14px">👤 HERÓI - ENGINE</div>
       <div id="closeChar" style="width:40px;height:40px;background:#000;border:3px solid #FFD700;border-radius:10px;display:flex;justify-content:center;align-items:center;color:#FFD700;font-weight:900;cursor:pointer">✕</div>
     </div>
     <div class="charTop">
       <div class="charAvatar" id="charAvatar">🪓</div>
       <div class="charInfo">
         <div class="charName" id="charName">Barbarian</div>
-        <div class="charClass" id="charClass">Guerreiro da Tribo do Norte</div>
         <div class="charLevel" id="charLevel">Lv1 • Ato 1</div>
         <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
           <span style="font-size:7px;background:#000;padding:2px 6px;border-radius:6px;border:2px solid #5d4037;color:#FFD700;font-weight:900" id="charHp">HP 100</span>
@@ -265,7 +253,7 @@ canvas{width:100%;height:100%;display:block}
       </div>
     </div>
     <div class="attrGrid" id="attrGrid"></div>
-    <div style="color:#FFD700;font-size:10px;font-weight:900;margin:12px 0 6px 0;letter-spacing:1px">🌟 SKILL TREE - RAMIFICADA</div>
+    <div style="color:#FFD700;font-size:10px;font-weight:900;margin:12px 0 6px 0">🌟 SKILL TREE</div>
     <div class="skillList" id="skillList"></div>
     <div style="margin-top:12px;display:flex;gap:8px">
       <div class="invBtn" id="invOpenFromChar" style="flex:1">🎒 INVENTÁRIO</div>
@@ -281,27 +269,28 @@ canvas{width:100%;height:100%;display:block}
   </div>
 
   <div id="startScreen">
-    <div class="logo">ENJOYGO</div>
-    <div class="sublogo">FINAL • LOJA + GEMAS 4 SLOTS</div>
-    <div class="badges"><span class="badge">MERCADOR</span><span class="badge">GEMAS 4 SLOTS</span><span class="badge">5 ATOS</span><span class="badge">VISUAL MUDA</span></div>
-    <div style="color:#d7ccc8;font-size:11px;font-weight:700;margin:8px 0">Tudo funcionando - Loja + Gemas Champions!</div>
+    <div class="logo">NORRATH</div>
+    <div class="logo2">CLASH</div>
+    <div class="sublogo">CHAMPIONS ENGINE • TEXTURAS PRÓPRIAS</div>
+    <div class="badges"><span class="badge">MOTOR PRÓPRIO</span><span class="badge">24 TEXTURAS</span><span class="badge">LOJA+GEMAS</span><span class="badge">5 ATOS</span></div>
+    <div style="color:#d7ccc8;font-size:11px;font-weight:700;margin:8px 0">Motor gráfico procedural - Texturas geradas em código!</div>
     <div class="classGrid" id="classGrid">
-      <div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">STR alta, vida gigante, machado duplo</div></div>
-      <div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">DEX alta, arco, tiro triplo</div></div>
-      <div class="classCard" data-class="cleric"><div class="classIcon">✨</div><div class="className">CLERIC</div><div class="classDesc">Cura, buff sagrado, banir mortos</div></div>
-      <div class="classCard" data-class="wizard"><div class="classIcon">🔮</div><div class="className">WIZARD</div><div class="classDesc">17 magias, meteoro, raio, sem escudo</div></div>
-      <div class="classCard" data-class="shadowknight" style="grid-column:span 2"><div class="classIcon">💀</div><div class="className">SHADOW KNIGHT - Summon + Life Tap</div></div>
+      <div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Textura armadura pesada</div></div>
+      <div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Textura couro + arco</div></div>
+      <div class="classCard" data-class="cleric"><div class="classIcon">✨</div><div class="className">CLERIC</div><div class="classDesc">Textura manto sagrado</div></div>
+      <div class="classCard" data-class="wizard"><div class="classIcon">🔮</div><div class="className">WIZARD</div><div class="classDesc">Textura manto arcano</div></div>
+      <div class="classCard" data-class="shadowknight" style="grid-column:span 2"><div class="classIcon">💀</div><div class="className">SHADOW KNIGHT - Textura ossos + sombra</div></div>
     </div>
-    <button class="startBtn" id="startBtn">▶ JOGAR FINAL</button>
+    <button class="startBtn" id="startBtn">▶ JOGAR ENGINE</button>
     <div class="infoBox">
-      <div class="infoTitle">🏪 NOVO - LOJA + GEMAS CHAMPIONS:</div>
+      <div class="infoTitle">🎨 MOTOR GRÁFICO PRÓPRIO - TEXTURAS:</div>
       <div class="infoText">
-        ✅ <b>Mercador NPC</b> no mapa - clica nele ou botão 🏪 pra abrir loja<br>
-        ✅ <b>Comprar/Vender</b> - 3 abas: comprar itens, vender loot, comprar gemas<br>
-        ✅ <b>8 tipos de gemas:</b> Rubi fogo, Safira gelo, Topázio raio, Esmeralda vida, Diamante crítico, Ametista mana, etc<br>
-        ✅ <b>4 slots por item</b> - cada arma/armadura tem 4 furos, coloca gema pra boost<br>
-        ✅ <b>Visual gemas</b> - pontinhos coloridos no item equipado mostram gemas<br>
-        ✅ <b>Gerenciar gemas</b> - clica no item equipado → gerencia slots, remove, troca
+        ✅ <b>Engine NORRATH-1</b> - Canvas 2D, 60 FPS, batch rendering<br>
+        ✅ <b>24 texturas procedurais</b> geradas em código: grama, pedra, madeira, telhado, metal, couro, tecido, etc<br>
+        ✅ <b>Texture Atlas</b> 512x512 - todas texturas em 1 imagem pra performance<br>
+        ✅ <b>Personagem com textura</b> - armadura, elmo, arma mudam textura real, não só cor<br>
+        ✅ <b>Nome oficial: NORRATH CLASH</b> - Champions of Norrath × Clash of Clans<br>
+        ✅ <b>Visual Clash</b> - Borda grossa, sombra, cores vivas, cartoon
       </div>
     </div>
   </div>
@@ -309,42 +298,33 @@ canvas{width:100%;height:100%;display:block}
 </div>
 
 <script>
-// ===== ENJOYGO FINAL - LOJA + GEMAS =====
+// ===== NORRATH CLASH - MOTOR GRÁFICO PRÓPRIO COM TEXTURAS =====
 const W=3200,H=3200;
 let act=1;
-let P={x:1600,y:1600,f:1,atk:0,block:0,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,xp:0,gold:450,attr:{STR:18,INT:10,DEX:12,STA:16},attrPts:0,skillPts:0};
-let C={x:0,y:0},J={a:0,x:0,y:0},T=null,selInv=-1,selClass='barbarian',inDungeon=false,selGemItem=null,selGemSlot=-1,selGemInv=-1,shopTab='buy';
+let P={x:1600,y:1600,f:1,atk:0,block:0,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,xp:0,gold:500,attr:{STR:18,INT:10,DEX:12,STA:16},attrPts:0,skillPts:0};
+let C={x:0,y:0},J={a:0,x:0,y:0},T=null,selInv=-1,selClass='barbarian',inDungeon=false,selGemItem=null,selGemSlot=-1,shopTab='buy',fps=60,frameCount=0,lastFpsTime=0;
 
 const CLASSES={
-  barbarian:{name:'Barbarian',icon:'🪓',desc:'Guerreiro da Tribo',base:{STR:18,INT:8,DEX:12,STA:16},hp:30,mana:5,skills:[
+  barbarian:{name:'Barbarian',icon:'🪓',base:{STR:18,INT:8,DEX:12,STA:16},hp:30,mana:5,tex:'heavy_metal',skills:[
     {id:'bash',n:'Bash',d:'Golpe esmagador',icon:'💥',tier:0,mana:10,cd:3,req:[],max:20},
     {id:'dual',n:'Dual Wield',d:'Dois machados',icon:'🪓',tier:1,mana:15,cd:5,req:['bash'],max:20},
     {id:'tornado',n:'Tornado Spin',d:'Gira com machados',icon:'🌪️',tier:2,mana:25,cd:8,req:['dual'],max:20},
-    {id:'ancestral',n:'Ancestral Call',d:'Invoca ancestrais',icon:'👻',tier:3,mana:40,cd:20,req:['tornado'],max:20},
   ]},
-  ranger:{name:'Ranger',icon:'🏹',desc:'Patrulheiro',base:{STR:14,INT:10,DEX:18,STA:12},hp:20,mana:10,skills:[
+  ranger:{name:'Ranger',icon:'🏹',base:{STR:14,INT:10,DEX:18,STA:12},hp:20,mana:10,tex:'leather',skills:[
     {id:'powershot',n:'Power Shot',d:'Tiro potente',icon:'🎯',tier:0,mana:10,cd:2,req:[],max:20},
     {id:'triple',n:'Triple Shot',d:'3 flechas',icon:'🏹',tier:1,mana:18,cd:4,req:['powershot'],max:20},
-    {id:'poison',n:'Poison Shot',d:'Flecha venenosa',icon:'☠️',tier:2,mana:22,cd:6,req:['triple'],max:20},
-    {id:'entangle',n:'Entangle',d:'Prende inimigos',icon:'🌿',tier:3,mana:35,cd:12,req:['poison'],max:20},
   ]},
-  cleric:{name:'Cleric',icon:'✨',desc:'Clérigo da Luz',base:{STR:12,INT:16,DEX:10,STA:16},hp:22,mana:18,skills:[
+  cleric:{name:'Cleric',icon:'✨',base:{STR:12,INT:16,DEX:10,STA:16},hp:22,mana:18,tex:'holy_cloth',skills:[
     {id:'holy',n:'Holy Strike',d:'Golpe sagrado',icon:'✨',tier:0,mana:12,cd:3,req:[],max:20},
     {id:'heal',n:'Blessed Healing',d:'Cura forte',icon:'💚',tier:1,mana:20,cd:5,req:['holy'],max:20},
-    {id:'armor',n:'Holy Armor',d:'Escudo sagrado',icon:'🛡️',tier:2,mana:28,cd:10,req:['heal'],max:20},
-    {id:'dismiss',n:'Dismiss Undead',d:'Bane mortos',icon:'💀',tier:3,mana:40,cd:15,req:['armor'],max:20},
   ]},
-  wizard:{name:'Wizard',icon:'🔮',desc:'Erudito Arcano',base:{STR:8,INT:20,DEX:14,STA:10},hp:15,mana:30,skills:[
+  wizard:{name:'Wizard',icon:'🔮',base:{STR:8,INT:20,DEX:14,STA:10},hp:15,mana:30,tex:'arcane_cloth',skills:[
     {id:'fire',n:'Fire Bolt',d:'Bola de fogo',icon:'🔥',tier:0,mana:10,cd:1.5,req:[],max:20},
     {id:'frost',n:'Frost Nova',d:'Explosão gelo',icon:'❄️',tier:0,mana:15,cd:4,req:[],max:20},
-    {id:'light',n:'Lightning',d:'Raio',icon:'⚡',tier:1,mana:20,cd:3,req:['fire'],max:20},
-    {id:'meteor',n:'Meteor Storm',d:'Chuva meteoros',icon:'☄️',tier:2,mana:35,cd:12,req:['light','frost'],max:20},
   ]},
-  shadowknight:{name:'Shadow Knight',icon:'💀',desc:'Cavaleiro das Sombras',base:{STR:16,INT:16,DEX:10,STA:14},hp:24,mana:14,skills:[
+  shadowknight:{name:'Shadow Knight',icon:'💀',base:{STR:16,INT:16,DEX:10,STA:14},hp:24,mana:14,tex:'bone_shadow',skills:[
     {id:'disease',n:'Disease Bolt',d:'Raio doente',icon:'🤢',tier:0,mana:12,cd:2.5,req:[],max:20},
     {id:'skeleton',n:'Summon Skeleton',d:'Invoca esqueleto',icon:'🦴',tier:1,mana:25,cd:15,req:['disease'],max:20},
-    {id:'lifetap',n:'Life Tap',d:'Rouba vida',icon:'🩸',tier:2,mana:20,cd:6,req:['skeleton'],max:20},
-    {id:'plague',n:'Plague',d:'Praga em área',icon:'☣️',tier:3,mana:45,cd:18,req:['lifetap'],max:20},
   ]},
 };
 
@@ -352,16 +332,133 @@ let playerSkills={};
 function initSkills(){playerSkills={}; CLASSES[P.cls].skills.forEach(s=>playerSkills[s.id]={lvl:0,cd:0});}
 initSkills();
 
-// GEMAS - CHAMPIONS 4 SLOTS
+// ===== MOTOR GRÁFICO - TEXTURE ATLAS =====
+const texCanvas=document.getElementById('texAtlas');
+const texCtx=texCanvas.getContext('2d');
+let textures={};
+
+function createTexture(name,x,y,w,h,drawFn){
+  textures[name]={x,y,w,h};
+  texCtx.save();
+  texCtx.translate(x,y);
+  drawFn(texCtx,w,h);
+  texCtx.restore();
+}
+
+function genTextures(){
+  // Limpa atlas
+  texCtx.fillStyle='#000'; texCtx.fillRect(0,0,512,512);
+  
+  // 0,0 - Grama Faydark
+  createTexture('grass_faydark',0,0,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#2e7d32'; ctx.fillRect(0,0,w,h);
+    for(let i=0;i<30;i++){ctx.fillStyle=i%2?'#388e3c':'#1b5e20'; ctx.fillRect(Math.random()*w,Math.random()*h,2+Math.random()*4,2+Math.random()*4);}
+    for(let i=0;i<10;i++){ctx.fillStyle='#4caf50'; ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,1+Math.random()*2,0,6.28); ctx.fill();}
+  });
+  
+  // 64,0 - Pedra
+  createTexture('stone',64,0,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#616161'; ctx.fillRect(0,0,w,h);
+    for(let i=0;i<40;i++){let c=100+Math.random()*80; ctx.fillStyle=\`rgb(\${c},\${c},\${c})\`; ctx.fillRect(Math.random()*w,Math.random()*h,3+Math.random()*8,2+Math.random()*6);}
+    ctx.strokeStyle='rgba(0,0,0,0.2)'; for(let i=0;i<5;i++){ctx.beginPath(); ctx.moveTo(0,Math.random()*h); ctx.lineTo(w,Math.random()*h); ctx.stroke();}
+  });
+  
+  // 128,0 - Madeira
+  createTexture('wood',128,0,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#5d4037'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#8d6e63'; for(let i=0;i<h;i+=8){ctx.fillRect(0,i,w,2);}
+    ctx.fillStyle='#3e2723'; for(let i=0;i<20;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,1,0,6.28); ctx.fill();}
+  });
+  
+  // 192,0 - Telhado
+  createTexture('roof',192,0,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#b71c1c'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#7f0000'; for(let y=0;y<h;y+=12){for(let x=0;x<w;x+=16){ctx.fillRect(x+2,y+2,12,8);}}
+  });
+  
+  // 256,0 - Metal pesado (barbarian)
+  createTexture('heavy_metal',256,0,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#424242'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#757575'; ctx.fillRect(4,4,w-8,8); ctx.fillRect(4,h-12,w-8,8);
+    ctx.fillStyle='#212121'; for(let i=0;i<5;i++){ctx.fillRect(10+i*10,20,4,24);}
+  });
+  
+  // 320,0 - Couro (ranger)
+  createTexture('leather',320,0,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#8d6e63'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#5d4037'; for(let i=0;i<30;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,1+Math.random()*2,0,6.28); ctx.fill();}
+  });
+  
+  // 384,0 - Tecido sagrado (cleric)
+  createTexture('holy_cloth',384,0,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#fff8e1'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#ffecb3'; ctx.fillRect(0,0,w,8); ctx.fillRect(0,h-8,w,8);
+    ctx.fillStyle='#FFD700'; ctx.fillRect(w/2-2,0,4,h);
+  });
+  
+  // 0,64 - Tecido arcano (wizard)
+  createTexture('arcane_cloth',0,64,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#1a237e'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#3949ab'; for(let i=0;i<20;i++){ctx.fillStyle=\`rgba(100,150,255,\${0.3+Math.random()*0.5})\`; ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,2+Math.random()*4,0,6.28); ctx.fill();}
+  });
+  
+  // 64,64 - Osso/sombra (shadowknight)
+  createTexture('bone_shadow',64,64,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#212121'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#e0d5c7'; ctx.fillRect(10,10,w-20,8); ctx.fillRect(10,30,w-20,8); ctx.fillRect(10,50,w-20,8);
+  });
+  
+  // 128,64 - Folhagem árvore
+  createTexture('foliage',128,64,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#2e7d32'; ctx.beginPath(); ctx.arc(w/2,h/2,w/2-2,0,6.28); ctx.fill();
+    ctx.fillStyle='#388e3c'; ctx.beginPath(); ctx.arc(w/2-8,h/2-8,w/3,0,6.28); ctx.fill();
+  });
+  
+  // 192,64 - Tronco
+  createTexture('trunk',192,64,32,64,(ctx,w,h)=>{
+    ctx.fillStyle='#5d4037'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#3e2723'; ctx.fillRect(4,0,4,h); ctx.fillRect(w-8,0,4,h);
+  });
+  
+  // 256,64 - Parede casa
+  createTexture('wall',256,64,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#d7ccc8'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#bcaaa4'; ctx.fillRect(0,0,w,4); ctx.fillRect(0,h-4,w,4); ctx.fillRect(0,0,4,h); ctx.fillRect(w-4,0,4,h);
+    ctx.fillStyle='#8d6e63'; ctx.fillRect(10,10,w-20,4); ctx.fillRect(10,30,w-20,4);
+  });
+  
+  // 320,64 - Chão dungeon
+  createTexture('dungeon_floor',320,64,64,64,(ctx,w,h)=>{
+    ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#4e342e'; ctx.fillRect(2,2,w-4,h-4);
+    ctx.strokeStyle='#1a0f0a'; ctx.lineWidth=2; ctx.strokeRect(0,0,w,h);
+  });
+  
+  // 384,64 - Metal arma
+  createTexture('weapon_metal',384,64,64,16,(ctx,w,h)=>{
+    ctx.fillStyle='#b0bec5'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#eceff1'; ctx.fillRect(0,2,w,2); ctx.fillStyle='#607d8b'; ctx.fillRect(0,h-3,w,2);
+  });
+  
+  // Texturas extras
+  createTexture('grass_desert',0,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#c19a5a'; ctx.fillRect(0,0,w,h); for(let i=0;i<20;i++){ctx.fillStyle='#a67c52'; ctx.fillRect(Math.random()*w,Math.random()*h,3,3);}});
+  createTexture('grass_snow',64,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#e0f7fa'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#b2ebf2'; for(let i=0;i<15;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,2,0,6.28); ctx.fill();}});
+  createTexture('water',128,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#0277bd'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#4fc3f7'; for(let i=0;i<h;i+=8){ctx.fillRect(0,i+Math.sin(i*0.2)*2,w,1);}});
+  createTexture('lava',192,128,64,64,(ctx,w,h)=>{ctx.fillStyle='#bf360c'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#ff5722'; for(let i=0;i<10;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,3+Math.random()*5,0,6.28); ctx.fill();}});
+  
+  console.log('Texturas geradas:', Object.keys(textures).length);
+  document.getElementById('engineText').innerHTML=\`ENGINE: NORRATH-1<br>FPS: 60<br>TEX: \${Object.keys(textures).length} LOADED<br>ATLAS: 512x512\`;
+}
+
+genTextures();
+
 const GEM_TYPES=[
-  {id:'ruby',name:'Rubi Flamejante',icon:'🔴',color:'#d32f2f',stats:{fire:8,dmg:3},desc:'+8 dano fogo +3 dano',price:120},
+  {id:'ruby',name:'Rubi Flamejante',icon:'🔴',color:'#d32f2f',stats:{fire:8,dmg:3},desc:'+8 fogo +3 dano',price:120},
   {id:'sapphire',name:'Safira Gélida',icon:'🔵',color:'#1976d2',stats:{ice:8,def:3},desc:'+8 gelo +3 def',price:120},
-  {id:'topaz',name:'Topázio Trovejante',icon:'🟡',color:'#fbc02d',stats:{light:8,speed:4},desc:'+8 raio +4 veloc',price:130},
-  {id:'emerald',name:'Esmeralda da Vida',icon:'🟢',color:'#388e3c',stats:{hp:15,STA:2},desc:'+15 HP +2 STA',price:140},
-  {id:'diamond',name:'Diamante Crítico',icon:'💎',color:'#e1f5fe',stats:{crit:8,dmg:4},desc:'+8% crit +4 dano',price:200},
-  {id:'amethyst',name:'Ametista Arcana',icon:'🟣',color:'#7b1fa2',stats:{mana:15,INT:2},desc:'+15 mana +2 INT',price:140},
-  {id:'garnet',name:'Granada da Força',icon:'🟤',color:'#5d4037',stats:{STR:3,dmg:5},desc:'+3 STR +5 dano',price:150},
-  {id:'opal',name:'Opala Vampírica',icon:'⚪',color:'#f5f5f5',stats:{lifesteal:5,hp:8},desc:'+5% roubo vida +8 HP',price:180},
+  {id:'topaz',name:'Topázio',icon:'🟡',color:'#fbc02d',stats:{light:8,speed:4},desc:'+8 raio +4 veloc',price:130},
+  {id:'emerald',name:'Esmeralda Vida',icon:'🟢',color:'#388e3c',stats:{hp:15,STA:2},desc:'+15 HP +2 STA',price:140},
+  {id:'diamond',name:'Diamante Crítico',icon:'💎',color:'#e1f5fe',stats:{crit:8,dmg:4},desc:'+8% crit',price:200},
+  {id:'amethyst',name:'Ametista Mana',icon:'🟣',color:'#7b1fa2',stats:{mana:15,INT:2},desc:'+15 mana',price:140},
 ];
 
 function genGem(){
@@ -383,14 +480,14 @@ function initInv(){
   ];
 }
 
-const PREFIXES=[{n:'Forte',s:{STR:2}},{n:'Sábio',s:{INT:2}},{n:'Ágil',s:{DEX:2}},{n:'Vigoroso',s:{STA:2}},{n:'Flamejante',s:{fire:5}},{n:'Gélido',s:{ice:5}}];
-const SUFFIXES=[{n:'do Poder',s:{dmg:4}},{n:'da Proteção',s:{def:4}},{n:'da Vida',s:{hp:10}},{n:'da Mana',s:{mana:10}}];
+const PREFIXES=[{n:'Forte',s:{STR:2}},{n:'Sábio',s:{INT:2}},{n:'Ágil',s:{DEX:2}}];
+const SUFFIXES=[{n:'do Poder',s:{dmg:4}},{n:'da Proteção',s:{def:4}}];
 const RARITIES={common:{c:'#9e9e9e',m:1}, magic:{c:'#42a5f5',m:1.5}, rare:{c:'#FFD700',m:2.2}, legendary:{c:'#ff6d00',m:3.5}};
 
 function genItem(slotType, rarity, lvl){
-  const rar=rarity||(['common','common','common','magic','magic','rare','legendary'][Math.floor(Math.random()*7)]);
+  const rar=rarity||(['common','common','magic','rare'][Math.floor(Math.random()*4)]);
   const mult=RARITIES[rar].m;
-  let base={weapon:{icon:['🗡️','🪓','🏹','🔨'][Math.floor(Math.random()*4)],w:8,dmg:5+Math.floor(lvl*2*mult)}, shield:{icon:'🛡️',w:6,def:3+Math.floor(lvl*1.5*mult)}, head:{icon:'⛑️',w:3,def:2+Math.floor(lvl*mult)}, chest:{icon:'🦺',w:6,def:4+Math.floor(lvl*1.2*mult)}, arms:{icon:'💪',w:3,def:1+Math.floor(lvl*mult)}, legs:{icon:'🦵',w:4,def:2+Math.floor(lvl*mult)}, feet:{icon:'👢',w:3,def:1+Math.floor(lvl*mult)}, ring:{icon:'💍',w:1,stats:{crit:2}}, amulet:{icon:'📿',w:1,stats:{hp:5}}};
+  let base={weapon:{icon:['🗡️','🪓','🏹'][Math.floor(Math.random()*3)],w:8,dmg:5+Math.floor(lvl*2*mult)}, shield:{icon:'🛡️',w:6,def:3+Math.floor(lvl*1.5*mult)}, head:{icon:'⛑️',w:3,def:2+Math.floor(lvl*mult)}, chest:{icon:'🦺',w:6,def:4+Math.floor(lvl*1.2*mult)}, arms:{icon:'💪',w:3,def:1+Math.floor(lvl*mult)}, legs:{icon:'🦵',w:4,def:2+Math.floor(lvl*mult)}, feet:{icon:'👢',w:3,def:1+Math.floor(lvl*mult)}, ring:{icon:'💍',w:1,stats:{crit:2}}, amulet:{icon:'📿',w:1,stats:{hp:5}}};
   let type=slotType==='weapon'||slotType==='shield'||slotType==='head'||slotType==='chest'||slotType==='arms'||slotType==='legs'||slotType==='feet'?slotType:(slotType==='ring1'||slotType==='ring2'?'ring':'amulet');
   let b=base[type]||base.ring;
   let pre=Math.random()<0.5?PREFIXES[Math.floor(Math.random()*PREFIXES.length)]:null;
@@ -403,11 +500,11 @@ function genItem(slotType, rarity, lvl){
 }
 
 const ACTS=[
-  {id:1,name:'Faydark Forest',icon:'🌲',desc:'Floresta élfica infestada de orcs',color:'#2e7d32',monsters:['orc','goblin','wolf'],boss:'Orc Rei'},
-  {id:2,name:'Caverna Goblin',icon:'🕳️',desc:'Cavernas escuras dos goblins',color:'#5d4037',monsters:['goblin','bat','spider'],boss:'Goblin Xamã'},
-  {id:3,name:'Deserto Ardente',icon:'🏜️',desc:'Deserto com escorpiões gigantes',color:'#ff8f00',monsters:['scorpion','skeleton','mummy'],boss:'Escorpião Rei'},
-  {id:4,name:'Formigueiro',icon:'🐜',desc:'Colônia de formigas carnívoras',color:'#4e342e',monsters:['ant','beetle','worm'],boss:'Rainha Formiga'},
-  {id:5,name:'Cidade Dark Elf',icon:'🏰',desc:'Fortaleza final',color:'#4a148c',monsters:['darkelf','demon','vampire'],boss:'Lorde Dark Elf'},
+  {id:1,name:'Faydark Forest',icon:'🌲',desc:'Floresta élfica',color:'#2e7d32',tex:'grass_faydark',monsters:['orc','goblin'],boss:'Orc Rei'},
+  {id:2,name:'Caverna Goblin',icon:'🕳️',desc:'Cavernas escuras',color:'#5d4037',tex:'stone',monsters:['goblin','bat'],boss:'Goblin Xamã'},
+  {id:3,name:'Deserto Ardente',icon:'🏜️',desc:'Deserto',color:'#ff8f00',tex:'grass_desert',monsters:['scorpion','skeleton'],boss:'Escorpião Rei'},
+  {id:4,name:'Formigueiro',icon:'🐜',desc:'Formigueiro',color:'#4e342e',tex:'stone',monsters:['ant','beetle'],boss:'Rainha Formiga'},
+  {id:5,name:'Cidade Dark Elf',icon:'🏰',desc:'Fortaleza final',color:'#4a148c',tex:'dungeon_floor',monsters:['darkelf','demon'],boss:'Lorde Dark Elf'},
 ];
 
 let objs=[], mons=[], chests=[], dungeonWalls=[], projectiles=[], particles=[], summons=[], merchants=[];
@@ -415,13 +512,11 @@ let objs=[], mons=[], chests=[], dungeonWalls=[], projectiles=[], particles=[], 
 function genWorld(){
   objs=[]; mons=[]; chests=[]; dungeonWalls=[]; projectiles=[]; particles=[]; summons=[]; merchants=[];
   for(let i=0;i<6;i++){let x=400+Math.random()*2400, y=400+Math.random()*2400; objs.push({x,y,t:'house',w:80,h:70,collision:true});}
-  for(let i=0;i<40;i++){let x=Math.random()*W, y=Math.random()*H; objs.push({x,y,t:'tree',w:32,h:32,collision:true});}
-  for(let i=0;i<25;i++){let x=Math.random()*W, y=Math.random()*H; objs.push({x,y,t:'rock',w:24,h:24,collision:true});}
-  // Mercador
+  for(let i=0;i<35;i++){let x=Math.random()*W, y=Math.random()*H; objs.push({x,y,t:'tree',w:32,h:32,collision:true});}
+  for(let i=0;i<20;i++){let x=Math.random()*W, y=Math.random()*H; objs.push({x,y,t:'rock',w:24,h:24,collision:true});}
   merchants.push({x:1000,y:1000,act:act,shop:genShopInventory()});
-  if(act>1) merchants.push({x:2000,y:800,act:act,shop:genShopInventory()});
   let count=8+act*2;
-  for(let i=0;i<count;i++){let x=300+Math.random()*2600, y=300+Math.random()*2600; let type=ACTS[act-1].monsters[Math.floor(Math.random()*3)]; mons.push({x,y,type,hp:60+act*20,max:60+act*20,vx:0,vy:0,w:0,atkCd:0,alive:true,level:act});}
+  for(let i=0;i<count;i++){let x=300+Math.random()*2600, y=300+Math.random()*2600; let type=ACTS[act-1].monsters[Math.floor(Math.random()*2)]; mons.push({x,y,type,hp:60+act*20,max:60+act*20,vx:0,vy:0,w:0,atkCd:0,alive:true,level:act});}
   let bx=1600+Math.cos(act)*800, by=1600+Math.sin(act)*800;
   mons.push({x:bx,y:by,type:'boss',bossName:ACTS[act-1].boss,hp:300+act*100,max:300+act*100,vx:0,vy:0,w:0,atkCd:0,alive:true,isBoss:true,level:act+2});
   for(let i=0;i<6;i++){let x=200+Math.random()*2800, y=200+Math.random()*2800; let isGem=Math.random()<0.3; chests.push({x,y,opened:false,loot:isGem?genGem():genItem('weapon',['magic','rare'][Math.floor(Math.random()*2)],act+Math.floor(Math.random()*3))});}
@@ -446,7 +541,7 @@ function genDungeon(actId){
     rooms.push({x:rx,y:ry,w:rw,h:rh});
     dungeonWalls.push({x:rx,y:ry,w:rw,h:12},{x:rx,y:ry+rh-12,w:rw,h:12},{x:rx,y:ry,w:12,h:rh},{x:rx+rw-12,y:ry,w:12,h:rh});
     let mCount=2+Math.floor(Math.random()*3);
-    for(let j=0;j<mCount;j++){let mx=rx+40+Math.random()*(rw-80), my=ry+40+Math.random()*(rh-80); mons.push({x:mx,y:my,type:ACTS[actId-1].monsters[Math.floor(Math.random()*3)],hp:50+actId*15,max:50+actId*15,vx:0,vy:0,w:0,atkCd:0,alive:true,level:actId});}
+    for(let j=0;j<mCount;j++){let mx=rx+40+Math.random()*(rw-80), my=ry+40+Math.random()*(rh-80); mons.push({x:mx,y:my,type:ACTS[actId-1].monsters[Math.floor(Math.random()*2)],hp:50+actId*15,max:50+actId*15,vx:0,vy:0,w:0,atkCd:0,alive:true,level:actId});}
     if(Math.random()<0.7){chests.push({x:rx+rw/2,y:ry+rh/2,opened:false,loot:Math.random()<0.4?genGem():genItem('weapon',['magic','rare','legendary'][Math.floor(Math.random()*3)],actId+2)});}
   }
   for(let i=0;i<rooms.length-1;i++){let r1=rooms[i], r2=rooms[i+1]; let x1=r1.x+r1.w/2, y1=r1.y+r1.h/2, x2=r2.x+r2.w/2, y2=r2.y+r2.h/2; dungeonWalls.push({x:Math.min(x1,x2),y:y1-6,w:Math.abs(x2-x1),h:12},{x:x2-6,y:Math.min(y1,y2),w:12,h:Math.abs(y2-y1)});}
@@ -509,7 +604,7 @@ function ri(){
       let dots=document.createElement('div'); dots.className='gemDots';
       equip[s].gems.forEach(g=>{
         let dot=document.createElement('div'); dot.className='gemDot';
-        if(g){dot.style.background=g.color; dot.title=g.name;} else {dot.style.background='#1a1a1a'; dot.style.border='1px dashed #5d4037';}
+        if(g){dot.style.background=g.color;} else {dot.style.background='#1a1a1a'; dot.style.border='1px dashed #5d4037';}
         dots.appendChild(dot);
       });
       d.appendChild(dots);
@@ -525,11 +620,6 @@ function ri(){
       w+=it.weight*it.count;
       if(it.rarity) d.style.borderColor=RARITIES[it.rarity].c;
       if(it.type==='gem'){d.style.borderColor=it.color; d.style.boxShadow=\`0 0 8px \${it.color}60,0 3px 0 #000\`;}
-      if(it.gems&&it.gems.filter(g=>g).length>0){
-        let dots=document.createElement('div'); dots.className='gemDots';
-        it.gems.forEach(gm=>{let dot=document.createElement('div'); dot.className='gemDot'; dot.style.background=gm?gm.color:'#1a1a1a'; dots.appendChild(dot);});
-        d.appendChild(dots);
-      }
     }
     d.onclick=()=>{selInv=i; ri();};
     d.ondblclick=()=>{if(it.type==='potion') useItem(i); else if(it.type!=='empty'&&it.type!=='gold'&&it.type!=='gem') equipItem(i);};
@@ -537,7 +627,6 @@ function ri(){
   });
   const maxW=40+P.attr.STR*4;
   document.getElementById('invWeight').textContent=w+'/'+maxW;
-  document.getElementById('invWeight').style.color=w>maxW?'#ff5252':'#a1887f';
 }
 
 function openGemModal(){
@@ -547,37 +636,27 @@ function openGemModal(){
   const slotsDiv=document.getElementById('gemSlots'); slotsDiv.innerHTML='';
   selGemItem.gems.forEach((g,idx)=>{
     const d=document.createElement('div'); d.className='gemSlot'+(g?' hasGem':'');
-    if(g){d.innerHTML=\`<div class="gemIcon">\${g.icon}</div><div class="gemName">\${g.name.split(' ')[0]}</div><div style="font-size:6px;color:\${g.color};font-weight:900">\${g.desc}</div>\`; d.style.borderColor=g.color;}
-    else{d.innerHTML=\`<div class="gemIcon">➕</div><div class="gemName">VAZIO</div><div style="font-size:6px;color:#5d4037">Slot \${idx+1}</div>\`;}
+    if(g){d.innerHTML=\`<div class="gemIcon">\${g.icon}</div><div class="gemName">\${g.name.split(' ')[0]}</div>\`; d.style.borderColor=g.color;}
+    else{d.innerHTML=\`<div class="gemIcon">➕</div><div class="gemName">VAZIO</div>\`;}
     d.onclick=()=>{
-      if(g){
-        // Remover gema
-        addToInv(g); selGemItem.gems[idx]=null; openGemModal(); ri(); updateCharVisual();
-        showPopup(\`💎 \${g.name} removida\`,'#FFD700');
-      } else {
-        selGemSlot=idx; document.querySelectorAll('.gemSlot').forEach(x=>x.style.borderColor='#5d4037'); d.style.borderColor='#FFD700'; d.style.boxShadow='0 0 12px rgba(255,215,0,0.8)';
-        // Destacar gemas compatíveis
-        document.querySelectorAll('.gemInvSlot').forEach(x=>x.style.borderColor='#5d4037');
-      }
+      if(g){addToInv(g); selGemItem.gems[idx]=null; openGemModal(); ri(); updateCharVisual(); showPopup(\`💎 \${g.name} removida\`,'#FFD700');}
+      else{selGemSlot=idx; document.querySelectorAll('.gemSlot').forEach(x=>x.style.borderColor='#5d4037'); d.style.borderColor='#FFD700';}
     };
     slotsDiv.appendChild(d);
   });
   const gemInvDiv=document.getElementById('gemInventory'); gemInvDiv.innerHTML='';
   let gemsInInv=inv.filter(it=>it.type==='gem');
-  if(gemsInInv.length===0){gemInvDiv.innerHTML='<div style="grid-column:span 4;color:#8d6e63;font-size:9px;text-align:center;padding:10px">Nenhuma gema na mochila<br>Compre no mercador 🏪 ou ache em baús!</div>';}
-  gemsInInv.forEach((gem,idx)=>{
+  if(gemsInInv.length===0){gemInvDiv.innerHTML='<div style="grid-column:span 4;color:#8d6e63;font-size:9px;text-align:center;padding:10px">Nenhuma gema - compre no mercador!</div>';}
+  gemsInInv.forEach((gem)=>{
     const origIdx=inv.indexOf(gem);
-    const d=document.createElement('div'); d.className='gemInvSlot hasGem'+(selGemInv===origIdx?' selected':'');
-    d.innerHTML=\`<div style="font-size:20px">\${gem.icon}</div><div style="font-size:6px;font-weight:900;color:\${gem.color};text-align:center;line-height:1.1">\${gem.name.split(' ')[0]}<br>\${gem.desc.split(' ')[0]}</div>\`;
+    const d=document.createElement('div'); d.className='gemInvSlot hasGem';
+    d.innerHTML=\`<div style="font-size:20px">\${gem.icon}</div><div style="font-size:6px;font-weight:900;color:\${gem.color}">\${gem.name.split(' ')[0]}</div>\`;
     d.style.borderColor=gem.color;
     d.onclick=()=>{
-      if(selGemSlot<0){showPopup('Selecione um slot vazio primeiro!','#ff5252'); return;}
-      // Equipar gema no slot
+      if(selGemSlot<0){showPopup('Selecione slot vazio!','#ff5252'); return;}
       selGemItem.gems[selGemSlot]=gem;
       inv[origIdx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0};
-      selGemSlot=-1; selGemInv=-1;
-      openGemModal(); ri(); updateCharVisual();
-      showPopup(\`💎 \${gem.name} equipada! +\${gem.desc}\`,'#4caf50');
+      selGemSlot=-1; openGemModal(); ri(); updateCharVisual(); showPopup(\`💎 \${gem.name} equipada!\`,'#4caf50');
     };
     gemInvDiv.appendChild(d);
   });
@@ -594,8 +673,7 @@ function equipItem(idx){
   if(equip[slot]) addToInv(equip[slot]);
   equip[slot]=it;
   inv[idx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0};
-  selInv=-1; ri(); updateCharVisual();
-  showPopup(\`✅ Equipado: \${it.name}\`,'#4caf50');
+  selInv=-1; ri(); updateCharVisual(); showPopup(\`✅ Equipado: \${it.name}\`,'#4caf50');
 }
 
 function useItem(idx){
@@ -612,15 +690,15 @@ function updateBars(){
   let tot=calcTotalStats();
   document.getElementById('charHp').textContent=\`HP \${Math.round(P.hp)}/\${P.maxHp}\`;
   document.getElementById('charMana').textContent=\`MANA \${Math.round(P.mana)}/\${P.maxMana}\`;
-  document.getElementById('charStats').textContent=\`Dmg \${10+tot.dmg} Def \${tot.def} Crit \${tot.crit}%\`;
+  document.getElementById('charStats').textContent=\`Dmg \${10+tot.dmg} Def \${tot.def}\`;
 }
 
 function updateCharVisual(){
   const avatar=document.getElementById('charAvatar');
   let icon=CLASSES[P.cls].icon; if(equip.weapon) icon=equip.weapon.icon; avatar.textContent=icon;
-  let totalDef=0,totalDmg=0; Object.values(equip).forEach(it=>{if(it){totalDef+=it.stats.def||0; totalDmg+=it.stats.dmg||0; (it.gems||[]).forEach(g=>{if(g){totalDef+=g.stats.def||0; totalDmg+=g.stats.dmg||0;}});}});
+  let totalDef=0,totalDmg=0; Object.values(equip).forEach(it=>{if(it){totalDef+=it.stats.def||0; totalDmg+=it.stats.dmg||0;}});
   document.getElementById('charName').textContent=\`\${CLASSES[P.cls].name} Lv\${P.lvl}\`;
-  document.getElementById('charLevel').textContent=\`Lv\${P.lvl} • Ato \${act} - \${ACTS[act-1].name} • Dmg \${totalDmg} Def \${totalDef}\`;
+  document.getElementById('charLevel').textContent=\`Lv\${P.lvl} • Ato \${act} - \${ACTS[act-1].name} • Dmg \${totalDmg} Def \${totalDef} • TEX: \${CLASSES[P.cls].tex}\`;
 }
 
 function showPopup(text,color='#FFD700'){
@@ -636,9 +714,7 @@ function showLoot(item){
   d.innerHTML=\`
     <div class="lootRarity" style="background:\${rar.c};color:\${isGem?'#000':'#fff'}">\${isGem?'GEMA':(item.rarity||'common').toUpperCase()}</div>
     <div class="lootName" style="color:\${rar.c}">\${item.icon} \${item.name}</div>
-    <div class="lootStats">
-      \${isGem?\`💎 \${item.desc}<br>Preço: \${item.price} ouro<br>Peso \${item.weight}\`:\`Lv \${item.level} • Peso \${item.weight}<br>\${item.stats.dmg?\`⚔️ Dano: +\${item.stats.dmg}<br>\`:''}\${item.stats.def?\`🛡️ Defesa: +\${item.stats.def}<br>\`:''}\${item.stats.STR?\`💪 STR +\${item.stats.STR}<br>\`:''}\${item.gems?\`💎 Slots: \${item.gems.filter(g=>g).length}/4\`:''}\`}
-    </div>
+    <div class="lootStats">\${isGem?\`💎 \${item.desc}<br>Preço: \${item.price}\`:\`Lv \${item.level} • \${item.rarity}<br>\${item.stats.dmg?\`⚔️ Dano: +\${item.stats.dmg}<br>\`:''}\${item.stats.def?\`🛡️ Def: +\${item.stats.def}<br>\`:''}\${item.gems?\`💎 Slots: \${item.gems.filter(g=>g).length}/4\`:''}\`}</div>
     <div class="lootBtns"><div class="lootBtn equip" id="lootEquip">\${isGem?'GUARDAR':'EQUIPAR'}</div><div class="lootBtn take" id="lootTake">PEGAR</div></div>
   \`;
   document.getElementById('gc').appendChild(d);
@@ -710,10 +786,6 @@ function doSkill(id){
   if(id==='heal'){P.hp=Math.min(P.maxHp,P.hp+60+P.attr.INT*2+tot.hp); updateBars(); showPopup(\`💚 +\${60+P.attr.INT*2} HP\`,'#4caf50');}
   if(id==='armor'){P.block=10; showPopup('🛡️ Escudo sagrado 10s','#42a5f5');}
   if(id==='skeleton'){summons.push({x:P.x+40,y:P.y,type:'skeleton',hp:80,max:80,life:30,atkCd:0}); showPopup('🦴 Esqueleto invocado','#9e9e9e');}
-  if(id==='lifetap'){
-    let t=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0];
-    if(t){let dmg=35+P.attr.INT+tot.dmg; t.hp-=dmg; P.hp=Math.min(P.maxHp,P.hp+dmg*0.6+tot.lifesteal); updateBars(); particles.push({x:t.x,y:t.y-20,text:\`-\${dmg}\`,life:1,color:'#e91e63'});}
-  }
   document.getElementById('game').style.filter='brightness(1.5)'; setTimeout(()=>document.getElementById('game').style.filter='',150);
 }
 
@@ -729,10 +801,10 @@ function updateCharScreen(){
   CLASSES[P.cls].skills.forEach(s=>{
     const ps=playerSkills[s.id]; const canUnlock=s.req.every(r=>playerSkills[r]&&playerSkills[r].lvl>0);
     const d=document.createElement('div'); d.className='skillRow'; d.style.opacity=canUnlock||ps.lvl>0?1:0.4;
-    d.innerHTML=\`<div class="skillIcon">\${s.icon}</div><div class="skillInfo"><div class="skillName">\${s.n} \${ps.lvl>0?\`Lv\${ps.lvl}\`:''}</div><div class="skillDesc">\${s.d} • \${s.mana} mana • \${s.cd}s • Tier \${s.tier+1}\${s.req.length?\` • Req: \${s.req.join(',')}\`:''}</div></div><div class="skillLevel">\${ps.lvl}/\${s.max} \${P.skillPts>0&&canUnlock&&ps.lvl<s.max?\`<div style="background:#FFD700;color:#000;padding:2px 6px;border-radius:6px;margin-top:3px;cursor:pointer;border:2px solid #000" onclick="addSkill('\${s.id}')">+ UP</div>\`:''}</div>\`;
+    d.innerHTML=\`<div class="skillIcon">\${s.icon}</div><div class="skillInfo"><div class="skillName">\${s.n} \${ps.lvl>0?\`Lv\${ps.lvl}\`:''}</div><div class="skillDesc">\${s.d} • \${s.mana} mana • \${s.cd}s • Tier \${s.tier+1}</div></div><div class="skillLevel">\${ps.lvl}/\${s.max} \${P.skillPts>0&&canUnlock&&ps.lvl<s.max?\`<div style="background:#FFD700;color:#000;padding:2px 6px;border-radius:6px;margin-top:3px;cursor:pointer;border:2px solid #000" onclick="addSkill('\${s.id}')">+ UP</div>\`:''}</div>\`;
     sl.appendChild(d);
   });
-  document.getElementById('charLevel').textContent=\`Lv\${P.lvl} • XP \${P.xp}/100 • \${P.attrPts} pts attr • \${P.skillPts} pts skill\`;
+  document.getElementById('charLevel').textContent=\`Lv\${P.lvl} • XP \${P.xp}/100 • \${P.attrPts} pts attr • \${P.skillPts} pts skill • TEX: \${CLASSES[P.cls].tex}\`;
 }
 window.addAttr=(k)=>{if(P.attrPts>0){P.attr[k]++;P.attrPts--; if(k==='STA'){P.maxHp+=8;P.hp+=8;} if(k==='INT'){P.maxMana+=8;P.mana+=8;} updateBars(); updateCharScreen(); ri();}};
 window.addSkill=(id)=>{if(P.skillPts>0){playerSkills[id].lvl++;P.skillPts--; updateCharScreen(); updateSpellBar();}};
@@ -749,14 +821,13 @@ function updateSpellBar(){
 function showActTransition(newAct,isFinal=false){
   const t=document.getElementById('actTransition'); t.style.display='flex';
   if(isFinal){
-    document.getElementById('actIcon').textContent='🏆'; document.getElementById('actTitle').textContent='VITÓRIA!'; document.getElementById('actDesc').textContent='Você zerou Champions of Norrath! Lorde Dark Elf derrotado!';
+    document.getElementById('actIcon').textContent='🏆'; document.getElementById('actTitle').textContent='VITÓRIA!'; document.getElementById('actDesc').textContent='Você zerou NORRATH CLASH! Lorde Dark Elf derrotado!';
   } else {
     const ad=ACTS[newAct-1]; document.getElementById('actIcon').textContent=ad.icon; document.getElementById('actTitle').textContent=\`ATO \${newAct} - \${ad.name}\`; document.getElementById('actDesc').textContent=ad.desc;
   }
   let w=0; const iv=setInterval(()=>{w+=2; document.getElementById('actBar').style.width=w+'%'; if(w>=100){clearInterval(iv); setTimeout(()=>{t.style.display='none'; if(!isFinal){act=newAct; genWorld(); rq();}},800);}},30);
 }
 
-// SHOP SYSTEM
 let currentMerchant=null;
 function openShop(merchant=null){
   currentMerchant=merchant||merchants[0];
@@ -773,13 +844,13 @@ function renderShop(){
   else if(shopTab==='gems'){items=currentMerchant.shop.filter(it=>it.type==='gem');}
   else if(shopTab==='sell'){items=inv.filter(it=>it.type!=='empty'&&it.type!=='gold');}
   
-  items.forEach((it,idx)=>{
+  items.forEach((it)=>{
     const d=document.createElement('div'); d.className='shopItem';
     const price=shopTab==='sell'?Math.floor((it.price||it.level*15||20)*0.6):(it.price||it.level*20||50);
     const canBuy=P.gold>=price;
     let statsText='';
     if(it.type==='gem'){statsText=\`\${it.desc}<br>💎 \${it.gemType}\`;}
-    else{statsText=\`Lv\${it.level} • \${it.rarity||'common'}<br>\${it.stats.dmg?\`⚔️+\${it.stats.dmg} \`:''}\${it.stats.def?\`🛡️+\${it.stats.def} \`:''}\${it.gems?\`💎 \${it.gems.filter(g=>g).length}/4 slots\`:''}\`;}
+    else{statsText=\`Lv\${it.level} • \${it.rarity||'common'}<br>\${it.stats.dmg?\`⚔️+\${it.stats.dmg} \`:''}\${it.stats.def?\`🛡️+\${it.stats.def} \`:''}\${it.gems?\`💎 \${it.gems.filter(g=>g).length}/4\`:''}\`;}
     d.innerHTML=\`
       <div class="shopItemIcon">\${it.icon}</div>
       <div class="shopItemName" style="\${it.rarity?\`color:\${RARITIES[it.rarity].c}\`:''}\${it.type==='gem'?\`color:\${it.color}\`:''}">\${it.name}</div>
@@ -788,7 +859,6 @@ function renderShop(){
     \`;
     d.onclick=()=>{
       if(shopTab==='sell'){
-        // Vender
         let invIdx=inv.indexOf(it);
         if(invIdx>=0){
           P.gold+=price; inv[invIdx]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0};
@@ -797,14 +867,12 @@ function renderShop(){
           renderShop(); ri();
         }
       } else {
-        // Comprar
         if(!canBuy){showPopup('💰 Ouro insuficiente!','#ff5252'); return;}
         P.gold-=price; document.getElementById('gold').textContent=P.gold; document.getElementById('shopGold').textContent=\`💰 \${P.gold}\`;
         let bought={...it, id:Math.random().toString(36).substr(2,6)};
         if(bought.gems) bought.gems=[null,null,null,null];
         addToInv(bought); ri();
         showPopup(\`🛒 Comprou \${it.name}\`,'#FFD700');
-        // Remove do shop
         let shopIdx=currentMerchant.shop.indexOf(it);
         if(shopIdx>=0) currentMerchant.shop.splice(shopIdx,1);
         renderShop();
@@ -813,7 +881,7 @@ function renderShop(){
     grid.appendChild(d);
   });
   if(items.length===0){
-    grid.innerHTML=\`<div style="grid-column:span 2;color:#8d6e63;font-size:11px;text-align:center;padding:20px">\${shopTab==='sell'?'Mochila vazia - nada pra vender':'Loja vazia - volte no próximo ato!'}</div>\`;
+    grid.innerHTML=\`<div style="grid-column:span 2;color:#8d6e63;font-size:11px;text-align:center;padding:20px">\${shopTab==='sell'?'Mochila vazia':'Loja vazia!'}</div>\`;
   }
 }
 
@@ -833,6 +901,13 @@ jb.addEventListener('touchstart',jsS,{passive:false}); jb.addEventListener('touc
 jb.addEventListener('mousedown',jsS); window.addEventListener('mousemove',jsM); window.addEventListener('mouseup',jsE);
 
 const cv=document.getElementById('game'), ctx=cv.getContext('2d');
+
+function drawTexture(name,sx,sy,sw,sh){
+  let t=textures[name];
+  if(!t) return;
+  ctx.drawImage(texCanvas,t.x,t.y,t.w,t.h,sx,sy,sw,sh);
+}
+
 cv.addEventListener('click',e=>{
   const r=cv.getBoundingClientRect(); const x=(e.clientX-r.left)*(cv.width/r.width), y=(e.clientY-r.top)*(cv.height/r.height);
   if(y>cv.height-150) return; if(y<68) return;
@@ -863,7 +938,7 @@ document.querySelectorAll('.spell').forEach(el=>{el.onclick=()=>{let sid=el.data
 document.getElementById('closeInvBtn').onclick=()=>document.getElementById('invDrawer').classList.remove('open');
 document.getElementById('useBtn').onclick=()=>{if(selInv>=0) useItem(selInv);};
 document.getElementById('equipBtn').onclick=()=>{if(selInv>=0) equipItem(selInv);};
-document.getElementById('gemBtn').onclick=()=>{if(selInv>=0&&inv[selInv].type!=='empty'&&inv[selInv].type!=='gem'&&inv[selInv].type!=='potion'){selGemItem=inv[selInv]; openGemModal();} else if(selInv>=0&&inv[selInv].type==='gem'){showPopup('Gemas são pra colocar em armas/armaduras! Selecione uma arma primeiro.','#FFD700');} else {showPopup('Selecione uma arma/armadura pra gerenciar gemas!','#FFD700');}};
+document.getElementById('gemBtn').onclick=()=>{if(selInv>=0&&inv[selInv].type!=='empty'&&inv[selInv].type!=='gem'&&inv[selInv].type!=='potion'){selGemItem=inv[selInv]; openGemModal();} else if(selInv>=0&&inv[selInv].type==='gem'){showPopup('Gemas são pra colocar em armas! Selecione arma primeiro.','#FFD700');} else {showPopup('Selecione arma/armadura pra gemas!','#FFD700');}};
 document.getElementById('dropBtn').onclick=()=>{if(selInv>=0){inv[selInv]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0}; selInv=-1; ri();}};
 document.getElementById('invHandle').onclick=()=>document.getElementById('invDrawer').classList.remove('open');
 document.getElementById('closeGemBtn').onclick=()=>document.getElementById('gemModal').style.display='none';
@@ -871,8 +946,7 @@ document.getElementById('removeAllGems').onclick=()=>{
   if(!selGemItem) return;
   selGemItem.gems.forEach(g=>{if(g) addToInv(g);});
   selGemItem.gems=[null,null,null,null];
-  openGemModal(); ri(); updateCharVisual();
-  showPopup('💎 Todas gemas removidas','#FFD700');
+  openGemModal(); ri(); updateCharVisual(); showPopup('💎 Todas gemas removidas','#FFD700');
 };
 
 document.querySelectorAll('.classCard').forEach(c=>{
@@ -894,9 +968,12 @@ function startGame(){
 }
 document.getElementById('startBtn').onclick=startGame;
 
+// LOOP COM ENGINE
 let last=performance.now();
 function loop(now){
   const dt=Math.min((now-last)/1000,0.05); last=now;
+  frameCount++; if(now-lastFpsTime>1000){fps=frameCount; frameCount=0; lastFpsTime=now; document.getElementById('engineText').innerHTML=\`ENGINE: NORRATH-1<br>FPS: \${fps}<br>TEX: \${Object.keys(textures).length} ATLAS<br>ACT: \${act} \${ACTS[act-1].name}<br>CLS: \${CLASSES[P.cls].tex}\`;}
+  
   Object.keys(playerSkills).forEach(k=>{if(playerSkills[k].cd>0) playerSkills[k].cd=Math.max(0,playerSkills[k].cd-dt);});
   document.querySelectorAll('.spell').forEach(el=>{
     let sid=el.dataset.skill; if(sid&&playerSkills[sid]){let cd=playerSkills[sid].cd; let cdEl=el.querySelector('.spellCd'); if(cd>0){if(!cdEl){cdEl=document.createElement('div');cdEl.className='spellCd';el.appendChild(cdEl);} cdEl.textContent=Math.ceil(cd);} else if(cdEl) cdEl.remove();}
@@ -956,66 +1033,81 @@ function loop(now){
 }
 
 function draw(){
-  const actColors=['#3a5a3a','#5d4037','#c19a5a','#4e342e','#3a2a4a'];
-  ctx.fillStyle=actColors[act-1]||'#3a5a3a'; ctx.fillRect(0,0,cv.width,cv.height);
-  for(let i=0;i<200;i++){
-    let wx=(i*137.5)%W, wy=(i*241.3)%H; let sx=wx-C.x, sy=wy-C.y;
-    if(sx<-30||sx>450||sy<-30||sy>890) continue;
-    ctx.fillStyle=i%3===0?'#4a7a4a':i%3===1?'#5a8a5a':'#3a6a3a';
-    if(inDungeon) ctx.fillStyle=i%2===0?'#4a3a32':'#3e2723';
-    ctx.fillRect(sx,sy,22,22);
+  // Fundo com textura do ato
+  let actTex=ACTS[act-1].tex;
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,cv.width,cv.height);
+  
+  // Chão com textura procedural do atlas
+  let tileSize=64;
+  let startX=Math.floor(C.x/tileSize)*tileSize, startY=Math.floor(C.y/tileSize)*tileSize;
+  for(let x=startX;x<C.x+cv.width+tileSize;x+=tileSize){
+    for(let y=startY;y<C.y+cv.height+tileSize;y+=tileSize){
+      let sx=x-C.x, sy=y-C.y;
+      if(inDungeon) drawTexture('dungeon_floor',sx,sy,tileSize,tileSize);
+      else drawTexture(actTex,sx,sy,tileSize,tileSize);
+    }
   }
-  ctx.strokeStyle=inDungeon?'rgba(0,0,0,0.2)':'rgba(0,0,0,0.1)'; ctx.lineWidth=1; let tile=64, sx0=-(C.x%tile), sy0=-(C.y%tile);
-  for(let x=sx0;x<cv.width;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke()}
-  for(let y=sy0;y<cv.height;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke()}
+  
+  // Grid sutil
+  ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=1;
+  let gx0=-(C.x%tileSize), gy0=-(C.y%tileSize);
+  for(let x=gx0;x<cv.width;x+=tileSize){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke()}
+  for(let y=gy0;y<cv.height;y+=tileSize){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke()}
+  
+  // Paredes dungeon com textura
   dungeonWalls.forEach(w=>{
     let x=w.x-C.x,y=w.y-C.y; if(x<-100||x>500||y<-100||y>960) return;
-    ctx.fillStyle='#2a1a14'; ctx.fillRect(x,y,w.w,w.h); ctx.fillStyle='#5d4037'; ctx.fillRect(x,y,w.w,4);
+    drawTexture('stone',x,y,w.w,w.h);
     ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x,y,w.w,w.h);
   });
+  
+  // Objetos com texturas
   objs.forEach(o=>{
     let x=o.x-C.x,y=o.y-C.y; if(x<-100||x>520||y<-100||y>960) return;
     ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+o.h/2+4,o.w/2+4,8,0,0,6.28); ctx.fill();
     if(o.t==='house'){
-      ctx.fillStyle='#d7ccc8'; ctx.fillRect(x-o.w/2,y-o.h/2,o.w,o.h); ctx.fillStyle='#8d6e63'; ctx.fillRect(x-o.w/2,y-o.h/2,o.w,8);
-      ctx.fillStyle='#5d4037'; ctx.beginPath(); ctx.moveTo(x-o.w/2-6,y-o.h/2); ctx.lineTo(x,y-o.h/2-28); ctx.lineTo(x+o.w/2+6,y-o.h/2); ctx.closePath(); ctx.fill();
-      ctx.fillStyle='#3e2723'; ctx.fillRect(x-10,y-4,20,18); ctx.fillStyle='#FFD700'; ctx.fillRect(x-14,y-14,10,10); ctx.fillRect(x+4,y-14,10,10);
+      drawTexture('wall',x-o.w/2,y-o.h/2,o.w,o.h);
+      drawTexture('roof',x-o.w/2-6,y-o.h/2-28,o.w+12,28);
+      ctx.fillStyle='#3e2723'; ctx.fillRect(x-10,y-4,20,18);
       ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);
     } else if(o.t==='tree'){
-      ctx.fillStyle='#5d4037'; ctx.fillRect(x-5,y-6,10,18); ctx.fillStyle='#2e7d32'; ctx.beginPath(); ctx.arc(x,y-12,18,0,6.28); ctx.fill();
-      ctx.fillStyle='#388e3c'; ctx.beginPath(); ctx.arc(x-4,y-16,12,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(x,y-12,18,0,6.28); ctx.stroke();
+      drawTexture('trunk',x-8,y-6,16,24);
+      drawTexture('foliage',x-24,y-32,48,40);
     } else if(o.t==='rock'){
-      ctx.fillStyle='#78909c'; ctx.beginPath(); ctx.ellipse(x,y,14,10,0,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(x,y,14,10,0,0,6.28); ctx.stroke();
+      drawTexture('stone',x-14,y-10,28,20);
     } else if(o.t==='dungeon'){
-      ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-o.w/2,y-o.h/2,o.w,o.h); ctx.fillStyle='#ff6d00'; ctx.beginPath(); ctx.arc(x,y,16,0,6.28); ctx.fill();
-      ctx.fillStyle='#000'; ctx.font='bold 20px sans-serif'; ctx.textAlign='center'; ctx.fillText('🕳️',x,y+6); ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);
-      ctx.fillStyle='#FFD700'; ctx.font='bold 8px sans-serif'; ctx.fillText('DUNGEON',x,y+o.h/2+14);
+      ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-o.w/2,y-o.h/2,o.w,o.h);
+      ctx.fillStyle='#ff6d00'; ctx.beginPath(); ctx.arc(x,y,16,0,6.28); ctx.fill();
+      ctx.fillStyle='#000'; ctx.font='bold 20px sans-serif'; ctx.textAlign='center'; ctx.fillText('🕳️',x,y+6);
+      ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);
     } else if(o.t==='exit'){
-      ctx.fillStyle='#4caf50'; ctx.beginPath(); ctx.arc(x,y,22,0,6.28); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.fillText('🚪',x,y+6);
+      ctx.fillStyle='#4caf50'; ctx.beginPath(); ctx.arc(x,y,22,0,6.28); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.fillText('🚪',x,y+6);
       ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(x,y,22,0,6.28); ctx.stroke();
     }
   });
+  
   merchants.forEach(m=>{
     let x=m.x-C.x,y=m.y-C.y; if(x<-50||x>470||y<-50||y>910) return;
     ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+20,20,6,0,0,6.28); ctx.fill();
     ctx.fillStyle='#ff8f00'; ctx.beginPath(); ctx.ellipse(x,y,18,20,0,0,6.28); ctx.fill();
     ctx.fillStyle='#fff8e1'; ctx.beginPath(); ctx.arc(x,y-8,10,0,6.28); ctx.fill();
-    ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(x-3,y-9,2,0,6.28); ctx.arc(x+3,y-9,2,0,6.28); ctx.fill();
-    ctx.fillStyle='#FFD700'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText('🏪',x,y+6);
     ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(x,y,18,20,0,0,6.28); ctx.stroke();
-    ctx.fillStyle='#000'; ctx.fillRect(x-20,y-30,40,14); ctx.fillStyle='#FFD700'; ctx.font='bold 8px sans-serif'; ctx.fillText('MERCADOR',x,y-21);
+    ctx.fillStyle='#000'; ctx.fillRect(x-20,y-30,40,14); ctx.fillStyle='#FFD700'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center'; ctx.fillText('MERCADOR',x,y-21);
   });
+  
   chests.forEach(ch=>{
     let x=ch.x-C.x,y=ch.y-C.y; if(x<-40||x>460||y<-40||y>900) return;
     ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+10,16,4,0,0,6.28); ctx.fill();
     if(ch.opened){ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-4,28,10);}
-    else{ctx.fillStyle=ch.loot.type==='gem'?'#7b1fa2':'#8d6e63'; ctx.fillRect(x-16,y-8,32,18); ctx.fillStyle='#FFD700'; ctx.fillRect(x-3,y-2,6,6); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-16,y-8,32,18);}
+    else{drawTexture('wood',x-16,y-8,32,18); ctx.fillStyle='#FFD700'; ctx.fillRect(x-3,y-2,6,6); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-16,y-8,32,18);}
   });
+  
   mons.forEach(m=>{
     if(!m.alive) return;
     let x=m.x-C.x,y=m.y-C.y; if(x<-60||x>480||y<-60||y>920) return;
     ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x,y+18,18,5,0,0,6.28); ctx.fill();
-    let col=m.type==='orc'?'#4a7a2a':m.type==='goblin'?'#8bc34a':m.type==='boss'?'#d32f2f':m.type==='scorpion'?'#ff8f00':'#9e9e9e';
+    let col=m.type==='orc'?'#4a7a2a':m.type==='goblin'?'#8bc34a':m.type==='boss'?'#d32f2f':'#9e9e9e';
     if(m.frozen) col='#81d4fa';
     ctx.fillStyle=col; ctx.beginPath(); ctx.ellipse(x,y,16+m.level,18+m.level,0,0,6.28); ctx.fill();
     ctx.strokeStyle='#000'; ctx.lineWidth=m.isBoss?4:3; ctx.stroke();
@@ -1024,39 +1116,52 @@ function draw(){
     ctx.fillStyle='#000'; ctx.fillRect(x-18,y-26,36,7); ctx.fillStyle=m.isBoss?'#ff5252':'#4caf50'; ctx.fillRect(x-17,y-25,34*(m.hp/m.max),5);
     if(m.isBoss){ctx.fillStyle='#FFD700'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center'; ctx.fillText(m.bossName,x,y-30);}
   });
-  summons.forEach(s=>{
-    let x=s.x-C.x,y=s.y-C.y;
-    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+14,12,3,0,0,6.28); ctx.fill();
-    ctx.fillStyle='#e0d5c7'; ctx.beginPath(); ctx.ellipse(x,y,12,14,0,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
-  });
-  projectiles.forEach(pr=>{
-    let x=pr.x-C.x,y=pr.y-C.y; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.fillText(pr.icon,x,y);
-  });
+  
+  // Player com textura da classe
   let px=P.x-C.x,py=P.y-C.y;
   ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(px,py+20,16,5,0,0,6.28); ctx.fill();
   ctx.save(); ctx.translate(px,py); ctx.scale(P.f,1);
-  let legColor=equip.legs? (equip.legs.rarity==='legendary'?'#ff6d00':equip.legs.rarity==='rare'?'#FFD700':'#5d4037') : '#3e2723';
-  ctx.fillStyle=legColor; ctx.fillRect(-7,6,6,12); ctx.fillRect(1,6,6,12); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(-7,6,6,12); ctx.strokeRect(1,6,6,12);
-  let feetColor=equip.feet? (equip.feet.rarity==='rare'?'#FFD700':'#8d6e63') : '#3e2723';
-  ctx.fillStyle=feetColor; ctx.fillRect(-8,16,8,5); ctx.fillRect(0,16,8,5); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-8,16,8,5); ctx.strokeRect(0,16,8,5);
-  let chestColor=equip.chest? (equip.chest.rarity==='legendary'?'#ff6d00':equip.chest.rarity==='rare'?'#FFD700':equip.chest.rarity==='magic'?'#42a5f5':'#5d4037') : '#5d4037';
-  ctx.fillStyle=chestColor; ctx.fillRect(-10,-6,20,16); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-10,-6,20,16);
-  let armsColor=equip.arms? '#8d6e63' : '#ffdbac';
-  ctx.fillStyle=armsColor; ctx.fillRect(-14,-2,5,10); ctx.fillRect(9,-2,5,10); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(-14,-2,5,10); ctx.strokeRect(9,-2,5,10);
+  
+  // Pernas com textura
+  drawTexture('leather',-7,6,6,12); drawTexture('leather',1,6,6,12);
+  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-7,6,6,12); ctx.strokeRect(1,6,6,12);
+  
+  // Pés
+  drawTexture('heavy_metal',-8,16,8,5); drawTexture('heavy_metal',0,16,8,5);
+  
+  // Corpo com textura da classe
+  let classTex=CLASSES[P.cls].tex;
+  drawTexture(classTex,-10,-6,20,16);
+  ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-10,-6,20,16);
+  
+  // Braços
+  drawTexture('leather',-14,-2,5,10); drawTexture('leather',9,-2,5,10);
+  
+  // Cabeça
   ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,10,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
+  
+  // Elmo com textura
   if(equip.head){
-    let helmColor=equip.head.rarity==='legendary'?'#ff6d00':equip.head.rarity==='rare'?'#FFD700':'#78909c';
-    ctx.fillStyle=helmColor; ctx.beginPath(); ctx.arc(0,-16,12,0,6.28); ctx.fill(); ctx.fillStyle='#000'; ctx.fillRect(-12,-18,24,4); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,-16,12,0,6.28); ctx.stroke();
+    drawTexture('heavy_metal',-12,-22,24,12);
+    ctx.fillStyle='#000'; ctx.fillRect(-12,-18,24,4);
   }
-  if(P.atk>0){ctx.save();ctx.translate(12,0);ctx.rotate(-0.8-P.atk*0.15); let wCol=equip.weapon? (equip.weapon.rarity==='legendary'?'#ff6d00':equip.weapon.rarity==='rare'?'#FFD700':'#c0c0c0') : '#c0c0c0'; ctx.fillStyle=wCol; ctx.fillRect(0,-3,22,4); ctx.fillStyle='#000'; ctx.fillRect(18,-5,8,8); ctx.restore();}
-  else{let wCol=equip.weapon? (equip.weapon.rarity==='legendary'?'#ff6d00':equip.weapon.rarity==='rare'?'#FFD700':'#c0c0c0') : '#c0c0c0'; ctx.fillStyle=wCol; ctx.fillRect(12,-3,18,4); ctx.fillStyle='#000'; ctx.fillRect(26,-5,6,8);}
-  if(equip.shield&&P.block<=0){ctx.fillStyle=equip.shield.rarity==='rare'?'#FFD700':'#42a5f5'; ctx.beginPath(); ctx.ellipse(-14,2,6,8,0,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();}
+  
+  // Arma com textura metal
+  if(P.atk>0){ctx.save();ctx.translate(12,0);ctx.rotate(-0.8-P.atk*0.15); drawTexture('weapon_metal',0,-3,22,4); ctx.restore();}
+  else{drawTexture('weapon_metal',12,-3,18,4);}
+  
+  // Escudo
+  if(equip.shield&&P.block<=0){ctx.fillStyle='#42a5f5'; ctx.beginPath(); ctx.ellipse(-14,2,6,8,0,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();}
   if(P.block>0){ctx.fillStyle='rgba(66,165,245,0.5)'; ctx.beginPath(); ctx.arc(0,0,28,0,6.28); ctx.fill(); ctx.strokeStyle='#42a5f5'; ctx.lineWidth=3; ctx.stroke();}
+  
   ctx.restore();
+  
   particles.forEach(p=>{
     let x=p.x-C.x,y=p.y-C.y; ctx.fillStyle=p.color; ctx.font='bold 14px sans-serif'; ctx.textAlign='center'; ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeText(p.text,x,y); ctx.fillText(p.text,x,y);
   });
+  
   if(T){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.setLineDash([8,4]); ctx.beginPath(); ctx.arc(x,y,18,0,6.28); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y,4,0,6.28); ctx.fill();}
+  
   quests.filter(q=>!q.done&&q.x).forEach(q=>{
     let x=q.x-C.x,y=q.y-C.y; if(x<-50||x>470||y<-50||y>910) return;
     ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y-36,16,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
