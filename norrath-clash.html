@@ -2,333 +2,243 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>NORRATH CLASH V7 CHAMPIONS REAL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>V8 ULTRA SIMPLE - FUNCIONA 100%</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;touch-action:manipulation;user-select:none}
-#gc{position:relative;width:100vw;height:100vh;background:#1a1a1a;overflow:hidden;touch-action:none}
-#gameCanvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;z-index:1;background:#2e7d32}
-
-/* HUD MINIMAL - NÃO BLOQUEIA */
-#hudTop{position:absolute;top:0;left:0;right:0;height:48px;background:linear-gradient(#2a2a2a,#0a0a0a);border-bottom:3px solid #000;display:flex;align-items:center;padding:0 8px;gap:6px;z-index:20;pointer-events:auto;touch-action:manipulation}
-.hudItem{background:#000;border:2px solid #5d4037;border-radius:10px;padding:3px 8px;color:#FFD700;font-weight:900;font-size:11px;display:flex;align-items:center;gap:3px;box-shadow:0 2px 0 #000}
-.hudItem.hp{border-color:#b71c1c;color:#ff5252}
-.hudItem.gold{border-color:#b8960c}
-.hudItem.lvl{border-color:#4a148c;color:#ce93d8}
-
-/* JOYSTICK - Z-INDEX 100, FORA DE TUDO, GIGANTE */
-#joystickWrap{position:absolute;bottom:20px;left:20px;width:150px;height:150px;z-index:100;pointer-events:auto;touch-action:none}
-#joyBase{width:150px;height:150px;border-radius:75px;background:radial-gradient(circle at 30% 30%,#6a6a6a,#1e1e1e);border:5px solid #000;box-shadow:0 8px 0 #000,0 0 25px rgba(0,0,0,0.7);position:relative;touch-action:none;pointer-events:auto}
-#joyStick{width:64px;height:64px;border-radius:32px;background:radial-gradient(circle at 30% 30%,#FFD700,#b8960c);border:4px solid #000;position:absolute;left:38px;top:38px;box-shadow:0 5px 0 #000;display:flex;justify-content:center;align-items:center;font-size:26px;touch-action:none;pointer-events:none}
-#joyText{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:7px;font-weight:900;padding:3px 8px;border-radius:10px;border:2px solid #FFD700;white-space:nowrap}
-
-/* ATTACK - Z-INDEX 100, GIGANTE */
-#attackWrap{position:absolute;bottom:20px;right:20px;width:80px;height:80px;z-index:100;pointer-events:auto;touch-action:none}
-#attackBtn{width:80px;height:80px;border-radius:20px;background:linear-gradient(#e53935,#7f0000);border:5px solid #000;box-shadow:0 8px 0 #000;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:36px;cursor:pointer;touch-action:none;pointer-events:auto}
-#attackBtn:active{transform:translateY(8px);box-shadow:0 0 0 #000}
-#attackTxt{font-size:7px;font-weight:900;color:#fff;margin-top:2px}
-
-/* START SCREEN - VAI SER REMOVIDO DO DOM */
-#startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 15%,#3e2723,#1a0f0a 60%,#000);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto;pointer-events:auto;touch-action:manipulation}
-.logo{font-size:42px;font-weight:900;color:#FFD700;text-shadow:4px 4px 0 #000,0 0 30px rgba(255,215,0,0.6);letter-spacing:3px;margin-top:15px}
-.sub{color:#FFA500;font-weight:900;letter-spacing:4px;font-size:11px;margin:5px 0 12px 0}
-.classGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin:12px 0}
-.classCard{background:linear-gradient(#4a3a32,#2a1a14);border:4px solid #000;border-radius:16px;padding:12px;text-align:center;box-shadow:0 5px 0 #000;cursor:pointer;pointer-events:auto;touch-action:manipulation;min-height:100px}
-.classCard.selected{border-color:#FFD700;box-shadow:0 0 20px #FFD700,0 5px 0 #000;transform:scale(1.03)}
-.classIcon{font-size:36px}
-.className{color:#FFD700;font-weight:900;font-size:10px;margin:6px 0 3px 0}
-.classDesc{color:#d7ccc8;font-size:8px;line-height:1.2}
-.startBtn{margin-top:16px;background:linear-gradient(#FFD700,#FF8f00);color:#000;border:5px solid #000;padding:16px 44px;border-radius:16px;font-weight:900;font-size:18px;box-shadow:0 7px 0 #000;cursor:pointer;min-width:240px;pointer-events:auto;touch-action:manipulation}
-.startBtn:active{transform:translateY(7px);box-shadow:0 0 0 #000}
-
-/* HINT */
-#hint{position:absolute;bottom:190px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);color:#FFD700;font-size:11px;font-weight:900;padding:10px 18px;border-radius:20px;border:3px solid #FFD700;z-index:50;pointer-events:none;text-align:center;max-width:90vw;animation:float 2s infinite}
-@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;touch-action:none}
+#gc{width:100vw;height:100vh;background:#2e7d32;position:relative;overflow:hidden}
+#game{width:100%;height:100%;display:block;background:#2e7d32;position:absolute;top:0;left:0}
+#hud{position:absolute;top:0;left:0;right:0;height:40px;background:#000;color:#FFD700;display:flex;align-items:center;padding:0 10px;gap:10px;z-index:10;font-weight:900;font-size:12px}
+#joy{position:absolute;bottom:20px;left:20px;width:130px;height:130px;border-radius:65px;background:rgba(0,0,0,0.5);border:4px solid #FFD700;z-index:20}
+#joyBase{width:100%;height:100%;border-radius:50%;background:#555;position:relative;border:4px solid #000}
+#joyStick{width:50px;height:50px;border-radius:25px;background:#FFD700;border:3px solid #000;position:absolute;left:36px;top:36px;display:flex;justify-content:center;align-items:center;font-size:20px}
+#atk{position:absolute;bottom:20px;right:20px;width:80px;height:80px;border-radius:20px;background:#c62828;border:4px solid #000;z-index:20;display:flex;justify-content:center;align-items:center;font-size:40px;color:#fff;font-weight:900}
+#start{position:absolute;inset:0;background:#1a0f0a;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+#start h1{color:#FFD700;font-size:36px;text-shadow:3px 3px 0 #000;margin-bottom:10px}
+#start p{color:#fff;font-size:12px;margin:5px 0}
+.btn{margin-top:20px;background:#FFD700;color:#000;border:4px solid #000;padding:15px 40px;border-radius:15px;font-weight:900;font-size:18px;box-shadow:0 6px 0 #000}
+.btn:active{transform:translateY(6px);box-shadow:none}
+#log{position:absolute;bottom:120px;left:10px;right:10px;background:rgba(0,0,0,0.9);color:#0f0;font-size:10px;padding:8px;border-radius:8px;border:2px solid #0f0;z-index:30;max-height:100px;overflow-y:auto;pointer-events:none;white-space:pre-wrap}
 </style>
 </head>
 <body>
 <div id="gc">
-<canvas id="gameCanvas" width="420" height="860"></canvas>
-<canvas id="texAtlas" width="512" height="512" style="display:none"></canvas>
-
-<div id="hudTop">
-<div class="hudItem hp">❤️ <span id="hpVal">120</span></div>
-<div class="hudItem gold">💰 <span id="goldVal">500</span></div>
-<div class="hudItem lvl">⭐ <span id="lvlVal">1</span></div>
-<div class="hudItem">📍 <span id="posVal">0,0</span></div>
+<canvas id="game" width="420" height="860"></canvas>
+<div id="hud">❤️ <span id="hp">100</span> | 💰 <span id="gold">0</span> | 📍 <span id="pos">0,0</span> | <span id="status">AGUARDANDO</span></div>
+<div id="joy"><div id="joyBase"><div id="joyStick">🕹️</div></div></div>
+<div id="atk">⚔️</div>
+<div id="log">LOG: Iniciando V8...
 </div>
-
-<div id="hint">👇 ARRASTE JOYSTICK PARA ANDAR | TOQUE NO MAPA PARA IR ATÉ LÁ 👇<br><span style="font-size:9px">⚔️ DIREITA = ATACAR</span></div>
-
-<div id="joystickWrap"><div id="joyBase"><div id="joyStick">🕹️</div></div><div id="joyText">MOVER</div></div>
-<div id="attackWrap"><div id="attackBtn">⚔️<div id="attackTxt">ATACAR</div></div></div>
-
-<div id="startScreen">
-<div class="logo">NORRATH</div>
-<div class="sub">CLASH V7 CHAMPIONS REAL</div>
-<div style="color:#FFD700;font-size:9px;font-weight:900;background:#000;padding:5px 12px;border-radius:10px;border:2px solid #FFD700;margin:8px 0">✅ SEM MENUS NA FRENTE • CHAMPIONS REALISTA • JOYSTICK + TOQUE</div>
-<div class="classGrid" id="classGrid">
-<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Forte, tank</div></div>
-<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Rápido, crítico</div></div>
-<div class="classCard" data-class="cleric"><div class="classIcon">✨</div><div class="className">CLERIC</div><div class="classDesc">Cura</div></div>
-<div class="classCard" data-class="wizard"><div class="classIcon">🔮</div><div class="className">WIZARD</div><div class="classDesc">Magia</div></div>
-</div>
-<button class="startBtn" id="startBtn">▶ JOGAR - MAPA LIVRE!</button>
-<div style="margin-top:12px;background:rgba(0,0,0,0.6);padding:8px;border-radius:10px;border:2px solid #000;max-width:400px;width:100%">
-<div style="color:#FFD700;font-size:8px;font-weight:900;text-align:center">CHAMPIONS REALISTA • VERTICAL • ANDÁVEL</div>
-<div style="color:#bcaaa4;font-size:7px;line-height:1.4;margin-top:4px">Mundo 3200x3200, casas, árvores, monstros, baús, tudo andável. Gráfico escuro realista igual Champions of Norrath PS2.</div>
+<div id="start">
+<h1>NORRATH V8</h1>
+<p style="color:#FFD700;font-weight:900">ULTRA SIMPLE - 100% FUNCIONAL</p>
+<p>Toque no botão abaixo, menu some e anda!</p>
+<p style="font-size:10px;color:#aaa;margin-top:10px">Se não funcionar, log verde mostra erro</p>
+<button class="btn" id="btnStart" onclick="startV8()">▶ JOGAR AGORA</button>
+<p style="margin-top:15px;font-size:9px;color:#FFD700">V8: Sem texturas, sem colisão, só anda!</p>
 </div>
 </div>
-</div>
-
 <script>
-console.log('V7 CHAMPIONS REAL - INIT');
-const W=3200,H=3200;
-let P={x:1600,y:1600,f:1,atk:0,hp:120,maxHp:120,cls:'barbarian',lvl:1,gold:500,attr:{STR:18,DEX:14}};
-let C={x:0,y:0}, J={a:0,x:0,y:0}, T=null, selClass='barbarian', gameStarted=false;
+let logEl=document.getElementById('log');
+function log(m){console.log(m); logEl.textContent+=m+'\n'; logEl.scrollTop=logEl.scrollHeight;}
+log('V8 JS carregou OK');
 
-// CLASSES
-const CLASSES={
-barbarian:{name:'Barbarian',icon:'🪓',base:{STR:18,DEX:12},hp:30},
-ranger:{name:'Ranger',icon:'🏹',base:{STR:14,DEX:18},hp:20},
-cleric:{name:'Cleric',icon:'✨',base:{STR:12,DEX:10},hp:22},
-wizard:{name:'Wizard',icon:'🔮',base:{STR:8,DEX:14},hp:15},
-};
+let P={x:1600,y:1600,f:1,atk:0,hp:100,gold:0};
+let C={x:0,y:0}, J={a:0,x:0,y:0}, T=null, gameOn=false;
+let objs=[], mons=[];
+let W=3200,H=3200;
 
-// TEXTURES CHAMPIONS REALISTA - ESCURO, DETALHADO
-const texCanvas=document.getElementById('texAtlas');
-const texCtx=texCanvas.getContext('2d');
-let textures={};
-function createTexture(name,x,y,w,h,drawFn){textures[name]={x,y,w,h};texCtx.save();texCtx.translate(x,y);drawFn(texCtx,w,h);texCtx.restore();}
-function genTextures(){
-texCtx.fillStyle='#000'; texCtx.fillRect(0,0,512,512);
-// Grass Champions - escuro realista
-createTexture('grass',0,0,64,64,(ctx,w,h)=>{
-ctx.fillStyle='#2e4a2e'; ctx.fillRect(0,0,w,h);
-for(let i=0;i<80;i++){ctx.fillStyle=i%3==0?'#3a5a3a':i%3==1?'#1e3a1e':'#4a6a4a'; ctx.fillRect(Math.random()*w,Math.random()*h,1+Math.random()*3,1+Math.random()*3);}
-ctx.fillStyle='rgba(0,0,0,0.15)'; for(let i=0;i<20;i++){ctx.fillRect(Math.random()*w,Math.random()*h,2,2);}
-});
-// Stone - realista
-createTexture('stone',64,0,64,64,(ctx,w,h)=>{
-ctx.fillStyle='#5a5a5a'; ctx.fillRect(0,0,w,h);
-for(let i=0;i<70;i++){let c=70+Math.random()*60; ctx.fillStyle=`rgb(${c},${c},${c})`; ctx.fillRect(Math.random()*w,Math.random()*h,3+Math.random()*9,2+Math.random()*7);}
-ctx.strokeStyle='rgba(0,0,0,0.4)'; ctx.lineWidth=1; ctx.strokeRect(0,0,w,h);
-});
-// Wall Champions - pedra escura realista
-createTexture('wall',128,0,64,64,(ctx,w,h)=>{
-ctx.fillStyle='#3a3a3a'; ctx.fillRect(0,0,w,h);
-ctx.fillStyle='#4a4a4a'; ctx.fillRect(2,2,w-4,h-4);
-ctx.fillStyle='#5a5a5a'; for(let y=0;y<h;y+=12){for(let x=0;x<w;x+=18){ctx.fillRect(x+3,y+4,14,3);}}
-ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(0,0,w,h);
-});
-// Roof - escuro Champions
-createTexture('roof',192,0,64,64,(ctx,w,h)=>{
-ctx.fillStyle='#4a2a2a'; ctx.fillRect(0,0,w,h);
-ctx.fillStyle='#5a3a3a'; for(let y=0;y<h;y+=10){for(let x=0;x<w;x+=14){ctx.fillRect(x+2,y+2,10,6);}}
-ctx.fillStyle='#6a4a4a'; for(let y=0;y<h;y+=10){ctx.fillRect(x+2,y+2,10,2);}
-ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(0,0,w,h);
-});
-createTexture('trunk',256,0,32,64,(ctx,w,h)=>{ctx.fillStyle='#2a1a0a'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#3e2723'; ctx.fillRect(4,0,w-8,h); ctx.fillStyle='#5d4037'; ctx.fillRect(6,0,3,h);});
-createTexture('foliage',288,0,64,64,(ctx,w,h)=>{
-ctx.fillStyle='#0f2a0f'; ctx.beginPath(); ctx.arc(w/2+3,h/2+3,w/2-1,0,6.28); ctx.fill();
-ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.arc(w/2,h/2,w/2-4,0,6.28); ctx.fill();
-ctx.fillStyle='#2a4a2a'; ctx.beginPath(); ctx.arc(w/2-5,h/2-5,12,0,6.28); ctx.fill();
-});
+function genWorldSimple(){
+log('Gerando mundo...');
+objs=[]; mons=[];
+for(let i=0;i<15;i++){objs.push({x:300+Math.random()*2600,y:300+Math.random()*2600,w:80,h:80,t:'house'});}
+for(let i=0;i<20;i++){objs.push({x:Math.random()*W,y:Math.random()*H,w:40,h:40,t:'tree'});}
+for(let i=0;i<10;i++){mons.push({x:500+Math.random()*2200,y:500+Math.random()*2200,hp:50,alive:true});}
+log('Mundo: '+objs.length+' objs, '+mons.length+' mons');
 }
-genTextures();
 
-// WORLD - CHAMPIONS STYLE
-let objs=[], mons=[], chests=[];
-function genWorld(){
-objs=[]; mons=[]; chests=[];
-for(let i=0;i<12;i++){let tries=0,x,y,ok; do{x=400+Math.random()*2400;y=400+Math.random()*2400; ok=!objs.some(o=>Math.hypot(o.x-x,o.y-y)<200); tries++;}while(!ok&&tries<20); objs.push({x,y,t:'house',w:100,h:90});}
-for(let i=0;i<60;i++){let x=Math.random()*W,y=Math.random()*H; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<100)) objs.push({x,y,t:'tree',w:40,h:40});}
-for(let i=0;i<35;i++){let x=Math.random()*W,y=Math.random()*H; objs.push({x,y,t:'rock',w:32,h:32});}
-for(let i=0;i<15;i++){let x=300+Math.random()*2600,y=300+Math.random()*2600; mons.push({x,y,type:Math.random()<0.5?'orc':'goblin',hp:70,max:70,alive:true});}
-mons.push({x:2200,y:2200,type:'boss',bossName:'ORC REI',hp:400,max:400,alive:true,isBoss:true});
-for(let i=0;i<12;i++){let x=200+Math.random()*2800,y=200+Math.random()*2800; chests.push({x,y,opened:false});}
-}
-function checkCollision(nx,ny,r=22){for(let o of objs){if(nx+r>o.x-o.w/2 && nx-r<o.x+o.w/2 && ny+r>o.y-o.h/2 && ny-r<o.y+o.h/2) return true;} return false;}
-function checkSlide(px,py,nx,ny,r=22){if(!checkCollision(nx,ny,r)) return {x:nx,y:ny}; if(!checkCollision(nx,py,r)) return {x:nx,y:py}; if(!checkCollision(px,ny,r)) return {x:px,y:ny}; return {x:px,y:py};}
-
-// CANVAS DRAW - CHAMPIONS REALISTA
-const cv=document.getElementById('gameCanvas');
+const cv=document.getElementById('game');
 const ctx=cv.getContext('2d');
-function drawTexture(name,sx,sy,sw,sh){let t=textures[name]; if(!t) return; ctx.drawImage(texCanvas,t.x,t.y,t.w,t.h,sx,sy,sw,sh);}
-function draw(){
-ctx.fillStyle='#1a2a1a'; ctx.fillRect(0,0,cv.width,cv.height);
-let tile=64, startX=Math.floor(C.x/tile)*tile, startY=Math.floor(C.y/tile)*tile;
-for(let x=startX;x<C.x+cv.width+tile;x+=tile){for(let y=startY;y<C.y+cv.height+tile;y+=tile){drawTexture('grass',x-C.x,y-C.y,tile,tile);}}
+
+function drawSimple(){
+ctx.fillStyle='#3a7a3a'; ctx.fillRect(0,0,cv.width,cv.height);
+// grid
 ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=1;
-for(let x=-(C.x%tile);x<cv.width;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke()}
-for(let y=-(C.y%tile);y<cv.height;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke()}
+let tile=64;
+for(let x=-(C.x%tile);x<cv.width;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
+for(let y=-(C.y%tile);y<cv.height;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
+// objs
 objs.forEach(o=>{
-let x=o.x-C.x,y=o.y-C.y; if(x<-130||x>550||y<-130||y>990) return;
-ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x,y+o.h/2+8,o.w/2+8,12,0,0,6.28); ctx.fill();
-if(o.t==='house'){drawTexture('wall',x-o.w/2,y-o.h/2,o.w,o.h); drawTexture('roof',x-o.w/2-10,y-o.h/2-36,o.w+20,36); ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-14,y-6,28,22); ctx.fillStyle='#3e2723'; ctx.fillRect(x-12,y-4,8,10); ctx.fillStyle='#ff6f00'; ctx.fillRect(x-10,y,4,4); ctx.strokeStyle='#000'; ctx.lineWidth=5; ctx.strokeRect(x-o.w/2,y-o.h/2,o.w,o.h);}
-else if(o.t==='tree'){drawTexture('trunk',x-12,y-10,24,32); drawTexture('foliage',x-32,y-44,64,52);}
-else if(o.t==='rock'){drawTexture('stone',x-18,y-14,36,28); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-18,y-14,36,28);}
+let x=o.x-C.x,y=o.y-C.y;
+if(x<-100||x>520||y<-100||y>960) return;
+if(o.t==='house'){ctx.fillStyle='#8d6e63'; ctx.fillRect(x-40,y-40,80,70); ctx.fillStyle='#5d4037'; ctx.fillRect(x-40,y-60,80,25); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-40,y-40,80,70); ctx.strokeRect(x-40,y-60,80,25);}
+else {ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.arc(x,y,20,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();}
 });
-chests.forEach(ch=>{let x=ch.x-C.x,y=ch.y-C.y; if(x<-40||x>460||y<-40||y>900) return; if(!ch.opened){ctx.fillStyle='#4e342e'; ctx.fillRect(x-20,y-12,40,26); ctx.fillStyle='#8d6e63'; ctx.fillRect(x-18,y-10,36,8); ctx.fillStyle='#FFD700'; ctx.fillRect(x-5,y-2,10,10); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-20,y-12,40,26);} else {ctx.fillStyle='#3e2723'; ctx.fillRect(x-20,y-2,40,12);}});
-mons.forEach(m=>{if(!m.alive) return; let x=m.x-C.x,y=m.y-C.y; if(x<-70||x>490||y<-70||y>930) return; ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x,y+24,22,8,0,0,6.28); ctx.fill(); let col=m.isBoss?'#8b0000':m.type==='orc'?'#2a4a2a':'#4a5a2a'; ctx.fillStyle=col; ctx.beginPath(); ctx.ellipse(x,y,20,26,0,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=m.isBoss?5:4; ctx.stroke(); ctx.fillStyle='#c0c0c0'; ctx.beginPath(); ctx.arc(x-7,y-6,7,0,6.28); ctx.arc(x+7,y-6,7,0,6.28); ctx.fill(); ctx.fillStyle='#ff0000'; ctx.beginPath(); ctx.arc(x-7,y-6,3,0,6.28); ctx.arc(x+7,y-6,3,0,6.28); ctx.fill(); ctx.fillStyle='#000'; ctx.fillRect(x-22,y-36,44,9); ctx.fillStyle=m.isBoss?'#ff0000':'#4caf50'; ctx.fillRect(x-21,y-35,42*(m.hp/m.max),7); if(m.isBoss){ctx.fillStyle='#FFD700'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText(m.bossName,x,y-42);}});
+mons.forEach(m=>{
+if(!m.alive) return;
+let x=m.x-C.x,y=m.y-C.y;
+if(x<-50||x>470||y<-50||y>910) return;
+ctx.fillStyle='#4a2a2a'; ctx.beginPath(); ctx.arc(x,y,18,0,6.28); ctx.fill();
+ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
+ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x-5,y-4,4,0,6.28); ctx.arc(x+5,y-4,4,0,6.28); ctx.fill();
+});
+// player
 let px=P.x-C.x,py=P.y-C.y;
-ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.beginPath(); ctx.ellipse(px,py+26,20,8,0,0,6.28); ctx.fill();
-ctx.save(); ctx.translate(px,py); ctx.scale(P.f,1);
-ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-16,13,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.stroke();
-ctx.fillStyle='#3e2723'; ctx.fillRect(-14,-8,28,22); ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(-14,-8,28,22);
-if(P.atk>0){ctx.save();ctx.translate(16,0);ctx.rotate(-0.9-P.atk*0.13);ctx.fillStyle='#9e9e9e'; ctx.fillRect(0,-5,30,7); ctx.fillStyle='#4e342e'; ctx.fillRect(0,-3,10,16); ctx.restore();} else {ctx.fillStyle='#9e9e9e'; ctx.fillRect(16,-5,24,7);}
-ctx.restore();
-if(T){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=5; ctx.setLineDash([12,8]); ctx.beginPath(); ctx.arc(x,y,26,0,6.28); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(x,y,7,0,6.28); ctx.fill();}
+ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(px,py-12,12,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
+ctx.fillStyle='#5d4037'; ctx.fillRect(px-12,py-4,24,18); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(px-12,py-4,24,18);
+if(P.atk>0){ctx.fillStyle='#aaa'; ctx.fillRect(px+12,py-4,24,6);}
+else {ctx.fillStyle='#aaa'; ctx.fillRect(px+12,py-2,20,5);}
+if(T){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=4; ctx.setLineDash([8,4]); ctx.beginPath(); ctx.arc(x,y,20,0,6.28); ctx.stroke(); ctx.setLineDash([]);}
 }
 
-// JOYSTICK V7 - ULTRA ROBUSTO - TESTADO WEBVIEW
-const joyBase=document.getElementById('joyBase');
-const joyStick=document.getElementById('joyStick');
-const joyWrap=document.getElementById('joystickWrap');
-let activeTouchId=null;
-function getJoyPos(e){
+// JOYSTICK SIMPLES QUE FUNCIONA
+let joyBase=document.getElementById('joyBase');
+let joyStick=document.getElementById('joyStick');
+let joyWrap=document.getElementById('joy');
+
+function getJoy(e){
 let cx,cy;
-if(e.touches && e.touches.length>0){
-let t=e.touches[0];
-if(activeTouchId!==null){for(let tt of e.touches){if(tt.identifier===activeTouchId){t=tt;break;}}}
-cx=t.clientX; cy=t.clientY;
-} else if(e.changedTouches && e.changedTouches.length>0){cx=e.changedTouches[0].clientX; cy=e.changedTouches[0].clientY;}
+if(e.touches && e.touches[0]){cx=e.touches[0].clientX; cy=e.touches[0].clientY;}
 else {cx=e.clientX; cy=e.clientY;}
 let r=joyBase.getBoundingClientRect();
-let dx=cx-(r.left+r.width/2), dy=cy-(r.top+r.height/2), d=Math.hypot(dx,dy), max=55;
-if(d>max){let a=Math.atan2(dy,dx); dx=Math.cos(a)*max; dy=Math.sin(a)*max; d=max;}
-return {dx,dy,d,cx,cy};
+let dx=cx-(r.left+r.width/2), dy=cy-(r.top+r.height/2), d=Math.hypot(dx,dy), max=45;
+if(d>max){let a=Math.atan2(dy,dx); dx=Math.cos(a)*max; dy=Math.sin(a)*max;}
+return {dx,dy};
 }
-function joyStart(e){
-e.preventDefault(); e.stopPropagation();
-if(e.touches && e.touches[0]) activeTouchId=e.touches[0].identifier;
-J.a=1; T=null;
-let h=document.getElementById('hint'); if(h) h.style.display='none';
-joyStick.style.transform='scale(1.2)'; joyStick.style.boxShadow='0 8px 0 #000,0 0 25px #FFD700';
-if(navigator.vibrate) navigator.vibrate(20);
-}
-function joyMove(e){
-if(!J.a) return;
-e.preventDefault(); e.stopPropagation();
-let {dx,dy,d}=getJoyPos(e);
-if(d<10){J.x=0;J.y=0; joyStick.style.transform='translate(0px,0px) scale(1.2)'; return;}
-joyStick.style.transform=`translate(${dx}px,${dy}px) scale(1.2)`;
-J.x=dx/55; J.y=dy/55;
-if(Math.abs(J.x)>0.08) P.f=J.x>0?1:-1;
-}
-function joyEnd(e){
-if(e){e.preventDefault(); e.stopPropagation();}
-J.a=0; J.x=0; J.y=0; activeTouchId=null;
-joyStick.style.transform='translate(0,0) scale(1)'; joyStick.style.boxShadow='0 5px 0 #000';
-}
-function setupJoystick(){
-[joyWrap, joyBase].forEach(el=>{
-el.addEventListener('touchstart', joyStart, {passive:false});
-el.addEventListener('touchmove', joyMove, {passive:false});
-el.addEventListener('touchend', joyEnd, {passive:false});
-el.addEventListener('touchcancel', joyEnd, {passive:false});
-});
-joyBase.addEventListener('mousedown', (e)=>{activeTouchId=null; joyStart(e);});
-document.addEventListener('mousemove', (e)=>{if(J.a && activeTouchId===null) joyMove(e);});
-document.addEventListener('mouseup', (e)=>{if(activeTouchId===null) joyEnd(e);});
-}
-setupJoystick();
 
-// TAP MAP - AUTO WALK
-function handleMapTap(cx,cy){
-let r=cv.getBoundingClientRect();
-let x=(cx-r.left)*(cv.width/r.width), y=(cy-r.top)*(cv.height/r.height);
-if(y<55) return false;
-if(y>cv.height-180 && cx<r.left+180) return false;
-if(y>cv.height-180 && cx>r.left+r.width-120) return false;
-T={x:C.x+x, y:C.y+y};
-if(navigator.vibrate) navigator.vibrate(10);
-return true;
-}
-cv.addEventListener('click', (e)=>{handleMapTap(e.clientX,e.clientY);});
+joyWrap.addEventListener('touchstart', (e)=>{
+e.preventDefault();
+J.a=1; T=null;
+let {dx,dy}=getJoy(e);
+joyStick.style.transform=`translate(${dx}px,${dy}px)`;
+J.x=dx/45; J.y=dy/45;
+document.getElementById('status').textContent='JOY ATIVO';
+log('JOY START '+J.x.toFixed(2)+','+J.y.toFixed(2));
+},{passive:false});
+
+joyWrap.addEventListener('touchmove', (e)=>{
+if(!J.a) return;
+e.preventDefault();
+let {dx,dy}=getJoy(e);
+joyStick.style.transform=`translate(${dx}px,${dy}px)`;
+J.x=dx/45; J.y=dy/45;
+if(Math.abs(J.x)>0.1) P.f=J.x>0?1:-1;
+},{passive:false});
+
+joyWrap.addEventListener('touchend', (e)=>{
+e.preventDefault();
+J.a=0; J.x=0; J.y=0;
+joyStick.style.transform='translate(0,0)';
+document.getElementById('status').textContent='PARADO';
+log('JOY END');
+},{passive:false});
+
+// MOUSE FOR TEST
+joyWrap.addEventListener('mousedown', (e)=>{
+J.a=1; T=null;
+let {dx,dy}=getJoy(e);
+joyStick.style.transform=`translate(${dx}px,${dy}px)`;
+J.x=dx/45; J.y=dy/45;
+});
+window.addEventListener('mousemove', (e)=>{
+if(!J.a) return;
+let {dx,dy}=getJoy(e);
+joyStick.style.transform=`translate(${dx}px,${dy}px)`;
+J.x=dx/45; J.y=dy/45;
+});
+window.addEventListener('mouseup', ()=>{
+J.a=0; J.x=0; J.y=0;
+joyStick.style.transform='translate(0,0)';
+});
+
+// MAP TAP
 cv.addEventListener('touchstart', (e)=>{
 if(J.a) return;
 if(e.touches.length!==1) return;
 let t=e.touches[0];
-if(t.clientY>window.innerHeight*0.75){
-if(t.clientX<window.innerWidth*0.4 || t.clientX>window.innerWidth*0.6) return;
-}
+if(t.clientX<180 && t.clientY>window.innerHeight-200) return;
+if(t.clientX>window.innerWidth-120 && t.clientY>window.innerHeight-200) return;
 e.preventDefault();
-handleMapTap(t.clientX,t.clientY);
+let r=cv.getBoundingClientRect();
+let x=(t.clientX-r.left)*(cv.width/r.width), y=(t.clientY-r.top)*(cv.height/r.height);
+T={x:C.x+x, y:C.y+y};
+log('TAP MAP '+Math.floor(T.x)+','+Math.floor(T.y));
 },{passive:false});
 
+cv.addEventListener('click', (e)=>{
+let r=cv.getBoundingClientRect();
+let x=(e.clientX-r.left)*(cv.width/r.width), y=(e.clientY-r.top)*(cv.height/r.width);
+T={x:C.x+x, y:C.y+y};
+log('CLICK MAP');
+});
+
 // ATTACK
-function doAttack(){
-P.atk=16;
-let hit=false;
+document.getElementById('atk').addEventListener('touchstart', (e)=>{
+e.preventDefault();
+P.atk=12;
+P.gold+=5;
+document.getElementById('gold').textContent=P.gold;
+log('ATAQUE! Gold '+P.gold);
 mons.forEach(m=>{
 if(!m.alive) return;
-if(Math.hypot(m.x-P.x,m.y-P.y)<110){
-m.hp-=25+Math.floor(Math.random()*15);
-hit=true;
-if(m.hp<=0){m.alive=false; setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=300+Math.random()*2600; m.y=300+Math.random()*2600;},7000); P.gold+=25; document.getElementById('goldVal').textContent=P.gold;}
-}
+if(Math.hypot(m.x-P.x,m.y-P.y)<100){m.hp-=30; if(m.hp<=0){m.alive=false; setTimeout(()=>{m.alive=true; m.hp=50;},3000);} }
 });
-chests.forEach(ch=>{if(!ch.opened && Math.hypot(ch.x-P.x,ch.y-P.y)<85){ch.opened=true; P.gold+=60; document.getElementById('goldVal').textContent=P.gold;}});
-if(hit){cv.style.transform='translate(2px,0)'; setTimeout(()=>cv.style.transform='',50); if(navigator.vibrate) navigator.vibrate(25);}
-}
-function setupAttack(){
-let btn=document.getElementById('attackBtn');
-btn.addEventListener('click', doAttack);
-btn.addEventListener('touchstart', (e)=>{e.preventDefault(); e.stopPropagation(); doAttack(); if(navigator.vibrate) navigator.vibrate(20);},{passive:false});
-}
-setupAttack();
-
-// CLASS SELECT
-document.querySelectorAll('.classCard').forEach(card=>{
-card.addEventListener('click', ()=>{
-document.querySelectorAll('.classCard').forEach(c=>c.classList.remove('selected'));
-card.classList.add('selected'); selClass=card.dataset.class;
-if(navigator.vibrate) navigator.vibrate(15);
-});
-card.addEventListener('touchstart', (e)=>{e.preventDefault(); document.querySelectorAll('.classCard').forEach(c=>c.classList.remove('selected')); card.classList.add('selected'); selClass=card.dataset.class;},{passive:false});
+},{passive:false});
+document.getElementById('atk').addEventListener('click', ()=>{
+P.atk=12; P.gold+=5; document.getElementById('gold').textContent=P.gold; log('ATAQUE CLICK');
 });
 
-// START - REMOVE FROM DOM 100%
-function startGame(){
-console.log('V7 START', selClass);
-P.cls=selClass; P.x=W/2; P.y=H/2; P.hp=P.maxHp; P.gold=500; P.lvl=1;
-genWorld();
-let ss=document.getElementById('startScreen');
-if(ss){ss.remove(); console.log('START SCREEN REMOVED - ZERO MENUS');}
-let hint=document.getElementById('hint');
-if(hint){hint.style.display='block'; setTimeout(()=>{if(hint) hint.style.display='none';},6000);}
-if(!gameStarted){gameStarted=true; requestAnimationFrame(loop);}
+// START - SIMPLES E COM TRY CATCH
+function startV8(){
+try{
+log('START V8 CLICADO!');
+P.x=W/2; P.y=H/2;
+genWorldSimple();
+let s=document.getElementById('start');
+if(s){s.style.display='none'; s.remove(); log('MENU REMOVIDO DO DOM');}
+else {log('ERRO: start não achado');}
+if(!gameOn){
+gameOn=true;
+log('INICIANDO LOOP...');
+requestAnimationFrame(loop);
 }
-document.getElementById('startBtn').addEventListener('click', startGame);
-document.getElementById('startBtn').addEventListener('touchstart', (e)=>{e.preventDefault(); startGame();},{passive:false});
+document.getElementById('status').textContent='JOGANDO!';
+log('JOGO INICIADO - ARRASTE JOYSTICK');
+}catch(err){
+log('ERRO START: '+err.message+' '+err.stack);
+alert('ERRO: '+err.message);
+}
+}
 
-// LOOP
+// LOOP SIMPLES
 let last=performance.now();
 function loop(now){
+try{
 let dt=Math.min((now-last)/1000,0.05); last=now;
 let mx=0,my=0;
 if(J.a){mx=J.x; my=J.y;}
-else if(T){let dx=T.x-P.x, dy=T.y-P.y, d=Math.hypot(dx,dy); if(d<28){T=null;} else {mx=dx/d; my=dy/d; if(Math.abs(mx)>0.08) P.f=mx>0?1:-1;}}
+else if(T){let dx=T.x-P.x, dy=T.y-P.y, d=Math.hypot(dx,dy); if(d<25){T=null;} else {mx=dx/d; my=dy/d;}}
 if(mx||my){
-let speed=240;
-let nx=P.x+mx*speed*dt, ny=P.y+my*speed*dt;
-let res=checkSlide(P.x,P.y,nx,ny,24);
-P.x=res.x; P.y=res.y;
-P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));
+P.x+=mx*200*dt;
+P.y+=my*200*dt;
+P.x=Math.max(0,Math.min(W,P.x));
+P.y=Math.max(0,Math.min(H,P.y));
 }
 if(P.atk>0) P.atk--;
 C.x=P.x-cv.width/2; C.y=P.y-cv.height/2;
 C.x=Math.max(0,Math.min(W-cv.width,C.x)); C.y=Math.max(0,Math.min(H-cv.height,C.y));
-draw();
-document.getElementById('hpVal').textContent=Math.floor(P.hp);
-document.getElementById('lvlVal').textContent=P.lvl;
-document.getElementById('posVal').textContent=Math.floor(P.x/100)+','+Math.floor(P.y/100);
+drawSimple();
+document.getElementById('pos').textContent=Math.floor(P.x/100)+','+Math.floor(P.y/100);
+}catch(err){
+log('ERRO LOOP: '+err.message);
+}
 requestAnimationFrame(loop);
 }
-genWorld(); draw();
-console.log('V7 READY');
+
+genWorldSimple();
+drawSimple();
+log('V8 PRONTO - CLIQUE JOGAR');
 </script>
 </body>
 </html>
