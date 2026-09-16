@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>NORRATH CLASH V4 JOGÁVEL - Champions Style</title>
+<title>NORRATH CLASH V5 REAL JOGÁVEL - CLASH STYLE</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent} html,body{touch-action:manipulation}
 body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
@@ -169,11 +169,40 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;touch-acti
 .paragonLevel{color:#fff;font-weight:900;font-size:14px;text-align:center;margin:4px 0}
 .paragonDesc{color:#c9b896;font-size:7px;line-height:1.3;text-align:center}
 #saveIndicator{position:absolute;top:78px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#4caf50;font-size:9px;font-weight:900;padding:4px 12px;border-radius:12px;border:2px solid #4caf50;display:none;z-index:12}
+
+/* V5 JOGÁVEL REAL - SEM MENUS BLOQUEANDO - CLASH STYLE */
+#startScreen{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#8d6e63 0%,#4e342e 30%,#1a0f0a 70%,#000 100%);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;z-index:100;text-align:center;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));overflow-y:auto;pointer-events:auto;touch-action:manipulation}
+#startScreen.hidden{display:none !important; pointer-events:none !important; z-index:-1 !important}
+#actTransition{position:absolute;inset:0;background:#000;z-index:90;display:none;flex-direction:column;justify-content:center;align-items:center;color:#FFD700;text-align:center;pointer-events:none}
+#actTransition.show{display:flex; pointer-events:auto}
+#ui{position:absolute;inset:0;pointer-events:none;z-index:10}
+.topBar{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(#5d4037,#3e2723);display:flex;justify-content:space-between;align-items:center;padding:4px 4px 0 4px;border-bottom:4px solid #000;pointer-events:auto;gap:2px;padding-top:max(4px,env(safe-area-inset-top));z-index:15;box-shadow:0 4px 0 #000}
+.topBar.collapsed{transform:translateY(-100%); transition:transform 0.3s}
+#minimap{position:absolute;top:62px;left:6px;width:90px;height:90px;background:rgba(0,0,0,0.9);border:4px solid #000;border-radius:14px;overflow:hidden;pointer-events:auto;z-index:12;box-shadow:0 4px 0 #000,0 0 0 3px #FFD700}
+#minimap.collapsed{display:none}
+#questPanel{position:absolute;top:62px;right:6px;width:150px;max-width:38vw;background:linear-gradient(#fff8e1,#ffecb3);border-radius:14px;padding:6px;border:4px solid #000;box-shadow:0 5px 0 #000;pointer-events:auto;max-height:28vh;overflow-y:auto;z-index:12}
+#questPanel.collapsed{display:none}
+#joystick{position:absolute;bottom:20px;left:20px;width:140px;height:140px;pointer-events:auto;z-index:25;touch-action:none;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);border-radius:50%}
+.joyBase{width:140px;height:140px;border-radius:70px;background:radial-gradient(circle at 30% 30%,#8d8d8d,#2a2a2a);border:5px solid #000;position:relative;box-shadow:0 8px 0 #000,0 0 30px rgba(0,0,0,0.6),inset 0 0 20px rgba(255,255,255,0.2);touch-action:none;pointer-events:auto}
+.joyStick{width:60px;height:60px;border-radius:30px;background:radial-gradient(circle at 30% 30%,#FFEB3B,#FF9800);border:4px solid #000;position:absolute;left:35px;top:35px;box-shadow:0 6px 0 #000,0 0 15px rgba(255,215,0,0.5);display:flex;justify-content:center;align-items:center;touch-action:none;pointer-events:none;transition:transform 0.05s, box-shadow 0.1s}
+.joyStick::after{content:'🕹️';font-size:24px}
+.joyLabel{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:7px;font-weight:900;padding:4px 10px;border-radius:20px;border:2px solid #FFD700;white-space:nowrap;box-shadow:0 2px 0 #000;pointer-events:none}
+#actionBtns{position:absolute;bottom:20px;right:16px;pointer-events:auto;display:flex;flex-direction:column;gap:12px;z-index:25;touch-action:none}
+.actBtn{width:70px;height:70px;min-width:70px;min-height:70px;border-radius:20px;border:4px solid #000;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 6px 0 #000;transition:transform 0.05s;position:relative;touch-action:none;pointer-events:auto}
+.actBtn:active{transform:translateY(6px);box-shadow:0 0 0 #000}
+#spellsBar{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:auto;background:rgba(0,0,0,0.85);padding:8px 12px;border-radius:20px;border:4px solid #000;box-shadow:0 6px 0 #000;z-index:25;touch-action:none}
+#game{width:100%;height:100%;display:block;image-rendering:pixelated;touch-action:none;pointer-events:auto;background:#2e7d32}
+#gc{position:relative;width:100vw;height:100vh;height:100dvh;max-width:480px;max-height:960px;background:#2e7d32;overflow:hidden;box-shadow:0 0 0 4px #000;touch-action:none}
+.uiToggle{position:absolute;top:62px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:8px;font-weight:900;padding:4px 10px;border-radius:12px;border:2px solid #FFD700;pointer-events:auto;z-index:20;cursor:pointer;box-shadow:0 2px 0 #000}
+#moveHint{position:absolute;bottom:180px;left:20px;background:rgba(0,0,0,0.85);color:#FFD700;font-size:10px;font-weight:900;padding:8px 14px;border-radius:20px;border:3px solid #FFD700;pointer-events:none;z-index:15;animation:float 2s infinite;max-width:200px;text-align:center}
+
 </style>
 </head>
 <body>
 <div id="gc">
 <canvas id="game" width="420" height="860"></canvas>
+<div id="moveHint">👇 ARRASTE AQUI PARA ANDAR 👇<br><span style="font-size:8px">Toque no mapa = auto-walk</span></div>
+<div class="uiToggle" id="uiToggle" onclick="toggleUI()">👁️ UI</div>
 <canvas id="texAtlas" width="512" height="512" style="display:none"></canvas>
 <div id="ui">
   <div class="topBar">
@@ -203,7 +232,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;touch-acti
     <div class="spell" id="spell3"><div class="spellKey">3</div><div class="spellIcon">⚡</div><div class="spellMana">15</div></div>
     <div class="spell" id="spell4"><div class="spellKey">4</div><div class="spellIcon">💚</div><div class="spellMana">20</div></div>
   </div>
-  <div id="tip">💡 V4 JOGÁVEL: Joystick Champions! Arraste esquerda para andar, toque no mapa para auto-walk, ⚔️ para atacar!</div>
+  <div id="tip">💡 V5 REAL: SEM MENUS NA FRENTE! Joystick gigante esquerda, toque mapa para andar, ⚔️ direita ataca! Gráfico Clash!</div>
 
   <div id="invDrawer">
     <div id="invHandle"></div>
@@ -319,7 +348,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;touch-acti
     <div style="margin-top:20px;width:60%;height:6px;background:#333;border-radius:3px;overflow:hidden"><div id="actBar" style="height:100%;background:#FFD700;width:0%"></div></div>
   </div>
 
-  <div id="startScreen" style="pointer-events:auto">
+  <div id="startScreen">
     <div class="logo">NORRATH</div>
     <div class="logo2">CLASH V2</div>
     <div class="sublogo">V4 JOGÁVEL • JOYSTICK FIX • CHAMPIONS STYLE</div>
@@ -396,10 +425,26 @@ let textures={};
 function createTexture(name,x,y,w,h,drawFn){textures[name]={x,y,w,h};texCtx.save();texCtx.translate(x,y);drawFn(texCtx,w,h);texCtx.restore();}
 function genTextures(){
   texCtx.fillStyle='#000'; texCtx.fillRect(0,0,512,512);
+  // V5 CLASH STYLE TEXTURES - mais cartoon, brilhante, Clash of Clans
+
   createTexture('grass_faydark',0,0,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#2e7d32'; ctx.fillRect(0,0,w,h);
-    for(let i=0;i<50;i++){ctx.fillStyle=i%3==0?'#388e3c':i%3==1?'#1b5e20':'#4caf50'; ctx.fillRect(Math.random()*w,Math.random()*h,1+Math.random()*3,1+Math.random()*3);}
-    ctx.fillStyle='rgba(255,255,255,0.1)'; for(let i=0;i<10;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,Math.random()*2,0,6.28); ctx.fill();}
+    // Clash style grass - bright, cartoon, with flowers
+    ctx.fillStyle='#7CB342'; ctx.fillRect(0,0,w,h);
+    // Darker grass patches
+    for(let i=0;i<60;i++){
+      ctx.fillStyle=i%4==0?'#8BC34A':i%4==1?'#689F38':i%4==2?'#9CCC65':'#558B2F';
+      let x=Math.random()*w, y=Math.random()*h, s=2+Math.random()*4;
+      ctx.fillRect(x,y,s,s);
+    }
+    // Clash flowers small
+    for(let i=0;i<8;i++){
+      let x=Math.random()*w, y=Math.random()*h;
+      ctx.fillStyle=['#FFEB3B','#FF9800','#E91E63','#FFFFFF'][Math.floor(Math.random()*4)];
+      ctx.beginPath(); ctx.arc(x,y,1.5,0,6.28); ctx.fill();
+      ctx.fillStyle='#4CAF50'; ctx.fillRect(x-0.5,y+1,1,2);
+    }
+    // Light shine
+    ctx.fillStyle='rgba(255,255,255,0.15)'; for(let i=0;i<12;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,Math.random()*1.5,0,6.28); ctx.fill();}
   });
   createTexture('stone',64,0,64,64,(ctx,w,h)=>{
     ctx.fillStyle='#616161'; ctx.fillRect(0,0,w,h);
@@ -412,9 +457,12 @@ function genTextures(){
     ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,w,3); ctx.fillRect(0,h-3,w,3);
   });
   createTexture('roof',192,0,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#b71c1c'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#7f0000'; for(let y=0;y<h;y+=12){for(let x=0;x<w;x+=16){ctx.fillRect(x+2,y+2,12,8); ctx.fillStyle='#d32f2f'; ctx.fillRect(x+2,y+2,12,2); ctx.fillStyle='#7f0000';}}
-    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(0,0,w,h);
+    // Clash of Clans style roof - bright red/orange, cartoon
+    ctx.fillStyle='#E53935'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#B71C1C'; for(let y=0;y<h;y+=10){for(let x=0;x<w;x+=14){ctx.fillRect(x+1,y+1,11,7);}}
+    ctx.fillStyle='#FF5252'; for(let y=0;y<h;y+=10){for(let x=0;x<w;x+=14){ctx.fillRect(x+1,y+1,11,2);}}
+    ctx.fillStyle='#FF8A65'; ctx.fillRect(0,0,w,3);
+    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(0,0,w,h);
   });
   createTexture('heavy_metal',256,0,64,64,(ctx,w,h)=>{
     ctx.fillStyle='#424242'; ctx.fillRect(0,0,w,h);
@@ -453,9 +501,12 @@ function genTextures(){
     ctx.fillStyle='#8d6e63'; ctx.fillRect(6,0,2,h);
   });
   createTexture('wall',256,64,64,64,(ctx,w,h)=>{
-    ctx.fillStyle='#d7ccc8'; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#bcaaa4'; ctx.fillRect(0,0,w,4); ctx.fillRect(0,h-4,w,4); ctx.fillRect(0,0,4,h); ctx.fillRect(w-4,0,4,h);
-    ctx.fillStyle='#a1887f'; for(let y=0;y<h;y+=16){for(let x=0;x<w;x+=20){ctx.fillRect(x+2,y+6,16,2);}}
+    // Clash style wall - beige cartoon with strong outline
+    ctx.fillStyle='#FFF8E1'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#FFECB3'; ctx.fillRect(3,3,w-6,h-6);
+    ctx.fillStyle='#FFE082'; ctx.fillRect(0,0,w,5); ctx.fillRect(0,h-5,w,5); ctx.fillRect(0,0,5,h); ctx.fillRect(w-5,0,5,h);
+    ctx.fillStyle='#D7CCC8'; for(let y=0;y<h;y+=14){for(let x=0;x<w;x+=18){ctx.fillRect(x+4,y+8,12,2);}}
+    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(0,0,w,h);
   });
   createTexture('dungeon_floor',320,64,64,64,(ctx,w,h)=>{
     ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,w,h);
@@ -1027,7 +1078,7 @@ function updateSpellBar(){
 }
 
 function showActTransition(newAct,isFinal=false,isTower=false){
-  const t=document.getElementById('actTransition'); t.style.display='flex';
+  const t=document.getElementById('actTransition'); t.style.display='flex'; t.classList.add('show');
   if(isFinal){
     document.getElementById('actIcon').textContent='🏆'; document.getElementById('actTitle').textContent='VITÓRIA! PARAGON ∞ + TORRE DESBLOQUEADA!'; document.getElementById('actDesc').textContent='Você zerou NORRATH CLASH! Agora Paragon infinito, Torre 100 andares e Boss Rush!';
   } else if(isTower){
@@ -1300,25 +1351,44 @@ document.querySelectorAll('.classCard').forEach(c=>{
 });
 
 function startGame(isContinue=false){
+  console.log('V5 START GAME', isContinue, selClass);
+  // Hide all blocking menus FOR REAL
+  let ss=document.getElementById('startScreen');
+  ss.classList.add('hidden');
+  ss.style.display='none';
+  ss.style.pointerEvents='none';
+  ss.style.zIndex='-1';
+  document.getElementById('actTransition').style.display='none';
+  document.getElementById('actTransition').classList.remove('show');
+  document.getElementById('moveHint').style.display='block';
+  setTimeout(()=>{ let mh=document.getElementById('moveHint'); if(mh) mh.style.display='none'; }, 5000);
+
   if(isContinue && loadGame()){
-    document.getElementById('startScreen').style.display='none';
     updateBars(); rq(); ri(); updateCharVisual(); updateCharScreen(); updateSpellBar();
     document.getElementById('level').textContent=P.lvl; document.getElementById('gold').textContent=P.gold;
-    genWorld(); // regenerate world but keep player progress
+    genWorld();
     showPopup('💾 Save carregado!',' #4caf50');
-    requestAnimationFrame(loop);
+    if(!window.gameLoopStarted){ window.gameLoopStarted=true; requestAnimationFrame(loop); }
     return;
   }
   P.cls=selClass; let cls=CLASSES[P.cls];
   P.attr={...cls.base}; P.maxHp=80+cls.base.STA*2+cls.hp; P.hp=P.maxHp; P.maxMana=40+cls.base.INT*2+cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=500; P.attrPts=0; P.skillPts=2; P.paragon=0; P.paragonXp=0; P.paragonMaxXp=100; P.x=W/2; P.y=H/2; towerFloor=0; inTower=false;
   initSkills(); initInv(); initQuests(); genWorld(); act=1; inDungeon=false;
-  document.getElementById('startScreen').style.display='none';
   updateBars(); rq(); ri(); updateCharVisual(); updateCharScreen(); updateSpellBar();
   document.getElementById('level').textContent=P.lvl; document.getElementById('gold').textContent=P.gold;
-  showActTransition(1);
+  // No blocking transition on first start - direct gameplay
+  showPopup('🎮 V5 JOGÁVEL! Arraste joystick para andar!',' #FFD700');
   saveGame();
-  requestAnimationFrame(loop);
+  if(!window.gameLoopStarted){ window.gameLoopStarted=true; requestAnimationFrame(loop); }
 }
+window.toggleUI = function(){
+  document.getElementById('minimap').classList.toggle('collapsed');
+  document.getElementById('questPanel').classList.toggle('collapsed');
+  document.getElementById('paragonInfo').classList.toggle('collapsed');
+  let hint=document.getElementById('moveHint');
+  if(hint) hint.style.display = hint.style.display==='none' ? 'block' : 'none';
+}
+
 function handleStart(isContinue){ console.log('Start clicked, continue='+isContinue); startGame(isContinue); }
 const startBtn=document.getElementById('startBtn');
 startBtn.addEventListener('click', ()=>handleStart(false));
