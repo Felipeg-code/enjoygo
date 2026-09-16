@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>NORRATH CLASH V2 - Melhorado</title>
+<title>NORRATH CLASH V4 JOGÁVEL - Champions Style</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent} html,body{touch-action:manipulation}
 body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
 #gc{position:relative;width:100vw;height:100vh;height:100dvh;max-width:480px;max-height:960px;background:#1a1a1e;overflow:hidden;box-shadow:0 0 0 3px #000}
 @media(min-width:500px){#gc{width:420px;height:860px;border-radius:20px;border:4px solid #000;box-shadow:0 0 0 3px #000,0 0 0 7px #3e2723,0 30px 80px rgba(0,0,0,0.9)}}
-canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated;touch-action:none;pointer-events:auto}
+#gc{touch-action:none}
+#game{touch-action:none}
 #ui{position:absolute;inset:0;pointer-events:none}
 .topBar{position:absolute;top:0;left:0;right:0;height:72px;background:linear-gradient(#2a1a0f,#0f0a05);display:flex;justify-content:space-between;align-items:center;padding:6px 6px 0 6px;border-bottom:4px solid #000;pointer-events:auto;gap:3px;padding-top:max(6px,env(safe-area-inset-top));z-index:10}
 .res{display:flex;align-items:center;background:linear-gradient(#2a2a2a,#0a0a0a);border-radius:12px;padding:2px 5px 2px 2px;border:3px solid #000;flex:1;min-width:0;box-shadow:0 3px 0 #000}
@@ -32,12 +34,14 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
 .qDist{font-size:8px;font-weight:900;color:#fff;background:linear-gradient(#2e7d32,#1b5e20);padding:2px 6px;border-radius:10px;border:2px solid #000;display:inline-block;margin-top:2px}
 .qProgress{position:absolute;bottom:0;left:3px;right:3px;height:4px;background:#000;border-radius:2px;overflow:hidden}
 .qProgFill{height:100%;background:linear-gradient(#4caf50,#2e7d32)}
-#joystick{position:absolute;bottom:18px;left:14px;width:160px;height:160px;pointer-events:auto;z-index:5}
-.joyBase{width:160px;height:160px;border-radius:80px;background:radial-gradient(circle at 30% 30%,#5a5a5a,#1a1a1a);border:5px solid #000;position:relative;box-shadow:0 7px 0 #000,0 0 20px rgba(0,0,0,0.5)}
-.joyStick{width:68px;height:68px;border-radius:34px;background:radial-gradient(circle at 30% 30%,#FFD700,#b8960c);border:4px solid #000;position:absolute;left:41px;top:41px;box-shadow:0 5px 0 #000;display:flex;justify-content:center;align-items:center;transition:transform 0.05s}
+#joystick{position:absolute;bottom:10px;left:10px;width:180px;height:180px;pointer-events:auto;z-index:20;touch-action:none}
+#joystick *{touch-action:none}
+.joyBase{width:160px;height:160px;border-radius:80px;background:radial-gradient(circle at 30% 30%,#5a5a5a,#1a1a1a);border:5px solid #000;position:relative;box-shadow:0 7px 0 #000,0 0 20px rgba(0,0,0,0.5);touch-action:none;pointer-events:auto}
+.joyBase:active{transform:scale(0.98)}
+.joyStick{width:68px;height:68px;border-radius:34px;background:radial-gradient(circle at 30% 30%,#FFD700,#b8960c);border:4px solid #000;position:absolute;left:41px;top:41px;box-shadow:0 5px 0 #000;display:flex;justify-content:center;align-items:center;transition:transform 0.05s;touch-action:none;pointer-events:none}
 .joyStick::after{content:'🕹️';font-size:26px}
 .joyLabel{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:#000;color:#FFD700;font-size:8px;font-weight:900;padding:3px 10px;border-radius:12px;border:2px solid #FFD700;white-space:nowrap}
-#actionBtns{position:absolute;bottom:18px;right:12px;pointer-events:auto;display:flex;flex-direction:column;gap:10px;z-index:5}
+#actionBtns{position:absolute;bottom:18px;right:12px;pointer-events:auto;display:flex;flex-direction:column;gap:10px;z-index:20;touch-action:none}
 .actBtn{width:66px;height:66px;min-width:66px;min-height:66px;border-radius:18px;border:4px solid #000;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 6px 0 #000;transition:transform 0.05s;position:relative}
 .actBtn:active{transform:translateY(6px);box-shadow:0 0 0 #000}
 .actBtn .icon{font-size:28px;line-height:1}
@@ -47,7 +51,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
 .actBtn.hero{background:linear-gradient(#616161,#212121)}
 .actBtn.shop{background:linear-gradient(#ff8f00,#e65100)}
 .actBtn.tower{background:linear-gradient(#9c27b0,#4a148c);display:none}
-#spellsBar{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;pointer-events:auto;background:rgba(0,0,0,0.9);padding:6px 10px;border-radius:16px;border:4px solid #000;box-shadow:0 5px 0 #000;z-index:5}
+#spellsBar{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;pointer-events:auto;background:rgba(0,0,0,0.9);padding:6px 10px;border-radius:16px;border:4px solid #000;box-shadow:0 5px 0 #000;z-index:20;touch-action:none}
 .spell{width:54px;height:54px;min-width:54px;min-height:54px;background:linear-gradient(#3a3a4a,#1a1a2a);border:4px solid #000;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;position:relative;box-shadow:0 3px 0 #000;transition:transform 0.05s}
 .spell:active{transform:translateY(3px);box-shadow:0 0 0 #000}
 .spell.cooldown{opacity:0.35;filter:grayscale(1)}
@@ -185,7 +189,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
   <div id="questPanel"><div class="qTitle">📜 MISSÕES • V2</div><div id="questList"></div></div>
   <div id="bossBar"><div id="bossFill" style="width:100%"></div><div id="bossName">👹 BOSS</div></div>
   <div id="autoBanner">🚶 Indo... <span class="cancel" id="cancelAuto">CANCELAR ✕</span></div>
-  <div id="joystick"><div class="joyBase" id="joyBase"><div class="joyStick" id="joyStick"></div></div><div class="joyLabel">MOVER • V2 MELHORADO</div></div>
+  <div id="joystick"><div class="joyBase" id="joyBase"><div class="joyStick" id="joyStick"></div></div><div class="joyLabel">MOVER • SEGURE E ARRASTE</div></div>
   <div id="actionBtns">
     <div class="actBtn attack" id="attackBtn"><span class="icon">⚔️</span><span class="label">ATACAR</span></div>
     <div class="actBtn potion" id="potionBtn"><span class="icon">🧪</span><span class="label">CURA</span></div>
@@ -199,7 +203,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
     <div class="spell" id="spell3"><div class="spellKey">3</div><div class="spellIcon">⚡</div><div class="spellMana">15</div></div>
     <div class="spell" id="spell4"><div class="spellKey">4</div><div class="spellIcon">💚</div><div class="spellMana">20</div></div>
   </div>
-  <div id="tip">💡 V2: Minimapa + Craft Gemas + Torre 100 + Save Auto!</div>
+  <div id="tip">💡 V4 JOGÁVEL: Joystick Champions! Arraste esquerda para andar, toque no mapa para auto-walk, ⚔️ para atacar!</div>
 
   <div id="invDrawer">
     <div id="invHandle"></div>
@@ -318,7 +322,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
   <div id="startScreen" style="pointer-events:auto">
     <div class="logo">NORRATH</div>
     <div class="logo2">CLASH V2</div>
-    <div class="sublogo">MINIMAPA + CRAFT + TORRE 100 + SAVE</div>
+    <div class="sublogo">V4 JOGÁVEL • JOYSTICK FIX • CHAMPIONS STYLE</div>
     <div class="badges"><span class="badge">V2 MELHORADO</span><span class="badge">MINIMAPA</span><span class="badge">CRAFT GEMAS</span><span class="badge">TORRE 100</span><span class="badge">SAVE AUTO</span></div>
     <div style="color:#d7ccc8;font-size:11px;font-weight:700;margin:8px 0">Melhorado enquanto você testa!</div>
     <div class="classGrid" id="classGrid">
@@ -1117,20 +1121,73 @@ function loadGame(){ try { let ls=safeLocalStorage();
 }
 function hasSave(){ try { let ls=safeLocalStorage(); return !!ls.getItem('norrath_v2_save'); } catch(e){ return false; } }
 
-// INPUTS - MELHORADO COM DEADZONE E VIBRAÇÃO
-const jb=document.getElementById('joyBase'), js=document.getElementById('joyStick');
+// INPUTS V4 JOGÁVEL - Champions of Norrath style - ROBUSTO WebView
+const jb=document.getElementById('joyBase'), js=document.getElementById('joyStick'), joystickContainer=document.getElementById('joystick');
+let activeTouchId=null;
 function gp(e){
+  let clientX, clientY;
+  if(e.touches && e.touches.length>0){
+    // Find active touch or first
+    let touch = null;
+    if(activeTouchId!==null){
+      for(let t of e.touches){ if(t.identifier===activeTouchId){ touch=t; break; } }
+    }
+    if(!touch) touch=e.touches[0];
+    clientX=touch.clientX; clientY=touch.clientY;
+  } else if(e.changedTouches && e.changedTouches.length>0){
+    clientX=e.changedTouches[0].clientX; clientY=e.changedTouches[0].clientY;
+  } else {
+    clientX=e.clientX; clientY=e.clientY;
+  }
   const r=jb.getBoundingClientRect();
-  const cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY;
-  let dx=cx-(r.left+r.width/2), dy=cy-(r.top+r.height/2), d=Math.hypot(dx,dy), m=42;
-  if(d>m){let a=Math.atan2(dy,dx);dx=Math.cos(a)*m;dy=Math.sin(a)*m}
-  return{dx,dy,d}
+  let dx=clientX-(r.left+r.width/2), dy=clientY-(r.top+r.height/2), d=Math.hypot(dx,dy), m=55;
+  if(d>m){let a=Math.atan2(dy,dx);dx=Math.cos(a)*m;dy=Math.sin(a)*m; d=m}
+  return{dx,dy,d,clientX,clientY}
 }
-function jsS(e){e.preventDefault();J.a=1;T=null;document.getElementById('autoBanner').style.display='none'; js.style.transform='scale(1.1)';}
-function jsM(e){if(!J.a)return;e.preventDefault();let {dx,dy,d}=gp(e); if(d<8){J.x=0;J.y=0; js.style.transform=`translate(0px,0px) scale(1.1)`; return;} js.style.transform=`translate(${dx}px,${dy}px) scale(1.1)`;J.x=dx/42;J.y=dy/42;if(Math.abs(J.x)>0.1)P.f=J.x>0?1:-1}
-function jsE(){J.a=0;J.x=0;J.y=0;js.style.transform='translate(0,0) scale(1)';}
-jb.addEventListener('touchstart',jsS,{passive:false}); jb.addEventListener('touchmove',jsM,{passive:false}); jb.addEventListener('touchend',jsE);
-jb.addEventListener('mousedown',jsS); window.addEventListener('mousemove',jsM); window.addEventListener('mouseup',jsE);
+function jsS(e){
+  e.preventDefault(); e.stopPropagation();
+  if(e.touches && e.touches.length>0) activeTouchId=e.touches[0].identifier;
+  J.a=1; T=null;
+  let banner=document.getElementById('autoBanner'); if(banner) banner.style.display='none';
+  js.style.transform='scale(1.15)'; js.style.boxShadow='0 8px 0 #000,0 0 20px #FFD700';
+  if(navigator.vibrate) navigator.vibrate(20);
+}
+function jsM(e){
+  if(!J.a) return;
+  e.preventDefault(); e.stopPropagation();
+  let {dx,dy,d}=gp(e);
+  if(d<10){ J.x=0; J.y=0; js.style.transform=`translate(0px,0px) scale(1.15)`; return; }
+  js.style.transform=`translate(${dx}px,${dy}px) scale(1.15)`;
+  J.x=dx/55; J.y=dy/55;
+  if(Math.abs(J.x)>0.1) P.f=J.x>0?1:-1;
+  // Debug tip
+  if(Math.random()<0.05) console.log('Joystick move', J.x.toFixed(2), J.y.toFixed(2));
+}
+function jsE(e){
+  if(e) { e.preventDefault(); e.stopPropagation(); }
+  J.a=0; J.x=0; J.y=0; activeTouchId=null;
+  js.style.transform='translate(0,0) scale(1)'; js.style.boxShadow='0 5px 0 #000';
+}
+function setupJoystickV4(){
+  let elems=[jb, joystickContainer];
+  elems.forEach(el=>{
+    if(!el) return;
+    el.addEventListener('touchstart', jsS, {passive:false, capture:true});
+    el.addEventListener('touchmove', jsM, {passive:false, capture:true});
+    el.addEventListener('touchend', jsE, {passive:false, capture:true});
+    el.addEventListener('touchcancel', jsE, {passive:false, capture:true});
+  });
+  // Mouse fallback for desktop testing
+  jb.addEventListener('mousedown', (e)=>{ activeTouchId=null; jsS(e); });
+  document.addEventListener('mousemove', (e)=>{ if(J.a && activeTouchId===null) jsM(e); });
+  document.addEventListener('mouseup', (e)=>{ if(activeTouchId===null) jsE(e); });
+  // Prevent context menu on joystick
+  jb.addEventListener('contextmenu', e=>e.preventDefault());
+  joystickContainer.addEventListener('contextmenu', e=>e.preventDefault());
+  console.log('Joystick V4 setup OK - Champions style');
+}
+setupJoystickV4();
+
 
 const cv=document.getElementById('game'), ctx=cv.getContext('2d');
 const miniCanvas=document.getElementById('miniCanvas'), miniCtx=miniCanvas.getContext('2d');
@@ -1141,31 +1198,62 @@ function drawTexture(name,sx,sy,sw,sh){
   ctx.drawImage(texCanvas,t.x,t.y,t.w,t.h,sx,sy,sw,sh);
 }
 
-cv.addEventListener('click',e=>{
-  const r=cv.getBoundingClientRect(); const x=(e.clientX-r.left)*(cv.width/r.width), y=(e.clientY-r.top)*(cv.height/r.height);
-  if(y>cv.height-150) return; if(y<72) return;
-  let clickedObj=objs.find(o=>{let ox=o.x-C.x, oy=o.y-C.y; return Math.hypot(ox-x,oy-y)<55;});
-  if(clickedObj&&clickedObj.isDungeon){genDungeon(clickedObj.dungeonAct||act); showActTransition(act); quests.forEach(q=>{if(q.isDungeon&&q.act===act&&!q.done){q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; gainXp(60); rq();}}); saveGame(); return;}
-  if(clickedObj&&clickedObj.isTower){genTower(towerFloor+1); showActTransition(towerFloor+1,false,true); return;}
+function handleMapTap(clientX, clientY, isTouch=false){
+  const r=cv.getBoundingClientRect();
+  const x=(clientX-r.left)*(cv.width/r.width), y=(clientY-r.top)*(cv.height/r.height);
+  if(y>cv.height-170) return false; // avoid joystick area
+  if(y<80) return false; // avoid top bar
+  if(x<90 && y<170) return false; // avoid minimap
+  if(x>cv.width-180 && y<200) return false; // avoid quest panel
+  let clickedObj=objs.find(o=>{let ox=o.x-C.x, oy=o.y-C.y; return Math.hypot(ox-x,oy-y)<60;});
+  if(clickedObj&&clickedObj.isDungeon){genDungeon(clickedObj.dungeonAct||act); showActTransition(act); quests.forEach(q=>{if(q.isDungeon&&q.act===act&&!q.done){q.done=1;P.gold+=q.r;document.getElementById('gold').textContent=P.gold; gainXp(60); rq();}}); saveGame(); return true;}
+  if(clickedObj&&clickedObj.isTower){genTower(towerFloor+1); showActTransition(towerFloor+1,false,true); return true;}
   if(clickedObj&&clickedObj.t==='exit'){
     if(clickedObj.isTowerExit){towerFloor++; genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);}
     else if(clickedObj.isTowerPrev){if(towerFloor>0){towerFloor--; genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);}}
     else{inDungeon=false; inTower=false; genWorld(); showActTransition(act);}
-    saveGame(); return;
+    saveGame(); return true;
   }
-  let clickedMer=merchants.find(m=>{let mx=m.x-C.x, my=m.y-C.y; return Math.hypot(mx-x,my-y)<55;});
-  if(clickedMer){openShop(clickedMer); return;}
-  T={x:C.x+x,y:C.y+y,id:null}; document.getElementById('autoBanner').style.display='block'; document.getElementById('autoBanner').innerHTML=`🚶 Indo... <span class="cancel" id="cancelAuto2">CANCELAR ✕</span>`;
-  document.getElementById('cancelAuto2').onclick=()=>{T=null;document.getElementById('autoBanner').style.display='none'};
+  let clickedMer=merchants.find(m=>{let mx=m.x-C.x, my=m.y-C.y; return Math.hypot(mx-x,my-y)<65;});
+  if(clickedMer){openShop(clickedMer); return true;}
+  // Champions of Norrath style: tap to walk
+  T={x:C.x+x,y:C.y+y,id:null};
+  let banner=document.getElementById('autoBanner');
+  if(banner){ banner.style.display='block'; banner.innerHTML=`🚶 Indo para destino... <span class="cancel" id="cancelAuto2">CANCELAR ✕</span>`; 
+    let cancelBtn=document.getElementById('cancelAuto2');
+    if(cancelBtn) cancelBtn.onclick=()=>{T=null;banner.style.display='none';};
+  }
+  if(isTouch && navigator.vibrate) navigator.vibrate(15);
+  return true;
+}
+cv.addEventListener('click',e=>{
+  handleMapTap(e.clientX, e.clientY, false);
 });
-document.getElementById('attackBtn').onclick=()=>doAttack();
-document.getElementById('towerBtn').onclick=()=>{if(P.lvl>=20){genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);} else showPopup('🔒 Precisa Lv20!','#ff5252');};
-document.getElementById('potionBtn').onclick=()=>{
-  let it=inv.find(x=>x.id==='potion_hp'&&x.count>0);
-  if(it){it.count--; if(it.count<=0) inv[inv.indexOf(it)]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0}; P.hp=Math.min(P.maxHp,P.hp+80); updateBars(); ri(); saveGame();}
-};
-document.getElementById('charBtn').onclick=()=>{document.getElementById('charScreen').style.display='flex'; updateCharScreen();};
-document.getElementById('shopBtnTop').onclick=()=>openShop();
+cv.addEventListener('touchstart',e=>{
+  if(J.a) return; // joystick active, ignore map tap
+  if(e.touches.length!==1) return;
+  let t=e.touches[0];
+  // Only handle taps on upper 70% of screen
+  if(t.clientY > window.innerHeight*0.75) return;
+  e.preventDefault();
+  handleMapTap(t.clientX, t.clientY, true);
+},{passive:false});
+
+
+function setupActionBtn(id, fn){
+  let el=document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('click', fn);
+  el.addEventListener('touchstart', (e)=>{ e.preventDefault(); e.stopPropagation(); fn(); if(navigator.vibrate) navigator.vibrate(20); }, {passive:false});
+  el.addEventListener('contextmenu', e=>e.preventDefault());
+}
+setupActionBtn('attackBtn', ()=>doAttack());
+
+setupActionBtn('towerBtn', ()=>{if(P.lvl>=20){genTower(towerFloor+1); showActTransition(towerFloor+1,false,true);} else showPopup('🔒 Precisa Lv20!','#ff5252');});
+setupActionBtn('potionBtn', ()=>{ let it=inv.find(x=>x.id==='potion_hp'&&x.count>0); if(it){it.count--; if(it.count<=0) inv[inv.indexOf(it)]={id:'empty',name:'',icon:'',type:'empty',count:0,weight:0}; P.hp=Math.min(P.maxHp,P.hp+80); updateBars(); ri(); saveGame();} });
+/* potion now handled by setupActionBtn */
+setupActionBtn('charBtn', ()=>{document.getElementById('charScreen').style.display='flex'; updateCharScreen();});
+setupActionBtn('shopBtnTop', ()=>openShop());
 document.getElementById('closeChar').onclick=()=>document.getElementById('charScreen').style.display='none';
 document.getElementById('invOpenFromChar').onclick=()=>{document.getElementById('charScreen').style.display='none'; document.getElementById('invDrawer').classList.add('open');};
 document.getElementById('shopBtnFromChar').onclick=()=>{document.getElementById('charScreen').style.display='none'; openShop();};
@@ -1182,7 +1270,11 @@ document.querySelectorAll('.shopTab').forEach(tab=>{
   tab.onclick=()=>{document.querySelectorAll('.shopTab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); shopTab=tab.dataset.tab; renderShop();};
 });
 document.getElementById('cancelAuto').onclick=()=>{T=null;document.getElementById('autoBanner').style.display='none'};
-document.querySelectorAll('.spell').forEach(el=>{el.onclick=()=>{let sid=el.dataset.skill; if(sid) doSkill(sid);};});
+document.querySelectorAll('.spell').forEach(el=>{
+  let fn=()=>{let sid=el.dataset.skill; if(sid) doSkill(sid);};
+  el.addEventListener('click', fn);
+  el.addEventListener('touchstart', (e)=>{ e.preventDefault(); e.stopPropagation(); fn(); }, {passive:false});
+});
 document.getElementById('closeInvBtn').onclick=()=>document.getElementById('invDrawer').classList.remove('open');
 document.getElementById('useBtn').onclick=()=>{if(selInv>=0) useItem(selInv);};
 document.getElementById('equipBtn').onclick=()=>{if(selInv>=0) equipItem(selInv);};
