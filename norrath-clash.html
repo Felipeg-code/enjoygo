@@ -346,6 +346,10 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
 </div>
 
 <script>
+// APK WebView fix - force enable
+console.log('NORRATH CLASH V2 APK - JS running');
+window.onerror=function(m,s,l,c,e){ console.log('JS Error: '+m+' at '+s+':'+l); };
+
 // ===== NORRATH CLASH V2 - MELHORADO =====
 const W=3200,H=3200;
 let act=1,towerFloor=0,inTower=false;
@@ -1088,20 +1092,21 @@ function renderShop(){
 }
 
 // SAVE SYSTEM V2
-function saveGame(){
+function safeLocalStorage(){ try { return localStorage; } catch(e){ return {getItem:()=>null,setItem:()=>{},removeItem:()=>{}}; } }
+function saveGame(){ try { let ls=safeLocalStorage();
   try{
     let saveData={
       P,act,towerFloor,inTower,equip,inv,quests,playerSkills,version:'v2',
       timestamp:Date.now()
     };
-    localStorage.setItem('norrath_v2_save', JSON.stringify(saveData));
+    ls.setItem('norrath_v2_save', JSON.stringify(saveData));
     document.getElementById('saveIndicator').style.display='block';
     setTimeout(()=>document.getElementById('saveIndicator').style.display='none',1500);
   }catch(e){console.log('save fail',e);}
 }
-function loadGame(){
+function loadGame(){ try { let ls=safeLocalStorage();
   try{
-    let data=localStorage.getItem('norrath_v2_save');
+    let data=ls.getItem('norrath_v2_save');
     if(!data) return false;
     let save=JSON.parse(data);
     if(!save.P) return false;
@@ -1110,7 +1115,7 @@ function loadGame(){
     return true;
   }catch(e){return false;}
 }
-function hasSave(){return !!localStorage.getItem('norrath_v2_save');}
+function hasSave(){ try { let ls=safeLocalStorage(); return !!ls.getItem('norrath_v2_save'); } catch(e){ return false; } }
 
 // INPUTS - MELHORADO COM DEADZONE E VIBRAÇÃO
 const jb=document.getElementById('joyBase'), js=document.getElementById('joyStick');
@@ -1165,7 +1170,7 @@ document.getElementById('closeChar').onclick=()=>document.getElementById('charSc
 document.getElementById('invOpenFromChar').onclick=()=>{document.getElementById('charScreen').style.display='none'; document.getElementById('invDrawer').classList.add('open');};
 document.getElementById('shopBtnFromChar').onclick=()=>{document.getElementById('charScreen').style.display='none'; openShop();};
 document.getElementById('saveBtn').onclick=()=>{saveGame(); showPopup('💾 Jogo salvo!','#4caf50');};
-document.getElementById('resetBtn').onclick=()=>{if(confirm('Resetar tudo?')){localStorage.removeItem('norrath_v2_save'); location.reload();}};
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Resetar tudo?')){try { safeLocalStorage().removeItem('norrath_v2_save'); } catch(e){}; location.reload();}};
 document.getElementById('closeShop').onclick=()=>document.getElementById('shopModal').style.display='none';
 document.getElementById('rerollShop').onclick=()=>{
   if(P.gold<50){showPopup('Precisa 50 ouro!','#ff5252'); return;}

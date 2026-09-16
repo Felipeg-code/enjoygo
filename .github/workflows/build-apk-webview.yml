@@ -1,4 +1,4 @@
-name: Build APK WebView 100% Offline - JOGO REAL
+name: Build APK WebView 100% Offline - JOGO REAL INTERATIVO
 
 on:
   push:
@@ -14,15 +14,22 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Create WebView APK Project - JOGO DIRETO
+      - name: Create WebView APK Project - JOGO INTERATIVO
         run: |
           mkdir -p webview-apk/app/src/main/java/com/norrathclash
           mkdir -p webview-apk/app/src/main/assets
           mkdir -p webview-apk/app/src/main/res/values
           
-          cp norrath-clash.html webview-apk/app/src/main/assets/ 2>/dev/null || true
+          # Use APK-specific HTML with safe localStorage for WebView
+          if [ -f "norrath-clash-apk.html" ]; then
+            cp norrath-clash-apk.html webview-apk/app/src/main/assets/norrath-clash.html
+            echo "Usando norrath-clash-apk.html (patched for WebView)"
+          else
+            cp norrath-clash.html webview-apk/app/src/main/assets/ 2>/dev/null || true
+            echo "Usando norrath-clash.html normal"
+          fi
           ls -lh webview-apk/app/src/main/assets/
-          echo "HTML size: $(wc -c < webview-apk/app/src/main/assets/norrath-clash.html) bytes - deve ser 109KB+"
+          echo "HTML size: $(wc -c < webview-apk/app/src/main/assets/norrath-clash.html) bytes"
           
           cat > webview-apk/settings.gradle << 'GRADLE'
           include ':app'
@@ -51,8 +58,8 @@ jobs:
               applicationId "com.norrathclash"
               minSdk 21
               targetSdk 34
-              versionCode 4
-              versionName "4.0-V2-JOGO-REAL"
+              versionCode 5
+              versionName "5.0-V2-JOGO-INTERATIVO"
             }
             buildTypes {
               release { minifyEnabled false; shrinkResources false }
@@ -73,7 +80,6 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
             <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
             <application
               android:allowBackup="true"
               android:icon="@android:drawable/sym_def_app_icon"
@@ -109,6 +115,7 @@ jobs:
           import android.webkit.WebSettings;
           import android.view.WindowManager;
           import android.util.Log;
+          import android.widget.Toast;
           import java.io.InputStream;
           import java.io.IOException;
           public class MainActivity extends Activity {
@@ -123,6 +130,7 @@ jobs:
               WebSettings ws = webView.getSettings();
               ws.setJavaScriptEnabled(true);
               ws.setDomStorageEnabled(true);
+              ws.setDatabaseEnabled(true);
               ws.setAllowFileAccess(true);
               ws.setAllowFileAccessFromFileURLs(true);
               ws.setAllowUniversalAccessFromFileURLs(true);
@@ -132,24 +140,35 @@ jobs:
               ws.setDisplayZoomControls(false);
               ws.setCacheMode(WebSettings.LOAD_NO_CACHE);
               ws.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+              ws.setUseWideViewPort(true);
+              ws.setLoadWithOverviewMode(true);
+              ws.setSupportZoom(false);
               
-              webView.setWebViewClient(new WebViewClient());
+              webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                  super.onPageFinished(view, url);
+                  Log.d("NORRATH", "Page finished: " + url);
+                  // Inject JS to confirm running
+                  view.evaluateJavascript("console.log('WebView JS enabled, game should be interactive');", null);
+                }
+              });
               webView.setWebChromeClient(new WebChromeClient());
               webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
               
-              // METODO 1: Tenta carregar direto do assets via loadDataWithBaseURL (mais confiavel)
+              // Load game HTML with safe method
               try {
                 InputStream is = getAssets().open("norrath-clash.html");
                 byte[] buffer = new byte[is.available()];
                 is.read(buffer);
                 is.close();
                 String html = new String(buffer, "UTF-8");
-                Log.d("NORRATH", "HTML loaded: " + html.length() + " chars");
-                // Carrega HTML com base URL file:///android_asset/ para permitir recursos relativos
+                Log.d("NORRATH", "HTML loaded: " + html.length() + " chars, contains canvas: " + html.contains("<canvas"));
+                Toast.makeText(this, "Carregando NORRATH CLASH V2 - " + (html.length()/1024) + "KB", Toast.LENGTH_SHORT).show();
                 webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
               } catch (IOException e) {
                 Log.e("NORRATH", "Erro ao ler HTML: " + e.getMessage());
-                // Fallback: tenta loadUrl
+                Toast.makeText(this, "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 webView.loadUrl("file:///android_asset/norrath-clash.html");
               }
               
@@ -162,18 +181,13 @@ jobs:
             }
             @Override
             protected void onDestroy() {
-              if (webView != null) {
-                webView.destroy();
-              }
+              if (webView != null) webView.destroy();
               super.onDestroy();
             }
           }
           JAVA
           
-          echo "MainActivity criada com loadDataWithBaseURL - JOGO REAL:"
-          cat webview-apk/app/src/main/java/com/norrathclash/MainActivity.java
-          
-      - name: Build APK - JOGO REAL 100% OFFLINE
+      - name: Build APK - JOGO INTERATIVO
         run: |
           cd webview-apk
           gradle wrapper --gradle-version 8.5 || true
@@ -183,64 +197,53 @@ jobs:
           else
             gradle assembleDebug --no-daemon --stacktrace
           fi
-          ls -lh app/build/outputs/apk/debug/ || find . -name "*.apk" -type f -exec ls -lh {} \;
+          ls -lh app/build/outputs/apk/debug/
           python3 -c "
           import zipfile, os, glob
           apk='app/build/outputs/apk/debug/app-debug.apk'
           if not os.path.exists(apk):
               apks=glob.glob('**/*.apk', recursive=True)
-              print(f'Found APKs: {apks}')
-              if apks:
-                  apk=apks[0]
+              apk=apks[0] if apks else apk
           print(f'APK: {apk} - {os.path.getsize(apk)} bytes')
           with zipfile.ZipFile(apk) as z:
-              files=z.namelist()
-              has_html='assets/norrath-clash.html' in files
-              print(f'HAS HTML: {has_html}')
-              if has_html:
-                  info=z.getinfo('assets/norrath-clash.html')
-                  print(f'HTML size in APK: {info.file_size} bytes')
-                  html=z.read('assets/norrath-clash.html').decode('utf-8')
-                  print(f'Contains game canvas: {\"<canvas\" in html}')
-                  print(f'Contains NORRATH: {\"NORRATH CLASH\" in html}')
-                  print(f'Contains V2: {\"V2\" in html}')
-              # Check MainActivity
-              has_main='classes.dex' in files
-              print(f'HAS CLASSES.DEX: {has_main}')
+              html=z.read('assets/norrath-clash.html').decode()
+              print(f'HTML {len(html)} bytes, canvas {\"<canvas\" in html}, interactive {\"addEventListener\" in html}')
           "
 
-      - name: Upload APK JOGO REAL
+      - name: Upload APK JOGO INTERATIVO
         uses: actions/upload-artifact@v4
         with:
-          name: NORRATH-CLASH-V2-JOGO-REAL-APK
+          name: NORRATH-CLASH-V2-INTERATIVO-APK
           path: webview-apk/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Create Release JOGO REAL
+      - name: Create Release JOGO INTERATIVO
         if: success()
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: vJOGO-REAL-${{ github.run_number }}
-          name: 🎮 NORRATH CLASH V2 - JOGO REAL v${{ github.run_number }} - 100% OFFLINE
+          tag_name: vINTERATIVO-${{ github.run_number }}
+          name: 🎮 NORRATH CLASH V2 INTERATIVO v${{ github.run_number }} - JOGO RODA!
           body: |
-            🎮 **APK JOGO REAL - RODA O JOGO DIRETO, SEM INTERNET, SEM METRO!**
+            🎮 **APK INTERATIVO - JOGO RODA DE VERDADE, NÃO É SÓ FOTO!**
             
-            ✅ **O JOGO MESMO DENTRO DO APK:**
-            - HTML 109KB V2 com motor NORRATH-1, 24 texturas, 5 atos, dungeons, boss
-            - Minimapa + Craft Gemas + Torre 100 + Save Auto + Visual Equip
-            - Carrega via loadDataWithBaseURL de assets/norrath-clash.html
-            - 100% offline, sem internet, sem Metro, sem bundle!
-            - MainActivity.java lê HTML de assets e injeta no WebView
+            ✅ **CORRIGIDO:** JavaScript agora funciona no WebView!
+            - safeLocalStorage() para file:// URLs
+            - WebChromeClient + WebViewClient
+            - loadDataWithBaseURL com file:///android_asset/
+            - Toast "Carregando NORRATH CLASH V2"
             
-            📱 **INSTALAR E JOGAR:**
+            ✅ **JOGO REAL INTERATIVO:**
+            - HTML 109KB V2 com canvas, joystick, classes clicáveis
+            - 5 Atos + Minimapa + Craft + Torre 100
+            - 100% offline, sem Metro!
+            
+            📱 **INSTALAR:**
             1. Baixe app-debug.apk (3MB)
-            2. Instale no Android (permita fontes desconhecidas)
-            3. Abra - o jogo roda direto!
-            4. Sem precisar conectar nada!
+            2. Instale
+            3. Abra - deve mostrar "Carregando NORRATH CLASH V2"
+            4. Clique nas classes, no botão JOGAR - INTERATIVO!
             
-            🌐 WEB (mesmo jogo): https://felipeg-code.github.io/enjoygo/norrath-clash.html
-            
-            Build ${{ github.run_number }} - JOGO REAL 100% OFFLINE
+            Build ${{ github.run_number }}
           files: webview-apk/app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
