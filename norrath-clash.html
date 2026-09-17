@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>V19 3D NORRATH PS2 - Three.js</title>
+<title>V20 3D ELABORADO - Câmera Afastada + Personagem Detalhado</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;font-family:system-ui,sans-serif}
@@ -31,30 +31,25 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 .spell.cleric{background:linear-gradient(#FFD700,#ff8f00)}
 .spell.wizard{background:linear-gradient(#7c4dff,#4a148c)}
 .spell.disabled{opacity:0.5;filter:grayscale(0.5)}
-#deathText3d{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.7);color:#ff5252;font-size:12px;font-weight:900;padding:8px 16px;border-radius:20px;border:2px solid #ff5252;z-index:60;display:none;pointer-events:none;text-align:center}
+#deathText3d{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.65);color:#ccc;font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid #555;z-index:60;display:none;pointer-events:none;text-align:center}
 #deathText3d.show{display:block}
-#start{position:absolute;inset:0;background:radial-gradient(circle at 50% 15%,#1a2e1a,#050a05 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
+#start{position:absolute;inset:0;background:radial-gradient(circle at 50% 15%,#1e3320,#080e08 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
 .logo{font-size:38px;font-weight:900;color:#8bc34a;text-shadow:4px 4px 0 #000;letter-spacing:2px;margin-top:10px}
 .sub{color:#FFD700;font-weight:900;letter-spacing:3px;font-size:10px;margin:4px 0 10px 0}
 .classGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:380px;margin:10px 0}
-.classCard{background:linear-gradient(#1e2e1e,#121a12);border:3px solid #000;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 0 #000;cursor:pointer;min-height:140px;transition:transform 0.1s;position:relative;overflow:hidden}
+.classCard{background:linear-gradient(#1e2e1e,#121a12);border:3px solid #000;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 0 #000;cursor:pointer;min-height:150px;transition:transform 0.1s;position:relative;overflow:hidden}
 .classCard.selected{border-color:#8bc34a;box-shadow:0 0 18px #8bc34a,0 4px 0 #000;transform:scale(1.03)}
 .classIcon{font-size:32px}
 .className{color:#8bc34a;font-weight:900;font-size:10px;margin:5px 0 2px 0}
 .classDesc{color:#a5d6a7;font-size:7px;line-height:1.3}
-.classWeapon{margin-top:6px;background:rgba(0,0,0,0.6);border-radius:8px;padding:4px;border:1px solid #333;color:#fff;font-size:7px;font-weight:900}
+.classWeapon{margin-top:6px;background:rgba(0,0,0,0.6);border-radius:8px;padding:4px;border:1px solid #333;color:#fff;font-size:7px;font-weight:900;line-height:1.3}
 .startBtn{margin-top:14px;background:linear-gradient(#8bc34a,#33691e);color:#000;border:4px solid #000;padding:12px 36px;border-radius:12px;font-weight:900;font-size:16px;box-shadow:0 5px 0 #000;cursor:pointer;min-width:200px}
 .startBtn:active{transform:translateY(5px);box-shadow:none}
 #hint{position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.92);color:#8bc34a;font-size:9px;font-weight:900;padding:8px 14px;border-radius:16px;border:2px solid #8bc34a;z-index:15;pointer-events:none;text-align:center;max-width:88vw;line-height:1.3}
 #info3d{position:absolute;top:50px;left:6px;background:rgba(0,0,0,0.75);color:#8bc34a;font-size:7px;padding:5px 7px;border-radius:8px;z-index:25;pointer-events:none;border:1px solid #2a4a2a;line-height:1.4}
 </style>
 <script type="importmap">
-{
-"imports":{
-"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-}
-}
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
 </script>
 </head>
 <body>
@@ -66,263 +61,381 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 <div class="hudItem gold">💰 <span id="gold">0</span></div>
 <div class="hudItem">⭐ <span id="lvl">1</span> <span id="clsName">BARB</span></div>
 </div>
-<div id="info3d">V19 3D PS2<br>🎮 Three.js<br>🏠 3D casas<br>🌳 3D árvores<br>📷 Zoom morte</div>
+<div id="info3d">V20 ELABORADO<br>📷 Câmera 380px afastada<br>🧍 Modelagem detalhada<br>🎨 Ombreiras, braçadeiras</div>
 <div id="joyZone"></div>
 <div id="atkZone"></div>
 <div id="joyBase"></div>
 <div id="joyStick">🕹️</div>
 <div id="atkBtn">⚔️</div>
 <div id="spells"></div>
-<div id="deathText3d">Renascer em <span id="deathCount3d">3.0</span>s</div>
-<div id="hint">V19 3D: Mesma jogabilidade, agora 3D isométrico PS2 - zoom lento na morte</div>
+<div id="deathText3d">Renascer <span id="deathCount3d">3.0</span>s</div>
+<div id="hint">V20: Câmera afastada 380px + Personagem elaborado com ombreiras, capa, aljava, cristal</div>
 <div id="start">
 <div class="logo">NORRATH 3D</div>
-<div class="sub">V19 THREE.JS PS2</div>
-<div style="background:#000;border:2px solid #8bc34a;border-radius:10px;padding:10px 12px;color:#8bc34a;font-size:8px;font-weight:900;margin:6px 0;text-align:center;line-height:1.5">✅ 3D REAL IGUAL PS2<br>🏠 Casas 3D com telhado, chaminé, porta<br>🌳 Árvores 3D tronco cilindro + copa esfera<br>🧱 Colisão 3D sólida<br>📷 Câmera isométrica + zoom morte lento<br>🎮 Joystick 3D</div>
+<div class="sub">V20 ELABORADO</div>
+<div style="background:#000;border:2px solid #8bc34a;border-radius:10px;padding:10px 12px;color:#8bc34a;font-size:8px;font-weight:900;margin:6px 0;text-align:center;line-height:1.5">✅ CÂMERA 380px AFASTADA (era 220px)<br>🧍 PERSONAGEM ELABORADO<br>• Ombreiras, braçadeiras, joelheiras<br>• Capa, aljava com 3 flechas, cinto com bolsas<br>• Elmo com chifres curvos, capuz com sombra<br>• Armas com cabo enrolado couro + brilho metal<br>📷 Zoom morte lento close-up</div>
 <div class="classGrid" id="classGrid">
-<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Bárbaro 3D musculoso</div><div class="classWeapon">🪓 Machado 3D<br>Forjado</div></div>
-<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Elfo 3D esguio</div><div class="classWeapon">🏹 Arco 3D<br>1.8m</div></div>
-<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Clérigo 3D placa</div><div class="classWeapon">🔨 Martelo 3D<br>Guerra</div></div>
-<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Mago 3D manto</div><div class="classWeapon">🪄 Cajado 3D<br>Cristal</div></div>
+<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Bárbaro norte - ombreiras pele + braçadeiras ferro</div><div class="classWeapon">🪓 Machado duplo<br>Cabo couro enrolado<br>Lâmina com fio brilhante</div></div>
+<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Elfo arqueiro - capa + capuz + aljava 3 flechas</div><div class="classWeapon">🏹 Arco recurvo<br>Corda + flecha dourada<br>Aljava costas</div></div>
+<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Clérigo placa - ombreiras placa + cruz peito</div><div class="classWeapon">🔨 Martelo guerra<br>Cabeça com runas<br>Aura dourada</div></div>
+<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Mago - manto longo + capuz pontudo + barba</div><div class="classWeapon">🪄 Cajado 1.7m<br>Cristal flutuante emissivo<br>Partículas</div></div>
 </div>
-<button class="startBtn" id="btnStart">▶ JOGAR V19 3D!</button>
-<div style="color:#666;font-size:7px;margin-top:10px;text-align:center;max-width:360px;line-height:1.4">Three.js isométrico igual Champions of Norrath PS2. Câmera segue jogador, zoom lento ao morrer pra ver animação de perto. Sem overlay gigante.</div>
+<button class="startBtn" id="btnStart">▶ JOGAR V20 ELABORADO!</button>
 </div>
 </div>
 <script type="module">
 import * as THREE from 'three';
 
-// V19 3D - THREE.JS - PS2 IDENTICO
 const W=3200,H=3200;
 let P={x:1600,z:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velZ:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0, radius:14};
-let C={x:0,z:0,targetX:0,targetZ:0}, T=null, gameOn=false, selClass='barbarian';
+let C={x:0,z:0}, T=null, gameOn=false, selClass='barbarian';
 let J={active:false,x:0,y:0,startX:0,startY:0};
-let objs=[], mons=[], chests=[], particles=[], projectiles=[], smokeParticles=[];
+let objs=[], mons=[], chests=[], particles=[], projectiles=[];
 
 const CLASSES={
-barbarian:{short:'BARB',color:0x8d6e63,skin:0xd7a77a,armor:0x4a3a2a,weapon:{dmg:18,range:90},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:170,skills:[{id:'bash',n:'Bash',icon:'💥',mana:12,cd:3,dmg:35},{id:'shout',n:'Grito',icon:'📢',mana:20,cd:8,dmg:0}]},
-ranger:{short:'RANG',color:0x2e7d32,skin:0xe8c4a8,armor:0x1b5e20,weapon:{dmg:14,range:190},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:230,skills:[{id:'triple',n:'Triple',icon:'🏹',mana:15,cd:4,dmg:20},{id:'crit',n:'Mortal',icon:'🎯',mana:25,cd:6,dmg:60}]},
-cleric:{short:'CLER',color:0xb0bec5,skin:0xe8c4a8,armor:0x37474f,weapon:{dmg:16,range:95},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:190,skills:[{id:'holy',n:'Holy',icon:'✨',mana:14,cd:3,dmg:30},{id:'heal',n:'Heal',icon:'💚',mana:25,cd:6,dmg:0}]},
-wizard:{short:'WIZ',color:0x4a148c,skin:0xd7c4a8,armor:0x1a237e,weapon:{dmg:12,range:170},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:200,skills:[{id:'fire',n:'Fire',icon:'🔥',mana:12,cd:2,dmg:45},{id:'frost',n:'Frost',icon:'❄️',mana:20,cd:5,dmg:25}]},
+barbarian:{short:'BARB',color:0x8d6e63,skin:0xd7a77a,armor:0x4a3a2a,armor2:0x3e2723,weapon:{dmg:18,range:90},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:170,skills:[{id:'bash',icon:'💥',mana:12,cd:3,dmg:35},{id:'shout',icon:'📢',mana:20,cd:8,dmg:0}]},
+ranger:{short:'RANG',color:0x2e7d32,skin:0xe8c4a8,armor:0x1b5e20,armor2:0x2e7d32,weapon:{dmg:14,range:190},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:230,skills:[{id:'triple',icon:'🏹',mana:15,cd:4,dmg:20},{id:'crit',icon:'🎯',mana:25,cd:6,dmg:60}]},
+cleric:{short:'CLER',color:0xb0bec5,skin:0xe8c4a8,armor:0x90a4ae,armor2:0xb0bec5,weapon:{dmg:16,range:95},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:190,skills:[{id:'holy',icon:'✨',mana:14,cd:3,dmg:30},{id:'heal',icon:'💚',mana:25,cd:6,dmg:0}]},
+wizard:{short:'WIZ',color:0x4a148c,skin:0xd7c4a8,armor:0x1a237e,armor2:0x283593,weapon:{dmg:12,range:170},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:200,skills:[{id:'fire',icon:'🔥',mana:12,cd:2,dmg:45},{id:'frost',icon:'❄️',mana:20,cd:5,dmg:25}]},
 };
 let playerSkills={}, buffs={};
 function initSkills(){playerSkills={}; buffs={}; CLASSES[P.cls].skills.forEach(s=>playerSkills[s.id]={cd:0});}
 
-// THREE.JS SETUP
 const canvas=document.getElementById('game3d');
-const renderer=new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+const renderer=new THREE.WebGLRenderer({canvas, antialias:true});
 renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.setClearColor(0x0a1a0a);
-
+renderer.setClearColor(0x080f08);
 const scene=new THREE.Scene();
-scene.fog=new THREE.Fog(0x0a1a0a, 400, 1400);
-
-const camera=new THREE.PerspectiveCamera(42, canvas.clientWidth/canvas.clientHeight, 0.1, 3000);
-let camOffset=new THREE.Vector3(0, 220, 220); // isométrico PS2
-let camTargetOffset=new THREE.Vector3(0,0,0);
+scene.fog=new THREE.Fog(0x080f08, 500, 1600);
+const camera=new THREE.PerspectiveCamera(38, canvas.clientWidth/canvas.clientHeight, 0.1, 3000);
+// CÂMERA MAIS AFASTADA - 380px (era 220px)
+let camOffset=new THREE.Vector3(0, 360, 380);
 let camLookAt=new THREE.Vector3();
-
-// lights - PS2 style
-const ambient=new THREE.AmbientLight(0x404040, 0.6);
+const ambient=new THREE.AmbientLight(0x505050, 0.7);
 scene.add(ambient);
-const dirLight=new THREE.DirectionalLight(0xffffff, 0.9);
-dirLight.position.set(300,500,200);
+const dirLight=new THREE.DirectionalLight(0xffffff, 0.95);
+dirLight.position.set(400,600,300);
 dirLight.castShadow=true;
 dirLight.shadow.mapSize.width=1024;
 dirLight.shadow.mapSize.height=1024;
 dirLight.shadow.camera.near=100;
-dirLight.shadow.camera.far=1000;
-dirLight.shadow.camera.left=-600;
-dirLight.shadow.camera.right=600;
-dirLight.shadow.camera.top=600;
-dirLight.shadow.camera.bottom=-600;
+dirLight.shadow.camera.far=1200;
+dirLight.shadow.camera.left=-700;
+dirLight.shadow.camera.right=700;
+dirLight.shadow.camera.top=700;
+dirLight.shadow.camera.bottom=-700;
 scene.add(dirLight);
-const fillLight=new THREE.DirectionalLight(0x8bc34a, 0.25);
-fillLight.position.set(-200,300,-200);
+const fillLight=new THREE.DirectionalLight(0x8bc34a, 0.28);
+fillLight.position.set(-300,400,-300);
 scene.add(fillLight);
+const rimLight=new THREE.DirectionalLight(0xFFD700, 0.15);
+rimLight.position.set(0,200,-400);
+scene.add(rimLight);
 
-// ground - large plane
-const groundGeo=new THREE.PlaneGeometry(W,H, 32,32);
-const groundMat=new THREE.MeshStandardMaterial({color:0x1a331a, roughness:0.9, metalness:0.1});
+const groundGeo=new THREE.PlaneGeometry(W,H);
+const groundMat=new THREE.MeshStandardMaterial({color:0x142614, roughness:0.9});
 const ground=new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x=-Math.PI/2;
 ground.position.set(W/2,0,H/2);
 ground.receiveShadow=true;
 scene.add(ground);
 
-// ground details - small rocks/grass as instanced?
-const detailGroup=new THREE.Group();
-scene.add(detailGroup);
-
-// PLAYER 3D - realistic 7.5 heads
 let playerGroup=new THREE.Group();
 let playerMeshes={};
-function createPlayer3D(){
+
+function createPlayerElaborado(){
   if(playerGroup) scene.remove(playerGroup);
   playerGroup=new THREE.Group();
   let cls=CLASSES[P.cls];
-  // shadow
-  const shadowGeo=new THREE.CircleGeometry(14,16);
-  const shadowMat=new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.35});
+
+  // sombra suave
+  const shadowGeo=new THREE.CircleGeometry(16,20);
+  const shadowMat=new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.38});
   const shadow=new THREE.Mesh(shadowGeo, shadowMat);
-  shadow.rotation.x=-Math.PI/2;
-  shadow.position.y=0.2;
+  shadow.rotation.x=-Math.PI/2; shadow.position.y=0.3;
   playerGroup.add(shadow);
   playerMeshes.shadow=shadow;
 
-  // legs - 2 cylinders
-  const legGeo=new THREE.CylinderGeometry(3,3,18,8);
-  const legMat=new THREE.MeshStandardMaterial({color:0x2a2a2a, roughness:0.8});
-  const legL=new THREE.Mesh(legGeo, legMat); legL.position.set(-3.5,9,0); legL.castShadow=true; legL.receiveShadow=true;
-  const legR=new THREE.Mesh(legGeo, legMat); legR.position.set(3.5,9,0); legR.castShadow=true; legR.receiveShadow=true;
-  playerGroup.add(legL); playerGroup.add(legR);
-  playerMeshes.legL=legL; playerMeshes.legR=legR;
-
-  // boots
-  const bootGeo=new THREE.BoxGeometry(5,4,8);
-  const bootMat=new THREE.MeshStandardMaterial({color:0x1a1a1a, roughness:0.7});
-  const bootL=new THREE.Mesh(bootGeo, bootMat); bootL.position.set(-3.5,2,1); bootL.castShadow=true;
-  const bootR=new THREE.Mesh(bootGeo, bootMat); bootR.position.set(3.5,2,1); bootR.castShadow=true;
+  // --- PERNAS ELABORADAS ---
+  // coxa
+  const thighGeo=new THREE.CylinderGeometry(4,3.5,10,8);
+  const pantsMat=new THREE.MeshStandardMaterial({color:0x2a2a2a, roughness:0.85});
+  const thighL=new THREE.Mesh(thighGeo, pantsMat); thighL.position.set(-4,16,0); thighL.castShadow=true;
+  const thighR=new THREE.Mesh(thighGeo, pantsMat); thighR.position.set(4,16,0); thighR.castShadow=true;
+  playerGroup.add(thighL); playerGroup.add(thighR);
+  // joelheira
+  const kneeGeo=new THREE.SphereGeometry(3.8,8,8);
+  const kneeMat=new THREE.MeshStandardMaterial({color:cls.armor2, roughness:0.5, metalness:0.3});
+  const kneeL=new THREE.Mesh(kneeGeo, kneeMat); kneeL.position.set(-4,11,1); kneeL.scale.set(1,0.8,1); kneeL.castShadow=true;
+  const kneeR=new THREE.Mesh(kneeGeo, kneeMat); kneeR.position.set(4,11,1); kneeR.scale.set(1,0.8,1); kneeR.castShadow=true;
+  playerGroup.add(kneeL); playerGroup.add(kneeR);
+  // canela
+  const shinGeo=new THREE.CylinderGeometry(3.2,2.8,10,8);
+  const shinL=new THREE.Mesh(shinGeo, pantsMat); shinL.position.set(-4,5,0); shinL.castShadow=true;
+  const shinR=new THREE.Mesh(shinGeo, pantsMat); shinR.position.set(4,5,0); shinR.castShadow=true;
+  playerGroup.add(shinL); playerGroup.add(shinR);
+  // bota elaborada - couro com fivela
+  const bootGeo=new THREE.BoxGeometry(6,5,10);
+  const bootMat=new THREE.MeshStandardMaterial({color:0x1a1a1a, roughness:0.6});
+  const bootL=new THREE.Mesh(bootGeo, bootMat); bootL.position.set(-4,1.5,1); bootL.castShadow=true;
+  const bootR=new THREE.Mesh(bootGeo, bootMat); bootR.position.set(4,1.5,1); bootR.castShadow=true;
   playerGroup.add(bootL); playerGroup.add(bootR);
+  // fivela bota dourada
+  const buckleGeo=new THREE.BoxGeometry(2,1.5,1);
+  const buckleMat=new THREE.MeshStandardMaterial({color:0xFFD700, metalness:0.6});
+  const buckL=new THREE.Mesh(buckleGeo, buckleMat); buckL.position.set(-4,2.5,5); playerGroup.add(buckL);
+  const buckR=new THREE.Mesh(buckleGeo, buckleMat); buckR.position.set(4,2.5,5); playerGroup.add(buckR);
+
+  playerMeshes.thighL=thighL; playerMeshes.thighR=thighR;
+  playerMeshes.kneeL=kneeL; playerMeshes.kneeR=kneeR;
+  playerMeshes.shinL=shinL; playerMeshes.shinR=shinR;
   playerMeshes.bootL=bootL; playerMeshes.bootR=bootR;
 
-  // torso - box
-  const torsoGeo=new THREE.BoxGeometry(14,18,8);
+  // --- TORSO ELABORADO ---
+  // torso base
+  const torsoGeo=new THREE.BoxGeometry(16,20,10);
   const torsoMat=new THREE.MeshStandardMaterial({color:cls.armor, roughness:0.6, metalness:0.2});
-  const torso=new THREE.Mesh(torsoGeo, torsoMat); torso.position.set(0,22,0); torso.castShadow=true; torso.receiveShadow=true;
+  const torso=new THREE.Mesh(torsoGeo, torsoMat); torso.position.set(0,26,0); torso.castShadow=true;
   playerGroup.add(torso);
   playerMeshes.torso=torso;
-
-  // belt
-  const beltGeo=new THREE.BoxGeometry(15,2.5,9);
+  // peitoral detalhe
+  const chestGeo=new THREE.BoxGeometry(12,10,2);
+  const chestMat=new THREE.MeshStandardMaterial({color:cls.armor2, roughness:0.5, metalness:0.3});
+  const chest=new THREE.Mesh(chestGeo, chestMat); chest.position.set(0,28,5.5); chest.castShadow=true;
+  playerGroup.add(chest);
+  // cinto com bolsas
+  const beltGeo=new THREE.BoxGeometry(17,3,11);
   const beltMat=new THREE.MeshStandardMaterial({color:0x3e2723});
-  const belt=new THREE.Mesh(beltGeo, beltMat); belt.position.set(0,15,0); belt.castShadow=true;
+  const belt=new THREE.Mesh(beltGeo, beltMat); belt.position.set(0,18,0); belt.castShadow=true;
   playerGroup.add(belt);
+  const buckleBGeo=new THREE.BoxGeometry(4,4,2);
+  const buckleB=new THREE.Mesh(buckleBGeo, buckleMat); buckleB.position.set(0,18,6); playerGroup.add(buckleB);
+  // bolsa lateral
+  const pouchGeo=new THREE.BoxGeometry(4,5,3);
+  const pouchMat=new THREE.MeshStandardMaterial({color:0x4a3a2a});
+  const pouch=new THREE.Mesh(pouchGeo, pouchMat); pouch.position.set(8,16,4); pouch.castShadow=true; playerGroup.add(pouch);
+  // capa para ranger e wizard
+  if(P.cls==='ranger' || P.cls==='wizard'){
+    const capeGeo=new THREE.PlaneGeometry(18,24);
+    const capeMat=new THREE.MeshStandardMaterial({color:P.cls==='ranger'?0x1b5e20:0x1a237e, side:THREE.DoubleSide, roughness:0.9});
+    const cape=new THREE.Mesh(capeGeo, capeMat); cape.position.set(0,26,-6); cape.rotation.x=0.15; cape.castShadow=true;
+    playerGroup.add(cape);
+    playerMeshes.cape=cape;
+  }
 
-  // arms
-  const armGeo=new THREE.CylinderGeometry(2,2,14,8);
+  // ombreiras - elaboradas
+  const pauldronGeo=new THREE.SphereGeometry(5,10,8);
+  const pauldronMat=new THREE.MeshStandardMaterial({color:cls.armor2, metalness:0.4, roughness:0.5});
+  const paulL=new THREE.Mesh(pauldronGeo, pauldronMat); paulL.position.set(-11,32,0); paulL.scale.set(1.2,0.8,1); paulL.castShadow=true;
+  const paulR=new THREE.Mesh(pauldronGeo, pauldronMat); paulR.position.set(11,32,0); paulR.scale.set(1.2,0.8,1); paulR.castShadow=true;
+  playerGroup.add(paulL); playerGroup.add(paulR);
+  playerMeshes.paulL=paulL; playerMeshes.paulR=paulR;
+
+  // --- BRAÇOS ELABORADOS ---
+  // braço superior
+  const upperArmGeo=new THREE.CylinderGeometry(2.8,2.5,8,8);
   const skinMat=new THREE.MeshStandardMaterial({color:cls.skin, roughness:0.7});
-  const armL=new THREE.Mesh(armGeo, skinMat); armL.position.set(-10,22,0); armL.castShadow=true;
-  const armR=new THREE.Mesh(armGeo, skinMat); armR.position.set(10,22,0); armR.castShadow=true;
-  playerGroup.add(armL); playerGroup.add(armR);
-  playerMeshes.armL=armL; playerMeshes.armR=armR;
-
-  // hands
-  const handGeo=new THREE.SphereGeometry(2.5,8,8);
-  const handL=new THREE.Mesh(handGeo, skinMat); handL.position.set(-10,14,0); handL.castShadow=true;
-  const handR=new THREE.Mesh(handGeo, skinMat); handR.position.set(10,14,0); handR.castShadow=true;
+  const upArmL=new THREE.Mesh(upperArmGeo, skinMat); upArmL.position.set(-11,28,0); upArmL.castShadow=true;
+  const upArmR=new THREE.Mesh(upperArmGeo, skinMat); upArmR.position.set(11,28,0); upArmR.castShadow=true;
+  playerGroup.add(upArmL); playerGroup.add(upArmR);
+  // braçadeira
+  const bracerGeo=new THREE.CylinderGeometry(3,3,6,8);
+  const bracerMat=new THREE.MeshStandardMaterial({color:cls.armor2, metalness:0.3});
+  const bracL=new THREE.Mesh(bracerGeo, bracerMat); bracL.position.set(-11,20,0); bracL.castShadow=true;
+  const bracR=new THREE.Mesh(bracerGeo, bracerMat); bracR.position.set(11,20,0); bracR.castShadow=true;
+  playerGroup.add(bracL); playerGroup.add(bracR);
+  // antebraço
+  const foreArmGeo=new THREE.CylinderGeometry(2.3,2,7,8);
+  const foreL=new THREE.Mesh(foreArmGeo, skinMat); foreL.position.set(-11,14,0); foreL.castShadow=true;
+  const foreR=new THREE.Mesh(foreArmGeo, skinMat); foreR.position.set(11,14,0); foreR.castShadow=true;
+  playerGroup.add(foreL); playerGroup.add(foreR);
+  // mão
+  const handGeo=new THREE.SphereGeometry(2.8,8,8);
+  const handL=new THREE.Mesh(handGeo, skinMat); handL.position.set(-11,9,0); handL.castShadow=true;
+  const handR=new THREE.Mesh(handGeo, skinMat); handR.position.set(11,9,0); handR.castShadow=true;
   playerGroup.add(handL); playerGroup.add(handR);
+
+  playerMeshes.upArmL=upArmL; playerMeshes.upArmR=upArmR;
+  playerMeshes.bracL=bracL; playerMeshes.bracR=bracR;
+  playerMeshes.foreL=foreL; playerMeshes.foreR=foreR;
   playerMeshes.handL=handL; playerMeshes.handR=handR;
 
-  // head - sphere
-  const headGeo=new THREE.SphereGeometry(6,12,12);
-  const head=new THREE.Mesh(headGeo, skinMat); head.position.set(0,36,0); head.castShadow=true;
+  // --- CABEÇA ELABORADA ---
+  const headGeo=new THREE.SphereGeometry(6.5,14,14);
+  const head=new THREE.Mesh(headGeo, skinMat); head.position.set(0,41,0); head.castShadow=true;
   playerGroup.add(head);
   playerMeshes.head=head;
-
-  // eyes - small spheres
+  // pescoço
+  const neckGeo=new THREE.CylinderGeometry(2.5,3,4,8);
+  const neck=new THREE.Mesh(neckGeo, skinMat); neck.position.set(0,37,0); neck.castShadow=true;
+  playerGroup.add(neck);
+  // olhos
   const eyeGeo=new THREE.SphereGeometry(0.9,6,6);
   const eyeMat=new THREE.MeshBasicMaterial({color:0x000000});
-  const eyeL=new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-2,37,5);
-  const eyeR=new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(2,37,5);
+  const eyeL=new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-2.2,42,5.2);
+  const eyeR=new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(2.2,42,5.2);
   playerGroup.add(eyeL); playerGroup.add(eyeR);
-  playerMeshes.eyeL=eyeL; playerMeshes.eyeR=eyeR;
+  // sobrancelha / barba para wizard
+  if(P.cls==='wizard'){
+    const beardGeo=new THREE.ConeGeometry(3,8,8);
+    const beardMat=new THREE.MeshStandardMaterial({color:0xd7ccc8});
+    const beard=new THREE.Mesh(beardGeo, beardMat); beard.position.set(0,38,-1); beard.rotation.x=Math.PI; beard.castShadow=true;
+    playerGroup.add(beard);
+  }
 
-  // helmet per class
-  let helm;
+  // ELMO / CAPUZ ELABORADO
+  let helmGroup=new THREE.Group();
   if(P.cls==='barbarian'){
-    const helmGeo=new THREE.BoxGeometry(14,7,14);
-    const helmMat=new THREE.MeshStandardMaterial({color:0x4a3a2a, roughness:0.8});
-    helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,42,0); helm.castShadow=true;
-    // horns
-    const hornGeo=new THREE.ConeGeometry(1.5,6,6);
-    const hornMat=new THREE.MeshStandardMaterial({color:0x3e2723});
-    const hornL=new THREE.Mesh(hornGeo, hornMat); hornL.position.set(-6,44,0); hornL.rotation.z=0.5;
-    const hornR=new THREE.Mesh(hornGeo, hornMat); hornR.position.set(6,44,0); hornR.rotation.z=-0.5;
-    playerGroup.add(hornL); playerGroup.add(hornR);
-  } else if(P.cls==='ranger'){
-    const helmGeo=new THREE.BoxGeometry(13,6,13);
-    const helmMat=new THREE.MeshStandardMaterial({color:0x1b5e20});
-    helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,41,0); helm.castShadow=true;
-  } else if(P.cls==='cleric'){
     const helmGeo=new THREE.BoxGeometry(15,8,15);
-    const helmMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.4, roughness:0.4});
-    helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,42,0); helm.castShadow=true;
-  } else {
-    const helmGeo=new THREE.ConeGeometry(8,12,8);
-    const helmMat=new THREE.MeshStandardMaterial({color:0x1a237e});
-    helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,45,0); helm.castShadow=true;
-  }
-  if(helm) {playerGroup.add(helm); playerMeshes.helm=helm;}
-
-  // weapon - per class 3D
-  let weapon;
-  if(P.cls==='barbarian'){
-    const handleGeo=new THREE.CylinderGeometry(1,1,26,6);
-    const handleMat=new THREE.MeshStandardMaterial({color:0x3e2723});
-    const handle=new THREE.Mesh(handleGeo, handleMat); handle.position.set(14,22,0); handle.rotation.z=Math.PI/2; handle.castShadow=true;
-    playerGroup.add(handle);
-    const bladeGeo=new THREE.BoxGeometry(16,8,2);
-    const bladeMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.6, roughness:0.3});
-    const blade=new THREE.Mesh(bladeGeo, bladeMat); blade.position.set(22,26,0); blade.castShadow=true;
-    playerGroup.add(blade);
-    weapon=new THREE.Group(); weapon.add(handle); weapon.add(blade);
+    const helmMat=new THREE.MeshStandardMaterial({color:0x4a3a2a, roughness:0.7});
+    const helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,47,0); helm.castShadow=true; helmGroup.add(helm);
+    // aro metal
+    const rimGeo=new THREE.BoxGeometry(15.5,1.5,15.5);
+    const rimMat=new THREE.MeshStandardMaterial({color:0x9e9e9e, metalness:0.7});
+    const rim=new THREE.Mesh(rimGeo, rimMat); rim.position.set(0,44.5,0); helmGroup.add(rim);
+    // chifres curvos elaborados
+    const hornCurve=new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,0), new THREE.Vector3(2,3,1), new THREE.Vector3(4,6,0)]);
+    const hornGeo=new THREE.TubeGeometry(hornCurve, 8, 1.2, 6, false);
+    const hornMat=new THREE.MeshStandardMaterial({color:0xe8dcc8});
+    const hornL=new THREE.Mesh(hornGeo, hornMat); hornL.position.set(-7,47,0); hornL.rotation.z=0.8; hornL.rotation.y=-0.3; hornL.castShadow=true; helmGroup.add(hornL);
+    const hornR=new THREE.Mesh(hornGeo, hornMat); hornR.position.set(7,47,0); hornR.rotation.z=-0.8; hornR.rotation.y=0.3; hornR.rotation.x=Math.PI; hornR.castShadow=true; helmGroup.add(hornR);
   } else if(P.cls==='ranger'){
-    const bowGeo=new THREE.TorusGeometry(10,1,6,12, Math.PI);
-    const bowMat=new THREE.MeshStandardMaterial({color:0x4a2a0a});
-    const bow=new THREE.Mesh(bowGeo, bowMat); bow.position.set(14,22,0); bow.rotation.y=Math.PI/2; bow.rotation.x=Math.PI/2; bow.castShadow=true;
-    playerGroup.add(bow);
-    weapon=bow;
+    const hoodGeo=new THREE.ConeGeometry(9,14,12,1,true);
+    const hoodMat=new THREE.MeshStandardMaterial({color:0x1b5e20, side:THREE.DoubleSide});
+    const hood=new THREE.Mesh(hoodGeo, hoodMat); hood.position.set(0,48,0); hood.castShadow=true; helmGroup.add(hood);
+    // sombra capuz
+    const hoodInnerGeo=new THREE.ConeGeometry(8,12,12,1,true);
+    const hoodInnerMat=new THREE.MeshBasicMaterial({color:0x0f2a0f, side:THREE.DoubleSide});
+    const hoodInner=new THREE.Mesh(hoodInnerGeo, hoodInnerMat); hoodInner.position.set(0,47,0.5); helmGroup.add(hoodInner);
   } else if(P.cls==='cleric'){
-    const handleGeo=new THREE.CylinderGeometry(1.2,1.2,28,6);
-    const handleMat=new THREE.MeshStandardMaterial({color:0x3e2723});
-    const handle=new THREE.Mesh(handleGeo, handleMat); handle.position.set(14,24,0); handle.rotation.z=Math.PI/2; handle.castShadow=true;
-    playerGroup.add(handle);
-    const headGeo=new THREE.BoxGeometry(12,8,8);
-    const headMat=new THREE.MeshStandardMaterial({color:0xFFD700, metalness:0.5, roughness:0.4});
-    const mhead=new THREE.Mesh(headGeo, headMat); mhead.position.set(22,28,0); mhead.castShadow=true;
-    playerGroup.add(mhead);
-    weapon=new THREE.Group(); weapon.add(handle); weapon.add(mhead);
+    const helmGeo=new THREE.BoxGeometry(16,9,16);
+    const helmMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.5, roughness:0.3});
+    const helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,47,0); helm.castShadow=true; helmGroup.add(helm);
+    // crista
+    const crestGeo=new THREE.BoxGeometry(2,6,14);
+    const crestMat=new THREE.MeshStandardMaterial({color:0x78909c});
+    const crest=new THREE.Mesh(crestGeo, crestMat); crest.position.set(0,52,0); helmGroup.add(crest);
+    // viseira
+    const visorGeo=new THREE.BoxGeometry(14,3,2);
+    const visorMat=new THREE.MeshStandardMaterial({color:0x37474f});
+    const visor=new THREE.Mesh(visorGeo, visorMat); visor.position.set(0,44,7); helmGroup.add(visor);
   } else {
-    const staffGeo=new THREE.CylinderGeometry(1,1,32,6);
-    const staffMat=new THREE.MeshStandardMaterial({color:0x2a1a4a});
-    const staff=new THREE.Mesh(staffGeo, staffMat); staff.position.set(14,26,0); staff.rotation.z=Math.PI/2; staff.castShadow=true;
-    playerGroup.add(staff);
-    const crystalGeo=new THREE.IcosahedronGeometry(4,0);
-    const crystalMat=new THREE.MeshStandardMaterial({color:0xce93d8, emissive:0x7c4dff, emissiveIntensity:0.4});
-    const crystal=new THREE.Mesh(crystalGeo, crystalMat); crystal.position.set(28,30,0); crystal.castShadow=true;
-    playerGroup.add(crystal);
-    weapon=new THREE.Group(); weapon.add(staff); weapon.add(crystal);
+    const hatGeo=new THREE.ConeGeometry(9,18,12);
+    const hatMat=new THREE.MeshStandardMaterial({color:0x1a237e});
+    const hat=new THREE.Mesh(hatGeo, hatMat); hat.position.set(0,51,0); hat.castShadow=true; helmGroup.add(hat);
+    const brimGeo=new THREE.CylinderGeometry(10,10,1,16);
+    const brimMat=new THREE.MeshStandardMaterial({color:0x1a237e});
+    const brim=new THREE.Mesh(brimGeo, brimMat); brim.position.set(0,43,0); helmGroup.add(brim);
+    const jewelGeo=new THREE.SphereGeometry(2.2,8,8);
+    const jewelMat=new THREE.MeshStandardMaterial({color:0x7c4dff, emissive:0x4a148c, emissiveIntensity:0.6});
+    const jewel=new THREE.Mesh(jewelGeo, jewelMat); jewel.position.set(0,60,0); helmGroup.add(jewel);
   }
-  playerMeshes.weapon=weapon;
+  playerGroup.add(helmGroup);
+  playerMeshes.helmGroup=helmGroup;
+
+  // ALJAVA com flechas para ranger
+  if(P.cls==='ranger'){
+    const quiverGeo=new THREE.CylinderGeometry(4,4,14,8);
+    const quiverMat=new THREE.MeshStandardMaterial({color:0x3e2723});
+    const quiver=new THREE.Mesh(quiverGeo, quiverMat); quiver.position.set(-6,28,-6); quiver.rotation.x=0.2; quiver.castShadow=true; playerGroup.add(quiver);
+    for(let i=0;i<3;i++){
+      const arrGeo=new THREE.CylinderGeometry(0.3,0.3,16,4);
+      const arrMat=new THREE.MeshStandardMaterial({color:0x8d6e63});
+      const arr=new THREE.Mesh(arrGeo, arrMat); arr.position.set(-6+i*1.2,32,-6); arr.rotation.x=0.2; playerGroup.add(arr);
+      const fletchGeo=new THREE.ConeGeometry(1,3,4);
+      const fletchMat=new THREE.MeshStandardMaterial({color:0xFFD700});
+      const fletch=new THREE.Mesh(fletchGeo, fletchMat); fletch.position.set(-6+i*1.2,40,-6); fletch.rotation.x=Math.PI; playerGroup.add(fletch);
+    }
+  }
+
+  // ARMA ELABORADA 3D
+  if(P.cls==='barbarian'){
+    // cabo couro enrolado
+    const handleGeo=new THREE.CylinderGeometry(1.2,1.2,28,8);
+    const handleMat=new THREE.MeshStandardMaterial({color:0x2a1a0a});
+    const handle=new THREE.Mesh(handleGeo, handleMat); handle.position.set(16,22,0); handle.rotation.z=Math.PI/2; handle.castShadow=true; playerGroup.add(handle);
+    // enrolamento couro
+    for(let i=0;i<5;i++){
+      const wrapGeo=new THREE.TorusGeometry(1.4,0.3,4,8);
+      const wrapMat=new THREE.MeshStandardMaterial({color:0x4a2a0a});
+      const wrap=new THREE.Mesh(wrapGeo, wrapMat); wrap.position.set(10+i*3,22,0); wrap.rotation.y=Math.PI/2; playerGroup.add(wrap);
+    }
+    // lâmina dupla com fio brilhante
+    const bladeGeo=new THREE.BoxGeometry(18,10,3);
+    const bladeMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.7, roughness:0.2});
+    const blade=new THREE.Mesh(bladeGeo, bladeMat); blade.position.set(26,26,0); blade.castShadow=true; playerGroup.add(blade);
+    const edgeGeo=new THREE.BoxGeometry(18,1,3.2);
+    const edgeMat=new THREE.MeshStandardMaterial({color:0xffffff, metalness:0.9, roughness:0.1});
+    const edge=new THREE.Mesh(edgeGeo, edgeMat); edge.position.set(26,30.5,0); playerGroup.add(edge);
+  } else if(P.cls==='ranger'){
+    const bowGeo=new THREE.TorusGeometry(12,1.2,8,16, Math.PI*1.2);
+    const bowMat=new THREE.MeshStandardMaterial({color:0x3e2723, roughness:0.8});
+    const bow=new THREE.Mesh(bowGeo, bowMat); bow.position.set(16,22,0); bow.rotation.y=Math.PI/2; bow.rotation.x=Math.PI/2; bow.rotation.z=0.2; bow.castShadow=true; playerGroup.add(bow);
+    const stringGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(16,32,0), new THREE.Vector3(16,12,0)]);
+    const stringMat=new THREE.LineBasicMaterial({color:0xffffff});
+    const string=new THREE.Line(stringGeo, stringMat); playerGroup.add(string);
+    const arrowGeo=new THREE.CylinderGeometry(0.4,0.4,18,4);
+    const arrowMat=new THREE.MeshStandardMaterial({color:0x8d6e63});
+    const arrow=new THREE.Mesh(arrowGeo, arrowMat); arrow.position.set(16,22,2); arrow.rotation.x=Math.PI/2; arrow.castShadow=true; playerGroup.add(arrow);
+    const tipGeo=new THREE.ConeGeometry(1.2,4,6);
+    const tipMat=new THREE.MeshStandardMaterial({color:0xFFD700, metalness:0.6});
+    const tip=new THREE.Mesh(tipGeo, tipMat); tip.position.set(16,22,12); tip.rotation.x=Math.PI; playerGroup.add(tip);
+  } else if(P.cls==='cleric'){
+    const handleGeo=new THREE.CylinderGeometry(1.5,1.5,30,8);
+    const handleMat=new THREE.MeshStandardMaterial({color:0x3e2723});
+    const handle=new THREE.Mesh(handleGeo, handleMat); handle.position.set(16,24,0); handle.rotation.z=Math.PI/2; handle.castShadow=true; playerGroup.add(handle);
+    const headGeo=new THREE.BoxGeometry(14,10,10);
+    const headMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.5});
+    const mhead=new THREE.Mesh(headGeo, headMat); mhead.position.set(26,28,0); mhead.castShadow=true; playerGroup.add(mhead);
+    // runas
+    const runeGeo=new THREE.BoxGeometry(2,2,1);
+    const runeMat=new THREE.MeshStandardMaterial({color:0xFFD700, emissive:0xFFD700, emissiveIntensity:0.3});
+    const rune=new THREE.Mesh(runeGeo, runeMat); rune.position.set(26,28,5.5); playerGroup.add(rune);
+    // aura
+    const auraGeo=new THREE.SphereGeometry(8,8,8);
+    const auraMat=new THREE.MeshBasicMaterial({color:0xFFD700, transparent:true, opacity:0.15});
+    const aura=new THREE.Mesh(auraGeo, auraMat); aura.position.set(26,28,0); playerGroup.add(aura);
+  } else {
+    const staffGeo=new THREE.CylinderGeometry(1.2,1.2,36,8);
+    const staffMat=new THREE.MeshStandardMaterial({color:0x2a1a0a});
+    const staff=new THREE.Mesh(staffGeo, staffMat); staff.position.set(16,28,0); staff.rotation.z=Math.PI/2; staff.castShadow=true; playerGroup.add(staff);
+    // detalhes cajado - anéis
+    for(let i=0;i<3;i++){
+      const ringGeo=new THREE.TorusGeometry(1.5,0.3,6,12);
+      const ringMat=new THREE.MeshStandardMaterial({color:0x7c4dff, metalness:0.5});
+      const ring=new THREE.Mesh(ringGeo, ringMat); ring.position.set(12+i*6,28,0); ring.rotation.y=Math.PI/2; playerGroup.add(ring);
+    }
+    const crystalGeo=new THREE.IcosahedronGeometry(5,1);
+    const crystalMat=new THREE.MeshStandardMaterial({color:0xce93d8, emissive:0x7c4dff, emissiveIntensity:0.7, transparent:true, opacity:0.9});
+    const crystal=new THREE.Mesh(crystalGeo, crystalMat); crystal.position.set(32,32,0); crystal.castShadow=true; playerGroup.add(crystal);
+    playerMeshes.crystal=crystal;
+    // partículas cristal - anel emissivo
+    const glowGeo=new THREE.SphereGeometry(8,8,8);
+    const glowMat=new THREE.MeshBasicMaterial({color:0x7c4dff, transparent:true, opacity:0.18});
+    const glow=new THREE.Mesh(glowGeo, glowMat); glow.position.set(32,32,0); playerGroup.add(glow);
+  }
 
   playerGroup.position.set(P.x,0,P.z);
   scene.add(playerGroup);
 }
 
 function genWorld3D(){
-  // clear old objs
   objs.forEach(o=>{if(o.mesh) scene.remove(o.mesh); if(o.mesh2) scene.remove(o.mesh2); if(o.mesh3) scene.remove(o.mesh3);});
   mons.forEach(m=>{if(m.mesh) scene.remove(m.mesh);});
   chests.forEach(c=>{if(c.mesh) scene.remove(c.mesh);});
   objs=[]; mons=[]; chests=[]; particles=[]; projectiles=[];
 
-  // ground details - small boxes
   for(let i=0;i<80;i++){
     let x=Math.random()*W, z=Math.random()*H;
     let size=Math.random()*2+1;
     let geo=new THREE.BoxGeometry(size,size,size*0.5);
     let mat=new THREE.MeshStandardMaterial({color:0x1a331a});
-    let mesh=new THREE.Mesh(geo, mat);
-    mesh.position.set(x, size*0.25, z);
-    mesh.receiveShadow=true;
-    scene.add(mesh);
+    let mesh=new THREE.Mesh(geo, mat); mesh.position.set(x, size*0.25, z); mesh.receiveShadow=true; scene.add(mesh);
   }
 
-  // HOUSES 3D - 6 houses
   for(let i=0;i<6;i++){
     let attempts=0, x,z;
     do{ x=600+Math.random()*2000; z=600+Math.random()*2000; attempts++; } while(objs.some(o=>Math.hypot(o.x-x,o.z-z)<450) && attempts<80);
@@ -332,60 +445,39 @@ function genWorld3D(){
     else if(sizeType===1){ w=120; h=120; cw=100; ch=70; }
     else if(sizeType===2){ w=150; h=150; cw=130; ch=85; }
     else { w=80; h=160; cw=68; ch=68; }
-
-    let houseGroup=new THREE.Group();
-    // foundation
     let foundH=sizeType===3?16: sizeType===2?18:14;
     let foundGeo=new THREE.BoxGeometry(w+12, foundH, w+12);
     let foundMat=new THREE.MeshStandardMaterial({color:0x3a3a3a});
-    let found=new THREE.Mesh(foundGeo, foundMat); found.position.set(x, foundH/2, z); found.receiveShadow=true; found.castShadow=true;
-    scene.add(found);
-
+    let found=new THREE.Mesh(foundGeo, foundMat); found.position.set(x, foundH/2, z); found.receiveShadow=true; found.castShadow=true; scene.add(found);
     if(sizeType===3){
-      // tower
       let towerH=180;
       let towerGeo=new THREE.BoxGeometry(w-8, towerH, w-8);
       let towerMat=new THREE.MeshStandardMaterial({color:0x4a4a4a});
-      let tower=new THREE.Mesh(towerGeo, towerMat); tower.position.set(x, foundH+towerH/2, z); tower.castShadow=true; tower.receiveShadow=true;
-      scene.add(tower);
-      // door
+      let tower=new THREE.Mesh(towerGeo, towerMat); tower.position.set(x, foundH+towerH/2, z); tower.castShadow=true; tower.receiveShadow=true; scene.add(tower);
       let doorGeo=new THREE.BoxGeometry(16,28,4);
       let doorMat=new THREE.MeshStandardMaterial({color:0x1a0f0a});
-      let door=new THREE.Mesh(doorGeo, doorMat); door.position.set(x, foundH+14, z+w/2); door.castShadow=true;
-      scene.add(door);
-      houseGroup.add(found); houseGroup.add(tower); houseGroup.add(door);
-      objs.push({x,z,w,h,cw,ch,t:'house',size:sizeType,collision:true, mesh:tower, mesh2:found, mesh3:door, y:0});
+      let door=new THREE.Mesh(doorGeo, doorMat); door.position.set(x, foundH+14, z+w/2); door.castShadow=true; scene.add(door);
+      objs.push({x,z,w,h,cw,ch,t:'house',size:sizeType,collision:true, mesh:tower, mesh2:found, mesh3:door});
     } else {
       let wallW=sizeType===0?80: sizeType===1?100:130;
       let wallH=sizeType===0?60: sizeType===1?80:100;
       let wallGeo=new THREE.BoxGeometry(wallW, wallH, wallW);
       let wallMat=new THREE.MeshStandardMaterial({color:0x5d4037});
-      let wall=new THREE.Mesh(wallGeo, wallMat); wall.position.set(x, foundH+wallH/2, z); wall.castShadow=true; wall.receiveShadow=true;
-      scene.add(wall);
-
+      let wall=new THREE.Mesh(wallGeo, wallMat); wall.position.set(x, foundH+wallH/2, z); wall.castShadow=true; wall.receiveShadow=true; scene.add(wall);
       let roofH=sizeType===0?40: sizeType===1?55:70;
       let roofGeo=new THREE.ConeGeometry(wallW*0.75, roofH, 4);
       let roofMat=new THREE.MeshStandardMaterial({color:0x3e2723});
-      let roof=new THREE.Mesh(roofGeo, roofMat); roof.position.set(x, foundH+wallH+roofH/2, z); roof.rotation.y=Math.PI/4; roof.castShadow=true;
-      scene.add(roof);
-
-      // chimney
+      let roof=new THREE.Mesh(roofGeo, roofMat); roof.position.set(x, foundH+wallH+roofH/2, z); roof.rotation.y=Math.PI/4; roof.castShadow=true; scene.add(roof);
       let chimGeo=new THREE.BoxGeometry(12, 30, 12);
       let chimMat=new THREE.MeshStandardMaterial({color:0x2a2a2a});
-      let chim=new THREE.Mesh(chimGeo, chimMat); chim.position.set(x+wallW*0.3, foundH+wallH+10, z); chim.castShadow=true;
-      scene.add(chim);
-
-      // door
+      let chim=new THREE.Mesh(chimGeo, chimMat); chim.position.set(x+wallW*0.3, foundH+wallH+10, z); chim.castShadow=true; scene.add(chim);
       let doorGeo=new THREE.BoxGeometry(14,24,3);
       let doorMat=new THREE.MeshStandardMaterial({color:0x1a0f0a});
-      let door=new THREE.Mesh(doorGeo, doorMat); door.position.set(x, foundH+12, z+wallW/2+1); door.castShadow=true;
-      scene.add(door);
-
-      objs.push({x,z,w,h,cw,ch,t:'house',size:sizeType,collision:true, mesh:wall, mesh2:roof, mesh3:chim, y:0});
+      let door=new THREE.Mesh(doorGeo, doorMat); door.position.set(x, foundH+12, z+wallW/2+1); door.castShadow=true; scene.add(door);
+      objs.push({x,z,w,h,cw,ch,t:'house',size:sizeType,collision:true, mesh:wall, mesh2:roof, mesh3:chim});
     }
   }
 
-  // TREES 3D - 26 trees
   for(let i=0;i<26;i++){
     let attempts=0, x,z;
     do{ x=Math.random()*W; z=Math.random()*H; attempts++; } while(objs.some(o=>Math.hypot(o.x-x,o.z-z)<160) && attempts<80);
@@ -397,64 +489,47 @@ function genWorld3D(){
     else if(sizeType===2){ cw=22; ch=22; trunkW=10; trunkH=90; foliageR=34; }
     else if(sizeType===3){ cw=30; ch=30; trunkW=14; trunkH=130; foliageR=46; }
     else { cw=48; ch=48; trunkW=22; trunkH=200; foliageR=68; }
-
     let trunkGeo=new THREE.CylinderGeometry(trunkW*0.6, trunkW, trunkH, 8);
     let trunkMat=new THREE.MeshStandardMaterial({color:0x2a1a0a, roughness:0.9});
-    let trunk=new THREE.Mesh(trunkGeo, trunkMat); trunk.position.set(x, trunkH/2, z); trunk.castShadow=true; trunk.receiveShadow=true;
-    scene.add(trunk);
-
+    let trunk=new THREE.Mesh(trunkGeo, trunkMat); trunk.position.set(x, trunkH/2, z); trunk.castShadow=true; trunk.receiveShadow=true; scene.add(trunk);
     let foliageGeo=new THREE.IcosahedronGeometry(foliageR, 1);
     let foliageMat=new THREE.MeshStandardMaterial({color: sizeType===4?0x1a3a1a:0x2a5a2a, roughness:0.8});
-    let foliage=new THREE.Mesh(foliageGeo, foliageMat); foliage.position.set(x, trunkH+foliageR*0.3, z); foliage.castShadow=true;
-    scene.add(foliage);
-
-    // extra foliage for giant
+    let foliage=new THREE.Mesh(foliageGeo, foliageMat); foliage.position.set(x, trunkH+foliageR*0.3, z); foliage.castShadow=true; scene.add(foliage);
     let foliage2=null;
     if(sizeType>=3){
       let f2Geo=new THREE.IcosahedronGeometry(foliageR*0.7,1);
       let f2Mat=new THREE.MeshStandardMaterial({color:0x3a6a3a});
-      foliage2=new THREE.Mesh(f2Geo, f2Mat); foliage2.position.set(x+8, trunkH+foliageR*0.8, z); foliage2.castShadow=true;
-      scene.add(foliage2);
+      foliage2=new THREE.Mesh(f2Geo, f2Mat); foliage2.position.set(x+8, trunkH+foliageR*0.8, z); foliage2.castShadow=true; scene.add(foliage2);
     }
-
     objs.push({x,z,w:foliageR*2,h:trunkH,cw,ch,trunkW,trunkH,foliageR,t:'tree',size:sizeType,collision:true, mesh:trunk, mesh2:foliage, mesh3:foliage2, sway:Math.random()*6.28});
   }
 
-  // rocks
   for(let i=0;i<20;i++){
     let x=Math.random()*W,z=Math.random()*H;
     let rockGeo=new THREE.DodecahedronGeometry(10,0);
     let rockMat=new THREE.MeshStandardMaterial({color:0x4a4a4a});
-    let rock=new THREE.Mesh(rockGeo, rockMat); rock.position.set(x,5,z); rock.castShadow=true; rock.receiveShadow=true;
-    rock.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
-    scene.add(rock);
+    let rock=new THREE.Mesh(rockGeo, rockMat); rock.position.set(x,5,z); rock.castShadow=true; rock.receiveShadow=true; rock.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI); scene.add(rock);
     objs.push({x,z,w:20,h:20,cw:18,ch:14,t:'rock',collision:true, mesh:rock});
   }
 
-  // monsters - simple capsules
   for(let i=0;i<16;i++){
     let x=400+Math.random()*2400, z=400+Math.random()*2400;
     let group=new THREE.Group();
     let bodyGeo=new THREE.CapsuleGeometry(7,18,4,8);
     let bodyMat=new THREE.MeshStandardMaterial({color:0x4a2a2a});
-    let body=new THREE.Mesh(bodyGeo, bodyMat); body.position.y=18; body.castShadow=true;
-    group.add(body);
+    let body=new THREE.Mesh(bodyGeo, bodyMat); body.position.y=18; body.castShadow=true; group.add(body);
     let headGeo=new THREE.SphereGeometry(6,8,8);
     let headMat=new THREE.MeshStandardMaterial({color:0x6a4a3a});
-    let head=new THREE.Mesh(headGeo, headMat); head.position.y=32; head.castShadow=true;
-    group.add(head);
-    group.position.set(x,0,z);
-    scene.add(group);
+    let head=new THREE.Mesh(headGeo, headMat); head.position.y=32; head.castShadow=true; group.add(head);
+    group.position.set(x,0,z); scene.add(group);
     mons.push({x,z,hp:80,max:80,alive:true,walk:0,bob:Math.random()*6.28,frozen:0,stunned:0,type:Math.floor(Math.random()*3), mesh:group});
   }
 
-  // chests - boxes
   for(let i=0;i<14;i++){
     let x=200+Math.random()*2800, z=200+Math.random()*2800;
     let boxGeo=new THREE.BoxGeometry(18,12,14);
     let boxMat=new THREE.MeshStandardMaterial({color:0x5d4037});
-    let box=new THREE.Mesh(boxGeo, boxMat); box.position.set(x,6,z); box.castShadow=true; box.receiveShadow=true;
-    scene.add(box);
+    let box=new THREE.Mesh(boxGeo, boxMat); box.position.set(x,6,z); box.castShadow=true; box.receiveShadow=true; scene.add(box);
     chests.push({x,z,opened:false,bob:Math.random()*6.28, mesh:box});
   }
 }
@@ -464,57 +539,56 @@ function updatePlayerVisual(dt){
   if(isMoving){P.walk+=dt*6; P.bob+=dt*8;} else {P.walk*=0.92; P.bob*=0.92;}
 
   if(!P.dead){
-    // walk cycle
     let walkL=Math.sin(P.walk)*4;
     let walkR=Math.sin(P.walk+Math.PI)*4;
-    if(playerMeshes.legL){playerMeshes.legL.position.z=walkL; playerMeshes.legL.rotation.x=walkL*0.1;}
-    if(playerMeshes.legR){playerMeshes.legR.position.z=walkR; playerMeshes.legR.rotation.x=walkR*0.1;}
-    if(playerMeshes.bootL){playerMeshes.bootL.position.z=walkL; }
-    if(playerMeshes.bootR){playerMeshes.bootR.position.z=walkR; }
-    if(playerMeshes.armL){playerMeshes.armL.rotation.x=Math.sin(P.walk+Math.PI)*0.5;}
-    if(playerMeshes.armR){playerMeshes.armR.rotation.x=Math.sin(P.walk)*0.5;}
+    if(playerMeshes.thighL){playerMeshes.thighL.position.z=walkL*0.5; playerMeshes.thighL.rotation.x=walkL*0.08;}
+    if(playerMeshes.thighR){playerMeshes.thighR.position.z=walkR*0.5; playerMeshes.thighR.rotation.x=walkR*0.08;}
+    if(playerMeshes.shinL){playerMeshes.shinL.position.z=walkL*0.3;}
+    if(playerMeshes.shinR){playerMeshes.shinR.position.z=walkR*0.3;}
+    if(playerMeshes.bootL){playerMeshes.bootL.position.z=walkL*0.3;}
+    if(playerMeshes.bootR){playerMeshes.bootR.position.z=walkR*0.3;}
+    if(playerMeshes.upArmL){playerMeshes.upArmL.rotation.x=Math.sin(P.walk+Math.PI)*0.5;}
+    if(playerMeshes.upArmR){playerMeshes.upArmR.rotation.x=Math.sin(P.walk)*0.5;}
+    if(playerMeshes.foreL){playerMeshes.foreL.rotation.x=Math.sin(P.walk+Math.PI)*0.3;}
+    if(playerMeshes.foreR){playerMeshes.foreR.rotation.x=Math.sin(P.walk)*0.3;}
+    if(playerMeshes.cape){playerMeshes.cape.rotation.x=0.15+Math.sin(P.walk)*0.1;}
+    if(playerMeshes.crystal){playerMeshes.crystal.rotation.y+=dt*2; playerMeshes.crystal.position.y=32+Math.sin(P.bob*2)*0.5;}
 
-    // bob
     let bobY=Math.sin(P.bob)*1.5;
     playerGroup.position.y=bobY;
 
-    // facing
     if(Math.abs(P.velX)>1 || Math.abs(P.velZ)>1){
       let ang=Math.atan2(P.velX, P.velZ);
       playerGroup.rotation.y=ang;
     }
 
-    // attack
     if(P.atk>0){
       let prog=1-P.atk/14;
       let swing=Math.sin(prog*Math.PI)*1.5;
-      if(playerMeshes.armR){playerMeshes.armR.rotation.x=-swing*1.8; playerMeshes.armR.rotation.z=swing*0.5;}
+      if(playerMeshes.upArmR){playerMeshes.upArmR.rotation.x=-swing*1.8; playerMeshes.upArmR.rotation.z=swing*0.5;}
+      if(playerMeshes.foreR){playerMeshes.foreR.rotation.x=-swing*0.8;}
     }
   } else {
-    // death animation - kneeling then falling
     let t=P.deathT;
     if(t<0.7){
       let k=t/0.7;
-      // kneeling
-      if(playerMeshes.legL){playerMeshes.legL.rotation.x=-0.9*k; playerMeshes.legL.position.y=9-k*6;}
-      if(playerMeshes.legR){playerMeshes.legR.rotation.x=1.0*k; playerMeshes.legR.position.y=9-k*4;}
-      if(playerMeshes.torso){playerMeshes.torso.rotation.x=0.35*k; playerMeshes.torso.position.y=22-k*2; playerMeshes.torso.position.z=k*2;}
-      if(playerMeshes.head){playerMeshes.head.position.y=36-2*k; playerMeshes.head.position.z=2*k; playerMeshes.head.rotation.x=0.5*k;}
+      if(playerMeshes.thighL){playerMeshes.thighL.rotation.x=-0.9*k; playerMeshes.thighL.position.y=16-k*8;}
+      if(playerMeshes.thighR){playerMeshes.thighR.rotation.x=1.0*k; playerMeshes.thighR.position.y=16-k*6;}
+      if(playerMeshes.torso){playerMeshes.torso.rotation.x=0.4*k; playerMeshes.torso.position.y=26-k*3; playerMeshes.torso.position.z=k*3;}
+      if(playerMeshes.head){playerMeshes.head.position.y=41-3*k; playerMeshes.head.position.z=3*k; playerMeshes.head.rotation.x=0.6*k;}
     } else if(t<1.8){
       let f=(t-0.7)/1.1;
-      // falling
-      playerGroup.rotation.x=f*Math.PI/2*0.9;
-      playerGroup.position.y= -f*8;
-      playerGroup.position.z+=f*2;
+      playerGroup.rotation.x=f*Math.PI/2*0.92;
+      playerGroup.position.y= -f*10;
     } else {
-      playerGroup.rotation.x=Math.PI/2*0.9;
-      playerGroup.position.y=-8;
+      playerGroup.rotation.x=Math.PI/2*0.92;
+      playerGroup.position.y=-10;
     }
   }
 }
 
 function checkCollision3D(nx, nz){
-  let pr=11;
+  let pr=12;
   for(let o of objs){
     if(!o.collision) continue;
     let ox=o.x, oz=o.z, cw=o.cw, ch=o.ch;
@@ -525,7 +599,6 @@ function checkCollision3D(nx, nz){
   return null;
 }
 
-// JOYSTICK 3D
 const joyZone=document.getElementById('joyZone');
 const joyBase=document.getElementById('joyBase');
 const joyStick=document.getElementById('joyStick');
@@ -545,16 +618,11 @@ window.addEventListener('mouseup',e=>{joyEnd(e);});
 function handleTap(cx,cz){
 if(P.dead) return false;
 let r=canvas.getBoundingClientRect();
-let x=(cx-r.left)*(r.width/canvas.clientWidth), y=(cz-r.top)*(r.height/canvas.clientHeight);
-// convert screen to world ray - simple: tap sets target in front of camera
 let mouse=new THREE.Vector2((cx/r.width)*2-1, -(cz/r.height)*2+1);
 let raycaster=new THREE.Raycaster();
 raycaster.setFromCamera(mouse, camera);
 let intersect=raycaster.intersectObject(ground);
-if(intersect.length>0){
-  T={x:intersect[0].point.x, z:intersect[0].point.z};
-  return true;
-}
+if(intersect.length>0){ T={x:intersect[0].point.x, z:intersect[0].point.z}; return true; }
 return false;
 }
 canvas.addEventListener('click',e=>{handleTap(e.clientX,e.clientY);});
@@ -570,39 +638,19 @@ function doAttack(){
 if(P.dead) return;
 let cls=CLASSES[P.cls];
 P.atk=14;
-let hit=false;
 mons.forEach(m=>{
 if(!m.alive||m.frozen>0||m.stunned>0) return;
 if(Math.hypot(m.x-P.x,m.z-P.z)<cls.weapon.range){
 let dmg=cls.weapon.dmg+Math.floor(P.attr.STR*0.8)+Math.floor(Math.random()*6);
 if(buffs.dmg) dmg=Math.floor(dmg*1.5);
-if(P.cls==='ranger'&&Math.random()<0.25){dmg=Math.floor(dmg*2.2);}
-m.hp-=dmg; hit=true;
-createDamageText(m.x,m.z,dmg);
-if(m.hp<=0){
-m.alive=false; m.mesh.visible=false;
-setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=400+Math.random()*2400; m.z=400+Math.random()*2400; m.mesh.position.set(m.x,0,m.z); m.mesh.visible=true;},6000);
-P.gold+=25; P.xp+=30;
-if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp;}
-}
+m.hp-=dmg;
+if(m.hp<=0){m.alive=false; m.mesh.visible=false; setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=400+Math.random()*2400; m.z=400+Math.random()*2400; m.mesh.position.set(m.x,0,m.z); m.mesh.visible=true;},6000); P.gold+=25; P.xp+=30; if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp;}}
 }
 });
 chests.forEach(c=>{if(!c.opened&&Math.hypot(c.x-P.x,c.z-P.z)<70){c.opened=true; c.mesh.visible=false; P.gold+=40;}});
-if(hit){if(navigator.vibrate) navigator.vibrate(25);}
+if(navigator.vibrate) navigator.vibrate(25);
 updateBars();
 }
-
-function createDamageText(x,z,dmg){
-  let div=document.createElement('div');
-  div.style.position='absolute';
-  div.style.left='50%'; div.style.top='40%';
-  div.style.color='#ff5252'; div.style.fontWeight='900'; div.style.fontSize='16px';
-  div.style.pointerEvents='none'; div.style.zIndex='55';
-  div.textContent='-'+dmg;
-  document.getElementById('gc').appendChild(div);
-  setTimeout(()=>div.remove(),600);
-}
-
 function doSkill(idx){
 if(P.dead) return;
 let cls=CLASSES[P.cls];
@@ -620,7 +668,6 @@ else if(skill.id==='fire'){let target=mons.filter(m=>m.alive).sort((a,b)=>Math.h
 else if(skill.id==='frost'){mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.z-P.z)<140){m.hp-=skill.dmg; m.frozen=3; if(m.hp<=0){m.alive=false; m.mesh.visible=false;}}});}
 if(navigator.vibrate) navigator.vibrate(30);
 }
-
 let atkBtnEl=document.getElementById('atkBtn');
 atkBtnEl.addEventListener('click',doAttack);
 atkBtnEl.addEventListener('touchstart',e=>{e.preventDefault(); e.stopPropagation(); doAttack();},{passive:false});
@@ -659,7 +706,6 @@ if(P.dead) return;
 P.dead=true; P.deathT=0; P.velX=0; P.velZ=0; J.active=false; T=null; P.atk=0;
 document.getElementById('deathText3d').classList.add('show');
 if(navigator.vibrate) navigator.vibrate([100,50,200]);
-// camera will zoom in loop
 }
 function respawn(){
 P.dead=false; P.deathT=0; P.hp=Math.floor(P.maxHp*0.6); P.mana=Math.floor(P.maxMana*0.6); P.x=W/2; P.z=H/2; P.gold=Math.max(0,P.gold-50);
@@ -670,12 +716,12 @@ updateBars();
 function startGame(){
 P.cls=selClass; let cls=CLASSES[P.cls];
 P.attr={...cls.base}; P.maxHp=cls.hp; P.hp=P.maxHp; P.maxMana=cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=300; P.x=W/2; P.z=H/2; P.dead=false; P.deathT=0;
-initSkills(); genWorld3D(); createPlayer3D();
+initSkills(); genWorld3D(); createPlayerElaborado();
 let ss=document.getElementById('start'); if(ss) ss.remove();
 document.getElementById('hint').style.display='block';
 setTimeout(()=>{let h=document.getElementById('hint'); if(h) h.style.display='none';},7000);
 updateBars(); createSpells(); updateSpellCDs();
-camOffset.set(0,220,220);
+camOffset.set(0,360,380);
 if(!gameOn){gameOn=true; requestAnimationFrame(loop);}
 }
 document.getElementById('btnStart').addEventListener('click',startGame);
@@ -696,33 +742,19 @@ if(P.dead){
   P.deathT+=dt;
   let count=document.getElementById('deathCount3d');
   if(count) count.textContent=(3.0-P.deathT).toFixed(1);
-  // zoom lento em direção ao personagem
   let progress=Math.min(P.deathT/3.0,1);
-  // lerp camera offset from far to close
-  let targetOffset=new THREE.Vector3(0, 30+ (1-progress)*10, 60+ (1-progress)*10);
-  // smooth lerp
-  camOffset.lerp(targetOffset, dt*1.2);
-  // also rotate slightly around
-  let angle=progress*0.5;
-  camOffset.x=Math.sin(angle)* (60*(1-progress*0.5));
-  camOffset.z=Math.cos(angle)* (60+ (1-progress)*160);
+  // zoom lento - de 380px afastado para 70px perto
+  let targetOffset=new THREE.Vector3(Math.sin(progress*0.6)*20, 40+ (1-progress)*15, 75+ (1-progress)*20);
+  camOffset.lerp(targetOffset, dt*1.0);
 
-  if(P.deathT>=3.0){ respawn(); camOffset.set(0,220,220); }
+  if(P.deathT>=3.0){ respawn(); camOffset.set(0,360,380); }
 
   updatePlayerVisual(dt);
-
-  // camera follow with zoom
   let camPos=new THREE.Vector3(P.x+camOffset.x, camOffset.y, P.z+camOffset.z);
-  camera.position.lerp(camPos, dt*3);
-  camLookAt.set(P.x, 10, P.z);
+  camera.position.lerp(camPos, dt*2.5);
+  camLookAt.set(P.x, 12, P.z);
   camera.lookAt(camLookAt);
-
-  // update monsters etc
-  mons.forEach(m=>{
-    if(!m.alive) return;
-    m.mesh.position.set(m.x,0,m.z);
-  });
-
+  mons.forEach(m=>{if(m.alive) m.mesh.position.set(m.x,0,m.z);});
   renderer.render(scene,camera);
   updateBars(); updateSpellCDs();
   requestAnimationFrame(loop);
@@ -757,7 +789,7 @@ if(!m.alive) return;
 if(m.frozen>0){m.frozen-=dt; return;}
 if(m.stunned>0){m.stunned-=dt; return;}
 let dist=Math.hypot(m.x-P.x,m.z-P.z);
-if(dist<320){
+if(dist<340){
 let ang=Math.atan2(P.x-m.x,P.z-m.z);
 let sp=46;
 let nx=m.x+Math.sin(ang)*sp*dt, nz=m.z+Math.cos(ang)*sp*dt;
@@ -765,7 +797,7 @@ if(!checkCollision3D(nx,nz)){m.x=nx; m.z=nz;}
 else {if(!checkCollision3D(nx,m.z)) m.x=nx; else if(!checkCollision3D(m.x,nz)) m.z=nz;}
 m.mesh.position.set(m.x,0,m.z);
 m.mesh.lookAt(P.x,0,P.z);
-if(dist<32&&Math.random()<0.04){P.hp-=7; updateBars(); if(P.hp<=0) triggerDeath();}
+if(dist<34&&Math.random()<0.04){P.hp-=7; updateBars(); if(P.hp<=0) triggerDeath();}
 }
 });
 
@@ -790,10 +822,9 @@ projectiles.splice(i,1); break;
 updatePlayerVisual(dt);
 playerGroup.position.set(P.x, playerGroup.position.y, P.z);
 
-// camera isométrica PS2 - segue jogador
 let desiredPos=new THREE.Vector3(P.x+camOffset.x, camOffset.y, P.z+camOffset.z);
-camera.position.lerp(desiredPos, dt*2.5);
-camLookAt.set(P.x, 12, P.z);
+camera.position.lerp(desiredPos, dt*2.2);
+camLookAt.set(P.x, 14, P.z);
 camera.lookAt(camLookAt);
 
 renderer.render(scene,camera);
@@ -811,8 +842,7 @@ function onResize(){
 window.addEventListener('resize', onResize);
 onResize();
 
-// initial
-createPlayer3D();
+createPlayerElaborado();
 genWorld3D();
 updateBars();
 renderer.render(scene,camera);
