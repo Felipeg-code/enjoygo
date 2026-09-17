@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>V21 3D TEXTURAS - Texturas Reais em Tudo</title>
+<title>V22 LINEAR PORTAL - Mapa Linear com Portão + Partículas + Texturas Fortes</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;font-family:system-ui,sans-serif}
@@ -15,6 +15,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 .hudItem.hp{border-color:#b71c1c;color:#ff5252}
 .hudItem.mana{border-color:#0d47a1;color:#64b5f6}
 .hudItem.gold{border-color:#b8960c}
+.hudItem.map{background:#1a2a1a;border-color:#8bc34a;color:#8bc34a}
 #joyZone{position:absolute;bottom:0;left:0;width:50%;height:45%;z-index:30;pointer-events:auto;touch-action:none}
 #atkZone{position:absolute;bottom:0;right:0;width:50%;height:45%;z-index:30;pointer-events:auto;touch-action:none}
 #joyBase{position:absolute;bottom:35px;left:35px;width:110px;height:110px;border-radius:55px;background:radial-gradient(circle at 30% 30%,#666,#222);border:4px solid #000;box-shadow:0 6px 0 #000,0 0 20px rgba(0,0,0,0.6);z-index:40;pointer-events:none}
@@ -33,6 +34,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 .spell.disabled{opacity:0.5;filter:grayscale(0.5)}
 #deathText3d{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.65);color:#ccc;font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid #555;z-index:60;display:none;pointer-events:none;text-align:center}
 #deathText3d.show{display:block}
+#portalMsg{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#FFD700;font-size:12px;font-weight:900;padding:10px 18px;border-radius:20px;border:3px solid #FFD700;z-index:55;display:none;pointer-events:none;text-align:center;box-shadow:0 0 20px #FFD700}
+#portalMsg.show{display:block;animation:pulsePortal 1s infinite}
+@keyframes pulsePortal{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.05)}}
 #start{position:absolute;inset:0;background:radial-gradient(circle at 50% 15%,#1e3320,#080e08 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
 .logo{font-size:38px;font-weight:900;color:#8bc34a;text-shadow:4px 4px 0 #000;letter-spacing:2px;margin-top:10px}
 .sub{color:#FFD700;font-weight:900;letter-spacing:3px;font-size:10px;margin:4px 0 10px 0}
@@ -57,9 +61,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 <div class="hudItem hp">❤️ <span id="hp">120</span></div>
 <div class="hudItem mana">🔮 <span id="mana">80</span></div>
 <div class="hudItem gold">💰 <span id="gold">0</span></div>
-<div class="hudItem">⭐ <span id="lvl">1</span> <span id="clsName">BARB</span></div>
+<div class="hudItem map">🗺️ <span id="mapName">Faydark</span> <span id="lvl">1</span></div>
 </div>
-<div id="info3d">V21 TEXTURAS<br>🌿 Grama procedural<br>🪵 Madeira tábuas<br>🧱 Pedra + telha<br>🌳 Casca + folhas</div>
+<div id="info3d">V22 LINEAR<br>🗺️ Mapa linear limitado<br>🚪 Portão no final<br>✨ Partículas ambiente<br>🎨 Texturas fortes</div>
 <div id="joyZone"></div>
 <div id="atkZone"></div>
 <div id="joyBase"></div>
@@ -67,40 +71,47 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 <div id="atkBtn">⚔️</div>
 <div id="spells"></div>
 <div id="deathText3d">Renascer <span id="deathCount3d">3.0</span>s</div>
-<div id="hint">V21: TEXTURAS REAIS - Grama, madeira, pedra, casca, metal, tecido - tudo com textura procedural</div>
+<div id="portalMsg">🚪 PORTÃO - Próximo mapa!</div>
+<div id="hint">V22: Mapa LINEAR limitado com portão no final + partículas + texturas fortes - Siga o caminho!</div>
 <div id="start">
 <div class="logo">NORRATH 3D</div>
-<div class="sub">V21 TEXTURAS</div>
-<div style="background:#000;border:2px solid #8bc34a;border-radius:10px;padding:10px 12px;color:#8bc34a;font-size:8px;font-weight:900;margin:6px 0;text-align:center;line-height:1.5">✅ TEXTURAS PROCEDURAIS CANVAS<br>🌿 Chão grama com manchas, pedrinhas, flores<br>🪵 Casa madeira tábuas com veios e nós<br>🧱 Fundação pedra irregular com rejunte<br>🏠 Telhado telha 3D com sombra<br>🌳 Tronco casca sulcos verticais + musgo<br>🍃 Folhagem folhas com luz<br>⚔️ Metal brilho + couro enrolado<br>👕 Tecido manto com dobras</div>
+<div class="sub">V22 LINEAR PORTAL</div>
+<div style="background:#000;border:2px solid #8bc34a;border-radius:10px;padding:10px 12px;color:#8bc34a;font-size:8px;font-weight:900;margin:6px 0;text-align:center;line-height:1.5">✅ MAPA LINEAR LIMITADO<br>🗺️ Não é mundo aberto - caminho com padrão<br>🚪 Portão no final leva pra próximo mapa diferente<br>✨ Partículas: pólen, vaga-lumes, folhas caindo, poeira<br>🎨 Texturas fortes: madeira veios escuros, pedra 3D, casca sulcos profundos</div>
 <div class="classGrid" id="classGrid">
-<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Textura pele + couro + metal + pele ombreira</div><div class="classWeapon">🪓 Machado<br>Textura madeira veios<br>Metal com fio</div></div>
-<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Textura tecido capa + couro aljava + madeira arco</div><div class="classWeapon">🏹 Arco<br>Textura madeira recurvo<br>Corda fibra</div></div>
-<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Textura placa metal escovado + tecido tabardo</div><div class="classWeapon">🔨 Martelo<br>Textura metal runas<br>Aura</div></div>
-<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Textura manto tecido + cristal emissivo + partículas</div><div class="classWeapon">🪄 Cajado<br>Textura carvalho nós<br>Cristal facetado</div></div>
+<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Tanque linear - abre caminho</div><div class="classWeapon">🗺️ Mapa 1: Faydark<br>🌲 Floresta elfa<br>🚪 Portão -> Caverna</div></div>
+<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Arqueiro linear - limpa caminho</div><div class="classWeapon">🗺️ Mapa 2: Caverna<br>🪨 Pedra escura<br>🚪 Portão -> Neve</div></div>
+<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Clérigo linear - cura no caminho</div><div class="classWeapon">🗺️ Mapa 3: Neve<br>❄️ Montanha gelada<br>🚪 Portão -> Fim</div></div>
+<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Mago linear - AoE no corredor</div><div class="classWeapon">✨ Partículas<br>🍃 Folhas, pólen, poeira<br>🌟 Vaga-lumes</div></div>
 </div>
-<button class="startBtn" id="btnStart">▶ JOGAR V21 TEXTURAS!</button>
+<button class="startBtn" id="btnStart">▶ JOGAR V22 LINEAR!</button>
 </div>
 </div>
 <script type="module">
 import * as THREE from 'three';
 
-const W=3200,H=3200;
-let P={x:1600,z:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velZ:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0, radius:14};
-let T=null, gameOn=false, selClass='barbarian';
+const W=400, H=2000; // LINEAR: width 400 limited, length 2000
+let P={x:0,z:100,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velZ:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0, radius:14};
+let T=null, gameOn=false, selClass='barbarian', currentMap=0;
 let J={active:false,x:0,y:0,startX:0,startY:0};
-let objs=[], mons=[], chests=[], projectiles=[];
+let objs=[], mons=[], chests=[], projectiles=[], particles3D=[], portal=null;
+
+const MAPS=[
+{name:"Faydark", short:"Faydark", ground:0x142614, fog:0x0a1a0a, fogNear:500, fogFar:1400, sky:0x0a1a0a, treeColor:0x2a5a2a, houseColor:0x5d4037, rockColor:0x4a4a4a, enemy:0x4a2a2a, particles:"forest"},
+{name:"Blackburrow", short:"Caverna", ground:0x1a1a1a, fog:0x0a0a0a, fogNear:300, fogFar:900, sky:0x050505, treeColor:0x2a2a2a, houseColor:0x3a3a3a, rockColor:0x2a2a2a, enemy:0x3a2a2a, particles:"dust"},
+{name:"Everfrost", short:"Neve", ground:0xc0d0e0, fog:0x9090a0, fogNear:400, fogFar:1100, sky:0x607080, treeColor:0x1a3a1a, houseColor:0x5a4a3a, rockColor:0x808080, enemy:0x2a4a5a, particles:"snow"},
+];
 
 const CLASSES={
-barbarian:{short:'BARB',color:0x8d6e63,skin:0xd7a77a,armor:0x4a3a2a,armor2:0x3e2723,weapon:{dmg:18,range:90},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:170,skills:[{id:'bash',icon:'💥',mana:12,cd:3,dmg:35},{id:'shout',icon:'📢',mana:20,cd:8,dmg:0}]},
-ranger:{short:'RANG',color:0x2e7d32,skin:0xe8c4a8,armor:0x1b5e20,armor2:0x2e7d32,weapon:{dmg:14,range:190},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:230,skills:[{id:'triple',icon:'🏹',mana:15,cd:4,dmg:20},{id:'crit',icon:'🎯',mana:25,cd:6,dmg:60}]},
-cleric:{short:'CLER',color:0xb0bec5,skin:0xe8c4a8,armor:0x90a4ae,armor2:0xb0bec5,weapon:{dmg:16,range:95},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:190,skills:[{id:'holy',icon:'✨',mana:14,cd:3,dmg:30},{id:'heal',icon:'💚',mana:25,cd:6,dmg:0}]},
-wizard:{short:'WIZ',color:0x4a148c,skin:0xd7c4a8,armor:0x1a237e,armor2:0x283593,weapon:{dmg:12,range:170},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:200,skills:[{id:'fire',icon:'🔥',mana:12,cd:2,dmg:45},{id:'frost',icon:'❄️',mana:20,cd:5,dmg:25}]},
+barbarian:{short:'BARB',color:0x8d6e63,skin:0xd7a77a,armor:0x4a3a2a,armor2:0x3e2723,weapon:{dmg:20,range:92},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:175,skills:[{id:'bash',icon:'💥',mana:12,cd:3,dmg:38},{id:'shout',icon:'📢',mana:20,cd:8,dmg:0}]},
+ranger:{short:'RANG',color:0x2e7d32,skin:0xe8c4a8,armor:0x1b5e20,armor2:0x2e7d32,weapon:{dmg:15,range:195},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:235,skills:[{id:'triple',icon:'🏹',mana:15,cd:4,dmg:22},{id:'crit',icon:'🎯',mana:25,cd:6,dmg:65}]},
+cleric:{short:'CLER',color:0xb0bec5,skin:0xe8c4a8,armor:0x90a4ae,armor2:0xb0bec5,weapon:{dmg:17,range:96},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:195,skills:[{id:'holy',icon:'✨',mana:14,cd:3,dmg:32},{id:'heal',icon:'💚',mana:25,cd:6,dmg:0}]},
+wizard:{short:'WIZ',color:0x4a148c,skin:0xd7c4a8,armor:0x1a237e,armor2:0x283593,weapon:{dmg:13,range:175},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:205,skills:[{id:'fire',icon:'🔥',mana:12,cd:2,dmg:48},{id:'frost',icon:'❄️',mana:20,cd:5,dmg:28}]},
 };
 let playerSkills={}, buffs={};
 function initSkills(){playerSkills={}; buffs={}; CLASSES[P.cls].skills.forEach(s=>playerSkills[s.id]={cd:0});}
 
-// TEXTURE GENERATORS - procedural canvas
-function createCanvasTexture(drawFn, size=256){
+// TEXTURAS FORTES - high contrast
+function createTexture(drawFn, size=256){
   const c=document.createElement('canvas'); c.width=size; c.height=size;
   const ctx=c.getContext('2d');
   drawFn(ctx,size);
@@ -110,171 +121,166 @@ function createCanvasTexture(drawFn, size=256){
   return tex;
 }
 
-const texGrass=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#142614'; ctx.fillRect(0,0,s,s);
-  for(let i=0;i<800;i++){
+const texGrassStrong=createTexture((ctx,s)=>{
+  ctx.fillStyle='#0f2a0f'; ctx.fillRect(0,0,s,s);
+  // base noise strong
+  for(let i=0;i<1200;i++){
     let x=Math.random()*s, y=Math.random()*s;
-    let r=Math.random()*1.5;
-    ctx.fillStyle=Math.random()>0.5?'#1a331a':'#0f1f0f';
-    ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill();
+    let shade=Math.random();
+    if(shade<0.33) ctx.fillStyle='#1a3a1a';
+    else if(shade<0.66) ctx.fillStyle='#142e14';
+    else ctx.fillStyle='#0a1a0a';
+    ctx.fillRect(x,y,3,3);
   }
-  for(let i=0;i<300;i++){
+  // grass blades strong
+  ctx.strokeStyle='#1e4a1e'; ctx.lineWidth=1.2;
+  for(let i=0;i<400;i++){
     let x=Math.random()*s, y=Math.random()*s;
-    ctx.fillStyle='#1e3a1e'; ctx.fillRect(x,y,2,4);
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+Math.random()*4-2,y+6+Math.random()*4); ctx.stroke();
   }
-  for(let i=0;i<100;i++){
+  // dirt patches
+  for(let i=0;i<40;i++){
     let x=Math.random()*s, y=Math.random()*s;
-    ctx.fillStyle='rgba(0,0,0,0.15)'; ctx.beginPath(); ctx.ellipse(x,y,8,4,0,0,6.28); ctx.fill();
+    ctx.fillStyle='rgba(40,30,20,0.25)'; ctx.beginPath(); ctx.ellipse(x,y,12+Math.random()*12,8,0,0,6.28); ctx.fill();
   }
-  // small flowers
-  for(let i=0;i<15;i++){
+  // flowers / mushrooms
+  for(let i=0;i<20;i++){
     let x=Math.random()*s, y=Math.random()*s;
     ctx.fillStyle=Math.random()>0.5?'#8bc34a':'#FFD700';
-    ctx.beginPath(); ctx.arc(x,y,1.2,0,6.28); ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,1.8,0,6.28); ctx.fill();
   }
 },512);
 
-const texWood=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#5d4037'; ctx.fillRect(0,0,s,s);
-  // vertical planks
-  let planks=6;
-  for(let p=0;p<planks;p++){
-    let x=p*s/planks;
-    let shade=0.85+Math.random()*0.3;
-    ctx.fillStyle=`rgb(${93*shade},${64*shade},${55*shade})`;
-    ctx.fillRect(x,0,s/planks-2,s);
-    // wood grain
-    ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=1;
-    for(let i=0;i<20;i++){
-      let gx=x+Math.random()*(s/planks);
-      ctx.beginPath(); ctx.moveTo(gx,0); ctx.bezierCurveTo(gx+Math.random()*6-3,s*0.3, gx+Math.random()*6-3,s*0.7, gx,s); ctx.stroke();
-    }
-    // knots
-    if(Math.random()>0.4){
-      let kx=x+s/planks*0.5, ky=Math.random()*s;
-      ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.ellipse(kx,ky,4,6,0,0,6.28); ctx.fill();
-      ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.ellipse(kx,ky,2,3,0,0,6.28); ctx.fill();
-    }
-  }
-  // horizontal beams
-  ctx.fillStyle='#2a1a0a'; ctx.fillRect(0,0,s,8); ctx.fillRect(0,s/2-4,s,8); ctx.fillRect(0,s-8,s,8);
-},256);
-
-const texStone=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#3a3a3a'; ctx.fillRect(0,0,s,s);
-  let rows=5, cols=6;
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      let x=c*s/cols + (r%2)*s/cols/2 + Math.random()*4-2;
-      let y=r*s/rows + Math.random()*4-2;
-      let w=s/cols-6, h=s/rows-6;
-      let shade=0.8+Math.random()*0.4;
-      ctx.fillStyle=`rgb(${60*shade},${60*shade},${60*shade})`;
-      ctx.fillRect(x,y,w,h);
-      ctx.strokeStyle='#1a1a1a'; ctx.lineWidth=2; ctx.strokeRect(x,y,w,h);
-      ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(x,y,w,2);
-    }
-  }
-},256);
-
-const texRoof=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#2a1a0a'; ctx.fillRect(0,0,s,s);
-  let tileH=18, tileW=22;
-  for(let y=0;y<s;y+=tileH){
-    for(let x=0;x<s;x+=tileW){
-      let ox=(Math.floor(y/tileH)%2)*tileW/2;
-      let tx=x+ox, ty=y;
-      let shade=0.85+Math.random()*0.3;
-      ctx.fillStyle=`rgb(${62*shade},${39*shade},${35*shade})`;
-      ctx.fillRect(tx,ty,tileW-2,tileH-3);
-      ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(tx,ty+tileH-5,tileW-2,3);
-      ctx.strokeStyle='#1a0f0a'; ctx.lineWidth=1; ctx.strokeRect(tx,ty,tileW-2,tileH-3);
-    }
-  }
-},256);
-
-const texBark=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#1e0f0a'; ctx.fillRect(0,0,s,s);
-  ctx.fillStyle='#2a1a0a'; ctx.fillRect(0,0,s,s);
-  // vertical grooves
-  for(let x=0;x<s;x+=8){
-    let shade=0.7+Math.random()*0.5;
-    ctx.fillStyle=`rgb(${42*shade},${26*shade},${10*shade})`;
-    ctx.fillRect(x,0,6,s);
-    ctx.fillStyle='#0f0a05'; ctx.fillRect(x,0,1.5,s);
-    // knots
-    if(Math.random()>0.7){
-      let y=Math.random()*s;
-      ctx.fillStyle='#0f0a05'; ctx.beginPath(); ctx.ellipse(x+3,y,5,7,0,0,6.28); ctx.fill();
-    }
-  }
-  // moss
-  ctx.fillStyle='rgba(26,58,26,0.35)';
-  for(let i=0;i<20;i++){
-    let x=Math.random()*s, y=Math.random()*s;
-    ctx.fillRect(x,y,12,20);
-  }
-},256);
-
-const texFoliage=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#1a3a1a'; ctx.fillRect(0,0,s,s);
+const texDirtPath=createTexture((ctx,s)=>{
+  ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,s,s);
   for(let i=0;i<600;i++){
     let x=Math.random()*s, y=Math.random()*s;
-    let r=Math.random()*3+1;
-    let shade=0.7+Math.random()*0.6;
-    ctx.fillStyle=`rgb(${42*shade},${90*shade},${42*shade})`;
-    ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill();
+    ctx.fillStyle=`rgba(${50+Math.random()*30},${35+Math.random()*15},${25+Math.random()*10},0.4)`;
+    ctx.beginPath(); ctx.arc(x,y,2+Math.random()*3,0,6.28); ctx.fill();
   }
-  for(let i=0;i<200;i++){
+  // footprints / tracks
+  ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=2;
+  for(let i=0;i<20;i++){
     let x=Math.random()*s, y=Math.random()*s;
-    ctx.fillStyle='rgba(0,0,0,0.15)'; ctx.beginPath(); ctx.arc(x,y,4,0,6.28); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+10,y+2); ctx.stroke();
   }
 },256);
 
-const texMetal=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#6a6a6a'; ctx.fillRect(0,0,s,s);
-  for(let i=0;i<400;i++){
-    let x=Math.random()*s, y=Math.random()*s;
-    ctx.fillStyle=`rgba(${100+Math.random()*50},${100+Math.random()*50},${100+Math.random()*50},0.3)`;
-    ctx.fillRect(x,y,2,2);
-  }
-  // brushed metal lines
-  ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=1;
-  for(let y=0;y<s;y+=4){ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(s,y); ctx.stroke();}
-  // highlight
-  const grad=ctx.createLinearGradient(0,0,s,0);
-  grad.addColorStop(0,'rgba(255,255,255,0)'); grad.addColorStop(0.5,'rgba(255,255,255,0.15)'); grad.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=grad; ctx.fillRect(0,0,s,s);
-},128);
-
-const texCloth=createCanvasTexture((ctx,s)=>{
-  ctx.fillStyle='#1a237e'; ctx.fillRect(0,0,s,s);
-  // fabric weave
-  ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=1;
-  for(let x=0;x<s;x+=4){ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,s); ctx.stroke();}
-  for(let y=0;y<s;y+=4){ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(s,y); ctx.stroke();}
-  // folds shadow
-  for(let i=0;i<10;i++){
-    let y=Math.random()*s;
-    ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,y,s,8);
-  }
-},128);
-
-const texLeather=createCanvasTexture((ctx,s)=>{
+const texWoodStrong=createTexture((ctx,s)=>{
   ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,s,s);
-  for(let i=0;i<500;i++){
-    let x=Math.random()*s, y=Math.random()*s;
-    ctx.fillStyle=`rgba(${60+Math.random()*20},${40+Math.random()*10},${35+Math.random()*10},0.2)`;
-    ctx.beginPath(); ctx.arc(x,y,1,0,6.28); ctx.fill();
+  let planks=5;
+  for(let p=0;p<planks;p++){
+    let x=p*s/planks;
+    let baseR=60+Math.random()*20, baseG=40+Math.random()*15, baseB=30+Math.random()*10;
+    ctx.fillStyle=`rgb(${baseR},${baseG},${baseB})`;
+    ctx.fillRect(x+1,0,s/planks-3,s);
+    // strong grain - dark lines
+    ctx.strokeStyle='rgba(0,0,0,0.35)'; ctx.lineWidth=1.5;
+    for(let i=0;i<25;i++){
+      let gx=x+2+Math.random()*(s/planks-6);
+      ctx.beginPath();
+      ctx.moveTo(gx,0);
+      ctx.bezierCurveTo(gx+Math.random()*8-4,s*0.25, gx+Math.random()*8-4,s*0.75, gx+Math.random()*4-2,s);
+      ctx.stroke();
+    }
+    // light grain highlight
+    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1;
+    for(let i=0;i<10;i++){
+      let gx=x+2+Math.random()*(s/planks-6);
+      ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,s); ctx.stroke();
+    }
+    // knots - strong
+    if(Math.random()>0.2){
+      let kx=x+s/planks*0.5, ky=Math.random()*s;
+      ctx.fillStyle='#1a0f0a'; ctx.beginPath(); ctx.ellipse(kx,ky,6,9,0,0,6.28); ctx.fill();
+      ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.ellipse(kx,ky,3,5,0,0,6.28); ctx.fill();
+      ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.ellipse(kx,ky,6,9,0,0,6.28); ctx.stroke();
+    }
   }
-},128);
+  // beams - dark strong
+  ctx.fillStyle='#1a0f0a'; ctx.fillRect(0,0,s,10); ctx.fillRect(0,s/2-5,s,10); ctx.fillRect(0,s-10,s,10);
+  ctx.fillRect(0,0,10,s); ctx.fillRect(s-10,0,10,s);
+},256);
 
-texGrass.repeat.set(12,12);
-texWood.repeat.set(1,1);
-texStone.repeat.set(1,1);
-texRoof.repeat.set(1,1);
-texBark.repeat.set(1,2);
-texFoliage.repeat.set(1,1);
+const texStoneStrong=createTexture((ctx,s)=>{
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(0,0,s,s);
+  let rows=4, cols=5;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      let x=c*s/cols + (r%2)*s/cols/2 + Math.random()*3-1;
+      let y=r*s/rows + Math.random()*3-1;
+      let w=s/cols-8, h=s/rows-8;
+      let gray=50+Math.random()*40;
+      ctx.fillStyle=`rgb(${gray},${gray},${gray})`;
+      ctx.fillRect(x,y,w,h);
+      // 3D bevel
+      ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fillRect(x,y,w,3);
+      ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.fillRect(x,y+h-3,w,3);
+      ctx.fillRect(x,y,3,h);
+      ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(x,y,w,h);
+    }
+  }
+  // mortar dark
+  ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(0,0,s,s);
+  ctx.globalCompositeOperation='destination-over';
+  ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,s,s);
+  ctx.globalCompositeOperation='source-over';
+},256);
+
+const texBarkStrong=createTexture((ctx,s)=>{
+  ctx.fillStyle='#0f0a05'; ctx.fillRect(0,0,s,s);
+  // deep grooves
+  for(let x=0;x<s;x+=10){
+    let depth=Math.random()*0.5+0.5;
+    let r=Math.floor(30*depth), g=Math.floor(18*depth), b=Math.floor(8*depth);
+    ctx.fillStyle=`rgb(${r},${g},${b})`;
+    ctx.fillRect(x,0,8,s);
+    // highlight left edge
+    ctx.fillStyle=`rgb(${r+20},${g+12},${b+5})`;
+    ctx.fillRect(x,0,2,s);
+    // shadow right edge
+    ctx.fillStyle='#000'; ctx.fillRect(x+6,0,2,s);
+    // cracks
+    if(Math.random()>0.6){
+      let y=Math.random()*s;
+      ctx.fillStyle='#000'; ctx.fillRect(x,y,8,2);
+    }
+  }
+  // moss patches strong
+  for(let i=0;i<25;i++){
+    let x=Math.random()*s, y=Math.random()*s;
+    ctx.fillStyle=`rgba(${10+Math.random()*20},${50+Math.random()*30},${10+Math.random()*20},0.5)`;
+    ctx.fillRect(x,y,16,24);
+  }
+},256);
+
+const texFoliageStrong=createTexture((ctx,s)=>{
+  ctx.fillStyle='#0a1f0a'; ctx.fillRect(0,0,s,s);
+  for(let i=0;i<800;i++){
+    let x=Math.random()*s, y=Math.random()*s;
+    let r=Math.random()*4+1;
+    let green=40+Math.random()*80;
+    ctx.fillStyle=`rgb(${10+Math.random()*20},${green},${10+Math.random()*20})`;
+    ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill();
+  }
+  // dark shadows between leaves
+  for(let i=0;i<150;i++){
+    let x=Math.random()*s, y=Math.random()*s;
+    ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.arc(x,y,6,0,6.28); ctx.fill();
+  }
+  // highlights
+  for(let i=0;i<100;i++){
+    let x=Math.random()*s, y=Math.random()*s;
+    ctx.fillStyle='rgba(139,195,74,0.3)'; ctx.beginPath(); ctx.arc(x,y,2,0,6.28); ctx.fill();
+  }
+},256);
+
+texGrassStrong.repeat.set(8,20);
+texDirtPath.repeat.set(2,10);
+texWoodStrong.repeat.set(1,1);
+texStoneStrong.repeat.set(1,1);
+texBarkStrong.repeat.set(1,2);
+texFoliageStrong.repeat.set(2,2);
 
 // THREE SETUP
 const canvas=document.getElementById('game3d');
@@ -285,7 +291,6 @@ renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.setClearColor(0x080f08);
 const scene=new THREE.Scene();
-scene.fog=new THREE.Fog(0x080f08, 500, 1600);
 const camera=new THREE.PerspectiveCamera(38, canvas.clientWidth/canvas.clientHeight, 0.1, 3000);
 let camOffset=new THREE.Vector3(0, 360, 380);
 let camLookAt=new THREE.Vector3();
@@ -293,16 +298,11 @@ const ambient=new THREE.AmbientLight(0x505050, 0.7); scene.add(ambient);
 const dirLight=new THREE.DirectionalLight(0xffffff, 0.95);
 dirLight.position.set(400,600,300); dirLight.castShadow=true;
 dirLight.shadow.mapSize.width=1024; dirLight.shadow.mapSize.height=1024;
-dirLight.shadow.camera.near=100; dirLight.shadow.camera.far=1200;
-dirLight.shadow.camera.left=-700; dirLight.shadow.camera.right=700; dirLight.shadow.camera.top=700; dirLight.shadow.camera.bottom=-700;
+dirLight.shadow.camera.near=100; dirLight.shadow.camera.far=1500;
+dirLight.shadow.camera.left=-400; dirLight.shadow.camera.right=400; dirLight.shadow.camera.top=800; dirLight.shadow.camera.bottom=-200;
 scene.add(dirLight);
-const fillLight=new THREE.DirectionalLight(0x8bc34a, 0.28); fillLight.position.set(-300,400,-300); scene.add(fillLight);
 
-const groundGeo=new THREE.PlaneGeometry(W,H);
-const groundMat=new THREE.MeshStandardMaterial({map:texGrass, roughness:0.95, metalness:0.05});
-const ground=new THREE.Mesh(groundGeo, groundMat);
-ground.rotation.x=-Math.PI/2; ground.position.set(W/2,0,H/2); ground.receiveShadow=true; scene.add(ground);
-
+let ground, pathMesh, walls=[], particleSystem, particleGeo, particleMat;
 let playerGroup=new THREE.Group();
 let playerMeshes={};
 
@@ -310,272 +310,359 @@ function createPlayerTextured(){
   if(playerGroup) scene.remove(playerGroup);
   playerGroup=new THREE.Group();
   let cls=CLASSES[P.cls];
-
   const shadowGeo=new THREE.CircleGeometry(16,20);
   const shadowMat=new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.38});
   const shadow=new THREE.Mesh(shadowGeo, shadowMat); shadow.rotation.x=-Math.PI/2; shadow.position.y=0.3; playerGroup.add(shadow);
-
   const thighGeo=new THREE.CylinderGeometry(4,3.5,10,8);
-  const pantsMat=new THREE.MeshStandardMaterial({map:texCloth, color:0x2a2a2a, roughness:0.85});
-  if(P.cls==='barbarian') pantsMat.map=texLeather;
+  const pantsMat=new THREE.MeshStandardMaterial({color:0x2a2a2a, roughness:0.85});
   const thighL=new THREE.Mesh(thighGeo, pantsMat); thighL.position.set(-4,16,0); thighL.castShadow=true;
   const thighR=new THREE.Mesh(thighGeo, pantsMat); thighR.position.set(4,16,0); thighR.castShadow=true;
   playerGroup.add(thighL); playerGroup.add(thighR);
-
   const kneeGeo=new THREE.SphereGeometry(3.8,8,8);
-  const kneeMat=new THREE.MeshStandardMaterial({map:texMetal, color:cls.armor2, roughness:0.5, metalness:0.4});
+  const kneeMat=new THREE.MeshStandardMaterial({color:cls.armor2, roughness:0.5, metalness:0.4});
   const kneeL=new THREE.Mesh(kneeGeo, kneeMat); kneeL.position.set(-4,11,1); kneeL.scale.set(1,0.8,1); kneeL.castShadow=true;
   const kneeR=new THREE.Mesh(kneeGeo, kneeMat); kneeR.position.set(4,11,1); kneeR.scale.set(1,0.8,1); kneeR.castShadow=true;
   playerGroup.add(kneeL); playerGroup.add(kneeR);
-
   const shinGeo=new THREE.CylinderGeometry(3.2,2.8,10,8);
   const shinL=new THREE.Mesh(shinGeo, pantsMat); shinL.position.set(-4,5,0); shinL.castShadow=true;
   const shinR=new THREE.Mesh(shinGeo, pantsMat); shinR.position.set(4,5,0); shinR.castShadow=true;
   playerGroup.add(shinL); playerGroup.add(shinR);
-
   const bootGeo=new THREE.BoxGeometry(6,5,10);
-  const bootMat=new THREE.MeshStandardMaterial({map:texLeather, color:0x1a1a1a, roughness:0.6});
+  const bootMat=new THREE.MeshStandardMaterial({color:0x1a1a1a, roughness:0.6});
   const bootL=new THREE.Mesh(bootGeo, bootMat); bootL.position.set(-4,1.5,1); bootL.castShadow=true;
   const bootR=new THREE.Mesh(bootGeo, bootMat); bootR.position.set(4,1.5,1); bootR.castShadow=true;
   playerGroup.add(bootL); playerGroup.add(bootR);
-
-  playerMeshes.thighL=thighL; playerMeshes.thighR=thighR; playerMeshes.kneeL=kneeL; playerMeshes.kneeR=kneeR;
-  playerMeshes.shinL=shinL; playerMeshes.shinR=shinR; playerMeshes.bootL=bootL; playerMeshes.bootR=bootR;
-
+  playerMeshes.thighL=thighL; playerMeshes.thighR=thighR; playerMeshes.kneeL=kneeL; playerMeshes.kneeR=kneeR; playerMeshes.shinL=shinL; playerMeshes.shinR=shinR; playerMeshes.bootL=bootL; playerMeshes.bootR=bootR;
   const torsoGeo=new THREE.BoxGeometry(16,20,10);
-  const torsoMat=new THREE.MeshStandardMaterial({map:cls===CLASSES.barbarian?texLeather:texMetal, color:cls.armor, roughness:0.6, metalness:0.25});
-  const torso=new THREE.Mesh(torsoGeo, torsoMat); torso.position.set(0,26,0); torso.castShadow=true; playerGroup.add(torso);
-  playerMeshes.torso=torso;
-
+  const torsoMat=new THREE.MeshStandardMaterial({color:cls.armor, roughness:0.6, metalness:0.25});
+  const torso=new THREE.Mesh(torsoGeo, torsoMat); torso.position.set(0,26,0); torso.castShadow=true; playerGroup.add(torso); playerMeshes.torso=torso;
   const chestGeo=new THREE.BoxGeometry(12,10,2);
-  const chestMat=new THREE.MeshStandardMaterial({map:texMetal, color:cls.armor2, roughness:0.4, metalness:0.4});
+  const chestMat=new THREE.MeshStandardMaterial({color:cls.armor2, roughness:0.4, metalness:0.4});
   const chest=new THREE.Mesh(chestGeo, chestMat); chest.position.set(0,28,5.5); chest.castShadow=true; playerGroup.add(chest);
-
   const beltGeo=new THREE.BoxGeometry(17,3,11);
-  const beltMat=new THREE.MeshStandardMaterial({map:texLeather, color:0x3e2723});
+  const beltMat=new THREE.MeshStandardMaterial({color:0x3e2723});
   const belt=new THREE.Mesh(beltGeo, beltMat); belt.position.set(0,18,0); belt.castShadow=true; playerGroup.add(belt);
-  const buckleGeo=new THREE.BoxGeometry(4,4,2);
-  const buckleMat=new THREE.MeshStandardMaterial({map:texMetal, color:0xFFD700, metalness:0.7});
-  const buckleB=new THREE.Mesh(buckleGeo, buckleMat); buckleB.position.set(0,18,6); playerGroup.add(buckleB);
-
-  if(P.cls==='ranger' || P.cls==='wizard'){
-    const capeMat=new THREE.MeshStandardMaterial({map:texCloth, color:P.cls==='ranger'?0x1b5e20:0x1a237e, side:THREE.DoubleSide, roughness:0.9});
-    const capeGeo=new THREE.PlaneGeometry(18,24);
-    const cape=new THREE.Mesh(capeGeo, capeMat); cape.position.set(0,26,-6); cape.rotation.x=0.15; cape.castShadow=true; playerGroup.add(cape);
-    playerMeshes.cape=cape;
-  }
-
   const pauldronGeo=new THREE.SphereGeometry(5,10,8);
-  const pauldronMat=new THREE.MeshStandardMaterial({map:texMetal, color:cls.armor2, metalness:0.45, roughness:0.45});
+  const pauldronMat=new THREE.MeshStandardMaterial({color:cls.armor2, metalness:0.45, roughness:0.45});
   const paulL=new THREE.Mesh(pauldronGeo, pauldronMat); paulL.position.set(-11,32,0); paulL.scale.set(1.2,0.8,1); paulL.castShadow=true;
   const paulR=new THREE.Mesh(pauldronGeo, pauldronMat); paulR.position.set(11,32,0); paulR.scale.set(1.2,0.8,1); paulR.castShadow=true;
-  playerGroup.add(paulL); playerGroup.add(paulR);
-  playerMeshes.paulL=paulL; playerMeshes.paulR=paulR;
-
+  playerGroup.add(paulL); playerGroup.add(paulR); playerMeshes.paulL=paulL; playerMeshes.paulR=paulR;
   const upperArmGeo=new THREE.CylinderGeometry(2.8,2.5,8,8);
   const skinMat=new THREE.MeshStandardMaterial({color:cls.skin, roughness:0.7});
   const upArmL=new THREE.Mesh(upperArmGeo, skinMat); upArmL.position.set(-11,28,0); upArmL.castShadow=true;
   const upArmR=new THREE.Mesh(upperArmGeo, skinMat); upArmR.position.set(11,28,0); upArmR.castShadow=true;
   playerGroup.add(upArmL); playerGroup.add(upArmR);
-
   const bracerGeo=new THREE.CylinderGeometry(3,3,6,8);
-  const bracerMat=new THREE.MeshStandardMaterial({map:texMetal, color:cls.armor2, metalness:0.35});
+  const bracerMat=new THREE.MeshStandardMaterial({color:cls.armor2, metalness:0.35});
   const bracL=new THREE.Mesh(bracerGeo, bracerMat); bracL.position.set(-11,20,0); bracL.castShadow=true;
   const bracR=new THREE.Mesh(bracerGeo, bracerMat); bracR.position.set(11,20,0); bracR.castShadow=true;
   playerGroup.add(bracL); playerGroup.add(bracR);
-
   const foreArmGeo=new THREE.CylinderGeometry(2.3,2,7,8);
   const foreL=new THREE.Mesh(foreArmGeo, skinMat); foreL.position.set(-11,14,0); foreL.castShadow=true;
   const foreR=new THREE.Mesh(foreArmGeo, skinMat); foreR.position.set(11,14,0); foreR.castShadow=true;
   playerGroup.add(foreL); playerGroup.add(foreR);
-
   const handGeo=new THREE.SphereGeometry(2.8,8,8);
   const handL=new THREE.Mesh(handGeo, skinMat); handL.position.set(-11,9,0); handL.castShadow=true;
   const handR=new THREE.Mesh(handGeo, skinMat); handR.position.set(11,9,0); handR.castShadow=true;
   playerGroup.add(handL); playerGroup.add(handR);
-
-  playerMeshes.upArmL=upArmL; playerMeshes.upArmR=upArmR; playerMeshes.bracL=bracL; playerMeshes.bracR=bracR;
-  playerMeshes.foreL=foreL; playerMeshes.foreR=foreR; playerMeshes.handL=handL; playerMeshes.handR=handR;
-
+  playerMeshes.upArmL=upArmL; playerMeshes.upArmR=upArmR; playerMeshes.bracL=bracL; playerMeshes.bracR=bracR; playerMeshes.foreL=foreL; playerMeshes.foreR=foreR; playerMeshes.handL=handL; playerMeshes.handR=handR;
   const headGeo=new THREE.SphereGeometry(6.5,14,14);
-  const head=new THREE.Mesh(headGeo, skinMat); head.position.set(0,41,0); head.castShadow=true; playerGroup.add(head);
-  playerMeshes.head=head;
-
+  const head=new THREE.Mesh(headGeo, skinMat); head.position.set(0,41,0); head.castShadow=true; playerGroup.add(head); playerMeshes.head=head;
   const neckGeo=new THREE.CylinderGeometry(2.5,3,4,8);
   const neck=new THREE.Mesh(neckGeo, skinMat); neck.position.set(0,37,0); neck.castShadow=true; playerGroup.add(neck);
-
   const eyeGeo=new THREE.SphereGeometry(0.9,6,6);
   const eyeMat=new THREE.MeshBasicMaterial({color:0x000000});
   const eyeL=new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-2.2,42,5.2);
   const eyeR=new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(2.2,42,5.2);
   playerGroup.add(eyeL); playerGroup.add(eyeR);
-
   let helmGroup=new THREE.Group();
   if(P.cls==='barbarian'){
     const helmGeo=new THREE.BoxGeometry(15,8,15);
-    const helmMat=new THREE.MeshStandardMaterial({map:texLeather, color:0x4a3a2a, roughness:0.7});
+    const helmMat=new THREE.MeshStandardMaterial({color:0x4a3a2a, roughness:0.7});
     const helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,47,0); helm.castShadow=true; helmGroup.add(helm);
-    const rimGeo=new THREE.BoxGeometry(15.5,1.5,15.5);
-    const rimMat=new THREE.MeshStandardMaterial({map:texMetal, color:0x9e9e9e, metalness:0.7});
-    const rim=new THREE.Mesh(rimGeo, rimMat); rim.position.set(0,44.5,0); helmGroup.add(rim);
-    const hornCurve=new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,0), new THREE.Vector3(2,3,1), new THREE.Vector3(4,6,0)]);
-    const hornGeo=new THREE.TubeGeometry(hornCurve, 8, 1.2, 6, false);
-    const hornMat=new THREE.MeshStandardMaterial({color:0xe8dcc8});
-    const hornL=new THREE.Mesh(hornGeo, hornMat); hornL.position.set(-7,47,0); hornL.rotation.z=0.8; hornL.castShadow=true; helmGroup.add(hornL);
-    const hornR=new THREE.Mesh(hornGeo, hornMat); hornR.position.set(7,47,0); hornR.rotation.z=-0.8; hornR.rotation.x=Math.PI; hornR.castShadow=true; helmGroup.add(hornR);
   } else if(P.cls==='ranger'){
     const hoodGeo=new THREE.ConeGeometry(9,14,12,1,true);
-    const hoodMat=new THREE.MeshStandardMaterial({map:texCloth, color:0x1b5e20, side:THREE.DoubleSide});
+    const hoodMat=new THREE.MeshStandardMaterial({color:0x1b5e20, side:THREE.DoubleSide});
     const hood=new THREE.Mesh(hoodGeo, hoodMat); hood.position.set(0,48,0); hood.castShadow=true; helmGroup.add(hood);
   } else if(P.cls==='cleric'){
     const helmGeo=new THREE.BoxGeometry(16,9,16);
-    const helmMat=new THREE.MeshStandardMaterial({map:texMetal, color:0xb0bec5, metalness:0.5, roughness:0.3});
+    const helmMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.5, roughness:0.3});
     const helm=new THREE.Mesh(helmGeo, helmMat); helm.position.set(0,47,0); helm.castShadow=true; helmGroup.add(helm);
-    const crestGeo=new THREE.BoxGeometry(2,6,14);
-    const crestMat=new THREE.MeshStandardMaterial({map:texMetal, color:0x78909c});
-    const crest=new THREE.Mesh(crestGeo, crestMat); crest.position.set(0,52,0); helmGroup.add(crest);
   } else {
     const hatGeo=new THREE.ConeGeometry(9,18,12);
-    const hatMat=new THREE.MeshStandardMaterial({map:texCloth, color:0x1a237e});
+    const hatMat=new THREE.MeshStandardMaterial({color:0x1a237e});
     const hat=new THREE.Mesh(hatGeo, hatMat); hat.position.set(0,51,0); hat.castShadow=true; helmGroup.add(hat);
-    const jewelGeo=new THREE.SphereGeometry(2.2,8,8);
-    const jewelMat=new THREE.MeshStandardMaterial({color:0x7c4dff, emissive:0x4a148c, emissiveIntensity:0.6});
-    const jewel=new THREE.Mesh(jewelGeo, jewelMat); jewel.position.set(0,60,0); helmGroup.add(jewel);
   }
   playerGroup.add(helmGroup);
-
-  if(P.cls==='ranger'){
-    const quiverGeo=new THREE.CylinderGeometry(4,4,14,8);
-    const quiverMat=new THREE.MeshStandardMaterial({map:texLeather, color:0x3e2723});
-    const quiver=new THREE.Mesh(quiverGeo, quiverMat); quiver.position.set(-6,28,-6); quiver.rotation.x=0.2; quiver.castShadow=true; playerGroup.add(quiver);
-    for(let i=0;i<3;i++){
-      const arrGeo=new THREE.CylinderGeometry(0.3,0.3,16,4);
-      const arrMat=new THREE.MeshStandardMaterial({color:0x8d6e63});
-      const arr=new THREE.Mesh(arrGeo, arrMat); arr.position.set(-6+i*1.2,32,-6); arr.rotation.x=0.2; playerGroup.add(arr);
-    }
-  }
-
   if(P.cls==='barbarian'){
     const handleGeo=new THREE.CylinderGeometry(1.2,1.2,28,8);
-    const handleMat=new THREE.MeshStandardMaterial({map:texWood, color:0x2a1a0a});
+    const handleMat=new THREE.MeshStandardMaterial({color:0x2a1a0a});
     const handle=new THREE.Mesh(handleGeo, handleMat); handle.position.set(16,22,0); handle.rotation.z=Math.PI/2; handle.castShadow=true; playerGroup.add(handle);
     const bladeGeo=new THREE.BoxGeometry(18,10,3);
-    const bladeMat=new THREE.MeshStandardMaterial({map:texMetal, color:0xb0bec5, metalness:0.7, roughness:0.2});
+    const bladeMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.7, roughness:0.2});
     const blade=new THREE.Mesh(bladeGeo, bladeMat); blade.position.set(26,26,0); blade.castShadow=true; playerGroup.add(blade);
   } else if(P.cls==='ranger'){
     const bowGeo=new THREE.TorusGeometry(12,1.2,8,16, Math.PI*1.2);
-    const bowMat=new THREE.MeshStandardMaterial({map:texWood, color:0x3e2723});
+    const bowMat=new THREE.MeshStandardMaterial({color:0x3e2723});
     const bow=new THREE.Mesh(bowGeo, bowMat); bow.position.set(16,22,0); bow.rotation.y=Math.PI/2; bow.rotation.x=Math.PI/2; bow.rotation.z=0.2; bow.castShadow=true; playerGroup.add(bow);
   } else if(P.cls==='cleric'){
     const handleGeo=new THREE.CylinderGeometry(1.5,1.5,30,8);
-    const handleMat=new THREE.MeshStandardMaterial({map:texWood, color:0x3e2723});
+    const handleMat=new THREE.MeshStandardMaterial({color:0x3e2723});
     const handle=new THREE.Mesh(handleGeo, handleMat); handle.position.set(16,24,0); handle.rotation.z=Math.PI/2; handle.castShadow=true; playerGroup.add(handle);
     const headGeo=new THREE.BoxGeometry(14,10,10);
-    const headMat=new THREE.MeshStandardMaterial({map:texMetal, color:0xb0bec5, metalness:0.5});
+    const headMat=new THREE.MeshStandardMaterial({color:0xb0bec5, metalness:0.5});
     const mhead=new THREE.Mesh(headGeo, headMat); mhead.position.set(26,28,0); mhead.castShadow=true; playerGroup.add(mhead);
   } else {
     const staffGeo=new THREE.CylinderGeometry(1.2,1.2,36,8);
-    const staffMat=new THREE.MeshStandardMaterial({map:texWood, color:0x2a1a0a});
+    const staffMat=new THREE.MeshStandardMaterial({color:0x2a1a0a});
     const staff=new THREE.Mesh(staffGeo, staffMat); staff.position.set(16,28,0); staff.rotation.z=Math.PI/2; staff.castShadow=true; playerGroup.add(staff);
     const crystalGeo=new THREE.IcosahedronGeometry(5,1);
     const crystalMat=new THREE.MeshStandardMaterial({color:0xce93d8, emissive:0x7c4dff, emissiveIntensity:0.7});
     const crystal=new THREE.Mesh(crystalGeo, crystalMat); crystal.position.set(32,32,0); crystal.castShadow=true; playerGroup.add(crystal);
     playerMeshes.crystal=crystal;
   }
-
   playerGroup.position.set(P.x,0,P.z);
   scene.add(playerGroup);
 }
 
-function genWorldTextured(){
+function genLinearMap(mapIndex){
+  // clear
   objs.forEach(o=>{if(o.mesh) scene.remove(o.mesh); if(o.mesh2) scene.remove(o.mesh2); if(o.mesh3) scene.remove(o.mesh3);});
   mons.forEach(m=>{if(m.mesh) scene.remove(m.mesh);});
   chests.forEach(c=>{if(c.mesh) scene.remove(c.mesh);});
-  objs=[]; mons=[]; chests=[]; projectiles=[];
+  if(ground) scene.remove(ground);
+  if(pathMesh) scene.remove(pathMesh);
+  walls.forEach(w=>scene.remove(w)); walls=[];
+  if(particleSystem) scene.remove(particleSystem);
+  if(portal) {scene.remove(portal); if(portal.glow) scene.remove(portal.glow); if(portal.light) scene.remove(portal.light);}
+  objs=[]; mons=[]; chests=[]; projectiles=[]; particles3D=[];
 
-  for(let i=0;i<6;i++){
-    let attempts=0, x,z;
-    do{ x=600+Math.random()*2000; z=600+Math.random()*2000; attempts++; } while(objs.some(o=>Math.hypot(o.x-x,o.z-z)<450) && attempts<80);
-    let sizeType = Math.random()<0.3?0: Math.random()<0.6?1: Math.random()<0.85?2:3;
-    let w,cw,ch;
-    if(sizeType===0){ w=90; cw=80; ch=60; }
-    else if(sizeType===1){ w=120; cw=100; ch=70; }
-    else if(sizeType===2){ w=150; cw=130; ch=85; }
-    else { w=80; cw=68; ch=68; }
-    let foundH=sizeType===3?16: sizeType===2?18:14;
-    let foundGeo=new THREE.BoxGeometry(w+12, foundH, w+12);
-    let foundMat=new THREE.MeshStandardMaterial({map:texStone, roughness:0.9});
-    let found=new THREE.Mesh(foundGeo, foundMat); found.position.set(x, foundH/2, z); found.receiveShadow=true; found.castShadow=true; scene.add(found);
-    if(sizeType===3){
-      let towerH=180;
-      let towerGeo=new THREE.BoxGeometry(w-8, towerH, w-8);
-      let towerMat=new THREE.MeshStandardMaterial({map:texStone, roughness:0.85});
-      let tower=new THREE.Mesh(towerGeo, towerMat); tower.position.set(x, foundH+towerH/2, z); tower.castShadow=true; tower.receiveShadow=true; scene.add(tower);
-      objs.push({x,z,w,cw,ch,t:'house',size:sizeType,collision:true, mesh:tower, mesh2:found});
-    } else {
-      let wallW=sizeType===0?80: sizeType===1?100:130;
-      let wallH=sizeType===0?60: sizeType===1?80:100;
-      let wallGeo=new THREE.BoxGeometry(wallW, wallH, wallW);
-      let wallMat=new THREE.MeshStandardMaterial({map:texWood, roughness:0.8});
-      let wall=new THREE.Mesh(wallGeo, wallMat); wall.position.set(x, foundH+wallH/2, z); wall.castShadow=true; wall.receiveShadow=true; scene.add(wall);
-      let roofH=sizeType===0?40: sizeType===1?55:70;
-      let roofGeo=new THREE.ConeGeometry(wallW*0.75, roofH, 4);
-      let roofMat=new THREE.MeshStandardMaterial({map:texRoof, roughness:0.7});
-      let roof=new THREE.Mesh(roofGeo, roofMat); roof.position.set(x, foundH+wallH+roofH/2, z); roof.rotation.y=Math.PI/4; roof.castShadow=true; scene.add(roof);
-      let chimGeo=new THREE.BoxGeometry(12, 30, 12);
-      let chimMat=new THREE.MeshStandardMaterial({map:texStone});
-      let chim=new THREE.Mesh(chimGeo, chimMat); chim.position.set(x+wallW*0.3, foundH+wallH+10, z); chim.castShadow=true; scene.add(chim);
-      objs.push({x,z,w,cw,ch,t:'house',size:sizeType,collision:true, mesh:wall, mesh2:roof, mesh3:chim});
-    }
+  let map=MAPS[mapIndex];
+  renderer.setClearColor(map.sky);
+  scene.fog=new THREE.Fog(map.fog, map.fogNear, map.fogFar);
+  dirLight.color.setHex(mapIndex===2?0xffffff:0xffffff);
+  ambient.color.setHex(mapIndex===2?0xaaaaaa:0x505050);
+
+  // GROUND LINEAR - 400 width x 2000 length
+  const groundGeo=new THREE.PlaneGeometry(W, H);
+  const groundMat=new THREE.MeshStandardMaterial({map:texGrassStrong, roughness:0.95});
+  ground=new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x=-Math.PI/2;
+  ground.position.set(0,0,H/2);
+  ground.receiveShadow=true;
+  scene.add(ground);
+
+  // PATH CENTRAL - dirt path 80 width x 2000 length
+  const pathGeo=new THREE.PlaneGeometry(80, H);
+  const pathMat=new THREE.MeshStandardMaterial({map:texDirtPath, roughness:0.9});
+  pathMesh=new THREE.Mesh(pathGeo, pathMat);
+  pathMesh.rotation.x=-Math.PI/2;
+  pathMesh.position.set(0,0.2,H/2);
+  pathMesh.receiveShadow=true;
+  scene.add(pathMesh);
+
+  // WALLS INVISÍVEIS laterais - colisão
+  // left wall at x=-200, right at x=200, along entire length
+  // visual walls as dense trees/rocks to show limit
+  for(let z=0;z<H;z+=40){
+    // left border trees
+    let xL=-W/2+20+Math.random()*20;
+    let trunkH=80+Math.random()*40;
+    let trunkGeo=new THREE.CylinderGeometry(8,12,trunkH,6);
+    let trunkMat=new THREE.MeshStandardMaterial({map:texBarkStrong, color:0x1a1a1a});
+    let trunk=new THREE.Mesh(trunkGeo, trunkMat); trunk.position.set(xL,trunkH/2,z); trunk.castShadow=true; scene.add(trunk);
+    walls.push(trunk);
+    let xR=W/2-20-Math.random()*20;
+    let trunkR=new THREE.Mesh(trunkGeo, trunkMat); trunkR.position.set(xR,trunkH/2,z); trunkR.castShadow=true; scene.add(trunkR);
+    walls.push(trunkR);
   }
 
-  for(let i=0;i<26;i++){
-    let attempts=0, x,z;
-    do{ x=Math.random()*W; z=Math.random()*H; attempts++; } while(objs.some(o=>Math.hypot(o.x-x,o.z-z)<160) && attempts<80);
-    let r=Math.random();
-    let sizeType = r<0.2?0: r<0.45?1: r<0.7?2: r<0.88?3:4;
-    let cw,ch,trunkW,trunkH,foliageR;
-    if(sizeType===0){ cw=14; ch=14; trunkW=6; trunkH=30; foliageR=18; }
-    else if(sizeType===1){ cw=18; ch=18; trunkW=8; trunkH=60; foliageR=26; }
-    else if(sizeType===2){ cw=22; ch=22; trunkW=10; trunkH=90; foliageR=34; }
-    else if(sizeType===3){ cw=30; ch=30; trunkW=14; trunkH=130; foliageR=46; }
-    else { cw=48; ch=48; trunkW=22; trunkH=200; foliageR=68; }
-    let trunkGeo=new THREE.CylinderGeometry(trunkW*0.6, trunkW, trunkH, 8);
-    let trunkMat=new THREE.MeshStandardMaterial({map:texBark, roughness:0.95});
-    let trunk=new THREE.Mesh(trunkGeo, trunkMat); trunk.position.set(x, trunkH/2, z); trunk.castShadow=true; trunk.receiveShadow=true; scene.add(trunk);
-    let foliageGeo=new THREE.IcosahedronGeometry(foliageR, 1);
-    let foliageMat=new THREE.MeshStandardMaterial({map:texFoliage, color:0x2a5a2a, roughness:0.85});
-    let foliage=new THREE.Mesh(foliageGeo, foliageMat); foliage.position.set(x, trunkH+foliageR*0.3, z); foliage.castShadow=true; scene.add(foliage);
-    objs.push({x,z,w:foliageR*2,h:trunkH,cw,ch,trunkW,trunkH,foliageR,t:'tree',size:sizeType,collision:true, mesh:trunk, mesh2:foliage});
+  // HOUSES along path sides - linear pattern
+  for(let i=0;i<5;i++){
+    let z=300+i*320+Math.random()*40;
+    let side=Math.random()>0.5?1:-1;
+    let x=side*(120+Math.random()*40);
+    let sizeType=Math.floor(Math.random()*3);
+    let wallW=sizeType===0?70: sizeType===1?90:110;
+    let wallH=sizeType===0?50: sizeType===1?70:90;
+    let cw=wallW-10, ch=wallW-20;
+    let foundH=12;
+    let foundGeo=new THREE.BoxGeometry(wallW+10, foundH, wallW+10);
+    let foundMat=new THREE.MeshStandardMaterial({map:texStoneStrong, color:map.rockColor});
+    let found=new THREE.Mesh(foundGeo, foundMat); found.position.set(x,foundH/2,z); found.receiveShadow=true; found.castShadow=true; scene.add(found);
+    let wallGeo=new THREE.BoxGeometry(wallW, wallH, wallW);
+    let wallMat=new THREE.MeshStandardMaterial({map:texWoodStrong, color:map.houseColor});
+    let wall=new THREE.Mesh(wallGeo, wallMat); wall.position.set(x,foundH+wallH/2,z); wall.castShadow=true; wall.receiveShadow=true; scene.add(wall);
+    let roofH=wallW*0.6;
+    let roofGeo=new THREE.ConeGeometry(wallW*0.7, roofH, 4);
+    let roofMat=new THREE.MeshStandardMaterial({color:0x3e2723});
+    let roof=new THREE.Mesh(roofGeo, roofMat); roof.position.set(x,foundH+wallH+roofH/2,z); roof.rotation.y=Math.PI/4; roof.castShadow=true; scene.add(roof);
+    objs.push({x,z,w:wallW,h:wallH,cw,ch,t:'house',collision:true, mesh:wall, mesh2:found, mesh3:roof});
   }
 
+  // TREES along path - linear
   for(let i=0;i<20;i++){
-    let x=Math.random()*W,z=Math.random()*H;
-    let rockGeo=new THREE.DodecahedronGeometry(10,0);
-    let rockMat=new THREE.MeshStandardMaterial({map:texStone, color:0x5a5a5a});
-    let rock=new THREE.Mesh(rockGeo, rockMat); rock.position.set(x,5,z); rock.castShadow=true; rock.receiveShadow=true; rock.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI); scene.add(rock);
-    objs.push({x,z,w:20,h:20,cw:18,ch:14,t:'rock',collision:true, mesh:rock});
+    let z=100+i*90+Math.random()*30;
+    let side=Math.random()>0.5?1:-1;
+    let x=side*(60+Math.random()*80);
+    // avoid path center
+    if(Math.abs(x)<50) x=side*70;
+    let trunkH=60+Math.random()*80;
+    let foliageR=20+Math.random()*20;
+    let cw=18, ch=18;
+    let trunkGeo=new THREE.CylinderGeometry(foliageR*0.2, foliageR*0.35, trunkH, 8);
+    let trunkMat=new THREE.MeshStandardMaterial({map:texBarkStrong});
+    let trunk=new THREE.Mesh(trunkGeo, trunkMat); trunk.position.set(x,trunkH/2,z); trunk.castShadow=true; scene.add(trunk);
+    let foliageGeo=new THREE.IcosahedronGeometry(foliageR,1);
+    let foliageMat=new THREE.MeshStandardMaterial({map:texFoliageStrong, color:map.treeColor});
+    let foliage=new THREE.Mesh(foliageGeo, foliageMat); foliage.position.set(x,trunkH+foliageR*0.2,z); foliage.castShadow=true; scene.add(foliage);
+    objs.push({x,z,w:foliageR*2,h:trunkH,cw,ch,t:'tree',collision:true, mesh:trunk, mesh2:foliage});
   }
 
-  for(let i=0;i<16;i++){
-    let x=400+Math.random()*2400, z=400+Math.random()*2400;
+  // ROCKS scattered along path edges
+  for(let i=0;i<15;i++){
+    let z=Math.random()*H;
+    let x=(Math.random()>0.5?1:-1)*(90+Math.random()*80);
+    let rockGeo=new THREE.DodecahedronGeometry(8+Math.random()*6,0);
+    let rockMat=new THREE.MeshStandardMaterial({map:texStoneStrong, color:map.rockColor});
+    let rock=new THREE.Mesh(rockGeo, rockMat); rock.position.set(x,4,z); rock.castShadow=true; rock.receiveShadow=true; rock.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI); scene.add(rock);
+    objs.push({x,z,w:16,h:16,cw:14,ch:12,t:'rock',collision:true, mesh:rock});
+  }
+
+  // MONSTERS along path
+  for(let i=0;i<12;i++){
+    let z=250+i*130+Math.random()*40;
+    let x=(Math.random()*2-1)*60;
     let group=new THREE.Group();
     let bodyGeo=new THREE.CapsuleGeometry(7,18,4,8);
-    let bodyMat=new THREE.MeshStandardMaterial({color:0x4a2a2a});
+    let bodyMat=new THREE.MeshStandardMaterial({color:map.enemy});
     let body=new THREE.Mesh(bodyGeo, bodyMat); body.position.y=18; body.castShadow=true; group.add(body);
     let headGeo=new THREE.SphereGeometry(6,8,8);
     let headMat=new THREE.MeshStandardMaterial({color:0x6a4a3a});
     let head=new THREE.Mesh(headGeo, headMat); head.position.y=32; head.castShadow=true; group.add(head);
     group.position.set(x,0,z); scene.add(group);
-    mons.push({x,z,hp:80,max:80,alive:true,walk:0,bob:Math.random()*6.28,frozen:0,stunned:0, mesh:group});
+    mons.push({x,z,hp:85,max:85,alive:true,frozen:0,stunned:0, mesh:group});
   }
 
-  for(let i=0;i<14;i++){
-    let x=200+Math.random()*2800, z=200+Math.random()*2800;
-    let boxGeo=new THREE.BoxGeometry(18,12,14);
-    let boxMat=new THREE.MeshStandardMaterial({map:texWood, color:0x5d4037});
-    let box=new THREE.Mesh(boxGeo, boxMat); box.position.set(x,6,z); box.castShadow=true; box.receiveShadow=true; scene.add(box);
+  // CHESTS along path
+  for(let i=0;i<8;i++){
+    let z=200+i*220+Math.random()*30;
+    let x=(Math.random()*2-1)*50;
+    let boxGeo=new THREE.BoxGeometry(16,10,12);
+    let boxMat=new THREE.MeshStandardMaterial({map:texWoodStrong, color:0x5d4037});
+    let box=new THREE.Mesh(boxGeo, boxMat); box.position.set(x,5,z); box.castShadow=true; box.receiveShadow=true; scene.add(box);
     chests.push({x,z,opened:false, mesh:box});
+  }
+
+  // PORTAL GATE at end - z=1850
+  let gateZ=H-150;
+  let gateGroup=new THREE.Group();
+  // arch
+  let archGeo=new THREE.TorusGeometry(35,6,8,20, Math.PI);
+  let archMat=new THREE.MeshStandardMaterial({map:texStoneStrong, color:0x8a8a8a, emissive:0xFFD700, emissiveIntensity:0.15});
+  let arch=new THREE.Mesh(archGeo, archMat); arch.position.set(0,35,gateZ); arch.castShadow=true; gateGroup.add(arch);
+  // pillars
+  let pillarGeo=new THREE.BoxGeometry(12,70,12);
+  let pillarMat=new THREE.MeshStandardMaterial({map:texStoneStrong, color:0x6a6a6a});
+  let pillarL=new THREE.Mesh(pillarGeo, pillarMat); pillarL.position.set(-35,35,gateZ); pillarL.castShadow=true; gateGroup.add(pillarL);
+  let pillarR=new THREE.Mesh(pillarGeo, pillarMat); pillarR.position.set(35,35,gateZ); pillarR.castShadow=true; gateGroup.add(pillarR);
+  // portal energy
+  let portalGeo=new THREE.CircleGeometry(28,20);
+  let portalMat=new THREE.MeshStandardMaterial({color:mapIndex===0?0x8bc34a:mapIndex===1?0xff6f00:0x42a5f5, emissive:mapIndex===0?0x2e7d32:mapIndex===1?0xbf360c:0x0d47a1, emissiveIntensity:0.8, transparent:true, opacity:0.75, side:THREE.DoubleSide});
+  let portalEnergy=new THREE.Mesh(portalGeo, portalMat); portalEnergy.position.set(0,35,gateZ+2); gateGroup.add(portalEnergy);
+  // glow light
+  let portalLight=new THREE.PointLight(mapIndex===0?0x8bc34a:mapIndex===1?0xff6f00:0x42a5f5, 2, 200);
+  portalLight.position.set(0,35,gateZ);
+  scene.add(portalLight);
+  // floating runes
+  for(let i=0;i<4;i++){
+    let runeGeo=new THREE.BoxGeometry(3,6,1);
+    let runeMat=new THREE.MeshStandardMaterial({color:0xFFD700, emissive:0xFFD700, emissiveIntensity:0.6});
+    let rune=new THREE.Mesh(runeGeo, runeMat); let ang=i*Math.PI/2; rune.position.set(Math.cos(ang)*25,35+Math.sin(ang*2)*5,gateZ+4); rune.lookAt(0,35,gateZ); gateGroup.add(rune);
+  }
+  scene.add(gateGroup);
+  portal={x:0,z:gateZ, mesh:gateGroup, glow:portalEnergy, light:portalLight, energyMat:portalMat};
+
+  // PARTICLES ENVIRONMENT - 3 types based on map
+  createParticles(map.particles, mapIndex);
+
+  // reset player start
+  P.x=0; P.z=100;
+}
+
+function createParticles(type, mapIndex){
+  if(particleSystem) scene.remove(particleSystem);
+  let count= type==='forest'?250: type==='snow'?300:200;
+  particleGeo=new THREE.BufferGeometry();
+  let positions=new Float32Array(count*3);
+  let colors=new Float32Array(count*3);
+  let sizes=new Float32Array(count);
+  for(let i=0;i<count;i++){
+    positions[i*3]= (Math.random()-0.5)*W;
+    positions[i*3+1]= Math.random()*120+5;
+    positions[i*3+2]= Math.random()*H;
+    if(type==='forest'){
+      // pollen yellow/green
+      colors[i*3]=0.5+Math.random()*0.5; colors[i*3+1]=0.7+Math.random()*0.3; colors[i*3+2]=0.2+Math.random()*0.3;
+      sizes[i]=1.5+Math.random()*2.5;
+    } else if(type==='snow'){
+      colors[i*3]=0.9; colors[i*3+1]=0.9; colors[i*3+2]=1;
+      sizes[i]=2+Math.random()*3;
+    } else {
+      // dust gray
+      colors[i*3]=0.6+Math.random()*0.2; colors[i*3+1]=0.5+Math.random()*0.2; colors[i*3+2]=0.4+Math.random()*0.2;
+      sizes[i]=1+Math.random()*2;
+    }
+  }
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  particleGeo.setAttribute('color', new THREE.BufferAttribute(colors,3));
+  particleGeo.setAttribute('size', new THREE.BufferAttribute(sizes,1));
+
+  if(type==='snow'){
+    particleMat=new THREE.PointsMaterial({size:3, vertexColors:true, transparent:true, opacity:0.8, sizeAttenuation:true});
+  } else if(type==='forest'){
+    particleMat=new THREE.PointsMaterial({size:2.5, vertexColors:true, transparent:true, opacity:0.7, sizeAttenuation:true});
+  } else {
+    particleMat=new THREE.PointsMaterial({size:2, vertexColors:true, transparent:true, opacity:0.5, sizeAttenuation:true});
+  }
+  particleSystem=new THREE.Points(particleGeo, particleMat);
+  scene.add(particleSystem);
+  particles3D={type, count, positions, colors, sizes, baseY:[]};
+  for(let i=0;i<count;i++) particles3D.baseY.push(positions[i*3+1]);
+}
+
+function updateParticles(dt, time){
+  if(!particleGeo) return;
+  let pos=particleGeo.attributes.position.array;
+  for(let i=0;i<particles3D.count;i++){
+    let idx=i*3;
+    if(particles3D.type==='forest'){
+      // pollen floating slow, sway
+      pos[idx]+=Math.sin(time*0.5+i)*0.15;
+      pos[idx+1]+=Math.sin(time*0.3+i*0.7)*0.1;
+      pos[idx+2]+=Math.cos(time*0.4+i*0.5)*0.15;
+      // wrap
+      if(pos[idx]<-W/2) pos[idx]=W/2; if(pos[idx]>W/2) pos[idx]=-W/2;
+      if(pos[idx+2]<0) pos[idx+2]=H; if(pos[idx+2]>H) pos[idx+2]=0;
+      if(pos[idx+1]<2) pos[idx+1]=120; if(pos[idx+1]>130) pos[idx+1]=2;
+    } else if(particles3D.type==='snow'){
+      pos[idx]+=Math.sin(time*0.8+i)*0.3;
+      pos[idx+1]-=dt*20+Math.random()*10; // falling
+      pos[idx+2]+=Math.cos(time*0.6+i)*0.2;
+      if(pos[idx+1]<0){pos[idx+1]=130; pos[idx]= (Math.random()-0.5)*W; pos[idx+2]=Math.random()*H;}
+    } else {
+      // dust
+      pos[idx]+=Math.sin(time*0.3+i)*0.08;
+      pos[idx+1]+=Math.sin(time*0.2+i)*0.05;
+      pos[idx+2]+=Math.cos(time*0.3+i)*0.08;
+    }
+  }
+  particleGeo.attributes.position.needsUpdate=true;
+  // portal energy pulse
+  if(portal && portal.glow){
+    portal.glow.material.emissiveIntensity=0.8+Math.sin(time*3)*0.3;
+    portal.glow.rotation.z=time*0.5;
+    portal.light.intensity=1.5+Math.sin(time*2)*0.5;
   }
 }
 
@@ -590,21 +677,22 @@ function updatePlayerVisual(dt){
     if(playerMeshes.bootR) playerMeshes.bootR.position.z=walkR*0.3;
     if(playerMeshes.upArmL) playerMeshes.upArmL.rotation.x=Math.sin(P.walk+Math.PI)*0.5;
     if(playerMeshes.upArmR) playerMeshes.upArmR.rotation.x=Math.sin(P.walk)*0.5;
-    if(playerMeshes.cape) playerMeshes.cape.rotation.x=0.15+Math.sin(P.walk)*0.12;
-    if(playerMeshes.crystal){playerMeshes.crystal.rotation.y+=dt*2.5; playerMeshes.crystal.position.y=32+Math.sin(P.bob*2)*0.6;}
-    let bobY=Math.sin(P.bob)*1.5; playerGroup.position.y=bobY;
+    if(playerMeshes.crystal){playerMeshes.crystal.rotation.y+=dt*2.5;}
+    let bobY=Math.sin(P.bob)*1.2; playerGroup.position.y=bobY;
     if(Math.abs(P.velX)>1 || Math.abs(P.velZ)>1){let ang=Math.atan2(P.velX, P.velZ); playerGroup.rotation.y=ang;}
     if(P.atk>0){let prog=1-P.atk/14; let swing=Math.sin(prog*Math.PI)*1.5; if(playerMeshes.upArmR){playerMeshes.upArmR.rotation.x=-swing*1.8;}}
   } else {
     let t=P.deathT;
-    if(t<0.7){let k=t/0.7; if(playerMeshes.thighL){playerMeshes.thighL.rotation.x=-0.9*k; playerMeshes.thighL.position.y=16-k*8;} if(playerMeshes.thighR){playerMeshes.thighR.rotation.x=1.0*k;} if(playerMeshes.torso){playerMeshes.torso.rotation.x=0.4*k; playerMeshes.torso.position.z=k*3;}}
+    if(t<0.7){let k=t/0.7; if(playerMeshes.thighL){playerMeshes.thighL.rotation.x=-0.9*k; playerMeshes.thighL.position.y=16-k*8;} if(playerMeshes.torso){playerMeshes.torso.rotation.x=0.4*k; playerMeshes.torso.position.z=k*3;}}
     else if(t<1.8){let f=(t-0.7)/1.1; playerGroup.rotation.x=f*Math.PI/2*0.92; playerGroup.position.y=-f*10;}
     else {playerGroup.rotation.x=Math.PI/2*0.92; playerGroup.position.y=-10;}
   }
 }
 
 function checkCollision3D(nx, nz){
-  let pr=12;
+  let pr=13;
+  // walls boundaries
+  if(nx < -W/2+22 || nx > W/2-22) return {t:'wall'};
   for(let o of objs){ if(!o.collision) continue; let ox=o.x, oz=o.z, cw=o.cw, ch=o.ch; if(nx+pr > ox-cw/2 && nx-pr < ox+cw/2 && nz+pr > oz-ch/2 && nz-pr < oz+ch/2) return o; }
   return null;
 }
@@ -629,6 +717,7 @@ let raycaster=new THREE.Raycaster();
 raycaster.setFromCamera(mouse, camera);
 let intersect=raycaster.intersectObject(ground);
 if(intersect.length>0){ T={x:intersect[0].point.x, z:intersect[0].point.z}; return true; }
+if(intersect=raycaster.intersectObject(pathMesh)){ T={x:intersect[0].point.x, z:intersect[0].point.z}; return true; }
 return false;
 }
 canvas.addEventListener('click',e=>{handleTap(e.clientX,e.clientY);});
@@ -646,7 +735,7 @@ if(!m.alive) return;
 if(Math.hypot(m.x-P.x,m.z-P.z)<cls.weapon.range){
 let dmg=cls.weapon.dmg+Math.floor(P.attr.STR*0.8)+Math.floor(Math.random()*6);
 m.hp-=dmg;
-if(m.hp<=0){m.alive=false; m.mesh.visible=false; setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=400+Math.random()*2400; m.z=400+Math.random()*2400; m.mesh.position.set(m.x,0,m.z); m.mesh.visible=true;},6000); P.gold+=25; P.xp+=30; if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp;}}
+if(m.hp<=0){m.alive=false; m.mesh.visible=false; setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=(Math.random()*2-1)*60; m.z=P.z+200+Math.random()*200; m.mesh.position.set(m.x,0,m.z); m.mesh.visible=true;},5000); P.gold+=25; P.xp+=30; if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp;}}
 }
 });
 chests.forEach(c=>{if(!c.opened&&Math.hypot(c.x-P.x,c.z-P.z)<70){c.opened=true; c.mesh.visible=false; P.gold+=40;}});
@@ -705,18 +794,34 @@ P.dead=true; P.deathT=0; P.velX=0; P.velZ=0; J.active=false; T=null; P.atk=0;
 document.getElementById('deathText3d').classList.add('show');
 }
 function respawn(){
-P.dead=false; P.deathT=0; P.hp=Math.floor(P.maxHp*0.6); P.mana=Math.floor(P.maxMana*0.6); P.x=W/2; P.z=H/2; P.gold=Math.max(0,P.gold-50);
+P.dead=false; P.deathT=0; P.hp=Math.floor(P.maxHp*0.6); P.mana=Math.floor(P.maxMana*0.6); P.x=0; P.z=100; P.gold=Math.max(0,P.gold-50);
 playerGroup.rotation.x=0; playerGroup.position.y=0;
 document.getElementById('deathText3d').classList.remove('show');
 updateBars();
 }
+function nextMap(){
+  currentMap=(currentMap+1)%MAPS.length;
+  document.getElementById('mapName').textContent=MAPS[currentMap].short;
+  genLinearMap(currentMap);
+  createPlayerTextured();
+  P.x=0; P.z=100; P.hp=P.maxHp; P.mana=P.maxMana;
+  camOffset.set(0,360,380);
+  let msg=document.getElementById('portalMsg');
+  msg.textContent=`🗺️ ${MAPS[currentMap].name} - Mapa ${currentMap+1}/3`;
+  msg.classList.add('show');
+  setTimeout(()=>msg.classList.remove('show'),3000);
+  updateBars();
+}
+
 function startGame(){
 P.cls=selClass; let cls=CLASSES[P.cls];
-P.attr={...cls.base}; P.maxHp=cls.hp; P.hp=P.maxHp; P.maxMana=cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=300; P.x=W/2; P.z=H/2; P.dead=false; P.deathT=0;
-initSkills(); genWorldTextured(); createPlayerTextured();
+P.attr={...cls.base}; P.maxHp=cls.hp; P.hp=P.maxHp; P.maxMana=cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=300; P.x=0; P.z=100; P.dead=false; P.deathT=0;
+currentMap=0;
+initSkills(); genLinearMap(currentMap); createPlayerTextured();
 let ss=document.getElementById('start'); if(ss) ss.remove();
 document.getElementById('hint').style.display='block';
-setTimeout(()=>{let h=document.getElementById('hint'); if(h) h.style.display='none';},7000);
+setTimeout(()=>{let h=document.getElementById('hint'); if(h) h.style.display='none';},8000);
+document.getElementById('mapName').textContent=MAPS[currentMap].short;
 updateBars(); createSpells(); updateSpellCDs();
 camOffset.set(0,360,380);
 if(!gameOn){gameOn=true; requestAnimationFrame(loop);}
@@ -734,25 +839,31 @@ document.getElementById('clsName').textContent=CLASSES[P.cls].short;
 let last=performance.now();
 function loop(now){
 let dt=Math.min((now-last)/1000,0.05); last=now;
+let time=now*0.001;
+
 if(P.dead){
   P.deathT+=dt;
   let count=document.getElementById('deathCount3d'); if(count) count.textContent=(3.0-P.deathT).toFixed(1);
   let progress=Math.min(P.deathT/3.0,1);
-  let targetOffset=new THREE.Vector3(Math.sin(progress*0.6)*20, 40+ (1-progress)*15, 75+ (1-progress)*20);
+  let targetOffset=new THREE.Vector3(Math.sin(progress*0.6)*15, 35+ (1-progress)*12, 65+ (1-progress)*18);
   camOffset.lerp(targetOffset, dt*1.0);
   if(P.deathT>=3.0){ respawn(); camOffset.set(0,360,380); }
   updatePlayerVisual(dt);
+  updateParticles(dt,time);
   let camPos=new THREE.Vector3(P.x+camOffset.x, camOffset.y, P.z+camOffset.z);
   camera.position.lerp(camPos, dt*2.5);
-  camLookAt.set(P.x, 12, P.z); camera.lookAt(camLookAt);
+  camLookAt.set(P.x, 10, P.z); camera.lookAt(camLookAt);
   mons.forEach(m=>{if(m.alive) m.mesh.position.set(m.x,0,m.z);});
   renderer.render(scene,camera);
   updateBars(); updateSpellCDs();
   requestAnimationFrame(loop); return;
 }
+
 Object.keys(playerSkills).forEach(k=>{if(playerSkills[k].cd>0) playerSkills[k].cd=Math.max(0,playerSkills[k].cd-dt);});
 Object.keys(buffs).forEach(k=>{buffs[k]-=dt; if(buffs[k]<=0) delete buffs[k];});
 updateSpellCDs();
+updateParticles(dt,time);
+
 let targetX=0,targetZ=0;
 if(J.active){targetX=J.x; targetZ=J.y;}
 else if(T){let dx=T.x-P.x, dz=T.z-P.z, d=Math.hypot(dx,dz); if(d<22){T=null;} else {targetX=dx/d; targetZ=dz/d;}}
@@ -761,23 +872,36 @@ if(Math.hypot(P.velX,P.velZ)>1){
   let nx=P.x+P.velX*dt, nz=P.z+P.velZ*dt;
   let collX=checkCollision3D(nx,P.z), collZ=checkCollision3D(P.x,nz), collBoth=checkCollision3D(nx,nz);
   if(!collBoth){P.x=nx; P.z=nz;} else { if(!collX) P.x=nx; else if(!collZ) P.z=nz; }
-  P.x=Math.max(30,Math.min(W-30,P.x)); P.z=Math.max(30,Math.min(H-30,P.z));
+  // clamp to linear bounds
+  P.x=Math.max(-W/2+24,Math.min(W/2-24,P.x));
+  P.z=Math.max(20,Math.min(H-20,P.z));
+  // check portal
+  if(portal && Math.hypot(P.x-portal.x, P.z-portal.z)<45){
+    document.getElementById('portalMsg').classList.add('show');
+    if(Math.hypot(P.x-portal.x, P.z-portal.z)<28){
+      nextMap();
+    }
+  } else {
+    document.getElementById('portalMsg').classList.remove('show');
+  }
 }
 if(P.atk>0) P.atk--;
+
 mons.forEach(m=>{
 if(!m.alive) return;
 if(m.frozen>0){m.frozen-=dt; return;}
 if(m.stunned>0){m.stunned-=dt; return;}
 let dist=Math.hypot(m.x-P.x,m.z-P.z);
-if(dist<340){
+if(dist<360){
 let ang=Math.atan2(P.x-m.x,P.z-m.z);
-let sp=46;
+let sp=44;
 let nx=m.x+Math.sin(ang)*sp*dt, nz=m.z+Math.cos(ang)*sp*dt;
 if(!checkCollision3D(nx,nz)){m.x=nx; m.z=nz;}
 m.mesh.position.set(m.x,0,m.z); m.mesh.lookAt(P.x,0,P.z);
 if(dist<34&&Math.random()<0.04){P.hp-=7; updateBars(); if(P.hp<=0) triggerDeath();}
 }
 });
+
 projectiles.forEach((p,i)=>{
 let dx=p.tx-p.x, dz=p.tz-p.z; let d=Math.hypot(dx,dz);
 if(d<5){projectiles.splice(i,1); return;}
@@ -794,15 +918,19 @@ projectiles.splice(i,1); break;
 }
 }
 });
+
 updatePlayerVisual(dt);
 playerGroup.position.set(P.x, playerGroup.position.y, P.z);
+
 let desiredPos=new THREE.Vector3(P.x+camOffset.x, camOffset.y, P.z+camOffset.z);
 camera.position.lerp(desiredPos, dt*2.2);
 camLookAt.set(P.x, 14, P.z); camera.lookAt(camLookAt);
+
 renderer.render(scene,camera);
 updateBars();
 requestAnimationFrame(loop);
 }
+
 function onResize(){
   let w=document.getElementById('gc').clientWidth;
   let h=document.getElementById('gc').clientHeight;
@@ -811,8 +939,9 @@ function onResize(){
 }
 window.addEventListener('resize', onResize);
 onResize();
+
 createPlayerTextured();
-genWorldTextured();
+genLinearMap(0);
 updateBars();
 renderer.render(scene,camera);
 </script>
