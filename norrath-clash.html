@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>V16 REALISTA NORRATH</title>
+<title>V17 NORRATH IDÊNTICO PS2 - Casas e Árvores Gigantes + Colisão</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;font-family:system-ui,sans-serif}
-#gc{width:100vw;height:100vh;background:#0f1f0f;position:relative;overflow:hidden;max-width:480px;margin:0 auto;box-shadow:0 0 0 4px #000}
+#gc{width:100vw;height:100vh;background:#0a1a0a;position:relative;overflow:hidden;max-width:480px;margin:0 auto;box-shadow:0 0 0 4px #000}
 @media(min-width:500px){#gc{width:420px;height:90vh;max-height:860px;margin:5vh auto;border-radius:16px;border:4px solid #000}}
-#game{position:absolute;top:0;left:0;width:100%;height:100%;display:block;background:#1a2e1a;touch-action:none}
+#game{position:absolute;top:0;left:0;width:100%;height:100%;display:block;background:#142614;touch-action:none}
 #hud{position:absolute;top:0;left:0;right:0;height:44px;background:linear-gradient(#1a1a1a,#000);border-bottom:3px solid #000;z-index:20;display:flex;align-items:center;padding:0 6px;gap:5px;pointer-events:none}
 .hudItem{background:#000;border:2px solid #333;border-radius:10px;padding:3px 8px;color:#FFD700;font-weight:900;font-size:10px;display:flex;align-items:center;gap:3px;box-shadow:0 2px 0 #000}
 .hudItem.hp{border-color:#b71c1c;color:#ff5252}
@@ -18,7 +18,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 #joyZone{position:absolute;bottom:0;left:0;width:50%;height:45%;z-index:30;pointer-events:auto;touch-action:none}
 #atkZone{position:absolute;bottom:0;right:0;width:50%;height:45%;z-index:30;pointer-events:auto;touch-action:none}
 #joyBase{position:absolute;bottom:35px;left:35px;width:110px;height:110px;border-radius:55px;background:radial-gradient(circle at 30% 30%,#666,#222);border:4px solid #000;box-shadow:0 6px 0 #000,0 0 20px rgba(0,0,0,0.6);z-index:40;pointer-events:none}
-#joyStick{position:absolute;bottom:57px;left:57px;width:66px;height:66px;border-radius:33px;background:radial-gradient(circle at 30% 30%,#FFD700,#b8960c);border:4px solid #000;box-shadow:0 4px 0 #000,0 0 15px rgba(255,215,0,0.4);z-index:41;pointer-events:none;display:flex;justify-content:center;align-items:center;font-size:24px;transition:transform 0.08s}
+#joyStick{position:absolute;bottom:57px;left:57px;width:66px;height:66px;border-radius:33px;background:radial-gradient(circle at 30% 30%,#8bc34a,#33691e);border:4px solid #000;box-shadow:0 4px 0 #000,0 0 15px rgba(139,195,74,0.4);z-index:41;pointer-events:none;display:flex;justify-content:center;align-items:center;font-size:24px;transition:transform 0.08s}
 #atkBtn{position:absolute;bottom:35px;right:35px;width:80px;height:80px;border-radius:20px;background:linear-gradient(#e53935,#7f0000);border:4px solid #000;box-shadow:0 6px 0 #000;z-index:45;display:flex;justify-content:center;align-items:center;font-size:36px;pointer-events:auto;touch-action:none;cursor:pointer;transition:transform 0.08s}
 #atkBtn:active{transform:translateY(6px) scale(0.95);box-shadow:none}
 #spells{position:absolute;bottom:125px;right:15px;display:flex;flex-direction:column;gap:10px;z-index:50;pointer-events:auto}
@@ -38,9 +38,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 .deathBar{width:200px;height:8px;background:#333;border-radius:4px;margin-top:16px;overflow:hidden;border:2px solid #000}
 .deathBarFill{height:100%;background:linear-gradient(#ff5252,#b71c1c);width:0%;transition:width 0.1s}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-#start{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#1e2a1a,#0a0f0a 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
-.logo{font-size:38px;font-weight:900;color:#FFD700;text-shadow:4px 4px 0 #000;letter-spacing:2px;margin-top:10px}
-.sub{color:#8bc34a;font-weight:900;letter-spacing:3px;font-size:10px;margin:4px 0 10px 0}
+#start{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#1a2a1a,#050a05 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
+.logo{font-size:38px;font-weight:900;color:#8bc34a;text-shadow:4px 4px 0 #000;letter-spacing:2px;margin-top:10px}
+.sub{color:#FFD700;font-weight:900;letter-spacing:3px;font-size:10px;margin:4px 0 10px 0}
 .classGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:380px;margin:10px 0}
 .classCard{background:linear-gradient(#2a3a2a,#1a241a);border:3px solid #000;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 0 #000;cursor:pointer;min-height:140px;transition:transform 0.1s;position:relative;overflow:hidden}
 .classCard.selected{border-color:#8bc34a;box-shadow:0 0 18px #8bc34a,0 4px 0 #000;transform:scale(1.03)}
@@ -48,10 +48,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 .className{color:#8bc34a;font-weight:900;font-size:10px;margin:5px 0 2px 0}
 .classDesc{color:#a5d6a7;font-size:7px;line-height:1.3}
 .classWeapon{margin-top:6px;background:rgba(0,0,0,0.6);border-radius:8px;padding:4px;border:1px solid #333;color:#fff;font-size:7px;font-weight:900}
-.classWeapon b{color:#FFD700}
 .startBtn{margin-top:14px;background:linear-gradient(#8bc34a,#33691e);color:#000;border:4px solid #000;padding:12px 36px;border-radius:12px;font-weight:900;font-size:16px;box-shadow:0 5px 0 #000;cursor:pointer;min-width:200px}
 .startBtn:active{transform:translateY(5px);box-shadow:none}
-#hint{position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#8bc34a;font-size:10px;font-weight:900;padding:8px 14px;border-radius:16px;border:2px solid #8bc34a;z-index:15;pointer-events:none;text-align:center;max-width:85vw}
+#hint{position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);color:#8bc34a;font-size:9px;font-weight:900;padding:8px 14px;border-radius:16px;border:2px solid #8bc34a;z-index:15;pointer-events:none;text-align:center;max-width:85vw}
+#collisionDebug{position:absolute;top:50px;left:6px;background:rgba(0,0,0,0.7);color:#8bc34a;font-size:7px;padding:4px 6px;border-radius:6px;z-index:25;pointer-events:none;border:1px solid #333}
 </style>
 </head>
 <body>
@@ -63,6 +63,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 <div class="hudItem gold">💰 <span id="gold">0</span></div>
 <div class="hudItem">⭐ <span id="lvl">1</span> <span id="clsName">BARB</span></div>
 </div>
+<div id="collisionDebug">V17: COLISÃO ATIVA • Casas 2.5x • Árvores 4x • Broadroot 6x</div>
 <div id="joyZone"></div>
 <div id="atkZone"></div>
 <div id="joyBase"></div>
@@ -75,388 +76,356 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 <div class="deathBar"><div class="deathBarFill" id="deathFill"></div></div>
 <div class="deathSub" style="margin-top:8px;font-size:10px">Renascer em <span id="deathCount">3.0</span>s</div>
 </div>
-<div id="hint">V16: REALISTA NORRATH - Proporções humanas 7.5 cabeças</div>
+<div id="hint">V17: NORRATH PS2 IDÊNTICO - Casas 2.5x e Árvores 4x com colisão sólida</div>
 <div id="start">
 <div class="logo">NORRATH</div>
-<div class="sub">V16 REALISTA NORRATH</div>
-<div style="background:#000;border:2px solid #8bc34a;border-radius:10px;padding:6px 12px;color:#8bc34a;font-size:8px;font-weight:900;margin:6px 0;text-align:center">✅ PROPORÇÕES REALISTAS 7.5 CABEÇAS • CENÁRIO NORRATH • ANATOMIA HUMANA</div>
+<div class="sub">V17 IDÊNTICO PS2</div>
+<div style="background:#000;border:2px solid #8bc34a;border-radius:10px;padding:8px 12px;color:#8bc34a;font-size:8px;font-weight:900;margin:6px 0;text-align:center;line-height:1.4">✅ PROPORÇÃO PS2 IDÊNTICA<br>🏠 Casas 2.5x altura jogador (120px)<br>🌳 Árvores 4x (160px) + Broadroot 6x (240px)<br>🧱 Colisão sólida em tudo<br>🧍 Jogador 7.5 cabeças anatômico</div>
 <div class="classGrid" id="classGrid">
-<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Bárbaro norte - musculoso realista</div><div class="classWeapon">🪓 Machado Duplo Nórdico<br>Forjado, cabo longo</div></div>
-<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Elfo arqueiro - esguio realista</div><div class="classWeapon">🏹 Arco Longo Recurvo<br>1.8m altura realista</div></div>
-<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Clérigo armadura placa real</div><div class="classWeapon">🔨 Martelo Guerra Sagrado<br>Maça com cruz</div></div>
-<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Erudito manto longo realista</div><div class="classWeapon">🪄 Cajado Arcano 1.6m<br>Cristal flutuante</div></div>
+<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Bárbaro 1.9m musculoso</div><div class="classWeapon">🪓 Machado 1.2m<br>Colisão realista</div></div>
+<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Elfo 1.8m esguio</div><div class="classWeapon">🏹 Arco 1.8m<br>Igual altura corpo</div></div>
+<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Clérigo 1.85m placa</div><div class="classWeapon">🔨 Martelo 1.1m<br>2 mãos</div></div>
+<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Erudito 1.75m manto</div><div class="classWeapon">🪄 Cajado 1.6m<br>Cristal 10cm</div></div>
 </div>
-<button class="startBtn" id="btnStart">▶ JOGAR V16 REALISTA!</button>
-<div style="color:#666;font-size:7px;margin-top:10px;text-align:center;max-width:320px">Champions of Norrath: proporções humanas reais, cenário medieval escuro, árvores com casca, casas pedra+madeira, sombras suaves</div>
+<button class="startBtn" id="btnStart">▶ JOGAR V17 NORRATH PS2!</button>
+<div style="color:#666;font-size:7px;margin-top:10px;text-align:center;max-width:340px;line-height:1.4">Análise PS2: Kelethin Broadroot 6x jogador, casas 2.5x, carvalho 4x, porta 1.2x jogador. Colisão sólida impede atravessar tronco e paredes.</div>
 </div>
 </div>
 <script>
+// V17 - PROPORÇÃO IDÊNTICA NORRATH PS2
 const W=3200,H=3200;
-let P={x:1600,y:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velY:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0};
+let P={x:1600,y:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velY:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0, radius:10};
 let C={x:0,y:0,targetX:0,targetY:0}, T=null, gameOn=false, selClass='barbarian';
 let J={active:false,x:0,y:0,startX:0,startY:0};
 let objs=[], mons=[], chests=[], particles=[], projectiles=[], groundDetails=[];
 
 const CLASSES={
-barbarian:{name:'Barbarian',short:'BARB',icon:'🪓',color:'#8d6e63',skin:'#d7a77a',armor:'#4a3a2a',weapon:{name:'Machado Duplo',icon:'🪓',dmg:18,range:85},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:180,skills:[{id:'bash',n:'Bash',icon:'💥',mana:12,cd:3,dmg:35},{id:'shout',n:'Grito',icon:'📢',mana:20,cd:8,dmg:0}]},
-ranger:{name:'Ranger',short:'RANG',icon:'🏹',color:'#2e7d32',skin:'#e8c4a8',armor:'#1b5e20',weapon:{name:'Arco Longo',icon:'🏹',dmg:14,range:180},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:240,skills:[{id:'triple',n:'Triple',icon:'🏹',mana:15,cd:4,dmg:20},{id:'crit',n:'Mortal',icon:'🎯',mana:25,cd:6,dmg:60}]},
-cleric:{name:'Cleric',short:'CLER',icon:'🔨',color:'#b0bec5',skin:'#e8c4a8',armor:'#37474f',weapon:{name:'Martelo Sagrado',icon:'🔨',dmg:16,range:90},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:200,skills:[{id:'holy',n:'Holy',icon:'✨',mana:14,cd:3,dmg:30},{id:'heal',n:'Heal',icon:'💚',mana:25,cd:6,dmg:0}]},
-wizard:{name:'Wizard',short:'WIZ',icon:'🪄',color:'#4a148c',skin:'#d7c4a8',armor:'#1a237e',weapon:{name:'Varinha',icon:'🪄',dmg:12,range:160},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:210,skills:[{id:'fire',n:'Fire',icon:'🔥',mana:12,cd:2,dmg:45},{id:'frost',n:'Frost',icon:'❄️',mana:20,cd:5,dmg:25}]},
+barbarian:{name:'Barbarian',short:'BARB',color:'#8d6e63',skin:'#d7a77a',armor:'#4a3a2a',weapon:{dmg:18,range:85},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:180,skills:[{id:'bash',n:'Bash',icon:'💥',mana:12,cd:3,dmg:35},{id:'shout',n:'Grito',icon:'📢',mana:20,cd:8,dmg:0}]},
+ranger:{name:'Ranger',short:'RANG',color:'#2e7d32',skin:'#e8c4a8',armor:'#1b5e20',weapon:{dmg:14,range:180},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:240,skills:[{id:'triple',n:'Triple',icon:'🏹',mana:15,cd:4,dmg:20},{id:'crit',n:'Mortal',icon:'🎯',mana:25,cd:6,dmg:60}]},
+cleric:{name:'Cleric',short:'CLER',color:'#b0bec5',skin:'#e8c4a8',armor:'#37474f',weapon:{dmg:16,range:90},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:200,skills:[{id:'holy',n:'Holy',icon:'✨',mana:14,cd:3,dmg:30},{id:'heal',n:'Heal',icon:'💚',mana:25,cd:6,dmg:0}]},
+wizard:{name:'Wizard',short:'WIZ',color:'#4a148c',skin:'#d7c4a8',armor:'#1a237e',weapon:{dmg:12,range:160},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:210,skills:[{id:'fire',n:'Fire',icon:'🔥',mana:12,cd:2,dmg:45},{id:'frost',n:'Frost',icon:'❄️',mana:20,cd:5,dmg:25}]},
 };
 let playerSkills={}, buffs={};
 function initSkills(){playerSkills={}; buffs={}; CLASSES[P.cls].skills.forEach(s=>playerSkills[s.id]={cd:0});}
 
 function genWorld(){
 objs=[]; mons=[]; chests=[]; particles=[]; projectiles=[]; groundDetails=[];
-for(let i=0;i<200;i++){groundDetails.push({x:Math.random()*W,y:Math.random()*H,t:Math.floor(Math.random()*4),s:Math.random()*2+1});}
-for(let i=0;i<14;i++){let x=400+Math.random()*2400,y=400+Math.random()*2400; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<180)) objs.push({x,y,w:72,h:78,t:'house',bob:Math.random()*6.28});}
-for(let i=0;i<28;i++){let x=Math.random()*W,y=Math.random()*H; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<90)) objs.push({x,y,w:28,h:52,t:'tree',bob:Math.random()*6.28,variation:Math.random()});}
-for(let i=0;i<10;i++){let x=Math.random()*W,y=Math.random()*H; objs.push({x,y,w:18,h:14,t:'rock',bob:Math.random()*6.28});}
-for(let i=0;i<14;i++){mons.push({x:400+Math.random()*2400,y:400+Math.random()*2400,hp:70,max:70,alive:true,walk:0,bob:Math.random()*6.28,frozen:0,stunned:0,type:Math.floor(Math.random()*3)});}
-for(let i=0;i<10;i++){chests.push({x:200+Math.random()*2800,y:200+Math.random()*2800,opened:false,bob:Math.random()*6.28});}
+// ground details
+for(let i=0;i<300;i++){groundDetails.push({x:Math.random()*W,y:Math.random()*H,t:Math.floor(Math.random()*5),s:Math.random()*2+1});}
+// HOUSES - fewer, much larger, spaced 300px apart - PS2 scale 2.5x player
+// player height ~52px, house should be 130px tall
+for(let i=0;i<8;i++){
+  let attempts=0, x,y;
+  do{ x=500+Math.random()*2200; y=500+Math.random()*2200; attempts++; } while(objs.some(o=>Math.hypot(o.x-x,o.y-y)<320) && attempts<50);
+  let sizeType = Math.random()<0.5?0: (Math.random()<0.7?1:2); // 0 small cottage, 1 large tavern, 2 tower
+  let w,h,cw,ch;
+  if(sizeType===0){ w=96; h=96; cw=84; ch=56; } // cottage 2x player
+  else if(sizeType===1){ w=130; h=130; cw=112; ch=70; } // tavern 2.5x
+  else { w=80; h=160; cw=64; ch=64; } // tower 3x
+  objs.push({x,y,w,h,cw,ch,t:'house',size:sizeType,bob:Math.random()*6.28, collision:true});
+}
+// TREES - larger, 3 types PS2 identical
+// small oak 3x player (150px total), large pine 4x (200px), broadroot giant 6x (300px)
+for(let i=0;i<32;i++){
+  let attempts=0, x,y;
+  do{ x=Math.random()*W; y=Math.random()*H; attempts++; } while(objs.some(o=>Math.hypot(o.x-x,o.y-y)<120) && attempts<50);
+  let r=Math.random();
+  let sizeType = r<0.5?0: (r<0.85?1:2);
+  let w,h,cw,ch,trunkW,trunkH,foliageR;
+  if(sizeType===0){ w=50; h=70; cw=16; ch=16; trunkW=12; trunkH=65; foliageR=28; } // oak 3x
+  else if(sizeType===1){ w=70; h=90; cw=20; ch=20; trunkW=16; trunkH=85; foliageR=38; } // pine 4x
+  else { w=110; h=140; cw=36; ch=36; trunkW=32; trunkH=130; foliageR=58; } // broadroot 6x
+  objs.push({x,y,w,h,cw,ch,trunkW,trunkH,foliageR,t:'tree',size:sizeType,bob:Math.random()*6.28,variation:Math.random(), collision:true});
+}
+// ROCKS - small with collision
+for(let i=0;i<18;i++){
+  let x=Math.random()*W,y=Math.random()*H;
+  objs.push({x,y,w:22,h:18,cw:20,ch:14,t:'rock',bob:Math.random()*6.28, collision:true});
+}
+for(let i=0;i<16;i++){mons.push({x:400+Math.random()*2400,y:400+Math.random()*2400,hp:75,max:75,alive:true,walk:0,bob:Math.random()*6.28,frozen:0,stunned:0,type:Math.floor(Math.random()*3)});}
+for(let i=0;i<12;i++){chests.push({x:200+Math.random()*2800,y:200+Math.random()*2800,opened:false,bob:Math.random()*6.28});}
 }
 
 const cv=document.getElementById('game');
 const ctx=cv.getContext('2d');
 
-// REALISTIC DRAWING - NORRATH STYLE
 function drawGround(){
-  // base
-  ctx.fillStyle='#1e331e'; ctx.fillRect(0,0,cv.width,cv.height);
-  // darker forest floor variation
-  ctx.fillStyle='rgba(0,0,0,0.04)';
+  ctx.fillStyle='#132213'; ctx.fillRect(0,0,cv.width,cv.height);
+  // forest floor texture
+  ctx.fillStyle='rgba(0,0,0,0.06)';
   for(let x=-(C.x%64);x<cv.width;x+=64){
     for(let y=-(C.y%64);y<cv.height;y+=64){
-      if(((Math.floor((C.x+x)/64)+Math.floor((C.y+y)/64))%2)===0) ctx.fillRect(x,y,64,64);
+      if(((Math.floor((C.x+x)/64)+Math.floor((C.y+y)/64))%3)===0) ctx.fillRect(x,y,64,64);
     }
   }
-  // ground details - stones, grass tufts, dirt - world anchored
+  // dirt paths - world anchored, lighter
   groundDetails.forEach(g=>{
     let x=g.x-C.x,y=g.y-C.y; if(x<-20||x>440||y<-20||y>880) return;
-    if(g.t===0){ctx.fillStyle='rgba(0,0,0,0.12)'; ctx.beginPath(); ctx.ellipse(x,y, g.s*2, g.s*1.2,0,0,6.28); ctx.fill();}
-    else if(g.t===1){ctx.fillStyle='#2a4a2a'; ctx.fillRect(x,y,2,4);}
-    else if(g.t===2){ctx.fillStyle='#3a5a3a'; ctx.beginPath(); ctx.arc(x,y,1.5,0,6.28); ctx.fill();}
-    else {ctx.fillStyle='#1a2a1a'; ctx.fillRect(x,y,3,2);}
+    if(g.t===0){ctx.fillStyle='rgba(0,0,0,0.14)'; ctx.beginPath(); ctx.ellipse(x,y, g.s*2.2, g.s*1.3,0,0,6.28); ctx.fill();}
+    else if(g.t===1){ctx.fillStyle='#1e3a1e'; ctx.fillRect(x,y,2,5);}
+    else if(g.t===2){ctx.fillStyle='#2a4a2a'; ctx.beginPath(); ctx.arc(x,y,1.8,0,6.28); ctx.fill();}
+    else if(g.t===3){ctx.fillStyle='#0f1f0f'; ctx.fillRect(x,y,4,2);}
+    else {ctx.fillStyle='#3a5a3a'; ctx.fillRect(x,y,1,3);}
   });
-  // grid sutil
-  ctx.strokeStyle='rgba(0,0,0,0.05)'; ctx.lineWidth=1;
-  for(let x=-(C.x%96);x<cv.width;x+=96){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
-  for(let y=-(C.y%96);y<cv.height;y+=96){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
 }
 
-function drawHouseRealistic(o,x,y,bobY){
-  // sombra
-  ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+42,38,10,0,0,6.28); ctx.fill();
-  // fundação pedra realista
-  ctx.fillStyle='#3a3a3a'; ctx.fillRect(x-36,y+28+bobY,72,10);
-  ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(x-36,y+28+bobY,72,10);
-  ctx.fillStyle='#4a4a4a'; for(let i=0;i<4;i++){ctx.fillRect(x-34+i*18,y+30+bobY,8,6);}
-  // parede madeira com tábuas
-  ctx.fillStyle='#5d4037'; ctx.fillRect(x-32,y-18+bobY,64,48);
-  ctx.fillStyle='#4a2e1f'; for(let i=0;i<5;i++){let lx=x-32+i*13; ctx.fillRect(lx,y-18+bobY,2,48);}
-  ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-32,y-18+bobY,64,48);
-  // porta arqueada realista
-  ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-10,y+6+bobY,20,24);
-  ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.arc(x,y+6+bobY,10,Math.PI,0); ctx.fill();
-  ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(x,y+6+bobY,10,Math.PI,0); ctx.stroke(); ctx.strokeRect(x-10,y+6+bobY,20,24);
-  ctx.fillStyle='#3e2723'; ctx.fillRect(x-2,y+14+bobY,3,10); // maçaneta
-  // janela com cruz
-  ctx.fillStyle='#1a1a2a'; ctx.fillRect(x+12,y-6+bobY,14,14);
-  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x+12,y-6+bobY,14,14);
-  ctx.beginPath(); ctx.moveTo(x+19,y-6+bobY); ctx.lineTo(x+19,y+8+bobY); ctx.moveTo(x+12,y+1+bobY); ctx.lineTo(x+26,y+1+bobY); ctx.stroke();
-  ctx.fillStyle='rgba(255,215,0,0.15)'; ctx.fillRect(x+12,y-6+bobY,14,14); // luz
-  // telhado íngreme realista - mais alto
-  ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.moveTo(x-38,y-18+bobY); ctx.lineTo(x,y-52+bobY); ctx.lineTo(x+38,y-18+bobY); ctx.closePath(); ctx.fill();
-  ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(x-36,y-18+bobY); ctx.lineTo(x,y-48+bobY); ctx.lineTo(x+36,y-18+bobY); ctx.closePath(); ctx.fill();
+// HOUSE DRAWING - PS2 IDENTICAL SCALE 2.5x PLAYER
+function drawHousePS2(o,x,y,bobY){
+  // sombra grande realista
+  ctx.fillStyle='rgba(0,0,0,0.38)'; 
+  if(o.size===0) {ctx.beginPath(); ctx.ellipse(x,y+58,46,12,0,0,6.28); ctx.fill();}
+  else if(o.size===1) {ctx.beginPath(); ctx.ellipse(x,y+72,62,16,0,0,6.28); ctx.fill();}
+  else {ctx.beginPath(); ctx.ellipse(x,y+88,36,10,0,0,6.28); ctx.fill();}
+
+  if(o.size===2){
+    // TORRE PEDRA - 3x player, 160px altura
+    // base pedra
+    ctx.fillStyle='#3a3a3a'; ctx.fillRect(x-32,y-48+bobY,64,112);
+    // pedras individuais
+    ctx.fillStyle='#4a4a4a'; for(let row=0;row<7;row++){for(let col=0;col<4;col++){let px=x-30+col*16+(row%2)*8, py=y-46+row*16+bobY; ctx.fillRect(px,py,12,10); ctx.strokeStyle='#2a2a2a'; ctx.lineWidth=1; ctx.strokeRect(px,py,12,10);}}
+    ctx.strokeStyle='#000'; ctx.lineWidth=3.5; ctx.strokeRect(x-32,y-48+bobY,64,112);
+    // ameias topo
+    ctx.fillStyle='#3a3a3a'; for(let i=0;i<4;i++){ctx.fillRect(x-32+i*16,y-56+bobY,8,10);}
+    ctx.strokeStyle='#000'; ctx.lineWidth=2.5; for(let i=0;i<4;i++){ctx.strokeRect(x-32+i*16,y-56+bobY,8,10);}
+    // porta arqueada grande
+    ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-12,y+36+bobY,24,28);
+    ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.arc(x,y+36+bobY,12,Math.PI,0); ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-12,y+36+bobY,24,28); ctx.beginPath(); ctx.arc(x,y+36+bobY,12,Math.PI,0); ctx.stroke();
+    // janelas estreitas
+    ctx.fillStyle='#1a1a2a'; ctx.fillRect(x-20,y-20+bobY,6,20); ctx.fillRect(x+14,y-20+bobY,6,20);
+    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x-20,y-20+bobY,6,20); ctx.strokeRect(x+14,y-20+bobY,6,20);
+    ctx.fillStyle='rgba(255,180,0,0.2)'; ctx.fillRect(x-20,y-20+bobY,6,20); ctx.fillRect(x+14,y-20+bobY,6,20);
+    // colisão debug
+    // ctx.strokeStyle='rgba(255,0,0,0.3)'; ctx.strokeRect(x-o.cw/2,y-o.ch/2+30+bobY,o.cw,o.ch);
+    return;
+  }
+
+  let isLarge = o.size===1;
+  let houseW = isLarge?112:84;
+  let houseH = isLarge?70:52;
+  let roofH = isLarge?62:48;
+  let baseY = y+ (isLarge?38:30);
+
+  // fundação pedra alta realista - 14-18px
+  ctx.fillStyle='#3a3a3a'; ctx.fillRect(x-houseW/2-4,baseY+bobY,houseW+8,isLarge?16:12);
+  ctx.fillStyle='#4a4a4a'; for(let i=0;i<(isLarge?7:5);i++){ctx.fillRect(x-houseW/2-2+i*(isLarge?16:16),baseY+2+bobY,10,8);}
+  ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-houseW/2-4,baseY+bobY,houseW+8,isLarge?16:12);
+
+  // parede madeira - tábuas verticais com textura
+  ctx.fillStyle='#5d4037'; ctx.fillRect(x-houseW/2,baseY-houseH+bobY,houseW,houseH);
+  ctx.fillStyle='#4a2e1f'; for(let i=0;i<(isLarge?8:6);i++){let lx=x-houseW/2+i*(houseW/(isLarge?8:6)); ctx.fillRect(lx,baseY-houseH+bobY,2.5,houseH);}
+  // vigas horizontais
+  ctx.fillStyle='#3e2723'; ctx.fillRect(x-houseW/2,baseY-houseH+bobY,houseW,4); ctx.fillRect(x-houseW/2,baseY-8+bobY,houseW,4);
+  ctx.strokeStyle='#000'; ctx.lineWidth=3.2; ctx.strokeRect(x-houseW/2,baseY-houseH+bobY,houseW,houseH);
+
+  // porta - 1.2x jogador (62px altura porta, jogador 52px)
+  let doorW = isLarge?22:18; let doorH = isLarge?32:28;
+  ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-doorW/2,baseY-doorH+bobY,doorW,doorH);
+  ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.arc(x,baseY-doorH+bobY,doorW/2,Math.PI,0); ctx.fill();
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.8; ctx.strokeRect(x-doorW/2,baseY-doorH+bobY,doorW,doorH); ctx.beginPath(); ctx.arc(x,baseY-doorH+bobY,doorW/2,Math.PI,0); ctx.stroke();
+  ctx.fillStyle='#3e2723'; ctx.fillRect(x+doorW/2-5,baseY-10+bobY,3,8); // maçaneta ferro
+
+  // janela com cruz e luz
+  let winX = x+ (isLarge?28:22); let winY = baseY-houseH+ (isLarge?18:14);
+  ctx.fillStyle='#1a1a2a'; ctx.fillRect(winX,winY,16,16);
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.2; ctx.strokeRect(winX,winY,16,16);
+  ctx.beginPath(); ctx.moveTo(winX+8,winY); ctx.lineTo(winX+8,winY+16); ctx.moveTo(winX,winY+8); ctx.lineTo(winX+16,winY+8); ctx.stroke();
+  ctx.fillStyle='rgba(255,200,50,0.22)'; ctx.fillRect(winX,winY,16,16);
+
+  if(isLarge){
+    // segunda janela pra taverna grande
+    let winX2 = x-44; ctx.fillStyle='#1a1a2a'; ctx.fillRect(winX2,winY,16,16); ctx.strokeStyle='#000'; ctx.lineWidth=2.2; ctx.strokeRect(winX2,winY,16,16);
+    ctx.beginPath(); ctx.moveTo(winX2+8,winY); ctx.lineTo(winX2+8,winY+16); ctx.moveTo(winX2,winY+8); ctx.lineTo(winX2+16,winY+8); ctx.stroke();
+    ctx.fillStyle='rgba(255,200,50,0.22)'; ctx.fillRect(winX2,winY,16,16);
+  }
+
+  // telhado íngreme PS2 - 45-60px altura, telhas
+  ctx.fillStyle='#1e0f0a'; ctx.beginPath(); ctx.moveTo(x-houseW/2-10,baseY-houseH+bobY); ctx.lineTo(x,baseY-houseH-roofH+bobY); ctx.lineTo(x+houseW/2+10,baseY-houseH+bobY); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(x-houseW/2-8,baseY-houseH+bobY); ctx.lineTo(x,baseY-houseH-roofH+6+bobY); ctx.lineTo(x+houseW/2+8,baseY-houseH+bobY); ctx.closePath(); ctx.fill();
   // telhas linhas
-  ctx.strokeStyle='#1a0f0a'; ctx.lineWidth=1; for(let i=0;i<5;i++){let yy=y-44+bobY+i*6; ctx.beginPath(); ctx.moveTo(x-30+i*2,yy); ctx.lineTo(x+30-i*2,yy); ctx.stroke();}
-  ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x-38,y-18+bobY); ctx.lineTo(x,y-52+bobY); ctx.lineTo(x+38,y-18+bobY); ctx.stroke();
-  // chaminé
-  ctx.fillStyle='#2a2a2a'; ctx.fillRect(x+18,y-44+bobY,10,22);
-  ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(x+18,y-44+bobY,10,22);
-  ctx.fillStyle='rgba(100,100,100,0.3)'; ctx.beginPath(); ctx.arc(x+23,y-48+bobY,6,0,6.28); ctx.fill();
+  ctx.strokeStyle='#2a1a0a'; ctx.lineWidth=1; for(let i=0;i<7;i++){let yy=baseY-houseH-roofH+12+i*8+bobY; let wAtY = (houseW+16)*(1 - i/9); ctx.beginPath(); ctx.moveTo(x-wAtY/2,yy); ctx.lineTo(x+wAtY/2,yy); ctx.stroke();}
+  ctx.strokeStyle='#000'; ctx.lineWidth=3.5; ctx.beginPath(); ctx.moveTo(x-houseW/2-10,baseY-houseH+bobY); ctx.lineTo(x,baseY-houseH-roofH+bobY); ctx.lineTo(x+houseW/2+10,baseY-houseH+bobY); ctx.stroke();
+
+  // chaminé grande pedra
+  let chimX = x+ (isLarge?36:26); let chimW = isLarge?14:10; let chimH = isLarge?38:30;
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(chimX,baseY-houseH-roofH+12+bobY,chimW,chimH);
+  ctx.fillStyle='#3a3a3a'; for(let i=0;i<3;i++){ctx.fillRect(chimX+1,baseY-houseH-roofH+14+i*10+bobY,chimW-2,6);}
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.8; ctx.strokeRect(chimX,baseY-houseH-roofH+12+bobY,chimW,chimH);
+  // fumaça
+  ctx.fillStyle='rgba(120,120,120,0.25)'; ctx.beginPath(); ctx.arc(chimX+chimW/2,baseY-houseH-roofH+4+bobY,8,0,6.28); ctx.fill();
+  ctx.beginPath(); ctx.arc(chimX+chimW/2+3,baseY-houseH-roofH-2+bobY,6,0,6.28); ctx.fill();
 }
 
-function drawTreeRealistic(o,x,y,bobY){
-  ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+36,18,6,0,0,6.28); ctx.fill();
-  // tronco realista - mais fino e alto, com casca
-  let trunkH=36+o.variation*10;
-  ctx.fillStyle='#2a1a0a'; ctx.fillRect(x-5,y-8+bobY,10,trunkH);
-  ctx.fillStyle='#3e2723'; ctx.fillRect(x-3,y-8+bobY,3,trunkH);
-  ctx.fillStyle='#1a0f0a'; ctx.fillRect(x+2,y-8+bobY,1,trunkH);
-  // textura casca
-  ctx.fillStyle='#1a0f0a'; for(let i=0;i<4;i++){ctx.fillRect(x-4+Math.random()*6,y+bobY+i*8,4,1);}
-  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x-5,y-8+bobY,10,trunkH);
-  // folhagem em camadas realista - não bola perfeita
-  let foliageY=y-20+bobY;
-  // camada trás escura
-  ctx.fillStyle='#0f2a0f'; ctx.beginPath(); ctx.ellipse(x-4,foliageY+4,20,22,0,0,6.28); ctx.fill();
-  ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x+3,foliageY,22,24,0,0,6.28); ctx.fill();
-  ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.ellipse(x,foliageY-6,16,18,0,0,6.28); ctx.fill();
-  ctx.fillStyle='#3a6a3a'; ctx.beginPath(); ctx.ellipse(x-2,foliageY-12,10,10,0,0,6.28); ctx.fill();
-  // contorno suave
-  ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.ellipse(x,foliageY,22,24,0,0,6.28); ctx.stroke();
+// TREE DRAWING - PS2 IDENTICAL - 3x, 4x, 6x player
+function drawTreePS2(o,x,y,bobY){
+  // sombra proporcional ao tamanho
+  let shadowR = o.size===0?20: o.size===1?28: 44;
+  ctx.fillStyle='rgba(0,0,0,0.32)'; ctx.beginPath(); ctx.ellipse(x,y+o.trunkH/2+8,shadowR,shadowR*0.35,0,0,6.28); ctx.fill();
+
+  let trunkW = o.trunkW; let trunkH = o.trunkH;
+  let foliageY = y - trunkH*0.15;
+
+  // TRONCO - realista com casca, raízes, textura
+  // raízes
+  ctx.fillStyle='#1a0f0a'; ctx.beginPath(); ctx.ellipse(x-8,y+trunkH/2-4+bobY,12,5,0,0,6.28); ctx.fill(); ctx.beginPath(); ctx.ellipse(x+8,y+trunkH/2-4+bobY,12,5,0,0,6.28); ctx.fill();
+  // tronco principal
+  ctx.fillStyle='#2a1a0a'; ctx.fillRect(x-trunkW/2,y-trunkH/2+bobY,trunkW,trunkH);
+  // luz casca
+  ctx.fillStyle='#3e2723'; ctx.fillRect(x-trunkW/2+2,y-trunkH/2+bobY,4,trunkH);
+  ctx.fillStyle='#1a0f0a'; ctx.fillRect(x+trunkW/2-3,y-trunkH/2+bobY,2,trunkH);
+  // textura casca linhas horizontais
+  ctx.fillStyle='#1a0f0a'; for(let i=0;i<trunkH/12;i++){let yy=y-trunkH/2+i*12+Math.random()*4+bobY; ctx.fillRect(x-trunkW/2+1,yy,trunkW-2,1.5);}
+  // musgo
+  if(o.variation>0.5){ctx.fillStyle='#1a3a1a'; ctx.fillRect(x-trunkW/2,y-trunkH/2+trunkH*0.6+bobY,3,trunkH*0.3);}
+  ctx.strokeStyle='#000'; ctx.lineWidth=o.size===2?3:2.2; ctx.strokeRect(x-trunkW/2,y-trunkH/2+bobY,trunkW,trunkH);
+
+  // GALHOS para árvores grandes
+  if(o.size>=1){
+    ctx.strokeStyle='#2a1a0a'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x,y-trunkH*0.3+bobY); ctx.lineTo(x-18,y-trunkH*0.5+bobY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,y-trunkH*0.2+bobY); ctx.lineTo(x+16,y-trunkH*0.45+bobY); ctx.stroke();
+  }
+  if(o.size===2){
+    ctx.strokeStyle='#2a1a0a'; ctx.lineWidth=6; ctx.beginPath(); ctx.moveTo(x,y-trunkH*0.4+bobY); ctx.lineTo(x-30,y-trunkH*0.7+bobY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,y-trunkH*0.35+bobY); ctx.lineTo(x+28,y-trunkH*0.65+bobY); ctx.stroke();
+  }
+
+  // FOLHAGEM - em camadas, não bola perfeita, PS2 style
+  let fr = o.foliageR;
+  if(o.size===0){
+    // carvalho pequeno 3x - 3 camadas
+    ctx.fillStyle='#0f2a0f'; ctx.beginPath(); ctx.ellipse(x-6,foliageY+8, fr+4, fr+2,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x+5,foliageY+4, fr+2, fr+4,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.ellipse(x,foliageY-2, fr, fr+6,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#3a6a3a'; ctx.beginPath(); ctx.ellipse(x-2,foliageY-10, fr-8, fr-4,0,0,6.28); ctx.fill();
+  } else if(o.size===1){
+    // pinheiro grande 4x - mais alto que largo, camadas
+    ctx.fillStyle='#0a1f0a'; ctx.beginPath(); ctx.ellipse(x,foliageY+12, fr+6, fr+10,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#122f12'; ctx.beginPath(); ctx.ellipse(x-4,foliageY+4, fr+4, fr+8,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x+3,foliageY-2, fr+2, fr+6,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.ellipse(x,foliageY-10, fr-2, fr+2,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#3a6a3a'; ctx.beginPath(); ctx.ellipse(x-1,foliageY-20, fr-10, fr-6,0,0,6.28); ctx.fill();
+  } else {
+    // BROADROOT GIGANTE 6x - Kelethin style - ENORME
+    ctx.fillStyle='#081408'; ctx.beginPath(); ctx.ellipse(x-10,foliageY+18, fr+12, fr+16,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#0f2a0f'; ctx.beginPath(); ctx.ellipse(x+8,foliageY+12, fr+10, fr+14,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#122f12'; ctx.beginPath(); ctx.ellipse(x-5,foliageY, fr+8, fr+12,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x+4,foliageY-8, fr+4, fr+8,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.ellipse(x,foliageY-18, fr, fr+4,0,0,6.28); ctx.fill();
+    ctx.fillStyle='#3a6a3a'; ctx.beginPath(); ctx.ellipse(x-3,foliageY-30, fr-12, fr-8,0,0,6.28); ctx.fill();
+    // plataformas elfo madeira no tronco gigante (Kelethin)
+    ctx.fillStyle='#4a3a2a'; ctx.fillRect(x-fr/2,y-trunkH*0.6+bobY,fr,6); ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.strokeRect(x-fr/2,y-trunkH*0.6+bobY,fr,6);
+    ctx.fillStyle='#5d4037'; ctx.fillRect(x-fr/3,y-trunkH*0.2+bobY,fr*0.6,6); ctx.strokeRect(x-fr/3,y-trunkH*0.2+bobY,fr*0.6,6);
+  }
+  // contorno suave folhagem
+  ctx.strokeStyle='rgba(0,0,0,0.4)'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.ellipse(x,foliageY, fr, fr+4,0,0,6.28); ctx.stroke();
+
+  // colisão debug visual - descomente pra ver
+  // ctx.strokeStyle='rgba(255,0,0,0.4)'; ctx.lineWidth=1; ctx.strokeRect(x-o.cw/2,y-o.ch/2+o.trunkH/2-8,o.cw,o.ch);
 }
 
-function drawRock(o,x,y,bobY){
-  ctx.fillStyle='rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(x,y+8,12,4,0,0,6.28); ctx.fill();
-  ctx.fillStyle='#4a4a4a'; ctx.beginPath(); ctx.ellipse(x,y+bobY,12,8,0,0,6.28); ctx.fill();
-  ctx.fillStyle='#5a5a5a'; ctx.beginPath(); ctx.ellipse(x-2,y-2+bobY,8,5,0,0,6.28); ctx.fill();
-  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(x,y+bobY,12,8,0,0,6.28); ctx.stroke();
+function drawRockPS2(o,x,y,bobY){
+  ctx.fillStyle='rgba(0,0,0,0.28)'; ctx.beginPath(); ctx.ellipse(x,y+10,14,5,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#4a4a4a'; ctx.beginPath(); ctx.ellipse(x,y+2+bobY,16,10,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#5a5a5a'; ctx.beginPath(); ctx.ellipse(x-3,y+bobY,10,6,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#6a6a6a'; ctx.beginPath(); ctx.ellipse(x-2,y-2+bobY,5,3,0,0,6.28); ctx.fill();
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.2; ctx.beginPath(); ctx.ellipse(x,y+2+bobY,16,10,0,0,6.28); ctx.stroke();
 }
 
-function drawPlayerNorrath(px,py){
+function drawPlayerPS2(px,py){
 let cls=CLASSES[P.cls];
 let isMoving=!P.dead && Math.hypot(P.velX,P.velY)>5;
 let kneelProgress=0, fallProgress=0;
-if(P.dead){
-  let t=P.deathT;
-  if(t<0.7) kneelProgress=t/0.7;
-  else if(t<1.8){ kneelProgress=1; fallProgress=(t-0.7)/1.1; }
-  else { kneelProgress=1; fallProgress=1; }
-}
-if(isMoving){P.walk+=0.22; P.bob+=0.16;} else {P.walk*=0.88; P.bob*=0.88;}
-let bobY = P.dead ? 0 : Math.sin(P.bob)*1.2;
-let walkL = P.dead ? 0 : Math.sin(P.walk)*4;
-let walkR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*4;
-let armSwingL = P.dead ? 0 : Math.sin(P.walk)*2;
-let armSwingR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*2;
+if(P.dead){let t=P.deathT; if(t<0.7) kneelProgress=t/0.7; else if(t<1.8){ kneelProgress=1; fallProgress=(t-0.7)/1.1; } else { kneelProgress=1; fallProgress=1; }}
+if(isMoving){P.walk+=0.20; P.bob+=0.14;} else {P.walk*=0.88; P.bob*=0.88;}
+let bobY = P.dead ? 0 : Math.sin(P.bob)*1.0;
+let walkL = P.dead ? 0 : Math.sin(P.walk)*3.5;
+let walkR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*3.5;
+let armSwingL = P.dead ? 0 : Math.sin(P.walk)*1.8;
+let armSwingR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*1.8;
 
-// sombra realista
-if(!P.dead || kneelProgress<1){
-  ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(px,py+22,10,4,0,0,6.28); ctx.fill();
-} else {
-  ctx.fillStyle='rgba(0,0,0,0.22)'; ctx.beginPath(); ctx.ellipse(px+14,py+8,20,7,0,0,6.28); ctx.fill();
-}
+if(!P.dead || kneelProgress<1){ctx.fillStyle='rgba(0,0,0,0.38)'; ctx.beginPath(); ctx.ellipse(px,py+24,11,4.5,0,0,6.28); ctx.fill();}
+else {ctx.fillStyle='rgba(0,0,0,0.24)'; ctx.beginPath(); ctx.ellipse(px+14,py+10,22,8,0,0,6.28); ctx.fill();}
 
-ctx.save();
-ctx.translate(px,py+bobY);
-if(!P.dead) ctx.scale(P.f,1);
+ctx.save(); ctx.translate(px,py+bobY); if(!P.dead) ctx.scale(P.f,1);
 
-// DEATH - realista anatômico
 if(P.dead){
   if(kneelProgress>0 && fallProgress<0.01){
     let k=kneelProgress;
     ctx.save(); ctx.translate(0, k*10);
-    // pernas ajoelhando - realista: joelho no chão, outro pé apoiado
-    ctx.fillStyle='#2a2a2a'; // calça
-    ctx.save(); ctx.translate(-2,6); ctx.rotate(-0.9*k);
-    ctx.fillRect(-2,0,4,16); // perna trás dobrada
-    ctx.fillStyle='#1a1a1a'; ctx.fillRect(-3,14,5,4); // bota
-    ctx.restore();
-    ctx.save(); ctx.translate(3,4); ctx.rotate(1.0*k);
-    ctx.fillStyle='#2a2a2a'; ctx.fillRect(-2,0,4,12);
-    ctx.fillStyle='#1a1a1a'; ctx.fillRect(-3,10,5,4);
-    ctx.restore();
-    // tronco curvado pra frente
+    ctx.fillStyle='#2a2a2a'; ctx.save(); ctx.translate(-2,6); ctx.rotate(-0.9*k); ctx.fillRect(-2,0,4,16); ctx.fillStyle='#1a1a1a'; ctx.fillRect(-3,14,5,4); ctx.restore();
+    ctx.save(); ctx.translate(3,4); ctx.rotate(1.0*k); ctx.fillStyle='#2a2a2a'; ctx.fillRect(-2,0,4,12); ctx.fillStyle='#1a1a1a'; ctx.fillRect(-3,10,5,4); ctx.restore();
     ctx.save(); ctx.translate(0, -1*k); ctx.rotate(0.35*k);
-    ctx.fillStyle=cls.armor; ctx.fillRect(-6,-16,12,18);
-    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-6,-16,12,18);
-    // braços caindo
+    ctx.fillStyle=cls.armor; ctx.fillRect(-6,-16,12,18); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-6,-16,12,18);
     ctx.fillStyle=cls.skin; ctx.fillRect(-9,-14+armSwingL,3,12); ctx.fillRect(6,-14+armSwingR,3,12);
-    // cabeça caindo
     ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,-22+5*k,6,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
     if(k>0.6){ctx.fillStyle='#000'; ctx.font='bold 7px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-21+5*k);}
-    ctx.restore();
-    ctx.restore();
+    ctx.restore(); ctx.restore();
   } else if(fallProgress>0){
-    let f=fallProgress;
-    ctx.save();
-    ctx.rotate(f*Math.PI/2 *0.88);
-    ctx.translate(f*10, f*5);
-    // corpo deitado realista
-    ctx.fillStyle='#2a2a2a'; ctx.fillRect(-3,4,4,16); ctx.fillRect(2,4,4,16); // pernas esticadas
-    ctx.fillStyle='#1a1a1a'; ctx.fillRect(-4,18,5,3); ctx.fillRect(1,18,5,3); // botas
-    ctx.fillStyle=cls.armor; ctx.fillRect(-6,-14,12,18); // torso
-    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-6,-14,12,18);
-    ctx.fillStyle=cls.skin; ctx.fillRect(-9,-12,3,14); ctx.fillRect(6,-12,3,14); // braços
+    let f=fallProgress; ctx.save(); ctx.rotate(f*Math.PI/2 *0.88); ctx.translate(f*10, f*5);
+    ctx.fillStyle='#2a2a2a'; ctx.fillRect(-3,4,4,16); ctx.fillRect(2,4,4,16);
+    ctx.fillStyle='#1a1a1a'; ctx.fillRect(-4,18,5,3); ctx.fillRect(1,18,5,3);
+    ctx.fillStyle=cls.armor; ctx.fillRect(-6,-14,12,18); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-6,-14,12,18);
+    ctx.fillStyle=cls.skin; ctx.fillRect(-9,-12,3,14); ctx.fillRect(6,-12,3,14);
     ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,-20,6,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
     ctx.fillStyle='#000'; ctx.font='bold 7px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-19);
-    // arma caída
     ctx.save(); ctx.translate(16,-2); ctx.rotate(0.6);
     if(P.cls==='barbarian'){ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,3,20); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-8,0,16,8);}
     else if(P.cls==='ranger'){ctx.fillStyle='#4a2a0a'; ctx.fillRect(0,0,22,2);}
     else if(P.cls==='cleric'){ctx.fillStyle='#b8960c'; ctx.fillRect(0,-6,3,22);}
     else {ctx.fillStyle='#4a148c'; ctx.fillRect(0,0,18,3); ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(20,1,4,0,6.28); ctx.fill();}
-    ctx.restore();
-    ctx.restore();
+    ctx.restore(); ctx.restore();
   }
-  ctx.restore();
-  return;
+  ctx.restore(); return;
 }
 
-// ATAQUE - arma realista em swing
 if(P.atk>0){
-  let prog=1-P.atk/14;
-  let swing=Math.sin(prog*Math.PI)*1.4;
+  let prog=1-P.atk/14; let swing=Math.sin(prog*Math.PI)*1.4;
   ctx.save(); ctx.translate(7, -8); ctx.rotate(-0.3-swing*1.7);
-  if(P.cls==='barbarian'){
-    // machado nórdico realista - cabo longo madeira, lâmina grande curva
-    ctx.fillStyle='#2a1a0a'; ctx.fillRect(0,0,4,26); // cabo longo
-    ctx.fillStyle='#5d4037'; ctx.fillRect(1,2,2,22);
-    ctx.fillStyle='#b0bec5'; ctx.beginPath(); ctx.moveTo(4,-6); ctx.lineTo(4,12); ctx.lineTo(22,8); ctx.lineTo(24,0); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.stroke();
-    ctx.fillStyle='#78909c'; ctx.beginPath(); ctx.moveTo(4,-5); ctx.lineTo(20,0); ctx.strokeStyle='#78909c'; ctx.lineWidth=1; ctx.stroke();
-  }
-  else if(P.cls==='ranger'){
-    // arco recurvo realista 1.8m
-    ctx.strokeStyle='#3e2723'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(2,6,18, -0.8, 0.8); ctx.stroke();
-    ctx.strokeStyle='#8d6e63'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(2,6,18, -0.8, 0.8); ctx.stroke();
-    ctx.fillStyle='#FFD700'; ctx.fillRect(16,-2,12,2); // flecha
-    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(28,-2); ctx.lineTo(32,0); ctx.lineTo(28,2); ctx.fill();
-  }
-  else if(P.cls==='cleric'){
-    // martelo de guerra realista
-    ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,5,28); // cabo
-    ctx.fillStyle='#FFD700'; ctx.fillRect(-10,-10,20,12); // cabeça martelo
-    ctx.fillStyle='#fff8e1'; ctx.fillRect(-8,-12,16,4); ctx.fillStyle='#b8960c'; ctx.fillRect(-10,-10,20,2);
-    ctx.fillStyle='#ffeb3b'; ctx.beginPath(); ctx.arc(0,-16,5,0,6.28); ctx.fill(); // aura
-  }
-  else {
-    // cajado 1.6m com cristal
-    ctx.fillStyle='#2a1a4a'; ctx.fillRect(0,0,4,32);
-    ctx.fillStyle='#7c4dff'; ctx.fillRect(1,0,2,30);
-    ctx.fillStyle='#e1bee7'; ctx.beginPath(); ctx.arc(2,-6,7,0,6.28); ctx.fill();
-    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(2,-6,3,0,6.28); ctx.fill();
-    ctx.fillStyle='rgba(124,77,255,0.3)'; ctx.beginPath(); ctx.arc(2,-6,12,0,6.28); ctx.fill();
-  }
-  ctx.restore();
-  ctx.fillStyle=cls.color+'55'; ctx.beginPath(); ctx.arc(8,-4,36, -0.5, 1.2); ctx.fill();
+  if(P.cls==='barbarian'){ctx.fillStyle='#2a1a0a'; ctx.fillRect(0,0,4,26); ctx.fillStyle='#5d4037'; ctx.fillRect(1,2,2,22); ctx.fillStyle='#b0bec5'; ctx.beginPath(); ctx.moveTo(4,-6); ctx.lineTo(4,12); ctx.lineTo(22,8); ctx.lineTo(24,0); ctx.closePath(); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.stroke();}
+  else if(P.cls==='ranger'){ctx.strokeStyle='#3e2723'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(2,6,18, -0.8, 0.8); ctx.stroke(); ctx.strokeStyle='#8d6e63'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(2,6,18, -0.8, 0.8); ctx.stroke(); ctx.fillStyle='#FFD700'; ctx.fillRect(16,-2,12,2); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(28,-2); ctx.lineTo(32,0); ctx.lineTo(28,2); ctx.fill();}
+  else if(P.cls==='cleric'){ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,5,28); ctx.fillStyle='#FFD700'; ctx.fillRect(-10,-10,20,12); ctx.fillStyle='#fff8e1'; ctx.fillRect(-8,-12,16,4); ctx.fillStyle='#b8960c'; ctx.fillRect(-10,-10,20,2); ctx.fillStyle='#ffeb3b'; ctx.beginPath(); ctx.arc(0,-16,5,0,6.28); ctx.fill();}
+  else {ctx.fillStyle='#2a1a4a'; ctx.fillRect(0,0,4,32); ctx.fillStyle='#7c4dff'; ctx.fillRect(1,0,2,30); ctx.fillStyle='#e1bee7'; ctx.beginPath(); ctx.arc(2,-6,7,0,6.28); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(2,-6,3,0,6.28); ctx.fill(); ctx.fillStyle='rgba(124,77,255,0.3)'; ctx.beginPath(); ctx.arc(2,-6,12,0,6.28); ctx.fill();}
+  ctx.restore(); ctx.fillStyle=cls.color+'55'; ctx.beginPath(); ctx.arc(8,-4,36, -0.5, 1.2); ctx.fill();
 }
 
-// PERNAS REALISTAS - longas, finas, anatômicas 7.5 cabeças
-// calça + bota
-ctx.fillStyle='#2a2a2a'; // calça realista
-ctx.fillRect(-4.5,2+walkL,3.5,16); // perna esq
-ctx.fillRect(1,2+walkR,3.5,16); // perna dir
-// joelho sutil
+ctx.fillStyle='#2a2a2a'; ctx.fillRect(-4.5,2+walkL,3.5,16); ctx.fillRect(1,2+walkR,3.5,16);
 ctx.fillStyle='#1f1f1f'; ctx.fillRect(-4.5,10+walkL,3.5,2); ctx.fillRect(1,10+walkR,3.5,2);
-// botas couro realista
-ctx.fillStyle='#1a1a1a'; ctx.fillRect(-5.5,16+walkL,5,4); ctx.fillRect(0,16+walkR,5,4);
-ctx.fillStyle='#2a2a2a'; ctx.fillRect(-5.5,16+walkL,5,1.5);
-
-// TORSO REALISTA - anatômico, ombros largos, cintura fina
-ctx.fillStyle=cls.armor;
-ctx.fillRect(-6,-14,12,16); // torso principal 12x16 - proporção real
-ctx.strokeStyle='#000'; ctx.lineWidth=2.2; ctx.strokeRect(-6,-14,12,16);
-// cinto
-ctx.fillStyle='#3e2723'; ctx.fillRect(-6.5,-1,13,2.5);
-ctx.fillStyle='#FFD700'; ctx.fillRect(-1.5,-1.5,3,3.5); // fivela
-// detalhes armadura por classe realista
-if(P.cls==='barbarian'){
-  ctx.fillStyle='#4a3a2a'; ctx.fillRect(-6,-14,12,4); // pelagem ombro
-  ctx.fillStyle='#3e2723'; ctx.fillRect(-5,-12,3,3); ctx.fillRect(2,-12,3,3);
-  ctx.fillStyle='#2a1a0a'; ctx.fillRect(-6,2,12,1); // cinto couro
-}
-else if(P.cls==='ranger'){
-  ctx.fillStyle='#1b5e20'; ctx.fillRect(-6,-14,3,16); ctx.fillRect(3,-14,3,16); // colete couro
-  ctx.fillStyle='#2e7d32'; ctx.fillRect(-6,-14,12,2);
-  // aljava nas costas
-  ctx.fillStyle='#3e2723'; ctx.fillRect(-8,-12,2,10);
-  ctx.fillStyle='#FFD700'; for(let i=0;i<3;i++) ctx.fillRect(-8,-12+i*3,2,1.5);
-}
-else if(P.cls==='cleric'){
-  ctx.fillStyle='#90a4ae'; ctx.fillRect(-6,-14,12,16); // placa
-  ctx.fillStyle='#b0bec5'; ctx.fillRect(-5,-13,2,14); ctx.fillRect(3,-13,2,14); // brilho placa
-  ctx.fillStyle='#fff'; ctx.fillRect(-1,-14,2,16); ctx.fillRect(-6,-2,12,2); // cruz
-}
-else {
-  ctx.fillStyle='#1a237e'; ctx.fillRect(-7,-14,14,18); // manto longo até pernas
-  ctx.fillStyle='#283593'; ctx.fillRect(-6,-14,12,3); ctx.fillRect(-6,1,12,2);
-  ctx.fillStyle='#5c6bc0'; ctx.fillRect(-6,-14,1.5,18); // borda manto
-}
-
-// BRAÇOS REALISTAS - longos, musculosos, com mãos
-ctx.fillStyle=cls.skin;
-ctx.save(); ctx.translate(-7.5,-12); ctx.rotate(armSwingL*0.15);
-ctx.fillRect(-1.5,0,3,12); // braço esq
-ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,12,2.2,0,6.28); ctx.fill(); // mão
-ctx.restore();
-ctx.save(); ctx.translate(7.5,-12); ctx.rotate(armSwingR*0.15);
-ctx.fillRect(-1.5,0,3,12); // braço dir
-ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,12,2.2,0,6.28); ctx.fill();
-ctx.restore();
-
-// CABEÇA REALISTA - menor, 1/7.5 altura total
-ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,-20,5.5,0,6.28); ctx.fill();
-ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
-// pescoço
+ctx.fillStyle='#1a1a1a'; ctx.fillRect(-5.5,16+walkL,5,4); ctx.fillRect(0,16+walkR,5,4); ctx.fillStyle='#2a2a2a'; ctx.fillRect(-5.5,16+walkL,5,1.5);
+ctx.fillStyle=cls.armor; ctx.fillRect(-6,-14,12,16); ctx.strokeStyle='#000'; ctx.lineWidth=2.2; ctx.strokeRect(-6,-14,12,16);
+ctx.fillStyle='#3e2723'; ctx.fillRect(-6.5,-1,13,2.5); ctx.fillStyle='#FFD700'; ctx.fillRect(-1.5,-1.5,3,3.5);
+if(P.cls==='barbarian'){ctx.fillStyle='#4a3a2a'; ctx.fillRect(-6,-14,12,4); ctx.fillStyle='#3e2723'; ctx.fillRect(-5,-12,3,3); ctx.fillRect(2,-12,3,3);}
+else if(P.cls==='ranger'){ctx.fillStyle='#1b5e20'; ctx.fillRect(-6,-14,3,16); ctx.fillRect(3,-14,3,16); ctx.fillStyle='#2e7d32'; ctx.fillRect(-6,-14,12,2); ctx.fillStyle='#3e2723'; ctx.fillRect(-8,-12,2,10); ctx.fillStyle='#FFD700'; for(let i=0;i<3;i++) ctx.fillRect(-8,-12+i*3,2,1.5);}
+else if(P.cls==='cleric'){ctx.fillStyle='#90a4ae'; ctx.fillRect(-6,-14,12,16); ctx.fillStyle='#b0bec5'; ctx.fillRect(-5,-13,2,14); ctx.fillRect(3,-13,2,14); ctx.fillStyle='#fff'; ctx.fillRect(-1,-14,2,16); ctx.fillRect(-6,-2,12,2);}
+else {ctx.fillStyle='#1a237e'; ctx.fillRect(-7,-14,14,18); ctx.fillStyle='#283593'; ctx.fillRect(-6,-14,12,3); ctx.fillRect(-6,1,12,2); ctx.fillStyle='#5c6bc0'; ctx.fillRect(-6,-14,1.5,18);}
+ctx.fillStyle=cls.skin; ctx.save(); ctx.translate(-7.5,-12); ctx.rotate(armSwingL*0.15); ctx.fillRect(-1.5,0,3,12); ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,12,2.2,0,6.28); ctx.fill(); ctx.restore();
+ctx.save(); ctx.translate(7.5,-12); ctx.rotate(armSwingR*0.15); ctx.fillRect(-1.5,0,3,12); ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,12,2.2,0,6.28); ctx.fill(); ctx.restore();
+ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,-20,5.5,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
 ctx.fillStyle=cls.skin; ctx.fillRect(-2,-16,4,3);
-// rosto sutil - olhos pequenos realistas
 ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(-1.8,-20.5,0.9,0,6.28); ctx.arc(1.8,-20.5,0.9,0,6.28); ctx.fill();
-ctx.fillStyle='#4a2a0a'; ctx.fillRect(-2.5,-18.5,5,0.6); // boca sutil
-
-// ELMO / CAPUZ REALISTA
-if(P.cls==='barbarian'){
-  ctx.fillStyle='#4a3a2a'; ctx.fillRect(-6,-27,12,7); // elmo couro
-  ctx.fillStyle='#5d4037'; ctx.fillRect(-6,-27,12,2);
-  ctx.fillStyle='#9e9e9e'; ctx.fillRect(-6,-27,12,1.2); // aro metal
-  ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(-6,-27); ctx.lineTo(-8,-30); ctx.lineTo(-5,-27); ctx.fill(); // chifre esq pequeno
-  ctx.beginPath(); ctx.moveTo(6,-27); ctx.lineTo(8,-30); ctx.lineTo(5,-27); ctx.fill(); // chifre dir
-}
-else if(P.cls==='ranger'){
-  ctx.fillStyle='#1b5e20'; ctx.fillRect(-6,-26,12,6); // capuz
-  ctx.fillStyle='#2e7d32'; ctx.fillRect(-6,-26,12,2);
-  ctx.fillStyle='#0f3a0f'; ctx.fillRect(-6,-20,12,2); // sombra capuz
-}
-else if(P.cls==='cleric'){
-  ctx.fillStyle='#b0bec5'; ctx.fillRect(-6.5,-27,13,7); // elmo placa
-  ctx.fillStyle='#eceff1'; ctx.fillRect(-6.5,-27,13,1.5);
-  ctx.fillStyle='#78909c'; ctx.fillRect(-1,-27,2,7); // crista
-}
-else {
-  ctx.fillStyle='#1a237e'; ctx.beginPath(); ctx.arc(0,-24,7, Math.PI, 0); ctx.fill(); // capuz mago pontudo
-  ctx.fillStyle='#283593'; ctx.beginPath(); ctx.moveTo(-7,-24); ctx.lineTo(0,-32); ctx.lineTo(7,-24); ctx.fill();
-  ctx.fillStyle='#7c4dff'; ctx.beginPath(); ctx.arc(0,-30,2,0,6.28); ctx.fill(); // joia topo
-}
-
-// ARMA NAS COSTAS / MÃO quando não atacando - sempre visível realista
+ctx.fillStyle='#4a2a0a'; ctx.fillRect(-2.5,-18.5,5,0.6);
+if(P.cls==='barbarian'){ctx.fillStyle='#4a3a2a'; ctx.fillRect(-6,-27,12,7); ctx.fillStyle='#5d4037'; ctx.fillRect(-6,-27,12,2); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-6,-27,12,1.2); ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(-6,-27); ctx.lineTo(-8,-30); ctx.lineTo(-5,-27); ctx.fill(); ctx.beginPath(); ctx.moveTo(6,-27); ctx.lineTo(8,-30); ctx.lineTo(5,-27); ctx.fill();}
+else if(P.cls==='ranger'){ctx.fillStyle='#1b5e20'; ctx.fillRect(-6,-26,12,6); ctx.fillStyle='#2e7d32'; ctx.fillRect(-6,-26,12,2); ctx.fillStyle='#0f3a0f'; ctx.fillRect(-6,-20,12,2);}
+else if(P.cls==='cleric'){ctx.fillStyle='#b0bec5'; ctx.fillRect(-6.5,-27,13,7); ctx.fillStyle='#eceff1'; ctx.fillRect(-6.5,-27,13,1.5); ctx.fillStyle='#78909c'; ctx.fillRect(-1,-27,2,7);}
+else {ctx.fillStyle='#1a237e'; ctx.beginPath(); ctx.arc(0,-24,7, Math.PI, 0); ctx.fill(); ctx.fillStyle='#283593'; ctx.beginPath(); ctx.moveTo(-7,-24); ctx.lineTo(0,-32); ctx.lineTo(7,-24); ctx.fill(); ctx.fillStyle='#7c4dff'; ctx.beginPath(); ctx.arc(0,-30,2,0,6.28); ctx.fill();}
 if(P.atk<=0){
-  if(P.cls==='barbarian'){
-    ctx.fillStyle='#2a1a0a'; ctx.fillRect(6.5,-10,3,18); // cabo nas costas
-    ctx.fillStyle='#9e9e9e'; ctx.fillRect(3,-12,12,7); ctx.strokeStyle='#000'; ctx.lineWidth=1.2; ctx.strokeRect(3,-12,12,7);
-  }
-  else if(P.cls==='ranger'){
-    ctx.save(); ctx.translate(8,-8);
-    ctx.strokeStyle='#3e2723'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(0,4,14, -0.6, 0.6); ctx.stroke();
-    ctx.fillStyle='#3e2723'; ctx.fillRect(-1, -8,1.5,20); // arco nas costas vertical
-    ctx.restore();
-    // aljava flechas
-    ctx.fillStyle='#4a2a0a'; ctx.fillRect(-7,-10,2.5,10);
-  }
-  else if(P.cls==='cleric'){
-    ctx.fillStyle='#3e2723'; ctx.fillRect(7,-8,3,16);
-    ctx.fillStyle='#b0bec5'; ctx.fillRect(4,-12,10,6); ctx.strokeStyle='#000'; ctx.lineWidth=1.2; ctx.strokeRect(4,-12,10,6);
-  }
-  else {
-    ctx.fillStyle='#2a1a4a'; ctx.fillRect(7,-12,3,24); // cajado alto realista
-    ctx.fillStyle='#7c4dff'; ctx.fillRect(7.5,-12,2,22);
-    ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(8.5,-14,4,0,6.28); ctx.fill();
-    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(8.5,-14,1.5,0,6.28); ctx.fill();
-  }
+  if(P.cls==='barbarian'){ctx.fillStyle='#2a1a0a'; ctx.fillRect(6.5,-10,3,18); ctx.fillStyle='#9e9e9e'; ctx.fillRect(3,-12,12,7); ctx.strokeStyle='#000'; ctx.lineWidth=1.2; ctx.strokeRect(3,-12,12,7);}
+  else if(P.cls==='ranger'){ctx.save(); ctx.translate(8,-8); ctx.strokeStyle='#3e2723'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(0,4,14, -0.6, 0.6); ctx.stroke(); ctx.fillStyle='#3e2723'; ctx.fillRect(-1, -8,1.5,20); ctx.restore(); ctx.fillStyle='#4a2a0a'; ctx.fillRect(-7,-10,2.5,10);}
+  else if(P.cls==='cleric'){ctx.fillStyle='#3e2723'; ctx.fillRect(7,-8,3,16); ctx.fillStyle='#b0bec5'; ctx.fillRect(4,-12,10,6); ctx.strokeStyle='#000'; ctx.lineWidth=1.2; ctx.strokeRect(4,-12,10,6);}
+  else {ctx.fillStyle='#2a1a4a'; ctx.fillRect(7,-12,3,24); ctx.fillStyle='#7c4dff'; ctx.fillRect(7.5,-12,2,22); ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(8.5,-14,4,0,6.28); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(8.5,-14,1.5,0,6.28); ctx.fill();}
 }
-
 ctx.restore();
 }
 
-function drawMonsterRealistic(m,x,y){
-  m.bob+=0.04; m.walk+=0.12;
-  let bobY=Math.sin(m.bob)*1; let walkOff=Math.sin(m.walk)*3;
+function drawMonsterPS2(m,x,y){
+  m.bob+=0.04; m.walk+=0.12; let bobY=Math.sin(m.bob)*1; let walkOff=Math.sin(m.walk)*3;
   if(m.frozen>0){ctx.fillStyle='rgba(100,180,255,0.45)'; ctx.beginPath(); ctx.arc(x,y+bobY,18,0,6.28); ctx.fill();}
   if(m.stunned>0){ctx.fillStyle='rgba(255,235,59,0.5)'; ctx.beginPath(); ctx.arc(x,y+bobY-20,6,0,6.28); ctx.fill();}
-  ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+18,11,3.5,0,0,6.28); ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,0.28)'; ctx.beginPath(); ctx.ellipse(x,y+18,11,3.5,0,0,6.28); ctx.fill();
   ctx.save(); ctx.translate(x,y+bobY);
-  // corpo monstro realista - mais alto magro, não bola
-  let type=m.type;
-  if(type===0){ctx.fillStyle='#4a3a2a';} else if(type===1){ctx.fillStyle='#2a4a2a';} else {ctx.fillStyle='#3a2a4a';}
-  ctx.fillRect(-5,-10,10,14); // torso
-  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-5,-10,10,14);
-  // pernas longas
-  ctx.fillStyle='#2a2a2a'; ctx.fillRect(-4,4+walkOff,3,12); ctx.fillRect(1,4-walkOff,3,12);
-  ctx.fillStyle='#1a1a1a'; ctx.fillRect(-4.5,14+walkOff,4,3); ctx.fillRect(0.5,14-walkOff,4,3);
-  // braços
+  let type=m.type; if(type===0){ctx.fillStyle='#4a3a2a';} else if(type===1){ctx.fillStyle='#2a4a2a';} else {ctx.fillStyle='#3a2a4a';}
+  ctx.fillRect(-5,-10,10,14); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-5,-10,10,14);
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(-4,4+walkOff,3,12); ctx.fillRect(1,4-walkOff,3,12); ctx.fillStyle='#1a1a1a'; ctx.fillRect(-4.5,14+walkOff,4,3); ctx.fillRect(0.5,14-walkOff,4,3);
   ctx.fillStyle='#4a3a2a'; ctx.fillRect(-8,-8,3,10); ctx.fillRect(5,-8,3,10);
-  // cabeça menor realista
   ctx.fillStyle='#6a4a3a'; ctx.beginPath(); ctx.arc(0,-16,5.5,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
   ctx.fillStyle='#ff0000'; ctx.beginPath(); ctx.arc(-1.5,-16,1,0,6.28); ctx.arc(1.5,-16,1,0,6.28); ctx.fill();
   ctx.restore();
@@ -465,28 +434,28 @@ function drawMonsterRealistic(m,x,y){
 
 function draw(){
 drawGround();
-objs.forEach(o=>{
-let x=o.x-C.x,y=o.y-C.y; if(x<-100||x>520||y<-100||y>960) return;
-o.bob+=0.015;
-let bobY=Math.sin(o.bob)*1;
-if(o.t==='house') drawHouseRealistic(o,x,y,bobY);
-else if(o.t==='tree') drawTreeRealistic(o,x,y,bobY);
-else drawRock(o,x,y,bobY);
+// sort objs by y for depth
+let sorted=[...objs].sort((a,b)=>a.y-b.y);
+sorted.forEach(o=>{
+let x=o.x-C.x,y=o.y-C.y; if(x<-160||x>580||y<-160||y>1020) return;
+o.bob+=0.012; let bobY=Math.sin(o.bob)*0.8;
+if(o.t==='house') drawHousePS2(o,x,y,bobY);
+else if(o.t==='tree') drawTreePS2(o,x,y,bobY);
+else drawRockPS2(o,x,y,bobY);
 });
 chests.forEach(c=>{
 let x=c.x-C.x,y=c.y-C.y; if(x<-40||x>460||y<-40||y>900) return;
 c.bob+=0.03; let bobY=Math.sin(c.bob)*2;
 if(!c.opened){
-ctx.fillStyle='rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(x,y+10+bobY,14,4,0,0,6.28); ctx.fill();
-ctx.fillStyle='#4a3a2a'; ctx.fillRect(x-14,y-4+bobY,28,14);
-ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-4+bobY,28,4);
+ctx.fillStyle='rgba(0,0,0,0.24)'; ctx.beginPath(); ctx.ellipse(x,y+10+bobY,14,4,0,0,6.28); ctx.fill();
+ctx.fillStyle='#4a3a2a'; ctx.fillRect(x-14,y-4+bobY,28,14); ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-4+bobY,28,4);
 ctx.fillStyle='#FFD700'; ctx.fillRect(x-4,y,6,6); ctx.fillStyle='#FFA000'; ctx.fillRect(x-4,y,6,2);
 ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(x-14,y-4+bobY,28,14);
 }
 });
-mons.forEach(m=>{if(!m.alive) return; let x=m.x-C.x,y=m.y-C.y; if(x<-50||x>470||y<-50||y>910) return; drawMonsterRealistic(m,x,y);});
+mons.forEach(m=>{if(!m.alive) return; let x=m.x-C.x,y=m.y-C.y; if(x<-50||x>470||y<-50||y>910) return; drawMonsterPS2(m,x,y);});
 let px=P.x-C.x,py=P.y-C.y;
-drawPlayerNorrath(px,py);
+drawPlayerPS2(px,py);
 projectiles.forEach(p=>{
 let x=p.x-C.x,y=p.y-C.y;
 ctx.fillStyle=p.color||'#FFD700'; ctx.beginPath(); ctx.arc(x,y,4,0,6.28); ctx.fill();
@@ -501,6 +470,17 @@ else {ctx.beginPath(); ctx.arc(x,y,p.size||3,0,6.28); ctx.fill();}
 ctx.globalAlpha=1;
 });
 if(T&&!P.dead){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#8bc34a'; ctx.lineWidth=2.5; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.arc(x,y,14,0,6.28); ctx.stroke(); ctx.setLineDash([]);}
+// collision boxes debug - invisible normally, but draw faint when colliding
+if(window.showCollision){
+  objs.forEach(o=>{
+    if(!o.collision) return;
+    let x=o.x-C.x,y=o.y-C.y;
+    let cx=x-o.cw/2, cy=y-o.ch/2 + (o.t==='house'? (o.size===1?38:30) : o.trunkH/2-8);
+    if(o.t==='tree') cy=y-o.ch/2+o.trunkH/2-8;
+    if(o.t==='rock') cy=y-2;
+    ctx.strokeStyle='rgba(255,0,0,0.25)'; ctx.lineWidth=1; ctx.strokeRect(cx,cy,o.cw,o.ch);
+  });
+}
 }
 
 // JOYSTICK
@@ -631,7 +611,7 @@ P.attr={...cls.base}; P.maxHp=cls.hp; P.hp=P.maxHp; P.maxMana=cls.mana; P.mana=P
 initSkills(); genWorld();
 let ss=document.getElementById('start'); if(ss) ss.remove();
 document.getElementById('hint').style.display='block';
-setTimeout(()=>{let h=document.getElementById('hint'); if(h) h.style.display='none';},5000);
+setTimeout(()=>{let h=document.getElementById('hint'); if(h) h.style.display='none';},6000);
 updateBars(); createSpells(); updateSpellCDs();
 if(!gameOn){gameOn=true; requestAnimationFrame(loop);}
 }
@@ -644,6 +624,33 @@ document.getElementById('gold').textContent=P.gold;
 document.getElementById('lvl').textContent=P.lvl;
 document.getElementById('clsName').textContent=CLASSES[P.cls].short;
 }
+
+// COLLISION SYSTEM - PS2 identical solid
+function checkCollision(nx, ny){
+  let pr = 10; // player radius
+  for(let o of objs){
+    if(!o.collision) continue;
+    // collision box centered at object base
+    let ox = o.x;
+    let oy = o.y;
+    let cw = o.cw;
+    let ch = o.ch;
+    // adjust Y for house (collision at walls, not roof)
+    if(o.t==='house'){
+      if(o.size===2) oy = o.y + 30; // tower
+      else oy = o.y + (o.size===1?20:15);
+    } else if(o.t==='tree'){
+      oy = o.y + o.trunkH/2 - 8;
+    } else if(o.t==='rock'){
+      oy = o.y + 2;
+    }
+    if(nx+pr > ox-cw/2 && nx-pr < ox+cw/2 && ny+pr > oy-ch/2 && ny-pr < oy+ch/2){
+      return o;
+    }
+  }
+  return null;
+}
+
 let last=performance.now();
 function loop(now){
 let dt=Math.min((now-last)/1000,0.05); last=now;
@@ -671,17 +678,45 @@ let targetX=0,targetY=0;
 if(J.active){targetX=J.x; targetY=J.y;}
 else if(T){let dx=T.x-P.x, dy=T.y-P.y, d=Math.hypot(dx,dy); if(d<22){T=null;} else {targetX=dx/d; targetY=dy/d; if(Math.abs(targetX)>0.08) P.f=targetX>0?1:-1;}}
 if(J.active||T){P.velX=targetX*CLASSES[P.cls].speed; P.velY=targetY*CLASSES[P.cls].speed;} else {P.velX=0; P.velY=0;}
-if(Math.hypot(P.velX,P.velY)>1){P.x+=P.velX*dt; P.y+=P.velY*dt; P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));}
+if(Math.hypot(P.velX,P.velY)>1){
+  let nx=P.x+P.velX*dt, ny=P.y+P.velY*dt;
+  let collX = checkCollision(nx, P.y);
+  let collY = checkCollision(P.x, ny);
+  let collBoth = checkCollision(nx, ny);
+  if(!collBoth){
+    P.x=nx; P.y=ny;
+  } else {
+    if(!collX) P.x=nx;
+    else if(!collY) P.y=ny;
+    else {
+      // slide along wall - try smaller steps
+      if(!checkCollision(P.x+P.velX*dt*0.5, P.y)) P.x+=P.velX*dt*0.5;
+      if(!checkCollision(P.x, P.y+P.velY*dt*0.5)) P.y+=P.velY*dt*0.5;
+      // feedback
+      if(collBoth && Math.random()<0.1){
+        // small bump particles
+        particles.push({x:collBoth.x,y:collBoth.y-10,text:'💥',life:0.3,color:'#666',size:3});
+      }
+    }
+  }
+  P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));
+}
 if(P.atk>0) P.atk--;
 mons.forEach(m=>{
 if(!m.alive) return;
 if(m.frozen>0){m.frozen-=dt; return;}
 if(m.stunned>0){m.stunned-=dt; return;}
 let dist=Math.hypot(m.x-P.x,m.y-P.y);
-if(dist<280){
+if(dist<300){
 let ang=Math.atan2(P.y-m.y,P.x-m.x);
-let sp=52;
-m.x+=Math.cos(ang)*sp*dt; m.y+=Math.sin(ang)*sp*dt;
+let sp=48;
+let nx=m.x+Math.cos(ang)*sp*dt, ny=m.y+Math.sin(ang)*sp*dt;
+if(!checkCollision(nx, ny)) { m.x=nx; m.y=ny; }
+else {
+  // try X or Y only
+  if(!checkCollision(nx, m.y)) m.x=nx;
+  else if(!checkCollision(m.x, ny)) m.y=ny;
+}
 if(dist<48&&Math.random()<0.04){P.hp-=7; updateBars(); particles.push({x:P.x,y:P.y-10,text:'-'+7,life:0.8,color:'#ff5252',size:4}); if(P.hp<=0) triggerDeath();}
 }
 });
@@ -689,6 +724,9 @@ projectiles.forEach((p,i)=>{
 let ang=Math.atan2(p.ty-p.y,p.tx-p.x);
 p.x+=Math.cos(ang)*p.speed*dt; p.y+=Math.sin(ang)*p.speed*dt; p.life-=dt;
 if(p.life<=0){projectiles.splice(i,1); return;}
+// check collision with objs - projectiles stop on houses/trees?
+let coll = checkCollision(p.x, p.y);
+if(coll && coll.t!=='rock'){projectiles.splice(i,1); particles.push({x:p.x,y:p.y,life:0.5,color:'#666',size:2}); return;}
 for(let j=0;j<mons.length;j++){
 let m=mons[j]; if(!m.alive) continue;
 if(Math.hypot(m.x-p.x,m.y-p.y)<26){
