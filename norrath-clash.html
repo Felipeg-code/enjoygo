@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>V15 MORTE REALISTA + SKILLS + ARMAS</title>
+<title>V16 REALISTA NORRATH</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;font-family:system-ui,sans-serif}
-#gc{width:100vw;height:100vh;background:#1a2a1a;position:relative;overflow:hidden;max-width:480px;margin:0 auto;box-shadow:0 0 0 4px #000}
+#gc{width:100vw;height:100vh;background:#0f1f0f;position:relative;overflow:hidden;max-width:480px;margin:0 auto;box-shadow:0 0 0 4px #000}
 @media(min-width:500px){#gc{width:420px;height:90vh;max-height:860px;margin:5vh auto;border-radius:16px;border:4px solid #000}}
-#game{position:absolute;top:0;left:0;width:100%;height:100%;display:block;background:#2a4a2a;touch-action:none}
+#game{position:absolute;top:0;left:0;width:100%;height:100%;display:block;background:#1a2e1a;touch-action:none}
 #hud{position:absolute;top:0;left:0;right:0;height:44px;background:linear-gradient(#1a1a1a,#000);border-bottom:3px solid #000;z-index:20;display:flex;align-items:center;padding:0 6px;gap:5px;pointer-events:none}
 .hudItem{background:#000;border:2px solid #333;border-radius:10px;padding:3px 8px;color:#FFD700;font-weight:900;font-size:10px;display:flex;align-items:center;gap:3px;box-shadow:0 2px 0 #000}
 .hudItem.hp{border-color:#b71c1c;color:#ff5252}
@@ -38,21 +38,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 .deathBar{width:200px;height:8px;background:#333;border-radius:4px;margin-top:16px;overflow:hidden;border:2px solid #000}
 .deathBarFill{height:100%;background:linear-gradient(#ff5252,#b71c1c);width:0%;transition:width 0.1s}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-#start{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#2a1a14,#0a0503 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
+#start{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#1e2a1a,#0a0f0a 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
 .logo{font-size:38px;font-weight:900;color:#FFD700;text-shadow:4px 4px 0 #000;letter-spacing:2px;margin-top:10px}
-.sub{color:#FFA500;font-weight:900;letter-spacing:3px;font-size:10px;margin:4px 0 10px 0}
+.sub{color:#8bc34a;font-weight:900;letter-spacing:3px;font-size:10px;margin:4px 0 10px 0}
 .classGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:380px;margin:10px 0}
-.classCard{background:linear-gradient(#3e2723,#1a0f0a);border:3px solid #000;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 0 #000;cursor:pointer;min-height:130px;transition:transform 0.1s;position:relative;overflow:hidden}
-.classCard.selected{border-color:#FFD700;box-shadow:0 0 18px #FFD700,0 4px 0 #000;transform:scale(1.03)}
-.classIcon{font-size:36px}
-.className{color:#FFD700;font-weight:900;font-size:10px;margin:5px 0 2px 0}
-.classDesc{color:#d7ccc8;font-size:8px;line-height:1.3}
+.classCard{background:linear-gradient(#2a3a2a,#1a241a);border:3px solid #000;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 0 #000;cursor:pointer;min-height:140px;transition:transform 0.1s;position:relative;overflow:hidden}
+.classCard.selected{border-color:#8bc34a;box-shadow:0 0 18px #8bc34a,0 4px 0 #000;transform:scale(1.03)}
+.classIcon{font-size:32px}
+.className{color:#8bc34a;font-weight:900;font-size:10px;margin:5px 0 2px 0}
+.classDesc{color:#a5d6a7;font-size:7px;line-height:1.3}
 .classWeapon{margin-top:6px;background:rgba(0,0,0,0.6);border-radius:8px;padding:4px;border:1px solid #333;color:#fff;font-size:7px;font-weight:900}
 .classWeapon b{color:#FFD700}
-.classStats{color:#8d6e63;font-size:6px;margin-top:4px}
-.startBtn{margin-top:14px;background:linear-gradient(#FFD700,#FF8f00);color:#000;border:4px solid #000;padding:12px 36px;border-radius:12px;font-weight:900;font-size:16px;box-shadow:0 5px 0 #000;cursor:pointer;min-width:200px}
+.startBtn{margin-top:14px;background:linear-gradient(#8bc34a,#33691e);color:#000;border:4px solid #000;padding:12px 36px;border-radius:12px;font-weight:900;font-size:16px;box-shadow:0 5px 0 #000;cursor:pointer;min-width:200px}
 .startBtn:active{transform:translateY(5px);box-shadow:none}
-#hint{position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#FFD700;font-size:10px;font-weight:900;padding:8px 14px;border-radius:16px;border:2px solid #FFD700;z-index:15;pointer-events:none;text-align:center;max-width:85vw}
+#hint{position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#8bc34a;font-size:10px;font-weight:900;padding:8px 14px;border-radius:16px;border:2px solid #8bc34a;z-index:15;pointer-events:none;text-align:center;max-width:85vw}
 </style>
 </head>
 <body>
@@ -76,288 +75,423 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 <div class="deathBar"><div class="deathBarFill" id="deathFill"></div></div>
 <div class="deathSub" style="margin-top:8px;font-size:10px">Renascer em <span id="deathCount">3.0</span>s</div>
 </div>
-<div id="hint">V15: MORTE REALISTA + SKILLS FIX + ARMAS ÚNICAS</div>
+<div id="hint">V16: REALISTA NORRATH - Proporções humanas 7.5 cabeças</div>
 <div id="start">
 <div class="logo">NORRATH</div>
-<div class="sub">V15 MORTE REALISTA</div>
-<div style="background:#000;border:2px solid #4caf50;border-radius:10px;padding:6px 12px;color:#4caf50;font-size:8px;font-weight:900;margin:6px 0;text-align:center">✅ MORTE REALISTA • SKILLS FUNCIONANDO • ARMA MUDA POR CLASSE</div>
+<div class="sub">V16 REALISTA NORRATH</div>
+<div style="background:#000;border:2px solid #8bc34a;border-radius:10px;padding:6px 12px;color:#8bc34a;font-size:8px;font-weight:900;margin:6px 0;text-align:center">✅ PROPORÇÕES REALISTAS 7.5 CABEÇAS • CENÁRIO NORRATH • ANATOMIA HUMANA</div>
 <div class="classGrid" id="classGrid">
-<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Tanque bruto corpo-a-corpo</div><div class="classWeapon">🪓 <b>Machado Duplo</b><br>18 dmg • Stun 2s</div><div class="classStats">150 HP • Bash 💥 + Grito 📢</div></div>
-<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Arqueiro ágil longo alcance</div><div class="classWeapon">🏹 <b>Arco Longo Élfico</b><br>14 dmg • 180 range</div><div class="classStats">100 HP • Triple 🏹 + Mortal 🎯</div></div>
-<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Guerreiro sagrado cura</div><div class="classWeapon">🔨 <b>Martelo Sagrado</b><br>16 dmg • Holy + Heal</div><div class="classStats">120 HP • Holy ✨ + Heal 💚</div></div>
-<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Mago explosivo AoE</div><div class="classWeapon">🪄 <b>Varinha Arcana</b><br>12 dmg • Fire + Frost</div><div class="classStats">80 HP • Fire 🔥 + Frost ❄️</div></div>
+<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Bárbaro norte - musculoso realista</div><div class="classWeapon">🪓 Machado Duplo Nórdico<br>Forjado, cabo longo</div></div>
+<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Elfo arqueiro - esguio realista</div><div class="classWeapon">🏹 Arco Longo Recurvo<br>1.8m altura realista</div></div>
+<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Clérigo armadura placa real</div><div class="classWeapon">🔨 Martelo Guerra Sagrado<br>Maça com cruz</div></div>
+<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Erudito manto longo realista</div><div class="classWeapon">🪄 Cajado Arcano 1.6m<br>Cristal flutuante</div></div>
 </div>
-<button class="startBtn" id="btnStart">▶ JOGAR V15!</button>
-<div style="color:#666;font-size:7px;margin-top:10px;text-align:center;max-width:320px">Dica: cada classe tem arma VISUAL única + 2 skills únicas. Morra pra ver animação realista joelhos→chão→renasce</div>
+<button class="startBtn" id="btnStart">▶ JOGAR V16 REALISTA!</button>
+<div style="color:#666;font-size:7px;margin-top:10px;text-align:center;max-width:320px">Champions of Norrath: proporções humanas reais, cenário medieval escuro, árvores com casca, casas pedra+madeira, sombras suaves</div>
 </div>
 </div>
 <script>
 const W=3200,H=3200;
-let P={x:1600,y:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velY:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0,deathPhase:0};
+let P={x:1600,y:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velY:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0};
 let C={x:0,y:0,targetX:0,targetY:0}, T=null, gameOn=false, selClass='barbarian';
 let J={active:false,x:0,y:0,startX:0,startY:0};
-let objs=[], mons=[], chests=[], particles=[], projectiles=[];
+let objs=[], mons=[], chests=[], particles=[], projectiles=[], groundDetails=[];
 
 const CLASSES={
-barbarian:{name:'Barbarian',short:'BARB',icon:'🪓',color:'#e53935',weapon:{name:'Machado Duplo',icon:'🪓',dmg:18,range:85},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:180,skills:[{id:'bash',n:'Bash',icon:'💥',mana:12,cd:3,dmg:35,color:'#e53935',desc:'Atordoa 2s'},{id:'shout',n:'Grito',icon:'📢',mana:20,cd:8,dmg:0,color:'#ff8f00',desc:'+50% dano 5s'}]},
-ranger:{name:'Ranger',short:'RANG',icon:'🏹',color:'#43a047',weapon:{name:'Arco Longo',icon:'🏹',dmg:14,range:180},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:240,skills:[{id:'triple',n:'Triple',icon:'🏹',mana:15,cd:4,dmg:20,color:'#43a047',desc:'3 flechas'},{id:'crit',n:'Mortal',icon:'🎯',mana:25,cd:6,dmg:60,color:'#2e7d32',desc:'Tiro crítico'}]},
-cleric:{name:'Cleric',short:'CLER',icon:'🔨',color:'#FFD700',weapon:{name:'Martelo Sagrado',icon:'🔨',dmg:16,range:90},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:200,skills:[{id:'holy',n:'Holy',icon:'✨',mana:14,cd:3,dmg:30,color:'#FFD700',desc:'Luz sagrada'},{id:'heal',n:'Heal',icon:'💚',mana:25,cd:6,dmg:0,color:'#4caf50',desc:'Cura 80'}]},
-wizard:{name:'Wizard',short:'WIZ',icon:'🪄',color:'#7c4dff',weapon:{name:'Varinha',icon:'🪄',dmg:12,range:160},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:210,skills:[{id:'fire',n:'Fire',icon:'🔥',mana:12,cd:2,dmg:45,color:'#ff6f00',desc:'Bola fogo AoE'},{id:'frost',n:'Frost',icon:'❄️',mana:20,cd:5,dmg:25,color:'#42a5f5',desc:'Congela 3s'}]},
+barbarian:{name:'Barbarian',short:'BARB',icon:'🪓',color:'#8d6e63',skin:'#d7a77a',armor:'#4a3a2a',weapon:{name:'Machado Duplo',icon:'🪓',dmg:18,range:85},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:180,skills:[{id:'bash',n:'Bash',icon:'💥',mana:12,cd:3,dmg:35},{id:'shout',n:'Grito',icon:'📢',mana:20,cd:8,dmg:0}]},
+ranger:{name:'Ranger',short:'RANG',icon:'🏹',color:'#2e7d32',skin:'#e8c4a8',armor:'#1b5e20',weapon:{name:'Arco Longo',icon:'🏹',dmg:14,range:180},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:240,skills:[{id:'triple',n:'Triple',icon:'🏹',mana:15,cd:4,dmg:20},{id:'crit',n:'Mortal',icon:'🎯',mana:25,cd:6,dmg:60}]},
+cleric:{name:'Cleric',short:'CLER',icon:'🔨',color:'#b0bec5',skin:'#e8c4a8',armor:'#37474f',weapon:{name:'Martelo Sagrado',icon:'🔨',dmg:16,range:90},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:200,skills:[{id:'holy',n:'Holy',icon:'✨',mana:14,cd:3,dmg:30},{id:'heal',n:'Heal',icon:'💚',mana:25,cd:6,dmg:0}]},
+wizard:{name:'Wizard',short:'WIZ',icon:'🪄',color:'#4a148c',skin:'#d7c4a8',armor:'#1a237e',weapon:{name:'Varinha',icon:'🪄',dmg:12,range:160},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:210,skills:[{id:'fire',n:'Fire',icon:'🔥',mana:12,cd:2,dmg:45},{id:'frost',n:'Frost',icon:'❄️',mana:20,cd:5,dmg:25}]},
 };
 let playerSkills={}, buffs={};
 function initSkills(){playerSkills={}; buffs={}; CLASSES[P.cls].skills.forEach(s=>playerSkills[s.id]={cd:0});}
 
 function genWorld(){
-objs=[]; mons=[]; chests=[]; particles=[]; projectiles=[];
-for(let i=0;i<12;i++){let x=500+Math.random()*2200,y=500+Math.random()*2200; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<160)) objs.push({x,y,w:80,h:90,t:'house',bob:Math.random()*6.28});}
-for(let i=0;i<22;i++){let x=Math.random()*W,y=Math.random()*H; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<80)) objs.push({x,y,w:32,h:42,t:'tree',bob:Math.random()*6.28});}
-for(let i=0;i<14;i++){mons.push({x:400+Math.random()*2400,y:400+Math.random()*2400,hp:70,max:70,alive:true,walk:0,bob:Math.random()*6.28,frozen:0,stunned:0});}
+objs=[]; mons=[]; chests=[]; particles=[]; projectiles=[]; groundDetails=[];
+for(let i=0;i<200;i++){groundDetails.push({x:Math.random()*W,y:Math.random()*H,t:Math.floor(Math.random()*4),s:Math.random()*2+1});}
+for(let i=0;i<14;i++){let x=400+Math.random()*2400,y=400+Math.random()*2400; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<180)) objs.push({x,y,w:72,h:78,t:'house',bob:Math.random()*6.28});}
+for(let i=0;i<28;i++){let x=Math.random()*W,y=Math.random()*H; if(!objs.some(o=>Math.hypot(o.x-x,o.y-y)<90)) objs.push({x,y,w:28,h:52,t:'tree',bob:Math.random()*6.28,variation:Math.random()});}
+for(let i=0;i<10;i++){let x=Math.random()*W,y=Math.random()*H; objs.push({x,y,w:18,h:14,t:'rock',bob:Math.random()*6.28});}
+for(let i=0;i<14;i++){mons.push({x:400+Math.random()*2400,y:400+Math.random()*2400,hp:70,max:70,alive:true,walk:0,bob:Math.random()*6.28,frozen:0,stunned:0,type:Math.floor(Math.random()*3)});}
 for(let i=0;i<10;i++){chests.push({x:200+Math.random()*2800,y:200+Math.random()*2800,opened:false,bob:Math.random()*6.28});}
 }
 
 const cv=document.getElementById('game');
 const ctx=cv.getContext('2d');
 
-function drawPlayerRealistic(px,py){
-let cls=CLASSES[P.cls];
-let isMoving=!P.dead && Math.hypot(P.velX,P.velY)>5;
-
-// death animation values
-let kneelProgress=0, fallProgress=0, lyingProgress=0;
-if(P.dead){
-  let t=P.deathT;
-  if(t<0.7){ kneelProgress=t/0.7; }
-  else if(t<1.8){ kneelProgress=1; fallProgress=(t-0.7)/1.1; }
-  else { kneelProgress=1; fallProgress=1; lyingProgress=Math.min((t-1.8)/0.5,1); }
+// REALISTIC DRAWING - NORRATH STYLE
+function drawGround(){
+  // base
+  ctx.fillStyle='#1e331e'; ctx.fillRect(0,0,cv.width,cv.height);
+  // darker forest floor variation
+  ctx.fillStyle='rgba(0,0,0,0.04)';
+  for(let x=-(C.x%64);x<cv.width;x+=64){
+    for(let y=-(C.y%64);y<cv.height;y+=64){
+      if(((Math.floor((C.x+x)/64)+Math.floor((C.y+y)/64))%2)===0) ctx.fillRect(x,y,64,64);
+    }
+  }
+  // ground details - stones, grass tufts, dirt - world anchored
+  groundDetails.forEach(g=>{
+    let x=g.x-C.x,y=g.y-C.y; if(x<-20||x>440||y<-20||y>880) return;
+    if(g.t===0){ctx.fillStyle='rgba(0,0,0,0.12)'; ctx.beginPath(); ctx.ellipse(x,y, g.s*2, g.s*1.2,0,0,6.28); ctx.fill();}
+    else if(g.t===1){ctx.fillStyle='#2a4a2a'; ctx.fillRect(x,y,2,4);}
+    else if(g.t===2){ctx.fillStyle='#3a5a3a'; ctx.beginPath(); ctx.arc(x,y,1.5,0,6.28); ctx.fill();}
+    else {ctx.fillStyle='#1a2a1a'; ctx.fillRect(x,y,3,2);}
+  });
+  // grid sutil
+  ctx.strokeStyle='rgba(0,0,0,0.05)'; ctx.lineWidth=1;
+  for(let x=-(C.x%96);x<cv.width;x+=96){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
+  for(let y=-(C.y%96);y<cv.height;y+=96){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
 }
 
-if(isMoving){P.walk+=0.28; P.bob+=0.22;} else {P.walk*=0.85; P.bob*=0.85;}
-let bobY = P.dead ? 0 : Math.sin(P.bob)*2;
-let walkL = P.dead ? 0 : Math.sin(P.walk)*5;
-let walkR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*5;
+function drawHouseRealistic(o,x,y,bobY){
+  // sombra
+  ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(x,y+42,38,10,0,0,6.28); ctx.fill();
+  // fundação pedra realista
+  ctx.fillStyle='#3a3a3a'; ctx.fillRect(x-36,y+28+bobY,72,10);
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(x-36,y+28+bobY,72,10);
+  ctx.fillStyle='#4a4a4a'; for(let i=0;i<4;i++){ctx.fillRect(x-34+i*18,y+30+bobY,8,6);}
+  // parede madeira com tábuas
+  ctx.fillStyle='#5d4037'; ctx.fillRect(x-32,y-18+bobY,64,48);
+  ctx.fillStyle='#4a2e1f'; for(let i=0;i<5;i++){let lx=x-32+i*13; ctx.fillRect(lx,y-18+bobY,2,48);}
+  ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-32,y-18+bobY,64,48);
+  // porta arqueada realista
+  ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-10,y+6+bobY,20,24);
+  ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.arc(x,y+6+bobY,10,Math.PI,0); ctx.fill();
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(x,y+6+bobY,10,Math.PI,0); ctx.stroke(); ctx.strokeRect(x-10,y+6+bobY,20,24);
+  ctx.fillStyle='#3e2723'; ctx.fillRect(x-2,y+14+bobY,3,10); // maçaneta
+  // janela com cruz
+  ctx.fillStyle='#1a1a2a'; ctx.fillRect(x+12,y-6+bobY,14,14);
+  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x+12,y-6+bobY,14,14);
+  ctx.beginPath(); ctx.moveTo(x+19,y-6+bobY); ctx.lineTo(x+19,y+8+bobY); ctx.moveTo(x+12,y+1+bobY); ctx.lineTo(x+26,y+1+bobY); ctx.stroke();
+  ctx.fillStyle='rgba(255,215,0,0.15)'; ctx.fillRect(x+12,y-6+bobY,14,14); // luz
+  // telhado íngreme realista - mais alto
+  ctx.fillStyle='#2a1a0a'; ctx.beginPath(); ctx.moveTo(x-38,y-18+bobY); ctx.lineTo(x,y-52+bobY); ctx.lineTo(x+38,y-18+bobY); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(x-36,y-18+bobY); ctx.lineTo(x,y-48+bobY); ctx.lineTo(x+36,y-18+bobY); ctx.closePath(); ctx.fill();
+  // telhas linhas
+  ctx.strokeStyle='#1a0f0a'; ctx.lineWidth=1; for(let i=0;i<5;i++){let yy=y-44+bobY+i*6; ctx.beginPath(); ctx.moveTo(x-30+i*2,yy); ctx.lineTo(x+30-i*2,yy); ctx.stroke();}
+  ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x-38,y-18+bobY); ctx.lineTo(x,y-52+bobY); ctx.lineTo(x+38,y-18+bobY); ctx.stroke();
+  // chaminé
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(x+18,y-44+bobY,10,22);
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(x+18,y-44+bobY,10,22);
+  ctx.fillStyle='rgba(100,100,100,0.3)'; ctx.beginPath(); ctx.arc(x+23,y-48+bobY,6,0,6.28); ctx.fill();
+}
 
-// shadow
+function drawTreeRealistic(o,x,y,bobY){
+  ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+36,18,6,0,0,6.28); ctx.fill();
+  // tronco realista - mais fino e alto, com casca
+  let trunkH=36+o.variation*10;
+  ctx.fillStyle='#2a1a0a'; ctx.fillRect(x-5,y-8+bobY,10,trunkH);
+  ctx.fillStyle='#3e2723'; ctx.fillRect(x-3,y-8+bobY,3,trunkH);
+  ctx.fillStyle='#1a0f0a'; ctx.fillRect(x+2,y-8+bobY,1,trunkH);
+  // textura casca
+  ctx.fillStyle='#1a0f0a'; for(let i=0;i<4;i++){ctx.fillRect(x-4+Math.random()*6,y+bobY+i*8,4,1);}
+  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x-5,y-8+bobY,10,trunkH);
+  // folhagem em camadas realista - não bola perfeita
+  let foliageY=y-20+bobY;
+  // camada trás escura
+  ctx.fillStyle='#0f2a0f'; ctx.beginPath(); ctx.ellipse(x-4,foliageY+4,20,22,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x+3,foliageY,22,24,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.ellipse(x,foliageY-6,16,18,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#3a6a3a'; ctx.beginPath(); ctx.ellipse(x-2,foliageY-12,10,10,0,0,6.28); ctx.fill();
+  // contorno suave
+  ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.ellipse(x,foliageY,22,24,0,0,6.28); ctx.stroke();
+}
+
+function drawRock(o,x,y,bobY){
+  ctx.fillStyle='rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(x,y+8,12,4,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#4a4a4a'; ctx.beginPath(); ctx.ellipse(x,y+bobY,12,8,0,0,6.28); ctx.fill();
+  ctx.fillStyle='#5a5a5a'; ctx.beginPath(); ctx.ellipse(x-2,y-2+bobY,8,5,0,0,6.28); ctx.fill();
+  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(x,y+bobY,12,8,0,0,6.28); ctx.stroke();
+}
+
+function drawPlayerNorrath(px,py){
+let cls=CLASSES[P.cls];
+let isMoving=!P.dead && Math.hypot(P.velX,P.velY)>5;
+let kneelProgress=0, fallProgress=0;
+if(P.dead){
+  let t=P.deathT;
+  if(t<0.7) kneelProgress=t/0.7;
+  else if(t<1.8){ kneelProgress=1; fallProgress=(t-0.7)/1.1; }
+  else { kneelProgress=1; fallProgress=1; }
+}
+if(isMoving){P.walk+=0.22; P.bob+=0.16;} else {P.walk*=0.88; P.bob*=0.88;}
+let bobY = P.dead ? 0 : Math.sin(P.bob)*1.2;
+let walkL = P.dead ? 0 : Math.sin(P.walk)*4;
+let walkR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*4;
+let armSwingL = P.dead ? 0 : Math.sin(P.walk)*2;
+let armSwingR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*2;
+
+// sombra realista
 if(!P.dead || kneelProgress<1){
-  ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(px,py+26,12,4,0,0,6.28); ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(px,py+22,10,4,0,0,6.28); ctx.fill();
 } else {
-  ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(px+10,py+10,22,8,0,0,6.28); ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,0.22)'; ctx.beginPath(); ctx.ellipse(px+14,py+8,20,7,0,0,6.28); ctx.fill();
 }
 
 ctx.save();
 ctx.translate(px,py+bobY);
 if(!P.dead) ctx.scale(P.f,1);
 
-// DEATH DRAWING
+// DEATH - realista anatômico
 if(P.dead){
-  // phase 1: kneeling
   if(kneelProgress>0 && fallProgress<0.01){
     let k=kneelProgress;
-    // interpolate to kneeling: body goes down, knees bent
-    ctx.save();
-    ctx.translate(0, k*12); // desce
-    // legs kneeling: one knee on ground, other bent
-    ctx.fillStyle='#3e2723';
-    // leg back folded
-    ctx.save(); ctx.translate(-3,8); ctx.rotate(-0.8*k); ctx.fillRect(0,0,5,14); ctx.restore();
-    // leg front kneeling
-    ctx.save(); ctx.translate(2,6); ctx.rotate(1.2*k); ctx.fillRect(-2,0,5,12); ctx.restore();
-    // body leaning forward slightly as kneels
-    ctx.save();
-    ctx.translate(0, -2*k);
-    ctx.rotate(0.25*k);
-    ctx.fillStyle=cls.color;
-    ctx.fillRect(-9,-8,18,20);
-    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-9,-8,18,20);
-    // head dropping
-    ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(1*k,-14+4*k,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
-    // eyes closing / X
-    if(k>0.5){
-      ctx.fillStyle='#000'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-13+4*k);
-    }
+    ctx.save(); ctx.translate(0, k*10);
+    // pernas ajoelhando - realista: joelho no chão, outro pé apoiado
+    ctx.fillStyle='#2a2a2a'; // calça
+    ctx.save(); ctx.translate(-2,6); ctx.rotate(-0.9*k);
+    ctx.fillRect(-2,0,4,16); // perna trás dobrada
+    ctx.fillStyle='#1a1a1a'; ctx.fillRect(-3,14,5,4); // bota
+    ctx.restore();
+    ctx.save(); ctx.translate(3,4); ctx.rotate(1.0*k);
+    ctx.fillStyle='#2a2a2a'; ctx.fillRect(-2,0,4,12);
+    ctx.fillStyle='#1a1a1a'; ctx.fillRect(-3,10,5,4);
+    ctx.restore();
+    // tronco curvado pra frente
+    ctx.save(); ctx.translate(0, -1*k); ctx.rotate(0.35*k);
+    ctx.fillStyle=cls.armor; ctx.fillRect(-6,-16,12,18);
+    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-6,-16,12,18);
+    // braços caindo
+    ctx.fillStyle=cls.skin; ctx.fillRect(-9,-14+armSwingL,3,12); ctx.fillRect(6,-14+armSwingR,3,12);
+    // cabeça caindo
+    ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,-22+5*k,6,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
+    if(k>0.6){ctx.fillStyle='#000'; ctx.font='bold 7px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-21+5*k);}
     ctx.restore();
     ctx.restore();
-  }
-  // phase 2: falling to ground
-  else if(fallProgress>0){
+  } else if(fallProgress>0){
     let f=fallProgress;
     ctx.save();
-    // rotate body to fall sideways
-    ctx.rotate(f*Math.PI/2 *0.9); // 0 -> 90deg
-    ctx.translate(f*8, f*6);
-    // body lying
-    ctx.fillStyle=cls.color;
-    ctx.fillRect(-9,-8,18,20);
-    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-9,-8,18,20);
-    // legs stretched when fallen
-    ctx.fillStyle='#3e2723';
-    ctx.fillRect(-5,12,4,14);
-    ctx.fillRect(1,12,4,14);
-    // head
-    ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
-    // dead eyes X
-    ctx.fillStyle='#000'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-12);
-    // weapon dropped near
-    ctx.save(); ctx.translate(18,-2); ctx.rotate(0.5);
-    if(P.cls==='barbarian'){ctx.fillStyle='#5d4037'; ctx.fillRect(0,0,4,16); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-6,0,14,8);}
-    else if(P.cls==='ranger'){ctx.fillStyle='#8d6e63'; ctx.fillRect(0,0,20,3);}
-    else if(P.cls==='cleric'){ctx.fillStyle='#FFD700'; ctx.fillRect(0,-4,4,20);}
-    else {ctx.fillStyle='#7c4dff'; ctx.fillRect(0,0,16,3); ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(18,1,4,0,6.28); ctx.fill();}
+    ctx.rotate(f*Math.PI/2 *0.88);
+    ctx.translate(f*10, f*5);
+    // corpo deitado realista
+    ctx.fillStyle='#2a2a2a'; ctx.fillRect(-3,4,4,16); ctx.fillRect(2,4,4,16); // pernas esticadas
+    ctx.fillStyle='#1a1a1a'; ctx.fillRect(-4,18,5,3); ctx.fillRect(1,18,5,3); // botas
+    ctx.fillStyle=cls.armor; ctx.fillRect(-6,-14,12,18); // torso
+    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-6,-14,12,18);
+    ctx.fillStyle=cls.skin; ctx.fillRect(-9,-12,3,14); ctx.fillRect(6,-12,3,14); // braços
+    ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,-20,6,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
+    ctx.fillStyle='#000'; ctx.font='bold 7px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-19);
+    // arma caída
+    ctx.save(); ctx.translate(16,-2); ctx.rotate(0.6);
+    if(P.cls==='barbarian'){ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,3,20); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-8,0,16,8);}
+    else if(P.cls==='ranger'){ctx.fillStyle='#4a2a0a'; ctx.fillRect(0,0,22,2);}
+    else if(P.cls==='cleric'){ctx.fillStyle='#b8960c'; ctx.fillRect(0,-6,3,22);}
+    else {ctx.fillStyle='#4a148c'; ctx.fillRect(0,0,18,3); ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(20,1,4,0,6.28); ctx.fill();}
     ctx.restore();
     ctx.restore();
-    // extra: particles of impact
-    if(f>0.8 && f<0.85){
-      for(let i=0;i<5;i++) particles.push({x:P.x+Math.random()*20-10,y:P.y,life:0.6,color:'#8d6e63',size:2});
-    }
   }
   ctx.restore();
   return;
 }
 
-// ALIVE DRAWING - PROPORÇÃO BONITA + ARMA ÚNICA VISÍVEL
-// attack swing
+// ATAQUE - arma realista em swing
 if(P.atk>0){
   let prog=1-P.atk/14;
-  let swing=Math.sin(prog*Math.PI)*1.3;
-  ctx.save(); ctx.translate(10, -2); ctx.rotate(-0.2-swing*1.6);
-  // arma única por classe no ataque - MAIOR E MAIS VISÍVEL
+  let swing=Math.sin(prog*Math.PI)*1.4;
+  ctx.save(); ctx.translate(7, -8); ctx.rotate(-0.3-swing*1.7);
   if(P.cls==='barbarian'){
-    ctx.fillStyle='#3e2723'; ctx.fillRect(0,-3,7,24);
-    ctx.fillStyle='#b0bec5'; ctx.fillRect(7,-12,22,14); ctx.fillStyle='#90a4ae'; ctx.fillRect(7,-12,22,3);
-    ctx.fillStyle='#ff5252'; ctx.fillRect(7, -1, 22, 2); // sangue na lâmina
+    // machado nórdico realista - cabo longo madeira, lâmina grande curva
+    ctx.fillStyle='#2a1a0a'; ctx.fillRect(0,0,4,26); // cabo longo
+    ctx.fillStyle='#5d4037'; ctx.fillRect(1,2,2,22);
+    ctx.fillStyle='#b0bec5'; ctx.beginPath(); ctx.moveTo(4,-6); ctx.lineTo(4,12); ctx.lineTo(22,8); ctx.lineTo(24,0); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#78909c'; ctx.beginPath(); ctx.moveTo(4,-5); ctx.lineTo(20,0); ctx.strokeStyle='#78909c'; ctx.lineWidth=1; ctx.stroke();
   }
   else if(P.cls==='ranger'){
-    ctx.fillStyle='#5d4037'; ctx.beginPath(); ctx.arc(12,0,14, -0.6, 0.6); ctx.lineWidth=4; ctx.strokeStyle='#8d6e63'; ctx.stroke();
-    ctx.fillStyle='#FFD700'; ctx.fillRect(22,-8,10,3); ctx.fillRect(24,-8,2,16); // flecha dourada
+    // arco recurvo realista 1.8m
+    ctx.strokeStyle='#3e2723'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(2,6,18, -0.8, 0.8); ctx.stroke();
+    ctx.strokeStyle='#8d6e63'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(2,6,18, -0.8, 0.8); ctx.stroke();
+    ctx.fillStyle='#FFD700'; ctx.fillRect(16,-2,12,2); // flecha
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(28,-2); ctx.lineTo(32,0); ctx.lineTo(28,2); ctx.fill();
   }
   else if(P.cls==='cleric'){
-    ctx.fillStyle='#FFD700'; ctx.fillRect(-2,-16,8,28);
-    ctx.fillStyle='#fff8e1'; ctx.fillRect(-8,-20,20,10); ctx.fillStyle='#FFD700'; ctx.fillRect(-6,-22,16,4);
-    ctx.fillStyle='#ffeb3b'; ctx.beginPath(); ctx.arc(2,-24,6,0,6.28); ctx.fill(); // brilho sagrado
+    // martelo de guerra realista
+    ctx.fillStyle='#3e2723'; ctx.fillRect(0,0,5,28); // cabo
+    ctx.fillStyle='#FFD700'; ctx.fillRect(-10,-10,20,12); // cabeça martelo
+    ctx.fillStyle='#fff8e1'; ctx.fillRect(-8,-12,16,4); ctx.fillStyle='#b8960c'; ctx.fillRect(-10,-10,20,2);
+    ctx.fillStyle='#ffeb3b'; ctx.beginPath(); ctx.arc(0,-16,5,0,6.28); ctx.fill(); // aura
   }
   else {
-    ctx.fillStyle='#7c4dff'; ctx.fillRect(0,-2,26,5);
-    ctx.fillStyle='#e1bee7'; ctx.beginPath(); ctx.arc(30,0,7,0,6.28); ctx.fill();
-    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(30,0,3,0,6.28); ctx.fill();
+    // cajado 1.6m com cristal
+    ctx.fillStyle='#2a1a4a'; ctx.fillRect(0,0,4,32);
+    ctx.fillStyle='#7c4dff'; ctx.fillRect(1,0,2,30);
+    ctx.fillStyle='#e1bee7'; ctx.beginPath(); ctx.arc(2,-6,7,0,6.28); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(2,-6,3,0,6.28); ctx.fill();
+    ctx.fillStyle='rgba(124,77,255,0.3)'; ctx.beginPath(); ctx.arc(2,-6,12,0,6.28); ctx.fill();
   }
   ctx.restore();
-  // trail de ataque
-  ctx.fillStyle=cls.color+'66'; ctx.beginPath(); ctx.arc(10,0,34, -0.4, 1.3); ctx.fill();
+  ctx.fillStyle=cls.color+'55'; ctx.beginPath(); ctx.arc(8,-4,36, -0.5, 1.2); ctx.fill();
 }
 
-// pernas altas e bonitas
-ctx.fillStyle='#3e2723';
-ctx.fillRect(-5,10+walkL,4,14);
-ctx.fillRect(1,10+walkR,4,14);
+// PERNAS REALISTAS - longas, finas, anatômicas 7.5 cabeças
+// calça + bota
+ctx.fillStyle='#2a2a2a'; // calça realista
+ctx.fillRect(-4.5,2+walkL,3.5,16); // perna esq
+ctx.fillRect(1,2+walkR,3.5,16); // perna dir
+// joelho sutil
+ctx.fillStyle='#1f1f1f'; ctx.fillRect(-4.5,10+walkL,3.5,2); ctx.fillRect(1,10+walkR,3.5,2);
+// botas couro realista
+ctx.fillStyle='#1a1a1a'; ctx.fillRect(-5.5,16+walkL,5,4); ctx.fillRect(0,16+walkR,5,4);
+ctx.fillStyle='#2a2a2a'; ctx.fillRect(-5.5,16+walkL,5,1.5);
 
-// corpo alto e magro
-ctx.fillStyle=cls.color;
-ctx.fillRect(-9,-8,18,20);
-ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-9,-8,18,20);
-// detalhe armadura por classe
-if(P.cls==='barbarian'){ctx.fillStyle='#000'; ctx.fillRect(-9,2,18,3); ctx.fillStyle='#5d4037'; ctx.fillRect(-7,-6,4,4); ctx.fillRect(3,-6,4,4);}
-else if(P.cls==='ranger'){ctx.fillStyle='#2e7d32'; ctx.fillRect(-9,-8,4,20); ctx.fillRect(5,-8,4,20);}
-else if(P.cls==='cleric'){ctx.fillStyle='#fff'; ctx.fillRect(-2,-8,4,20); ctx.fillRect(-9,0,18,4);}
-else {ctx.fillStyle='#ce93d8'; ctx.fillRect(-9,-8,18,3); ctx.fillRect(-9,9,18,3);}
+// TORSO REALISTA - anatômico, ombros largos, cintura fina
+ctx.fillStyle=cls.armor;
+ctx.fillRect(-6,-14,12,16); // torso principal 12x16 - proporção real
+ctx.strokeStyle='#000'; ctx.lineWidth=2.2; ctx.strokeRect(-6,-14,12,16);
+// cinto
+ctx.fillStyle='#3e2723'; ctx.fillRect(-6.5,-1,13,2.5);
+ctx.fillStyle='#FFD700'; ctx.fillRect(-1.5,-1.5,3,3.5); // fivela
+// detalhes armadura por classe realista
+if(P.cls==='barbarian'){
+  ctx.fillStyle='#4a3a2a'; ctx.fillRect(-6,-14,12,4); // pelagem ombro
+  ctx.fillStyle='#3e2723'; ctx.fillRect(-5,-12,3,3); ctx.fillRect(2,-12,3,3);
+  ctx.fillStyle='#2a1a0a'; ctx.fillRect(-6,2,12,1); // cinto couro
+}
+else if(P.cls==='ranger'){
+  ctx.fillStyle='#1b5e20'; ctx.fillRect(-6,-14,3,16); ctx.fillRect(3,-14,3,16); // colete couro
+  ctx.fillStyle='#2e7d32'; ctx.fillRect(-6,-14,12,2);
+  // aljava nas costas
+  ctx.fillStyle='#3e2723'; ctx.fillRect(-8,-12,2,10);
+  ctx.fillStyle='#FFD700'; for(let i=0;i<3;i++) ctx.fillRect(-8,-12+i*3,2,1.5);
+}
+else if(P.cls==='cleric'){
+  ctx.fillStyle='#90a4ae'; ctx.fillRect(-6,-14,12,16); // placa
+  ctx.fillStyle='#b0bec5'; ctx.fillRect(-5,-13,2,14); ctx.fillRect(3,-13,2,14); // brilho placa
+  ctx.fillStyle='#fff'; ctx.fillRect(-1,-14,2,16); ctx.fillRect(-6,-2,12,2); // cruz
+}
+else {
+  ctx.fillStyle='#1a237e'; ctx.fillRect(-7,-14,14,18); // manto longo até pernas
+  ctx.fillStyle='#283593'; ctx.fillRect(-6,-14,12,3); ctx.fillRect(-6,1,12,2);
+  ctx.fillStyle='#5c6bc0'; ctx.fillRect(-6,-14,1.5,18); // borda manto
+}
 
-// cabeça proporcional
-ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
-// olhos
-ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(-3,-15,1.5,0,6.28); ctx.arc(3,-15,1.5,0,6.28); ctx.fill();
-if(isMoving){ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-3,-16,0.6,0,6.28); ctx.arc(3,-16,0.6,0,6.28); ctx.fill();}
+// BRAÇOS REALISTAS - longos, musculosos, com mãos
+ctx.fillStyle=cls.skin;
+ctx.save(); ctx.translate(-7.5,-12); ctx.rotate(armSwingL*0.15);
+ctx.fillRect(-1.5,0,3,12); // braço esq
+ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,12,2.2,0,6.28); ctx.fill(); // mão
+ctx.restore();
+ctx.save(); ctx.translate(7.5,-12); ctx.rotate(armSwingR*0.15);
+ctx.fillRect(-1.5,0,3,12); // braço dir
+ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,12,2.2,0,6.28); ctx.fill();
+ctx.restore();
 
-// elmo por classe proporcional
-if(P.cls==='barbarian'){ctx.fillStyle='#5d4037'; ctx.fillRect(-9,-22,18,8); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-9,-22,18,2); ctx.fillStyle='#b71c1c'; ctx.fillRect(-1,-26,2,6);}
-else if(P.cls==='ranger'){ctx.fillStyle='#4a5a2a'; ctx.fillRect(-8,-20,16,6); ctx.fillStyle='#8bc34a'; ctx.fillRect(-8,-20,16,2);}
-else if(P.cls==='cleric'){ctx.fillStyle='#FFD700'; ctx.fillRect(-9,-21,18,7); ctx.fillStyle='#fff'; ctx.fillRect(-2,-24,4,4);}
-else {ctx.fillStyle='#4a148c'; ctx.fillRect(-8,-20,16,8); ctx.fillStyle='#ce93d8'; ctx.fillRect(-8,-20,16,2); ctx.fillStyle='#7c4dff'; ctx.beginPath(); ctx.arc(0,-24,3,0,6.28); ctx.fill();}
+// CABEÇA REALISTA - menor, 1/7.5 altura total
+ctx.fillStyle=cls.skin; ctx.beginPath(); ctx.arc(0,-20,5.5,0,6.28); ctx.fill();
+ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
+// pescoço
+ctx.fillStyle=cls.skin; ctx.fillRect(-2,-16,4,3);
+// rosto sutil - olhos pequenos realistas
+ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(-1.8,-20.5,0.9,0,6.28); ctx.arc(1.8,-20.5,0.9,0,6.28); ctx.fill();
+ctx.fillStyle='#4a2a0a'; ctx.fillRect(-2.5,-18.5,5,0.6); // boca sutil
 
-// arma quando não atacando - SEMPRE VISÍVEL E ÚNICA
+// ELMO / CAPUZ REALISTA
+if(P.cls==='barbarian'){
+  ctx.fillStyle='#4a3a2a'; ctx.fillRect(-6,-27,12,7); // elmo couro
+  ctx.fillStyle='#5d4037'; ctx.fillRect(-6,-27,12,2);
+  ctx.fillStyle='#9e9e9e'; ctx.fillRect(-6,-27,12,1.2); // aro metal
+  ctx.fillStyle='#3e2723'; ctx.beginPath(); ctx.moveTo(-6,-27); ctx.lineTo(-8,-30); ctx.lineTo(-5,-27); ctx.fill(); // chifre esq pequeno
+  ctx.beginPath(); ctx.moveTo(6,-27); ctx.lineTo(8,-30); ctx.lineTo(5,-27); ctx.fill(); // chifre dir
+}
+else if(P.cls==='ranger'){
+  ctx.fillStyle='#1b5e20'; ctx.fillRect(-6,-26,12,6); // capuz
+  ctx.fillStyle='#2e7d32'; ctx.fillRect(-6,-26,12,2);
+  ctx.fillStyle='#0f3a0f'; ctx.fillRect(-6,-20,12,2); // sombra capuz
+}
+else if(P.cls==='cleric'){
+  ctx.fillStyle='#b0bec5'; ctx.fillRect(-6.5,-27,13,7); // elmo placa
+  ctx.fillStyle='#eceff1'; ctx.fillRect(-6.5,-27,13,1.5);
+  ctx.fillStyle='#78909c'; ctx.fillRect(-1,-27,2,7); // crista
+}
+else {
+  ctx.fillStyle='#1a237e'; ctx.beginPath(); ctx.arc(0,-24,7, Math.PI, 0); ctx.fill(); // capuz mago pontudo
+  ctx.fillStyle='#283593'; ctx.beginPath(); ctx.moveTo(-7,-24); ctx.lineTo(0,-32); ctx.lineTo(7,-24); ctx.fill();
+  ctx.fillStyle='#7c4dff'; ctx.beginPath(); ctx.arc(0,-30,2,0,6.28); ctx.fill(); // joia topo
+}
+
+// ARMA NAS COSTAS / MÃO quando não atacando - sempre visível realista
 if(P.atk<=0){
   if(P.cls==='barbarian'){
-    ctx.fillStyle='#3e2723'; ctx.fillRect(10,-2,5,18);
-    ctx.fillStyle='#b0bec5'; ctx.fillRect(15,-9,16,10); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(15,-9,16,10);
+    ctx.fillStyle='#2a1a0a'; ctx.fillRect(6.5,-10,3,18); // cabo nas costas
+    ctx.fillStyle='#9e9e9e'; ctx.fillRect(3,-12,12,7); ctx.strokeStyle='#000'; ctx.lineWidth=1.2; ctx.strokeRect(3,-12,12,7);
   }
   else if(P.cls==='ranger'){
-    ctx.save(); ctx.translate(12,0);
-    ctx.strokeStyle='#5d4037'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,12, -0.5, 0.5); ctx.stroke();
-    ctx.fillStyle='#8d6e63'; ctx.fillRect(8,-1,16,2);
+    ctx.save(); ctx.translate(8,-8);
+    ctx.strokeStyle='#3e2723'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(0,4,14, -0.6, 0.6); ctx.stroke();
+    ctx.fillStyle='#3e2723'; ctx.fillRect(-1, -8,1.5,20); // arco nas costas vertical
     ctx.restore();
+    // aljava flechas
+    ctx.fillStyle='#4a2a0a'; ctx.fillRect(-7,-10,2.5,10);
   }
   else if(P.cls==='cleric'){
-    ctx.fillStyle='#FFD700'; ctx.fillRect(10,-14,5,24);
-    ctx.fillStyle='#fff8e1'; ctx.fillRect(6,-18,13,8); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(6,-18,13,8);
+    ctx.fillStyle='#3e2723'; ctx.fillRect(7,-8,3,16);
+    ctx.fillStyle='#b0bec5'; ctx.fillRect(4,-12,10,6); ctx.strokeStyle='#000'; ctx.lineWidth=1.2; ctx.strokeRect(4,-12,10,6);
   }
   else {
-    ctx.fillStyle='#7c4dff'; ctx.fillRect(10,-2,18,4);
-    ctx.fillStyle='#e1bee7'; ctx.beginPath(); ctx.arc(30,0,5,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#2a1a4a'; ctx.fillRect(7,-12,3,24); // cajado alto realista
+    ctx.fillStyle='#7c4dff'; ctx.fillRect(7.5,-12,2,22);
+    ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(8.5,-14,4,0,6.28); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(8.5,-14,1.5,0,6.28); ctx.fill();
   }
 }
 
 ctx.restore();
+}
+
+function drawMonsterRealistic(m,x,y){
+  m.bob+=0.04; m.walk+=0.12;
+  let bobY=Math.sin(m.bob)*1; let walkOff=Math.sin(m.walk)*3;
+  if(m.frozen>0){ctx.fillStyle='rgba(100,180,255,0.45)'; ctx.beginPath(); ctx.arc(x,y+bobY,18,0,6.28); ctx.fill();}
+  if(m.stunned>0){ctx.fillStyle='rgba(255,235,59,0.5)'; ctx.beginPath(); ctx.arc(x,y+bobY-20,6,0,6.28); ctx.fill();}
+  ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+18,11,3.5,0,0,6.28); ctx.fill();
+  ctx.save(); ctx.translate(x,y+bobY);
+  // corpo monstro realista - mais alto magro, não bola
+  let type=m.type;
+  if(type===0){ctx.fillStyle='#4a3a2a';} else if(type===1){ctx.fillStyle='#2a4a2a';} else {ctx.fillStyle='#3a2a4a';}
+  ctx.fillRect(-5,-10,10,14); // torso
+  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(-5,-10,10,14);
+  // pernas longas
+  ctx.fillStyle='#2a2a2a'; ctx.fillRect(-4,4+walkOff,3,12); ctx.fillRect(1,4-walkOff,3,12);
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(-4.5,14+walkOff,4,3); ctx.fillRect(0.5,14-walkOff,4,3);
+  // braços
+  ctx.fillStyle='#4a3a2a'; ctx.fillRect(-8,-8,3,10); ctx.fillRect(5,-8,3,10);
+  // cabeça menor realista
+  ctx.fillStyle='#6a4a3a'; ctx.beginPath(); ctx.arc(0,-16,5.5,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=1.8; ctx.stroke();
+  ctx.fillStyle='#ff0000'; ctx.beginPath(); ctx.arc(-1.5,-16,1,0,6.28); ctx.arc(1.5,-16,1,0,6.28); ctx.fill();
+  ctx.restore();
+  ctx.fillStyle='#000'; ctx.fillRect(x-14,y-22,28,4); ctx.fillStyle='#e53935'; ctx.fillRect(x-13,y-21,26*(m.hp/m.max),2);
 }
 
 function draw(){
-ctx.fillStyle='#1e3a1e'; ctx.fillRect(0,0,cv.width,cv.height);
-ctx.strokeStyle='rgba(0,0,0,0.07)'; ctx.lineWidth=1;
-for(let x=-(C.x%64);x<cv.width;x+=64){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
-for(let y=-(C.y%64);y<cv.height;y+=64){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
-
+drawGround();
 objs.forEach(o=>{
-let x=o.x-C.x,y=o.y-C.y; if(x<-120||x>540||y<-120||y>980) return;
-o.bob+=0.02; let bobY=Math.sin(o.bob)*1.5;
-ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+40+bobY,28,8,0,0,6.28); ctx.fill();
-if(o.t==='house'){
-ctx.fillStyle='#4a3a32'; ctx.fillRect(x-32,y-20+bobY,64,55);
-ctx.fillStyle='#3e2723'; ctx.fillRect(x-32,y-42+bobY,64,24);
-ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-32,y-20+bobY,64,55); ctx.strokeRect(x-32,y-42+bobY,64,24);
-ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-10,y-2+bobY,20,20);
-} else {
-ctx.fillStyle='#2a1a0a'; ctx.fillRect(x-6,y-5+bobY,12,28);
-ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x,y-22+bobY,22,28,0,0,6.28); ctx.fill();
-ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.ellipse(x,y-28+bobY,16,20,0,0,6.28); ctx.fill();
-ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
-}
+let x=o.x-C.x,y=o.y-C.y; if(x<-100||x>520||y<-100||y>960) return;
+o.bob+=0.015;
+let bobY=Math.sin(o.bob)*1;
+if(o.t==='house') drawHouseRealistic(o,x,y,bobY);
+else if(o.t==='tree') drawTreeRealistic(o,x,y,bobY);
+else drawRock(o,x,y,bobY);
 });
-
 chests.forEach(c=>{
 let x=c.x-C.x,y=c.y-C.y; if(x<-40||x>460||y<-40||y>900) return;
-c.bob+=0.03; let bobY=Math.sin(c.bob)*2.5;
+c.bob+=0.03; let bobY=Math.sin(c.bob)*2;
 if(!c.opened){
-ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-6+bobY,28,20);
-ctx.fillStyle='#FFD700'; ctx.fillRect(x-4,y-2+bobY,8,8);
-ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-14,y-6+bobY,28,20);
+ctx.fillStyle='rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(x,y+10+bobY,14,4,0,0,6.28); ctx.fill();
+ctx.fillStyle='#4a3a2a'; ctx.fillRect(x-14,y-4+bobY,28,14);
+ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-4+bobY,28,4);
+ctx.fillStyle='#FFD700'; ctx.fillRect(x-4,y,6,6); ctx.fillStyle='#FFA000'; ctx.fillRect(x-4,y,6,2);
+ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.strokeRect(x-14,y-4+bobY,28,14);
 }
 });
-
-mons.forEach(m=>{
-if(!m.alive) return;
-let x=m.x-C.x,y=m.y-C.y; if(x<-50||x>470||y<-50||y>910) return;
-m.bob+=0.05; m.walk+=0.15;
-let bobY=Math.sin(m.bob)*1.5; let walkOff=Math.sin(m.walk)*2.5;
-if(m.frozen>0){ctx.fillStyle='rgba(100,180,255,0.5)'; ctx.beginPath(); ctx.arc(x,y+bobY,20,0,6.28); ctx.fill();}
-if(m.stunned>0){ctx.fillStyle='rgba(255,255,0,0.5)'; ctx.beginPath(); ctx.arc(x,y+bobY-22,8,0,6.28); ctx.fill();}
-ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+22,14,4,0,0,6.28); ctx.fill();
-ctx.save(); ctx.translate(x,y+bobY);
-ctx.fillStyle='#4a2a2a'; ctx.beginPath(); ctx.ellipse(0,2,10,18,0,0,6.28); ctx.fill();
-ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
-ctx.fillStyle='#3a2a2a'; ctx.fillRect(-5,14+walkOff,4,10); ctx.fillRect(1,14-walkOff,4,10);
-ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-12,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
-ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-3,-13,2.5,0,6.28); ctx.arc(3,-13,2.5,0,6.28); ctx.fill();
-ctx.fillStyle='#f00'; ctx.beginPath(); ctx.arc(-3,-13,1.2,0,6.28); ctx.arc(3,-13,1.2,0,6.28); ctx.fill();
-ctx.restore();
-ctx.fillStyle='#000'; ctx.fillRect(x-16,y-26,32,5); ctx.fillStyle='#4caf50'; ctx.fillRect(x-15,y-25,30*(m.hp/m.max),3);
-});
-
-// PLAYER
+mons.forEach(m=>{if(!m.alive) return; let x=m.x-C.x,y=m.y-C.y; if(x<-50||x>470||y<-50||y>910) return; drawMonsterRealistic(m,x,y);});
 let px=P.x-C.x,py=P.y-C.y;
-drawPlayerRealistic(px,py);
-
+drawPlayerNorrath(px,py);
 projectiles.forEach(p=>{
 let x=p.x-C.x,y=p.y-C.y;
-ctx.fillStyle=p.color||'#FFD700'; ctx.beginPath(); ctx.arc(x,y,5,0,6.28); ctx.fill();
-ctx.fillStyle='#fff'; ctx.font='bold 12px sans-serif'; ctx.textAlign='center'; ctx.fillText(p.icon||'•',x,y+4);
+ctx.fillStyle=p.color||'#FFD700'; ctx.beginPath(); ctx.arc(x,y,4,0,6.28); ctx.fill();
+ctx.fillStyle='#fff'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText(p.icon||'•',x,y+3);
 });
-
 particles.forEach(p=>{
 let x=p.x-C.x,y=p.y-C.y;
 ctx.globalAlpha=p.life;
@@ -366,16 +500,13 @@ if(p.text){ctx.font='bold '+(p.size||12)+'px sans-serif'; ctx.textAlign='center'
 else {ctx.beginPath(); ctx.arc(x,y,p.size||3,0,6.28); ctx.fill();}
 ctx.globalAlpha=1;
 });
-
-if(T&&!P.dead){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=3; ctx.setLineDash([6,4]); ctx.beginPath(); ctx.arc(x,y,16,0,6.28); ctx.stroke(); ctx.setLineDash([]);}
+if(T&&!P.dead){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#8bc34a'; ctx.lineWidth=2.5; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.arc(x,y,14,0,6.28); ctx.stroke(); ctx.setLineDash([]);}
 }
 
-// JOYSTICK SEM GELO
+// JOYSTICK
 const joyZone=document.getElementById('joyZone');
 const joyBase=document.getElementById('joyBase');
 const joyStick=document.getElementById('joyStick');
-const atkZone=document.getElementById('atkZone');
-
 function getTouch(e){
 if(e.touches&&e.touches[0]) return {x:e.touches[0].clientX,y:e.touches[0].clientY};
 if(e.changedTouches&&e.changedTouches[0]) return {x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
@@ -388,7 +519,6 @@ function joyEnd(e){if(!J.active) return; e.preventDefault(); e.stopPropagation()
 joyZone.addEventListener('mousedown',joyStart);
 window.addEventListener('mousemove',e=>{if(J.active) joyMove(e);});
 window.addEventListener('mouseup',e=>{joyEnd(e);});
-
 function handleTap(cx,cy){
 if(P.dead) return false;
 let r=cv.getBoundingClientRect();
@@ -422,7 +552,7 @@ particles.push({x:m.x,y:m.y-10,text:'-'+dmg,life:1,color:'#ff5252',size:4});
 if(m.hp<=0){
 m.alive=false; setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=400+Math.random()*2400; m.y=400+Math.random()*2400;},6000);
 P.gold+=25; P.xp+=30;
-if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp; particles.push({x:P.x,y:P.y-30,text:'LVL UP!',life:1.5,color:'#FFD700',size:6});}
+if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp; particles.push({x:P.x,y:P.y-30,text:'LVL UP!',life:1.5,color:'#8bc34a',size:6});}
 for(let i=0;i<8;i++) particles.push({x:m.x,y:m.y,life:1,color:'#ff5252',size:3});
 }
 }
@@ -431,7 +561,6 @@ chests.forEach(c=>{if(!c.opened&&Math.hypot(c.x-P.x,c.y-P.y)<70){c.opened=true; 
 if(hit){cv.style.transform='translate(2px,0)'; setTimeout(()=>cv.style.transform='',60); if(navigator.vibrate) navigator.vibrate(25);}
 updateBars();
 }
-
 function doSkill(idx){
 if(P.dead) return;
 let cls=CLASSES[P.cls];
@@ -439,59 +568,22 @@ let skill=cls.skills[idx]; if(!skill) return;
 if(playerSkills[skill.id].cd>0){particles.push({x:P.x,y:P.y-20,text:'CD '+Math.ceil(playerSkills[skill.id].cd)+'s',life:0.8,color:'#ff5252',size:4}); return;}
 if(P.mana<skill.mana){particles.push({x:P.x,y:P.y-20,text:'SEM MANA!',life:0.8,color:'#64b5f6',size:4}); return;}
 P.mana-=skill.mana; playerSkills[skill.id].cd=skill.cd; updateBars(); updateSpellCDs();
-console.log('skill',skill.id);
-if(skill.id==='bash'){
-  let hit=false;
-  mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<100){m.hp-=skill.dmg; m.stunned=2; hit=true; particles.push({x:m.x,y:m.y-15,text:'STUN! -'+skill.dmg,life:1,color:'#FFEB3B',size:5}); if(m.hp<=0) m.alive=false;}});
-  if(!hit) particles.push({x:P.x,y:P.y-15,text:'BASH!',life:0.8,color:'#ff8f00',size:5});
-  cv.style.transform='translate(-3px,0)'; setTimeout(()=>cv.style.transform='',100);
-}
-else if(skill.id==='shout'){
-  buffs.dmg=5; particles.push({x:P.x,y:P.y-30,text:'GRITO! +50% 5s',life:1.5,color:'#ff8f00',size:5});
-  for(let i=0;i<6;i++) particles.push({x:P.x+Math.random()*40-20,y:P.y+Math.random()*20-10,life:0.8,color:'#ff8f00',size:3});
-}
-else if(skill.id==='triple'){
-  let alive=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y)).slice(0,3);
-  if(alive.length===0){particles.push({x:P.x,y:P.y-15,text:'SEM ALVO!',life:0.8,color:'#aaa',size:4}); return;}
-  alive.forEach(target=>{projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:500,dmg:skill.dmg,icon:'🏹',color:'#8bc34a',life:2});});
-}
-else if(skill.id==='crit'){
-  let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0];
-  if(!target){particles.push({x:P.x,y:P.y-15,text:'SEM ALVO!',life:0.8,color:'#aaa',size:4}); return;}
-  target.hp-=skill.dmg; particles.push({x:target.x,y:target.y-20,text:'MORTAL! -'+skill.dmg,life:1,color:'#FFD700',size:6}); if(target.hp<=0) target.alive=false;
-  for(let i=0;i<5;i++) particles.push({x:target.x,y:target.y,life:0.8,color:'#FFD700',size:3});
-}
-else if(skill.id==='holy'){
-  let hit=0;
-  mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<110){m.hp-=skill.dmg; hit++; particles.push({x:m.x,y:m.y-10,text:'-'+skill.dmg,life:0.8,color:'#FFD700',size:4}); if(m.hp<=0) m.alive=false;}});
-  P.hp=Math.min(P.maxHp,P.hp+20); updateBars();
-  particles.push({x:P.x,y:P.y-30,text:'HOLY! '+hit+' inimigos',life:1,color:'#FFD700',size:5});
-}
-else if(skill.id==='heal'){
-  P.hp=Math.min(P.maxHp,P.hp+80); updateBars();
-  particles.push({x:P.x,y:P.y-30,text:'+80 HP',life:1,color:'#4caf50',size:6});
-  for(let i=0;i<8;i++) particles.push({x:P.x+Math.random()*30-15,y:P.y+Math.random()*20-10,life:1,color:'#4caf50',size:3});
-}
-else if(skill.id==='fire'){
-  let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0];
-  if(!target){particles.push({x:P.x,y:P.y-15,text:'SEM ALVO!',life:0.8,color:'#aaa',size:4}); return;}
-  projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:400,dmg:skill.dmg,icon:'🔥',color:'#ff6f00',life:2,aoe:true});
-}
-else if(skill.id==='frost'){
-  let hit=0;
-  mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<140){m.hp-=skill.dmg; m.frozen=3; hit++; particles.push({x:m.x,y:m.y-10,text:'❄️ -'+skill.dmg,life:1,color:'#42a5f5',size:5}); if(m.hp<=0) m.alive=false;}});
-  if(hit===0) particles.push({x:P.x,y:P.y-15,text:'FROST!',life:0.8,color:'#42a5f5',size:5});
-}
+if(skill.id==='bash'){mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<100){m.hp-=skill.dmg; m.stunned=2; particles.push({x:m.x,y:m.y-15,text:'STUN! -'+skill.dmg,life:1,color:'#FFEB3B',size:5}); if(m.hp<=0) m.alive=false;}}); cv.style.transform='translate(-3px,0)'; setTimeout(()=>cv.style.transform='',100);}
+else if(skill.id==='shout'){buffs.dmg=5; particles.push({x:P.x,y:P.y-30,text:'GRITO! +50% 5s',life:1.5,color:'#ff8f00',size:5});}
+else if(skill.id==='triple'){let alive=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y)).slice(0,3); alive.forEach(target=>{projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:500,dmg:skill.dmg,icon:'🏹',color:'#8bc34a',life:2});});}
+else if(skill.id==='crit'){let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0]; if(target){target.hp-=skill.dmg; particles.push({x:target.x,y:target.y-20,text:'MORTAL! -'+skill.dmg,life:1,color:'#FFD700',size:6}); if(target.hp<=0) target.alive=false;}}
+else if(skill.id==='holy'){mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<110){m.hp-=skill.dmg; if(m.hp<=0) m.alive=false;}}); P.hp=Math.min(P.maxHp,P.hp+20); updateBars(); particles.push({x:P.x,y:P.y-30,text:'HOLY!',life:1,color:'#FFD700',size:5});}
+else if(skill.id==='heal'){P.hp=Math.min(P.maxHp,P.hp+80); updateBars(); particles.push({x:P.x,y:P.y-30,text:'+80 HP',life:1,color:'#4caf50',size:6});}
+else if(skill.id==='fire'){let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0]; if(target) projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:400,dmg:skill.dmg,icon:'🔥',color:'#ff6f00',life:2,aoe:true});}
+else if(skill.id==='frost'){mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<140){m.hp-=skill.dmg; m.frozen=3; particles.push({x:m.x,y:m.y-10,text:'❄️',life:1,color:'#42a5f5',size:5}); if(m.hp<=0) m.alive=false;}});}
 if(navigator.vibrate) navigator.vibrate(30);
 }
-
 let atkBtnEl=document.getElementById('atkBtn');
 atkBtnEl.addEventListener('click',doAttack);
 atkBtnEl.addEventListener('touchstart',e=>{e.preventDefault(); e.stopPropagation(); doAttack();},{passive:false});
-atkZone.addEventListener('touchstart',e=>{e.preventDefault(); doAttack();},{passive:false});
-atkZone.addEventListener('mousedown',e=>{e.preventDefault(); doAttack();});
+document.getElementById('atkZone').addEventListener('touchstart',e=>{e.preventDefault(); doAttack();},{passive:false});
+document.getElementById('atkZone').addEventListener('mousedown',e=>{e.preventDefault(); doAttack();});
 
-// FIX SKILLS - cria uma vez só, não recria todo frame
 function createSpells(){
 let cont=document.getElementById('spells'); cont.innerHTML='';
 let cls=CLASSES[P.cls];
@@ -511,41 +603,28 @@ let spellEl=document.getElementById('spell-'+s.id);
 if(!cdEl||!spellEl) return;
 let cd=playerSkills[s.id]?.cd||0;
 if(cd>0){cdEl.style.display='flex'; cdEl.textContent=Math.ceil(cd); spellEl.classList.add('disabled');}
-else {cdEl.style.display='none'; spellEl.classList.remove('disabled');}
-if(P.mana < s.mana) spellEl.classList.add('disabled'); else if(cd<=0) spellEl.classList.remove('disabled');
+else {cdEl.style.display='none'; if(P.mana>=s.mana) spellEl.classList.remove('disabled');}
+if(P.mana < s.mana) spellEl.classList.add('disabled');
 });
 }
-
 document.querySelectorAll('.classCard').forEach(card=>{
-card.addEventListener('click',()=>{
-document.querySelectorAll('.classCard').forEach(c=>c.classList.remove('selected'));
-card.classList.add('selected'); selClass=card.dataset.class;
-});
+card.addEventListener('click',()=>{document.querySelectorAll('.classCard').forEach(c=>c.classList.remove('selected')); card.classList.add('selected'); selClass=card.dataset.class;});
 card.addEventListener('touchstart',e=>{e.preventDefault(); document.querySelectorAll('.classCard').forEach(c=>c.classList.remove('selected')); card.classList.add('selected'); selClass=card.dataset.class;},{passive:false});
 });
-
 function triggerDeath(){
 if(P.dead) return;
-P.dead=true; P.deathT=0; P.velX=0; P.velY=0; J.active=false; T=null;
-P.atk=0;
+P.dead=true; P.deathT=0; P.velX=0; P.velY=0; J.active=false; T=null; P.atk=0;
 document.getElementById('deathOverlay').classList.add('show');
 document.getElementById('deathText').textContent='Caindo de joelhos...';
 if(navigator.vibrate) navigator.vibrate([100,50,200]);
 }
-
 function respawn(){
-P.dead=false; P.deathT=0;
-P.hp=Math.floor(P.maxHp*0.6);
-P.mana=Math.floor(P.maxMana*0.6);
-P.x=W/2; P.y=H/2;
-P.gold=Math.max(0,P.gold-50);
+P.dead=false; P.deathT=0; P.hp=Math.floor(P.maxHp*0.6); P.mana=Math.floor(P.maxMana*0.6); P.x=W/2; P.y=H/2; P.gold=Math.max(0,P.gold-50);
 C.x=P.x-cv.width/2; C.y=P.y-cv.height/2;
 document.getElementById('deathOverlay').classList.remove('show');
 particles.push({x:P.x,y:P.y-30,text:'RENASCEU!',life:1.5,color:'#4caf50',size:6});
-for(let i=0;i<10;i++) particles.push({x:P.x+Math.random()*40-20,y:P.y+Math.random()*20-10,life:1,color:'#4caf50',size:3});
 updateBars();
 }
-
 function startGame(){
 P.cls=selClass; let cls=CLASSES[P.cls];
 P.attr={...cls.base}; P.maxHp=cls.hp; P.hp=P.maxHp; P.maxMana=cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=300; P.x=W/2; P.y=H/2; P.dead=false; P.deathT=0;
@@ -558,7 +637,6 @@ if(!gameOn){gameOn=true; requestAnimationFrame(loop);}
 }
 document.getElementById('btnStart').addEventListener('click',startGame);
 document.getElementById('btnStart').addEventListener('touchstart',e=>{e.preventDefault(); startGame();},{passive:false});
-
 function updateBars(){
 document.getElementById('hp').textContent=Math.floor(P.hp);
 document.getElementById('mana').textContent=Math.floor(P.mana);
@@ -566,18 +644,12 @@ document.getElementById('gold').textContent=P.gold;
 document.getElementById('lvl').textContent=P.lvl;
 document.getElementById('clsName').textContent=CLASSES[P.cls].short;
 }
-
 let last=performance.now();
 function loop(now){
 let dt=Math.min((now-last)/1000,0.05); last=now;
-
-// death handling
 if(P.dead){
   P.deathT+=dt;
-  let overlay=document.getElementById('deathOverlay');
-  let fill=document.getElementById('deathFill');
-  let count=document.getElementById('deathCount');
-  let txt=document.getElementById('deathText');
+  let fill=document.getElementById('deathFill'); let count=document.getElementById('deathCount'); let txt=document.getElementById('deathText');
   let progress=P.deathT/3.0;
   if(fill) fill.style.width=(progress*100)+'%';
   if(count) count.textContent=(3.0-P.deathT).toFixed(1);
@@ -585,29 +657,21 @@ if(P.dead){
   else if(P.deathT<1.8){ if(txt) txt.textContent='Caindo no chão...'; }
   else { if(txt) txt.textContent='Desmaiado... renascendo'; }
   if(P.deathT>=3.0){ respawn(); }
-  // still draw world
   C.targetX=P.x-cv.width/2; C.targetY=P.y-cv.height/2;
   C.targetX=Math.max(0,Math.min(W-cv.width,C.targetX)); C.targetY=Math.max(0,Math.min(H-cv.height,C.targetY));
   C.x+=(C.targetX-C.x)*0.14; C.y+=(C.targetY-C.y)*0.14;
   particles.forEach((p,i)=>{p.life-=dt*1.8; if(p.text){p.y-=25*dt;} else {p.y-=15*dt;} if(p.life<=0) particles.splice(i,1);});
   draw(); updateBars(); updateSpellCDs();
-  requestAnimationFrame(loop);
-  return;
+  requestAnimationFrame(loop); return;
 }
-
 Object.keys(playerSkills).forEach(k=>{if(playerSkills[k].cd>0) playerSkills[k].cd=Math.max(0,playerSkills[k].cd-dt);});
 Object.keys(buffs).forEach(k=>{buffs[k]-=dt; if(buffs[k]<=0) delete buffs[k];});
 updateSpellCDs();
-
 let targetX=0,targetY=0;
 if(J.active){targetX=J.x; targetY=J.y;}
 else if(T){let dx=T.x-P.x, dy=T.y-P.y, d=Math.hypot(dx,dy); if(d<22){T=null;} else {targetX=dx/d; targetY=dy/d; if(Math.abs(targetX)>0.08) P.f=targetX>0?1:-1;}}
 if(J.active||T){P.velX=targetX*CLASSES[P.cls].speed; P.velY=targetY*CLASSES[P.cls].speed;} else {P.velX=0; P.velY=0;}
-if(Math.hypot(P.velX,P.velY)>1){
-let nx=P.x+P.velX*dt, ny=P.y+P.velY*dt;
-P.x=nx; P.y=ny;
-P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));
-}
+if(Math.hypot(P.velX,P.velY)>1){P.x+=P.velX*dt; P.y+=P.velY*dt; P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));}
 if(P.atk>0) P.atk--;
 mons.forEach(m=>{
 if(!m.alive) return;
@@ -616,14 +680,9 @@ if(m.stunned>0){m.stunned-=dt; return;}
 let dist=Math.hypot(m.x-P.x,m.y-P.y);
 if(dist<280){
 let ang=Math.atan2(P.y-m.y,P.x-m.x);
-let sp=50;
-let nx=m.x+Math.cos(ang)*sp*dt, ny=m.y+Math.sin(ang)*sp*dt;
-m.x=nx; m.y=ny;
-if(dist<50&&Math.random()<0.04){
-  P.hp-=7; updateBars();
-  particles.push({x:P.x,y:P.y-10,text:'-'+7,life:0.8,color:'#ff5252',size:4});
-  if(P.hp<=0){ triggerDeath(); }
-}
+let sp=52;
+m.x+=Math.cos(ang)*sp*dt; m.y+=Math.sin(ang)*sp*dt;
+if(dist<48&&Math.random()<0.04){P.hp-=7; updateBars(); particles.push({x:P.x,y:P.y-10,text:'-'+7,life:0.8,color:'#ff5252',size:4}); if(P.hp<=0) triggerDeath();}
 }
 });
 projectiles.forEach((p,i)=>{
@@ -632,11 +691,8 @@ p.x+=Math.cos(ang)*p.speed*dt; p.y+=Math.sin(ang)*p.speed*dt; p.life-=dt;
 if(p.life<=0){projectiles.splice(i,1); return;}
 for(let j=0;j<mons.length;j++){
 let m=mons[j]; if(!m.alive) continue;
-if(Math.hypot(m.x-p.x,m.y-p.y)<28){
-if(p.aoe){
-  mons.forEach(mm=>{if(mm.alive&&Math.hypot(mm.x-p.x,mm.y-p.y)<80){mm.hp-=p.dmg; particles.push({x:mm.x,y:mm.y-10,text:'-'+p.dmg,life:0.8,color:'#ff6f00',size:4}); if(mm.hp<=0) mm.alive=false;}});
-  for(let k=0;k<10;k++) particles.push({x:p.x,y:p.y,life:1,color:p.color,size:4});
-}
+if(Math.hypot(m.x-p.x,m.y-p.y)<26){
+if(p.aoe){mons.forEach(mm=>{if(mm.alive&&Math.hypot(mm.x-p.x,mm.y-p.y)<80){mm.hp-=p.dmg; particles.push({x:mm.x,y:mm.y-10,text:'-'+p.dmg,life:0.8,color:'#ff6f00',size:4}); if(mm.hp<=0) mm.alive=false;}}); for(let k=0;k<10;k++) particles.push({x:p.x,y:p.y,life:1,color:p.color,size:4});}
 else {m.hp-=p.dmg; particles.push({x:m.x,y:m.y-10,text:'-'+p.dmg,life:0.8,color:p.color,size:4}); if(m.hp<=0) m.alive=false;}
 projectiles.splice(i,1); break;
 }
