@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>V14 ATAQUE + PROPORÇÃO BONITA</title>
+<title>V15 MORTE REALISTA + SKILLS + ARMAS</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;font-family:system-ui,sans-serif}
@@ -19,26 +19,37 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 #atkZone{position:absolute;bottom:0;right:0;width:50%;height:45%;z-index:30;pointer-events:auto;touch-action:none}
 #joyBase{position:absolute;bottom:35px;left:35px;width:110px;height:110px;border-radius:55px;background:radial-gradient(circle at 30% 30%,#666,#222);border:4px solid #000;box-shadow:0 6px 0 #000,0 0 20px rgba(0,0,0,0.6);z-index:40;pointer-events:none}
 #joyStick{position:absolute;bottom:57px;left:57px;width:66px;height:66px;border-radius:33px;background:radial-gradient(circle at 30% 30%,#FFD700,#b8960c);border:4px solid #000;box-shadow:0 4px 0 #000,0 0 15px rgba(255,215,0,0.4);z-index:41;pointer-events:none;display:flex;justify-content:center;align-items:center;font-size:24px;transition:transform 0.08s}
-#atkBtn{position:absolute;bottom:35px;right:35px;width:80px;height:80px;border-radius:20px;background:linear-gradient(#e53935,#7f0000);border:4px solid #000;box-shadow:0 6px 0 #000;z-index:40;display:flex;justify-content:center;align-items:center;font-size:36px;pointer-events:auto;touch-action:none;cursor:pointer;transition:transform 0.08s}
+#atkBtn{position:absolute;bottom:35px;right:35px;width:80px;height:80px;border-radius:20px;background:linear-gradient(#e53935,#7f0000);border:4px solid #000;box-shadow:0 6px 0 #000;z-index:45;display:flex;justify-content:center;align-items:center;font-size:36px;pointer-events:auto;touch-action:none;cursor:pointer;transition:transform 0.08s}
 #atkBtn:active{transform:translateY(6px) scale(0.95);box-shadow:none}
-#spells{position:absolute;bottom:125px;right:15px;display:flex;flex-direction:column;gap:8px;z-index:40;pointer-events:auto}
-.spell{width:54px;height:54px;border-radius:14px;border:4px solid #000;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:24px;cursor:pointer;box-shadow:0 4px 0 #000;position:relative;pointer-events:auto;touch-action:none}
-.spell:active{transform:translateY(4px);box-shadow:none}
-.spell .cd{position:absolute;inset:0;background:rgba(0,0,0,0.7);border-radius:10px;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:14px}
-.spell.barbarian{background:linear-gradient(#e53935,#7f0000)}
-.spell.ranger{background:linear-gradient(#43a047,#1b5e20)}
-.spell.cleric{background:linear-gradient(#FFD700,#b8960c)}
+#spells{position:absolute;bottom:125px;right:15px;display:flex;flex-direction:column;gap:10px;z-index:50;pointer-events:auto}
+.spell{width:60px;height:60px;border-radius:16px;border:4px solid #000;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:26px;cursor:pointer;box-shadow:0 5px 0 #000;position:relative;pointer-events:auto;touch-action:none;transition:transform 0.08s}
+.spell:active{transform:translateY(5px) scale(0.95);box-shadow:none}
+.spell .cd{position:absolute;inset:0;background:rgba(0,0,0,0.78);border-radius:12px;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:16px;pointer-events:none}
+.spell .manaCost{position:absolute;bottom:-6px;right:-6px;background:#0d47a1;color:#fff;font-size:7px;font-weight:900;padding:2px 5px;border-radius:8px;border:2px solid #000}
+.spell.barbarian{background:linear-gradient(#ff5252,#b71c1c)}
+.spell.ranger{background:linear-gradient(#66bb6a,#2e7d32)}
+.spell.cleric{background:linear-gradient(#FFD700,#ff8f00)}
 .spell.wizard{background:linear-gradient(#7c4dff,#4a148c)}
+.spell.disabled{opacity:0.5;filter:grayscale(0.5)}
+#deathOverlay{position:absolute;inset:0;background:rgba(0,0,0,0.85);z-index:80;display:none;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center}
+#deathOverlay.show{display:flex}
+.deathTitle{font-size:32px;font-weight:900;color:#ff5252;text-shadow:3px 3px 0 #000;animation:pulse 0.8s infinite}
+.deathSub{font-size:14px;color:#ccc;margin-top:10px}
+.deathBar{width:200px;height:8px;background:#333;border-radius:4px;margin-top:16px;overflow:hidden;border:2px solid #000}
+.deathBarFill{height:100%;background:linear-gradient(#ff5252,#b71c1c);width:0%;transition:width 0.1s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 #start{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,#2a1a14,#0a0503 70%,#000);z-index:100;display:flex;flex-direction:column;align-items:center;padding:16px;overflow-y:auto}
 .logo{font-size:38px;font-weight:900;color:#FFD700;text-shadow:4px 4px 0 #000;letter-spacing:2px;margin-top:10px}
 .sub{color:#FFA500;font-weight:900;letter-spacing:3px;font-size:10px;margin:4px 0 10px 0}
 .classGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:380px;margin:10px 0}
-.classCard{background:linear-gradient(#3e2723,#1a0f0a);border:3px solid #000;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 0 #000;cursor:pointer;min-height:110px;transition:transform 0.1s;position:relative;overflow:hidden}
+.classCard{background:linear-gradient(#3e2723,#1a0f0a);border:3px solid #000;border-radius:14px;padding:10px;text-align:center;box-shadow:0 4px 0 #000;cursor:pointer;min-height:130px;transition:transform 0.1s;position:relative;overflow:hidden}
 .classCard.selected{border-color:#FFD700;box-shadow:0 0 18px #FFD700,0 4px 0 #000;transform:scale(1.03)}
-.classIcon{font-size:34px}
+.classIcon{font-size:36px}
 .className{color:#FFD700;font-weight:900;font-size:10px;margin:5px 0 2px 0}
-.classDesc{color:#d7ccc8;font-size:7px;line-height:1.3}
-.classStats{color:#8d6e63;font-size:6px;margin-top:4px;background:rgba(0,0,0,0.5);padding:3px;border-radius:6px;border:1px solid #000}
+.classDesc{color:#d7ccc8;font-size:8px;line-height:1.3}
+.classWeapon{margin-top:6px;background:rgba(0,0,0,0.6);border-radius:8px;padding:4px;border:1px solid #333;color:#fff;font-size:7px;font-weight:900}
+.classWeapon b{color:#FFD700}
+.classStats{color:#8d6e63;font-size:6px;margin-top:4px}
 .startBtn{margin-top:14px;background:linear-gradient(#FFD700,#FF8f00);color:#000;border:4px solid #000;padding:12px 36px;border-radius:12px;font-weight:900;font-size:16px;box-shadow:0 5px 0 #000;cursor:pointer;min-width:200px}
 .startBtn:active{transform:translateY(5px);box-shadow:none}
 #hint{position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#FFD700;font-size:10px;font-weight:900;padding:8px 14px;border-radius:16px;border:2px solid #FFD700;z-index:15;pointer-events:none;text-align:center;max-width:85vw}
@@ -59,32 +70,39 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;position:fixed;
 <div id="joyStick">🕹️</div>
 <div id="atkBtn">⚔️</div>
 <div id="spells"></div>
-<div id="hint">V14: ATAQUE CORRIGIDO + PROPORÇÃO BONITA ALTA</div>
+<div id="deathOverlay">
+<div class="deathTitle">💀 MORREU</div>
+<div class="deathSub" id="deathText">Caindo de joelhos...</div>
+<div class="deathBar"><div class="deathBarFill" id="deathFill"></div></div>
+<div class="deathSub" style="margin-top:8px;font-size:10px">Renascer em <span id="deathCount">3.0</span>s</div>
+</div>
+<div id="hint">V15: MORTE REALISTA + SKILLS FIX + ARMAS ÚNICAS</div>
 <div id="start">
 <div class="logo">NORRATH</div>
-<div class="sub">V14 PROPORÇÃO BONITA</div>
-<div style="background:#000;border:2px solid #4caf50;border-radius:10px;padding:6px 12px;color:#4caf50;font-size:8px;font-weight:900;margin:6px 0">✅ ATAQUE FUNCIONANDO + PERSONAGENS ALTOS E BONITOS</div>
+<div class="sub">V15 MORTE REALISTA</div>
+<div style="background:#000;border:2px solid #4caf50;border-radius:10px;padding:6px 12px;color:#4caf50;font-size:8px;font-weight:900;margin:6px 0;text-align:center">✅ MORTE REALISTA • SKILLS FUNCIONANDO • ARMA MUDA POR CLASSE</div>
 <div class="classGrid" id="classGrid">
-<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Machado duplo</div><div class="classStats">🪓 Machado • Alto e forte</div></div>
-<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Arco longo</div><div class="classStats">🏹 Arco • Alto e ágil</div></div>
-<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Martelo sagrado</div><div class="classStats">🔨 Martelo • Alto e nobre</div></div>
-<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Varinha arcana</div><div class="classStats">🪄 Varinha • Alto e magro</div></div>
+<div class="classCard selected" data-class="barbarian"><div class="classIcon">🪓</div><div class="className">BARBARIAN</div><div class="classDesc">Tanque bruto corpo-a-corpo</div><div class="classWeapon">🪓 <b>Machado Duplo</b><br>18 dmg • Stun 2s</div><div class="classStats">150 HP • Bash 💥 + Grito 📢</div></div>
+<div class="classCard" data-class="ranger"><div class="classIcon">🏹</div><div class="className">RANGER</div><div class="classDesc">Arqueiro ágil longo alcance</div><div class="classWeapon">🏹 <b>Arco Longo Élfico</b><br>14 dmg • 180 range</div><div class="classStats">100 HP • Triple 🏹 + Mortal 🎯</div></div>
+<div class="classCard" data-class="cleric"><div class="classIcon">🔨</div><div class="className">CLERIC</div><div class="classDesc">Guerreiro sagrado cura</div><div class="classWeapon">🔨 <b>Martelo Sagrado</b><br>16 dmg • Holy + Heal</div><div class="classStats">120 HP • Holy ✨ + Heal 💚</div></div>
+<div class="classCard" data-class="wizard"><div class="classIcon">🪄</div><div class="className">WIZARD</div><div class="classDesc">Mago explosivo AoE</div><div class="classWeapon">🪄 <b>Varinha Arcana</b><br>12 dmg • Fire + Frost</div><div class="classStats">80 HP • Fire 🔥 + Frost ❄️</div></div>
 </div>
-<button class="startBtn" id="btnStart">▶ JOGAR V14!</button>
+<button class="startBtn" id="btnStart">▶ JOGAR V15!</button>
+<div style="color:#666;font-size:7px;margin-top:10px;text-align:center;max-width:320px">Dica: cada classe tem arma VISUAL única + 2 skills únicas. Morra pra ver animação realista joelhos→chão→renasce</div>
 </div>
 </div>
 <script>
 const W=3200,H=3200;
-let P={x:1600,y:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velY:0};
+let P={x:1600,y:1600,f:1,hp:120,maxHp:120,mana:80,maxMana:80,cls:'barbarian',lvl:1,gold:0,atk:0,walk:0,bob:0,velX:0,velY:0,attr:{STR:10,DEX:10,INT:10,STA:10},xp:0,maxXp:80,dead:false,deathT:0,deathPhase:0};
 let C={x:0,y:0,targetX:0,targetY:0}, T=null, gameOn=false, selClass='barbarian';
 let J={active:false,x:0,y:0,startX:0,startY:0};
 let objs=[], mons=[], chests=[], particles=[], projectiles=[];
 
 const CLASSES={
-barbarian:{name:'Barbarian',short:'BARB',icon:'🪓',color:'#e53935',weapon:{name:'Machado Duplo',icon:'🪓',dmg:18,range:85},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:180,skills:[{id:'bash',n:'Bash',icon:'💥',mana:12,cd:3,dmg:35,color:'#e53935'},{id:'shout',n:'Grito',icon:'📢',mana:20,cd:8,dmg:0,color:'#ff8f00'}]},
-ranger:{name:'Ranger',short:'RANG',icon:'🏹',color:'#43a047',weapon:{name:'Arco Longo',icon:'🏹',dmg:14,range:180},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:240,skills:[{id:'triple',n:'Triple',icon:'🏹',mana:15,cd:4,dmg:20,color:'#43a047'},{id:'crit',n:'Mortal',icon:'🎯',mana:25,cd:6,dmg:60,color:'#2e7d32'}]},
-cleric:{name:'Cleric',short:'CLER',icon:'🔨',color:'#FFD700',weapon:{name:'Martelo Sagrado',icon:'🔨',dmg:16,range:90},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:200,skills:[{id:'holy',n:'Holy',icon:'✨',mana:14,cd:3,dmg:30,color:'#FFD700'},{id:'heal',n:'Heal',icon:'💚',mana:25,cd:6,dmg:0,color:'#4caf50'}]},
-wizard:{name:'Wizard',short:'WIZ',icon:'🪄',color:'#7c4dff',weapon:{name:'Varinha',icon:'🪄',dmg:12,range:160},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:210,skills:[{id:'fire',n:'Fire',icon:'🔥',mana:12,cd:2,dmg:45,color:'#ff6f00'},{id:'frost',n:'Frost',icon:'❄️',mana:20,cd:5,dmg:25,color:'#42a5f5'}]},
+barbarian:{name:'Barbarian',short:'BARB',icon:'🪓',color:'#e53935',weapon:{name:'Machado Duplo',icon:'🪓',dmg:18,range:85},base:{STR:20,DEX:10,INT:6,STA:18},hp:150,mana:40,speed:180,skills:[{id:'bash',n:'Bash',icon:'💥',mana:12,cd:3,dmg:35,color:'#e53935',desc:'Atordoa 2s'},{id:'shout',n:'Grito',icon:'📢',mana:20,cd:8,dmg:0,color:'#ff8f00',desc:'+50% dano 5s'}]},
+ranger:{name:'Ranger',short:'RANG',icon:'🏹',color:'#43a047',weapon:{name:'Arco Longo',icon:'🏹',dmg:14,range:180},base:{STR:12,DEX:20,INT:8,STA:12},hp:100,mana:60,speed:240,skills:[{id:'triple',n:'Triple',icon:'🏹',mana:15,cd:4,dmg:20,color:'#43a047',desc:'3 flechas'},{id:'crit',n:'Mortal',icon:'🎯',mana:25,cd:6,dmg:60,color:'#2e7d32',desc:'Tiro crítico'}]},
+cleric:{name:'Cleric',short:'CLER',icon:'🔨',color:'#FFD700',weapon:{name:'Martelo Sagrado',icon:'🔨',dmg:16,range:90},base:{STR:14,INT:16,DEX:10,STA:16},hp:120,mana:100,speed:200,skills:[{id:'holy',n:'Holy',icon:'✨',mana:14,cd:3,dmg:30,color:'#FFD700',desc:'Luz sagrada'},{id:'heal',n:'Heal',icon:'💚',mana:25,cd:6,dmg:0,color:'#4caf50',desc:'Cura 80'}]},
+wizard:{name:'Wizard',short:'WIZ',icon:'🪄',color:'#7c4dff',weapon:{name:'Varinha',icon:'🪄',dmg:12,range:160},base:{STR:6,INT:22,DEX:12,STA:10},hp:80,mana:150,speed:210,skills:[{id:'fire',n:'Fire',icon:'🔥',mana:12,cd:2,dmg:45,color:'#ff6f00',desc:'Bola fogo AoE'},{id:'frost',n:'Frost',icon:'❄️',mana:20,cd:5,dmg:25,color:'#42a5f5',desc:'Congela 3s'}]},
 };
 let playerSkills={}, buffs={};
 function initSkills(){playerSkills={}; buffs={}; CLASSES[P.cls].skills.forEach(s=>playerSkills[s.id]={cd:0});}
@@ -100,8 +118,185 @@ for(let i=0;i<10;i++){chests.push({x:200+Math.random()*2800,y:200+Math.random()*
 const cv=document.getElementById('game');
 const ctx=cv.getContext('2d');
 
+function drawPlayerRealistic(px,py){
+let cls=CLASSES[P.cls];
+let isMoving=!P.dead && Math.hypot(P.velX,P.velY)>5;
+
+// death animation values
+let kneelProgress=0, fallProgress=0, lyingProgress=0;
+if(P.dead){
+  let t=P.deathT;
+  if(t<0.7){ kneelProgress=t/0.7; }
+  else if(t<1.8){ kneelProgress=1; fallProgress=(t-0.7)/1.1; }
+  else { kneelProgress=1; fallProgress=1; lyingProgress=Math.min((t-1.8)/0.5,1); }
+}
+
+if(isMoving){P.walk+=0.28; P.bob+=0.22;} else {P.walk*=0.85; P.bob*=0.85;}
+let bobY = P.dead ? 0 : Math.sin(P.bob)*2;
+let walkL = P.dead ? 0 : Math.sin(P.walk)*5;
+let walkR = P.dead ? 0 : Math.sin(P.walk+Math.PI)*5;
+
+// shadow
+if(!P.dead || kneelProgress<1){
+  ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(px,py+26,12,4,0,0,6.28); ctx.fill();
+} else {
+  ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(px+10,py+10,22,8,0,0,6.28); ctx.fill();
+}
+
+ctx.save();
+ctx.translate(px,py+bobY);
+if(!P.dead) ctx.scale(P.f,1);
+
+// DEATH DRAWING
+if(P.dead){
+  // phase 1: kneeling
+  if(kneelProgress>0 && fallProgress<0.01){
+    let k=kneelProgress;
+    // interpolate to kneeling: body goes down, knees bent
+    ctx.save();
+    ctx.translate(0, k*12); // desce
+    // legs kneeling: one knee on ground, other bent
+    ctx.fillStyle='#3e2723';
+    // leg back folded
+    ctx.save(); ctx.translate(-3,8); ctx.rotate(-0.8*k); ctx.fillRect(0,0,5,14); ctx.restore();
+    // leg front kneeling
+    ctx.save(); ctx.translate(2,6); ctx.rotate(1.2*k); ctx.fillRect(-2,0,5,12); ctx.restore();
+    // body leaning forward slightly as kneels
+    ctx.save();
+    ctx.translate(0, -2*k);
+    ctx.rotate(0.25*k);
+    ctx.fillStyle=cls.color;
+    ctx.fillRect(-9,-8,18,20);
+    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-9,-8,18,20);
+    // head dropping
+    ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(1*k,-14+4*k,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
+    // eyes closing / X
+    if(k>0.5){
+      ctx.fillStyle='#000'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-13+4*k);
+    }
+    ctx.restore();
+    ctx.restore();
+  }
+  // phase 2: falling to ground
+  else if(fallProgress>0){
+    let f=fallProgress;
+    ctx.save();
+    // rotate body to fall sideways
+    ctx.rotate(f*Math.PI/2 *0.9); // 0 -> 90deg
+    ctx.translate(f*8, f*6);
+    // body lying
+    ctx.fillStyle=cls.color;
+    ctx.fillRect(-9,-8,18,20);
+    ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-9,-8,18,20);
+    // legs stretched when fallen
+    ctx.fillStyle='#3e2723';
+    ctx.fillRect(-5,12,4,14);
+    ctx.fillRect(1,12,4,14);
+    // head
+    ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
+    // dead eyes X
+    ctx.fillStyle='#000'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.fillText('× ×',0,-12);
+    // weapon dropped near
+    ctx.save(); ctx.translate(18,-2); ctx.rotate(0.5);
+    if(P.cls==='barbarian'){ctx.fillStyle='#5d4037'; ctx.fillRect(0,0,4,16); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-6,0,14,8);}
+    else if(P.cls==='ranger'){ctx.fillStyle='#8d6e63'; ctx.fillRect(0,0,20,3);}
+    else if(P.cls==='cleric'){ctx.fillStyle='#FFD700'; ctx.fillRect(0,-4,4,20);}
+    else {ctx.fillStyle='#7c4dff'; ctx.fillRect(0,0,16,3); ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(18,1,4,0,6.28); ctx.fill();}
+    ctx.restore();
+    ctx.restore();
+    // extra: particles of impact
+    if(f>0.8 && f<0.85){
+      for(let i=0;i<5;i++) particles.push({x:P.x+Math.random()*20-10,y:P.y,life:0.6,color:'#8d6e63',size:2});
+    }
+  }
+  ctx.restore();
+  return;
+}
+
+// ALIVE DRAWING - PROPORÇÃO BONITA + ARMA ÚNICA VISÍVEL
+// attack swing
+if(P.atk>0){
+  let prog=1-P.atk/14;
+  let swing=Math.sin(prog*Math.PI)*1.3;
+  ctx.save(); ctx.translate(10, -2); ctx.rotate(-0.2-swing*1.6);
+  // arma única por classe no ataque - MAIOR E MAIS VISÍVEL
+  if(P.cls==='barbarian'){
+    ctx.fillStyle='#3e2723'; ctx.fillRect(0,-3,7,24);
+    ctx.fillStyle='#b0bec5'; ctx.fillRect(7,-12,22,14); ctx.fillStyle='#90a4ae'; ctx.fillRect(7,-12,22,3);
+    ctx.fillStyle='#ff5252'; ctx.fillRect(7, -1, 22, 2); // sangue na lâmina
+  }
+  else if(P.cls==='ranger'){
+    ctx.fillStyle='#5d4037'; ctx.beginPath(); ctx.arc(12,0,14, -0.6, 0.6); ctx.lineWidth=4; ctx.strokeStyle='#8d6e63'; ctx.stroke();
+    ctx.fillStyle='#FFD700'; ctx.fillRect(22,-8,10,3); ctx.fillRect(24,-8,2,16); // flecha dourada
+  }
+  else if(P.cls==='cleric'){
+    ctx.fillStyle='#FFD700'; ctx.fillRect(-2,-16,8,28);
+    ctx.fillStyle='#fff8e1'; ctx.fillRect(-8,-20,20,10); ctx.fillStyle='#FFD700'; ctx.fillRect(-6,-22,16,4);
+    ctx.fillStyle='#ffeb3b'; ctx.beginPath(); ctx.arc(2,-24,6,0,6.28); ctx.fill(); // brilho sagrado
+  }
+  else {
+    ctx.fillStyle='#7c4dff'; ctx.fillRect(0,-2,26,5);
+    ctx.fillStyle='#e1bee7'; ctx.beginPath(); ctx.arc(30,0,7,0,6.28); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(30,0,3,0,6.28); ctx.fill();
+  }
+  ctx.restore();
+  // trail de ataque
+  ctx.fillStyle=cls.color+'66'; ctx.beginPath(); ctx.arc(10,0,34, -0.4, 1.3); ctx.fill();
+}
+
+// pernas altas e bonitas
+ctx.fillStyle='#3e2723';
+ctx.fillRect(-5,10+walkL,4,14);
+ctx.fillRect(1,10+walkR,4,14);
+
+// corpo alto e magro
+ctx.fillStyle=cls.color;
+ctx.fillRect(-9,-8,18,20);
+ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-9,-8,18,20);
+// detalhe armadura por classe
+if(P.cls==='barbarian'){ctx.fillStyle='#000'; ctx.fillRect(-9,2,18,3); ctx.fillStyle='#5d4037'; ctx.fillRect(-7,-6,4,4); ctx.fillRect(3,-6,4,4);}
+else if(P.cls==='ranger'){ctx.fillStyle='#2e7d32'; ctx.fillRect(-9,-8,4,20); ctx.fillRect(5,-8,4,20);}
+else if(P.cls==='cleric'){ctx.fillStyle='#fff'; ctx.fillRect(-2,-8,4,20); ctx.fillRect(-9,0,18,4);}
+else {ctx.fillStyle='#ce93d8'; ctx.fillRect(-9,-8,18,3); ctx.fillRect(-9,9,18,3);}
+
+// cabeça proporcional
+ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
+// olhos
+ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(-3,-15,1.5,0,6.28); ctx.arc(3,-15,1.5,0,6.28); ctx.fill();
+if(isMoving){ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-3,-16,0.6,0,6.28); ctx.arc(3,-16,0.6,0,6.28); ctx.fill();}
+
+// elmo por classe proporcional
+if(P.cls==='barbarian'){ctx.fillStyle='#5d4037'; ctx.fillRect(-9,-22,18,8); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-9,-22,18,2); ctx.fillStyle='#b71c1c'; ctx.fillRect(-1,-26,2,6);}
+else if(P.cls==='ranger'){ctx.fillStyle='#4a5a2a'; ctx.fillRect(-8,-20,16,6); ctx.fillStyle='#8bc34a'; ctx.fillRect(-8,-20,16,2);}
+else if(P.cls==='cleric'){ctx.fillStyle='#FFD700'; ctx.fillRect(-9,-21,18,7); ctx.fillStyle='#fff'; ctx.fillRect(-2,-24,4,4);}
+else {ctx.fillStyle='#4a148c'; ctx.fillRect(-8,-20,16,8); ctx.fillStyle='#ce93d8'; ctx.fillRect(-8,-20,16,2); ctx.fillStyle='#7c4dff'; ctx.beginPath(); ctx.arc(0,-24,3,0,6.28); ctx.fill();}
+
+// arma quando não atacando - SEMPRE VISÍVEL E ÚNICA
+if(P.atk<=0){
+  if(P.cls==='barbarian'){
+    ctx.fillStyle='#3e2723'; ctx.fillRect(10,-2,5,18);
+    ctx.fillStyle='#b0bec5'; ctx.fillRect(15,-9,16,10); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(15,-9,16,10);
+  }
+  else if(P.cls==='ranger'){
+    ctx.save(); ctx.translate(12,0);
+    ctx.strokeStyle='#5d4037'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,12, -0.5, 0.5); ctx.stroke();
+    ctx.fillStyle='#8d6e63'; ctx.fillRect(8,-1,16,2);
+    ctx.restore();
+  }
+  else if(P.cls==='cleric'){
+    ctx.fillStyle='#FFD700'; ctx.fillRect(10,-14,5,24);
+    ctx.fillStyle='#fff8e1'; ctx.fillRect(6,-18,13,8); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(6,-18,13,8);
+  }
+  else {
+    ctx.fillStyle='#7c4dff'; ctx.fillRect(10,-2,18,4);
+    ctx.fillStyle='#e1bee7'; ctx.beginPath(); ctx.arc(30,0,5,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
+  }
+}
+
+ctx.restore();
+}
+
 function draw(){
-// fundo
 ctx.fillStyle='#1e3a1e'; ctx.fillRect(0,0,cv.width,cv.height);
 ctx.strokeStyle='rgba(0,0,0,0.07)'; ctx.lineWidth=1;
 for(let x=-(C.x%64);x<cv.width;x+=64){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
@@ -112,15 +307,13 @@ let x=o.x-C.x,y=o.y-C.y; if(x<-120||x>540||y<-120||y>980) return;
 o.bob+=0.02; let bobY=Math.sin(o.bob)*1.5;
 ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+40+bobY,28,8,0,0,6.28); ctx.fill();
 if(o.t==='house'){
-// PROPORÇÃO BONITA - casa mais alta, menos larga
-ctx.fillStyle='#4a3a32'; ctx.fillRect(x-32,y-20+bobY,64,55); // mais alta
-ctx.fillStyle='#3e2723'; ctx.fillRect(x-32,y-42+bobY,64,24); // telhado mais alto
+ctx.fillStyle='#4a3a32'; ctx.fillRect(x-32,y-20+bobY,64,55);
+ctx.fillStyle='#3e2723'; ctx.fillRect(x-32,y-42+bobY,64,24);
 ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeRect(x-32,y-20+bobY,64,55); ctx.strokeRect(x-32,y-42+bobY,64,24);
 ctx.fillStyle='#1a0f0a'; ctx.fillRect(x-10,y-2+bobY,20,20);
 } else {
-// árvore mais alta e bonita
-ctx.fillStyle='#2a1a0a'; ctx.fillRect(x-6,y-5+bobY,12,28); // tronco mais alto
-ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x,y-22+bobY,22,28,0,0,6.28); ctx.fill(); // folhagem alta
+ctx.fillStyle='#2a1a0a'; ctx.fillRect(x-6,y-5+bobY,12,28);
+ctx.fillStyle='#1a3a1a'; ctx.beginPath(); ctx.ellipse(x,y-22+bobY,22,28,0,0,6.28); ctx.fill();
 ctx.fillStyle='#2a5a2a'; ctx.beginPath(); ctx.ellipse(x,y-28+bobY,16,20,0,0,6.28); ctx.fill();
 ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
 }
@@ -130,7 +323,7 @@ chests.forEach(c=>{
 let x=c.x-C.x,y=c.y-C.y; if(x<-40||x>460||y<-40||y>900) return;
 c.bob+=0.03; let bobY=Math.sin(c.bob)*2.5;
 if(!c.opened){
-ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-6+bobY,28,20); // baú mais alto
+ctx.fillStyle='#5d4037'; ctx.fillRect(x-14,y-6+bobY,28,20);
 ctx.fillStyle='#FFD700'; ctx.fillRect(x-4,y-2+bobY,8,8);
 ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-14,y-6+bobY,28,20);
 }
@@ -145,69 +338,19 @@ if(m.frozen>0){ctx.fillStyle='rgba(100,180,255,0.5)'; ctx.beginPath(); ctx.arc(x
 if(m.stunned>0){ctx.fillStyle='rgba(255,255,0,0.5)'; ctx.beginPath(); ctx.arc(x,y+bobY-22,8,0,6.28); ctx.fill();}
 ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x,y+22,14,4,0,0,6.28); ctx.fill();
 ctx.save(); ctx.translate(x,y+bobY);
-// PROPORÇÃO BONITA - monstro mais alto, menos largo
-ctx.fillStyle='#4a2a2a'; ctx.beginPath(); ctx.ellipse(0,2,10,18,0,0,6.28); ctx.fill(); // corpo alto e magro
+ctx.fillStyle='#4a2a2a'; ctx.beginPath(); ctx.ellipse(0,2,10,18,0,0,6.28); ctx.fill();
 ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
-ctx.fillStyle='#3a2a2a'; ctx.fillRect(-5,14+walkOff,4,10); ctx.fillRect(1,14-walkOff,4,10); // pernas altas
-ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-12,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke(); // cabeça menor
+ctx.fillStyle='#3a2a2a'; ctx.fillRect(-5,14+walkOff,4,10); ctx.fillRect(1,14-walkOff,4,10);
+ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-12,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
 ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-3,-13,2.5,0,6.28); ctx.arc(3,-13,2.5,0,6.28); ctx.fill();
 ctx.fillStyle='#f00'; ctx.beginPath(); ctx.arc(-3,-13,1.2,0,6.28); ctx.arc(3,-13,1.2,0,6.28); ctx.fill();
 ctx.restore();
 ctx.fillStyle='#000'; ctx.fillRect(x-16,y-26,32,5); ctx.fillStyle='#4caf50'; ctx.fillRect(x-15,y-25,30*(m.hp/m.max),3);
 });
 
-// PLAYER PROPORÇÃO BONITA - ALTO E MAGRO, NÃO ACHATADO WIDE
+// PLAYER
 let px=P.x-C.x,py=P.y-C.y;
-let isMoving=Math.hypot(P.velX,P.velY)>5;
-if(isMoving){P.walk+=0.28; P.bob+=0.22;} else {P.walk*=0.85; P.bob*=0.85;}
-let bobY=Math.sin(P.bob)*2; let walkL=Math.sin(P.walk)*5; let walkR=Math.sin(P.walk+Math.PI)*5;
-ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(px,py+26,12,4,0,0,6.28); ctx.fill();
-ctx.save(); ctx.translate(px,py+bobY); ctx.scale(P.f,1);
-
-let cls=CLASSES[P.cls];
-let weaponColor=cls.color;
-
-// ataque fluido
-if(P.atk>0){
-let prog=1-P.atk/14;
-let swing=Math.sin(prog*Math.PI)*1.3;
-ctx.save(); ctx.translate(10, -2); ctx.rotate(-0.2-swing*1.6);
-if(P.cls==='barbarian'){ctx.fillStyle='#5d4037'; ctx.fillRect(0,-2,6,20); ctx.fillStyle='#9e9e9e'; ctx.fillRect(6,-10,20,10);}
-else if(P.cls==='ranger'){ctx.fillStyle='#8d6e63'; ctx.fillRect(0,-1,26,3); ctx.fillStyle='#FFD700'; ctx.fillRect(24,-7,5,14);}
-else if(P.cls==='cleric'){ctx.fillStyle='#FFD700'; ctx.fillRect(0,-14,6,24); ctx.fillStyle='#fff8e1'; ctx.fillRect(-5,-18,16,8);}
-else {ctx.fillStyle='#7c4dff'; ctx.fillRect(0,-2,22,4); ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(24,0,5,0,6.28); ctx.fill();}
-ctx.restore();
-ctx.fillStyle=weaponColor+'88'; ctx.beginPath(); ctx.arc(10,0,28, -0.3, 1.2); ctx.fill();
-}
-
-// pernas altas e bonitas - não achatadas
-ctx.fillStyle='#3e2723';
-ctx.fillRect(-5,10+walkL,4,14); // perna esq alta
-ctx.fillRect(1,10+walkR,4,14); // perna dir alta
-
-// corpo alto e magro - proporção bonita
-ctx.fillStyle=cls.color;
-ctx.fillRect(-9,-8,18,20); // corpo alto
-ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(-9,-8,18,20);
-
-// cabeça proporcional - não grande demais
-ctx.fillStyle='#ffdbac'; ctx.beginPath(); ctx.arc(0,-14,8,0,6.28); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.stroke();
-
-// elmo por classe - proporcional
-if(P.cls==='barbarian'){ctx.fillStyle='#5d4037'; ctx.fillRect(-9,-22,18,8); ctx.fillStyle='#9e9e9e'; ctx.fillRect(-9,-22,18,2);}
-else if(P.cls==='ranger'){ctx.fillStyle='#4a5a2a'; ctx.fillRect(-8,-20,16,6);}
-else if(P.cls==='cleric'){ctx.fillStyle='#FFD700'; ctx.fillRect(-9,-21,18,7);}
-else {ctx.fillStyle='#4a148c'; ctx.fillRect(-8,-20,16,8); ctx.fillStyle='#ce93d8'; ctx.fillRect(-8,-20,16,2);}
-
-// arma quando não atacando - proporcional
-if(P.atk<=0){
-if(P.cls==='barbarian'){ctx.fillStyle='#5d4037'; ctx.fillRect(10,-2,4,16); ctx.fillStyle='#9e9e9e'; ctx.fillRect(14,-8,14,8);}
-else if(P.cls==='ranger'){ctx.fillStyle='#8d6e63'; ctx.fillRect(10,-1,20,2);}
-else if(P.cls==='cleric'){ctx.fillStyle='#FFD700'; ctx.fillRect(10,-12,4,20);}
-else {ctx.fillStyle='#7c4dff'; ctx.fillRect(10,-2,16,3); ctx.fillStyle='#ce93d8'; ctx.beginPath(); ctx.arc(28,0,4,0,6.28); ctx.fill();}
-}
-
-ctx.restore();
+drawPlayerRealistic(px,py);
 
 projectiles.forEach(p=>{
 let x=p.x-C.x,y=p.y-C.y;
@@ -224,7 +367,7 @@ else {ctx.beginPath(); ctx.arc(x,y,p.size||3,0,6.28); ctx.fill();}
 ctx.globalAlpha=1;
 });
 
-if(T){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=3; ctx.setLineDash([6,4]); ctx.beginPath(); ctx.arc(x,y,16,0,6.28); ctx.stroke(); ctx.setLineDash([]);}
+if(T&&!P.dead){let x=T.x-C.x,y=T.y-C.y; ctx.strokeStyle='#FFD700'; ctx.lineWidth=3; ctx.setLineDash([6,4]); ctx.beginPath(); ctx.arc(x,y,16,0,6.28); ctx.stroke(); ctx.setLineDash([]);}
 }
 
 // JOYSTICK SEM GELO
@@ -232,15 +375,14 @@ const joyZone=document.getElementById('joyZone');
 const joyBase=document.getElementById('joyBase');
 const joyStick=document.getElementById('joyStick');
 const atkZone=document.getElementById('atkZone');
-const atkBtn=document.getElementById('atkBtn');
 
 function getTouch(e){
 if(e.touches&&e.touches[0]) return {x:e.touches[0].clientX,y:e.touches[0].clientY};
 if(e.changedTouches&&e.changedTouches[0]) return {x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
 return {x:e.clientX,y:e.clientY};
 }
-function joyStart(e){e.preventDefault(); e.stopPropagation(); let t=getTouch(e); J.active=true; J.startX=t.x; J.startY=t.y; J.x=0; J.y=0; T=null; document.getElementById('hint').style.display='none'; joyStick.style.transition='none'; joyBase.style.transform='scale(1.05)';}
-function joyMove(e){if(!J.active) return; e.preventDefault(); e.stopPropagation(); let t=getTouch(e); let dx=t.x-J.startX, dy=t.y-J.startY, dist=Math.hypot(dx,dy), max=42; if(dist>max){let a=Math.atan2(dy,dx); dx=Math.cos(a)*max; dy=Math.sin(a)*max;} joyStick.style.transform=`translate(${dx}px,${dy}px) scale(1.1)`; J.x=dx/max; J.y=dy/max; if(Math.abs(J.x)>0.08) P.f=J.x>0?1:-1;}
+function joyStart(e){if(P.dead) return; e.preventDefault(); e.stopPropagation(); let t=getTouch(e); J.active=true; J.startX=t.x; J.startY=t.y; J.x=0; J.y=0; T=null; document.getElementById('hint').style.display='none'; joyStick.style.transition='none'; joyBase.style.transform='scale(1.05)';}
+function joyMove(e){if(!J.active||P.dead) return; e.preventDefault(); e.stopPropagation(); let t=getTouch(e); let dx=t.x-J.startX, dy=t.y-J.startY, dist=Math.hypot(dx,dy), max=42; if(dist>max){let a=Math.atan2(dy,dx); dx=Math.cos(a)*max; dy=Math.sin(a)*max;} joyStick.style.transform=`translate(${dx}px,${dy}px) scale(1.1)`; J.x=dx/max; J.y=dy/max; if(Math.abs(J.x)>0.08) P.f=J.x>0?1:-1;}
 function joyEnd(e){if(!J.active) return; e.preventDefault(); e.stopPropagation(); J.active=false; J.x=0; J.y=0; P.velX=0; P.velY=0; joyBase.style.transform='scale(1)'; joyStick.style.transition='transform 0.12s cubic-bezier(0.34,1.56,0.64,1)'; joyStick.style.transform='translate(0,0) scale(1)';}
 [joyZone,joyBase].forEach(el=>{el.addEventListener('touchstart',joyStart,{passive:false}); el.addEventListener('touchmove',joyMove,{passive:false}); el.addEventListener('touchend',joyEnd,{passive:false}); el.addEventListener('touchcancel',joyEnd,{passive:false});});
 joyZone.addEventListener('mousedown',joyStart);
@@ -248,6 +390,7 @@ window.addEventListener('mousemove',e=>{if(J.active) joyMove(e);});
 window.addEventListener('mouseup',e=>{joyEnd(e);});
 
 function handleTap(cx,cy){
+if(P.dead) return false;
 let r=cv.getBoundingClientRect();
 let x=(cx-r.left)*(cv.width/r.width), y=(cy-r.top)*(cv.height/r.height);
 if(y<50) return false;
@@ -263,8 +406,8 @@ if(t.clientY>window.innerHeight*0.75){if(t.clientX<window.innerWidth*0.4||t.clie
 e.preventDefault(); handleTap(t.clientX,t.clientY);
 },{passive:false});
 
-// ATAQUE CORRIGIDO - AGORA COM POINTER EVENTS AUTO
 function doAttack(){
+if(P.dead) return;
 let cls=CLASSES[P.cls];
 P.atk=14;
 let hit=false;
@@ -272,13 +415,14 @@ mons.forEach(m=>{
 if(!m.alive||m.frozen>0||m.stunned>0) return;
 if(Math.hypot(m.x-P.x,m.y-P.y)<cls.weapon.range){
 let dmg=cls.weapon.dmg+Math.floor(P.attr.STR*0.8)+Math.floor(Math.random()*6);
+if(buffs.dmg) dmg=Math.floor(dmg*1.5);
 if(P.cls==='ranger'&&Math.random()<0.25){dmg=Math.floor(dmg*2.2); particles.push({x:m.x,y:m.y-20,text:'CRIT!',life:1,color:'#FFD700',size:5});}
 m.hp-=dmg; hit=true;
 particles.push({x:m.x,y:m.y-10,text:'-'+dmg,life:1,color:'#ff5252',size:4});
 if(m.hp<=0){
 m.alive=false; setTimeout(()=>{m.alive=true; m.hp=m.max; m.x=400+Math.random()*2400; m.y=400+Math.random()*2400;},6000);
 P.gold+=25; P.xp+=30;
-if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp;}
+if(P.xp>=P.maxXp){P.lvl++; P.xp=0; P.maxXp=Math.floor(80+P.lvl*8); P.maxHp+=20; P.hp=P.maxHp; particles.push({x:P.x,y:P.y-30,text:'LVL UP!',life:1.5,color:'#FFD700',size:6});}
 for(let i=0;i<8;i++) particles.push({x:m.x,y:m.y,life:1,color:'#ff5252',size:3});
 }
 }
@@ -289,38 +433,86 @@ updateBars();
 }
 
 function doSkill(idx){
+if(P.dead) return;
 let cls=CLASSES[P.cls];
 let skill=cls.skills[idx]; if(!skill) return;
-if(playerSkills[skill.id].cd>0) return; if(P.mana<skill.mana) return;
-P.mana-=skill.mana; playerSkills[skill.id].cd=skill.cd; updateBars();
-if(skill.id==='bash'){mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<100){m.hp-=skill.dmg; m.stunned=2; particles.push({x:m.x,y:m.y-15,text:'STUN!',life:1,color:'#FFEB3B',size:5});}});}
-else if(skill.id==='shout'){buffs.dmg=5; particles.push({x:P.x,y:P.y-30,text:'GRITO! +50%',life:1.5,color:'#ff8f00',size:5});}
-else if(skill.id==='triple'){for(let i=0;i<3;i++){let target=mons.filter(m=>m.alive)[i]; if(target) projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:400,dmg:skill.dmg,icon:'🏹',color:'#8bc34a',life:2});}}
-else if(skill.id==='crit'){let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0]; if(target){target.hp-=skill.dmg; particles.push({x:target.x,y:target.y-20,text:'MORTAL! -'+skill.dmg,life:1,color:'#FFD700',size:6}); if(target.hp<=0) target.alive=false;}}
-else if(skill.id==='holy'){mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<110){m.hp-=skill.dmg;}}); P.hp=Math.min(P.maxHp,P.hp+20); updateBars();}
-else if(skill.id==='heal'){P.hp=Math.min(P.maxHp,P.hp+80); updateBars(); particles.push({x:P.x,y:P.y-30,text:'+80 HP',life:1,color:'#4caf50',size:5});}
-else if(skill.id==='fire'){let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0]; if(target) projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:350,dmg:skill.dmg,icon:'🔥',color:'#ff6f00',life:2,aoe:true});}
-else if(skill.id==='frost'){mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<140){m.hp-=skill.dmg; m.frozen=3; particles.push({x:m.x,y:m.y-10,text:'❄️',life:1,color:'#42a5f5',size:5});}});}
-if(navigator.vibrate) navigator.vibrate(20);
+if(playerSkills[skill.id].cd>0){particles.push({x:P.x,y:P.y-20,text:'CD '+Math.ceil(playerSkills[skill.id].cd)+'s',life:0.8,color:'#ff5252',size:4}); return;}
+if(P.mana<skill.mana){particles.push({x:P.x,y:P.y-20,text:'SEM MANA!',life:0.8,color:'#64b5f6',size:4}); return;}
+P.mana-=skill.mana; playerSkills[skill.id].cd=skill.cd; updateBars(); updateSpellCDs();
+console.log('skill',skill.id);
+if(skill.id==='bash'){
+  let hit=false;
+  mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<100){m.hp-=skill.dmg; m.stunned=2; hit=true; particles.push({x:m.x,y:m.y-15,text:'STUN! -'+skill.dmg,life:1,color:'#FFEB3B',size:5}); if(m.hp<=0) m.alive=false;}});
+  if(!hit) particles.push({x:P.x,y:P.y-15,text:'BASH!',life:0.8,color:'#ff8f00',size:5});
+  cv.style.transform='translate(-3px,0)'; setTimeout(()=>cv.style.transform='',100);
+}
+else if(skill.id==='shout'){
+  buffs.dmg=5; particles.push({x:P.x,y:P.y-30,text:'GRITO! +50% 5s',life:1.5,color:'#ff8f00',size:5});
+  for(let i=0;i<6;i++) particles.push({x:P.x+Math.random()*40-20,y:P.y+Math.random()*20-10,life:0.8,color:'#ff8f00',size:3});
+}
+else if(skill.id==='triple'){
+  let alive=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y)).slice(0,3);
+  if(alive.length===0){particles.push({x:P.x,y:P.y-15,text:'SEM ALVO!',life:0.8,color:'#aaa',size:4}); return;}
+  alive.forEach(target=>{projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:500,dmg:skill.dmg,icon:'🏹',color:'#8bc34a',life:2});});
+}
+else if(skill.id==='crit'){
+  let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0];
+  if(!target){particles.push({x:P.x,y:P.y-15,text:'SEM ALVO!',life:0.8,color:'#aaa',size:4}); return;}
+  target.hp-=skill.dmg; particles.push({x:target.x,y:target.y-20,text:'MORTAL! -'+skill.dmg,life:1,color:'#FFD700',size:6}); if(target.hp<=0) target.alive=false;
+  for(let i=0;i<5;i++) particles.push({x:target.x,y:target.y,life:0.8,color:'#FFD700',size:3});
+}
+else if(skill.id==='holy'){
+  let hit=0;
+  mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<110){m.hp-=skill.dmg; hit++; particles.push({x:m.x,y:m.y-10,text:'-'+skill.dmg,life:0.8,color:'#FFD700',size:4}); if(m.hp<=0) m.alive=false;}});
+  P.hp=Math.min(P.maxHp,P.hp+20); updateBars();
+  particles.push({x:P.x,y:P.y-30,text:'HOLY! '+hit+' inimigos',life:1,color:'#FFD700',size:5});
+}
+else if(skill.id==='heal'){
+  P.hp=Math.min(P.maxHp,P.hp+80); updateBars();
+  particles.push({x:P.x,y:P.y-30,text:'+80 HP',life:1,color:'#4caf50',size:6});
+  for(let i=0;i<8;i++) particles.push({x:P.x+Math.random()*30-15,y:P.y+Math.random()*20-10,life:1,color:'#4caf50',size:3});
+}
+else if(skill.id==='fire'){
+  let target=mons.filter(m=>m.alive).sort((a,b)=>Math.hypot(a.x-P.x,a.y-P.y)-Math.hypot(b.x-P.x,b.y-P.y))[0];
+  if(!target){particles.push({x:P.x,y:P.y-15,text:'SEM ALVO!',life:0.8,color:'#aaa',size:4}); return;}
+  projectiles.push({x:P.x,y:P.y,tx:target.x,ty:target.y,speed:400,dmg:skill.dmg,icon:'🔥',color:'#ff6f00',life:2,aoe:true});
+}
+else if(skill.id==='frost'){
+  let hit=0;
+  mons.forEach(m=>{if(m.alive&&Math.hypot(m.x-P.x,m.y-P.y)<140){m.hp-=skill.dmg; m.frozen=3; hit++; particles.push({x:m.x,y:m.y-10,text:'❄️ -'+skill.dmg,life:1,color:'#42a5f5',size:5}); if(m.hp<=0) m.alive=false;}});
+  if(hit===0) particles.push({x:P.x,y:P.y-15,text:'FROST!',life:0.8,color:'#42a5f5',size:5});
+}
+if(navigator.vibrate) navigator.vibrate(30);
 }
 
-// ATAQUE - AGORA FUNCIONA - POINTER EVENTS AUTO
 let atkBtnEl=document.getElementById('atkBtn');
 atkBtnEl.addEventListener('click',doAttack);
 atkBtnEl.addEventListener('touchstart',e=>{e.preventDefault(); e.stopPropagation(); doAttack();},{passive:false});
 atkZone.addEventListener('touchstart',e=>{e.preventDefault(); doAttack();},{passive:false});
 atkZone.addEventListener('mousedown',e=>{e.preventDefault(); doAttack();});
 
-function updateSpells(){
+// FIX SKILLS - cria uma vez só, não recria todo frame
+function createSpells(){
 let cont=document.getElementById('spells'); cont.innerHTML='';
 let cls=CLASSES[P.cls];
 cls.skills.forEach((s,i)=>{
-let div=document.createElement('div'); div.className='spell '+P.cls;
-div.innerHTML=`<span>${s.icon}</span>`;
-if(playerSkills[s.id].cd>0){let cd=document.createElement('div'); cd.className='cd'; cd.textContent=Math.ceil(playerSkills[s.id].cd); div.appendChild(cd);}
-div.addEventListener('click',()=>doSkill(i));
+let div=document.createElement('div'); div.className='spell '+P.cls; div.id='spell-'+s.id;
+div.innerHTML=`<span>${s.icon}</span><div class="manaCost">${s.mana}🔮</div><div class="cd" id="spell-${s.id}-cd" style="display:none"></div>`;
+div.addEventListener('click',(e)=>{e.stopPropagation(); doSkill(i);});
 div.addEventListener('touchstart',e=>{e.preventDefault(); e.stopPropagation(); doSkill(i);},{passive:false});
 cont.appendChild(div);
+});
+}
+function updateSpellCDs(){
+let cls=CLASSES[P.cls];
+cls.skills.forEach(s=>{
+let cdEl=document.getElementById('spell-'+s.id+'-cd');
+let spellEl=document.getElementById('spell-'+s.id);
+if(!cdEl||!spellEl) return;
+let cd=playerSkills[s.id]?.cd||0;
+if(cd>0){cdEl.style.display='flex'; cdEl.textContent=Math.ceil(cd); spellEl.classList.add('disabled');}
+else {cdEl.style.display='none'; spellEl.classList.remove('disabled');}
+if(P.mana < s.mana) spellEl.classList.add('disabled'); else if(cd<=0) spellEl.classList.remove('disabled');
 });
 }
 
@@ -332,14 +524,36 @@ card.classList.add('selected'); selClass=card.dataset.class;
 card.addEventListener('touchstart',e=>{e.preventDefault(); document.querySelectorAll('.classCard').forEach(c=>c.classList.remove('selected')); card.classList.add('selected'); selClass=card.dataset.class;},{passive:false});
 });
 
+function triggerDeath(){
+if(P.dead) return;
+P.dead=true; P.deathT=0; P.velX=0; P.velY=0; J.active=false; T=null;
+P.atk=0;
+document.getElementById('deathOverlay').classList.add('show');
+document.getElementById('deathText').textContent='Caindo de joelhos...';
+if(navigator.vibrate) navigator.vibrate([100,50,200]);
+}
+
+function respawn(){
+P.dead=false; P.deathT=0;
+P.hp=Math.floor(P.maxHp*0.6);
+P.mana=Math.floor(P.maxMana*0.6);
+P.x=W/2; P.y=H/2;
+P.gold=Math.max(0,P.gold-50);
+C.x=P.x-cv.width/2; C.y=P.y-cv.height/2;
+document.getElementById('deathOverlay').classList.remove('show');
+particles.push({x:P.x,y:P.y-30,text:'RENASCEU!',life:1.5,color:'#4caf50',size:6});
+for(let i=0;i<10;i++) particles.push({x:P.x+Math.random()*40-20,y:P.y+Math.random()*20-10,life:1,color:'#4caf50',size:3});
+updateBars();
+}
+
 function startGame(){
 P.cls=selClass; let cls=CLASSES[P.cls];
-P.attr={...cls.base}; P.maxHp=80+cls.base.STA*2+cls.hp; P.hp=P.maxHp; P.maxMana=40+cls.base.INT*2+cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=300; P.x=W/2; P.y=H/2;
+P.attr={...cls.base}; P.maxHp=cls.hp; P.hp=P.maxHp; P.maxMana=cls.mana; P.mana=P.maxMana; P.lvl=1; P.xp=0; P.maxXp=80; P.gold=300; P.x=W/2; P.y=H/2; P.dead=false; P.deathT=0;
 initSkills(); genWorld();
 let ss=document.getElementById('start'); if(ss) ss.remove();
 document.getElementById('hint').style.display='block';
 setTimeout(()=>{let h=document.getElementById('hint'); if(h) h.style.display='none';},5000);
-updateBars(); updateSpells();
+updateBars(); createSpells(); updateSpellCDs();
 if(!gameOn){gameOn=true; requestAnimationFrame(loop);}
 }
 document.getElementById('btnStart').addEventListener('click',startGame);
@@ -356,18 +570,42 @@ document.getElementById('clsName').textContent=CLASSES[P.cls].short;
 let last=performance.now();
 function loop(now){
 let dt=Math.min((now-last)/1000,0.05); last=now;
+
+// death handling
+if(P.dead){
+  P.deathT+=dt;
+  let overlay=document.getElementById('deathOverlay');
+  let fill=document.getElementById('deathFill');
+  let count=document.getElementById('deathCount');
+  let txt=document.getElementById('deathText');
+  let progress=P.deathT/3.0;
+  if(fill) fill.style.width=(progress*100)+'%';
+  if(count) count.textContent=(3.0-P.deathT).toFixed(1);
+  if(P.deathT<0.7){ if(txt) txt.textContent='Caindo de joelhos...'; }
+  else if(P.deathT<1.8){ if(txt) txt.textContent='Caindo no chão...'; }
+  else { if(txt) txt.textContent='Desmaiado... renascendo'; }
+  if(P.deathT>=3.0){ respawn(); }
+  // still draw world
+  C.targetX=P.x-cv.width/2; C.targetY=P.y-cv.height/2;
+  C.targetX=Math.max(0,Math.min(W-cv.width,C.targetX)); C.targetY=Math.max(0,Math.min(H-cv.height,C.targetY));
+  C.x+=(C.targetX-C.x)*0.14; C.y+=(C.targetY-C.y)*0.14;
+  particles.forEach((p,i)=>{p.life-=dt*1.8; if(p.text){p.y-=25*dt;} else {p.y-=15*dt;} if(p.life<=0) particles.splice(i,1);});
+  draw(); updateBars(); updateSpellCDs();
+  requestAnimationFrame(loop);
+  return;
+}
+
 Object.keys(playerSkills).forEach(k=>{if(playerSkills[k].cd>0) playerSkills[k].cd=Math.max(0,playerSkills[k].cd-dt);});
 Object.keys(buffs).forEach(k=>{buffs[k]-=dt; if(buffs[k]<=0) delete buffs[k];});
-updateSpells();
+updateSpellCDs();
+
 let targetX=0,targetY=0;
 if(J.active){targetX=J.x; targetY=J.y;}
 else if(T){let dx=T.x-P.x, dy=T.y-P.y, d=Math.hypot(dx,dy); if(d<22){T=null;} else {targetX=dx/d; targetY=dy/d; if(Math.abs(targetX)>0.08) P.f=targetX>0?1:-1;}}
 if(J.active||T){P.velX=targetX*CLASSES[P.cls].speed; P.velY=targetY*CLASSES[P.cls].speed;} else {P.velX=0; P.velY=0;}
 if(Math.hypot(P.velX,P.velY)>1){
 let nx=P.x+P.velX*dt, ny=P.y+P.velY*dt;
-let canX=true,canY=true;
-for(let o of objs){if(!o.collision) continue; if(nx+18>o.x-o.w/2&&nx-18<o.x+o.w/2&&P.y+18>o.y-o.h/2&&P.y-18<o.y+o.h/2) canX=false; if(P.x+18>o.x-o.w/2&&P.x-18<o.x+o.w/2&&ny+18>o.y-o.h/2&&ny-18<o.y+o.h/2) canY=false;}
-if(canX) P.x=nx; if(canY) P.y=ny;
+P.x=nx; P.y=ny;
 P.x=Math.max(30,Math.min(W-30,P.x)); P.y=Math.max(30,Math.min(H-30,P.y));
 }
 if(P.atk>0) P.atk--;
@@ -380,30 +618,35 @@ if(dist<280){
 let ang=Math.atan2(P.y-m.y,P.x-m.x);
 let sp=50;
 let nx=m.x+Math.cos(ang)*sp*dt, ny=m.y+Math.sin(ang)*sp*dt;
-let can=true; for(let o of objs){if(nx+14>o.x-o.w/2&&nx-14<o.x+o.w/2&&ny+14>o.y-o.h/2&&ny-14<o.y+o.h/2) can=false;}
-if(can){m.x=nx; m.y=ny;}
-if(dist<50&&Math.random()<0.02){P.hp-=6; updateBars(); if(P.hp<=0){P.hp=P.maxHp*0.5; P.x=W/2; P.y=H/2; P.gold=Math.max(0,P.gold-30);}}
+m.x=nx; m.y=ny;
+if(dist<50&&Math.random()<0.04){
+  P.hp-=7; updateBars();
+  particles.push({x:P.x,y:P.y-10,text:'-'+7,life:0.8,color:'#ff5252',size:4});
+  if(P.hp<=0){ triggerDeath(); }
+}
 }
 });
 projectiles.forEach((p,i)=>{
 let ang=Math.atan2(p.ty-p.y,p.tx-p.x);
 p.x+=Math.cos(ang)*p.speed*dt; p.y+=Math.sin(ang)*p.speed*dt; p.life-=dt;
 if(p.life<=0){projectiles.splice(i,1); return;}
-mons.forEach(m=>{
-if(!m.alive) return;
+for(let j=0;j<mons.length;j++){
+let m=mons[j]; if(!m.alive) continue;
 if(Math.hypot(m.x-p.x,m.y-p.y)<28){
-if(p.aoe){mons.forEach(mm=>{if(mm.alive&&Math.hypot(mm.x-p.x,mm.y-p.y)<80){mm.hp-=p.dmg; if(mm.hp<=0) mm.alive=false;}}); for(let k=0;k<8;k++) particles.push({x:p.x,y:p.y,life:1,color:p.color,size:4});}
-else {m.hp-=p.dmg; if(m.hp<=0) m.alive=false;}
-projectiles.splice(i,1);
+if(p.aoe){
+  mons.forEach(mm=>{if(mm.alive&&Math.hypot(mm.x-p.x,mm.y-p.y)<80){mm.hp-=p.dmg; particles.push({x:mm.x,y:mm.y-10,text:'-'+p.dmg,life:0.8,color:'#ff6f00',size:4}); if(mm.hp<=0) mm.alive=false;}});
+  for(let k=0;k<10;k++) particles.push({x:p.x,y:p.y,life:1,color:p.color,size:4});
 }
-});
+else {m.hp-=p.dmg; particles.push({x:m.x,y:m.y-10,text:'-'+p.dmg,life:0.8,color:p.color,size:4}); if(m.hp<=0) m.alive=false;}
+projectiles.splice(i,1); break;
+}
+}
 });
 particles.forEach((p,i)=>{p.life-=dt*1.8; if(p.text){p.y-=25*dt;} else {p.y-=15*dt;} if(p.life<=0) particles.splice(i,1);});
 C.targetX=P.x-cv.width/2; C.targetY=P.y-cv.height/2;
 C.targetX=Math.max(0,Math.min(W-cv.width,C.targetX)); C.targetY=Math.max(0,Math.min(H-cv.height,C.targetY));
 C.x+=(C.targetX-C.x)*0.14; C.y+=(C.targetY-C.y)*0.14;
-draw();
-updateBars();
+draw(); updateBars();
 requestAnimationFrame(loop);
 }
 genWorld(); draw(); updateBars();
