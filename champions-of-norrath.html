@@ -1117,6 +1117,9 @@
         <button id="btnOpenSkills" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
           ⚡ TALENTOS [K] <span id="skillPtsBadge" style="display:none; color:#ff4444;">(1)</span>
         </button>
+        <button id="btnOpenBestiary" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
+          📖 BESTIÁRIO [B]
+        </button>
         <button id="btnOpenInventory" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
           🎒 ITENS [I]
         </button>
@@ -1222,6 +1225,20 @@
 
     <!-- JANELA DE INVENTÁRIO (PAPERDOLL COM ENGASTE) -->
     
+    <!-- CÓDICE DO BESTIÁRIO DE NORRATH (ETAPA 13) -->
+    <div id="bestiaryModal" class="gothic-modal interactive" style="display:none; max-width:460px; z-index:250; max-height:85vh; overflow-y:auto; padding:16px;">
+      <div class="modal-header">
+        <h2>📖 Códice do Bestiário de Norrath</h2>
+        <div class="close-btn" id="btnCloseBestiary">✕</div>
+      </div>
+      <p style="font-size:11px; color:#a1a1aa; margin:4px 0 12px; text-align:center;">
+        Fraquezas elementais, lore das criaturas e registros de abates do herói.
+      </p>
+      <div id="bestiaryList" style="display:flex; flex-direction:column; gap:10px;">
+        <!-- Inserido dinamicamente via renderBestiary() -->
+      </div>
+    </div>
+
     <!-- JANELA DE FORJA DO FERREIRO (+1 A +10) -->
     <div id="forgeModal" class="gothic-modal interactive" style="display:none; max-width:420px; z-index:250;">
       <div class="modal-header">
@@ -2303,6 +2320,8 @@
       currentFloor: 1,
       hasBossKey: false,
       blocking: false,
+      bestiaryKills: { orc: 0, skeleton: 0, wolf: 0, spider: 0, goblin: 0, demon: 0, warlord_boss: 0 },
+      campfireTick: 0,
       attacking: 0,
       comboStep: 0,
       comboTimer: 0,
@@ -2578,6 +2597,7 @@
     window.addEventListener('keydown', e => {
       keys[e.key.toLowerCase()] = true;
       audio.init();
+      if (e.key.toLowerCase() === 'b') toggleBestiary();
       if (e.key.toLowerCase() === 'i') toggleInventory();
       if (e.key.toLowerCase() === 'k') toggleSkills();
       if (e.key.toLowerCase() === 'j') toggleQuests();
@@ -2925,9 +2945,51 @@
             spawnFloatingText(`+${leech} DRENO`, player.gx, player.gy - 0.5, '#ff2255');
           }
 
+          // PALAVRA RÚNICA: BÔNUS PASSIVO DE DANO
+          if (player.equipment && player.equipment.mainhand && player.equipment.mainhand.runeword) {
+            finalDmg += (player.equipment.mainhand.runeword.bonusDmg || 30);
+          }
+
+          // FRAQUEZAS ELEMENTAIS DO BESTIÁRIO (ETAPA 13)
+          const monType = m.type || (m.isBoss ? 'warlord_boss' : 'orc');
+          const hasFire = (gemEffect === 'fire') || (player.equipment && player.equipment.mainhand && player.equipment.mainhand.sockets && player.equipment.mainhand.sockets.some(s => s.runeKey === 'ral' || (s.gemType === 'fire')));
+          const hasIce = (gemEffect === 'ice') || (player.equipment && player.equipment.mainhand && player.equipment.mainhand.sockets && player.equipment.mainhand.sockets.some(s => s.gemType === 'ice'));
+          const hasHoly = (player.clsKey === 'cleric') || (player.equipment && player.equipment.mainhand && player.equipment.mainhand.sockets && player.equipment.mainhand.sockets.some(s => s.runeKey === 'sol'));
+          const hasPoison = (gemEffect === 'poison') || (player.equipment && player.equipment.mainhand && player.equipment.mainhand.sockets && player.equipment.mainhand.sockets.some(s => s.runeKey === 'tal' || s.gemType === 'poison'));
+
+          let vulnerabilityBonus = 0;
+          if (hasFire && (monType === 'orc' || monType === 'orc_boss' || monType === 'wolf')) {
+            vulnerabilityBonus += Math.floor(finalDmg * 0.5);
+            spawnFloatingText(`🔥 VULNERÁVEL! (+50%)`, m.gx, m.gy - 0.7, '#ff5500');
+          }
+          if (hasHoly && (monType === 'skeleton' || monType === 'demon')) {
+            vulnerabilityBonus += Math.floor(finalDmg * 0.8);
+            spawnFloatingText(`✨ PURIFICAÇÃO! (+80%)`, m.gx, m.gy - 0.7, '#ffd700');
+          }
+          if (hasIce && (monType === 'spider' || monType === 'demon')) {
+            vulnerabilityBonus += Math.floor(finalDmg * 0.6);
+            spawnFloatingText(`❄️ CONGELAMENTO! (+60%)`, m.gx, m.gy - 0.7, '#00ffff');
+          }
+          if (hasPoison) {
+            if (monType === 'skeleton' || monType === 'spider') {
+              spawnFloatingText(`🛡️ IMUNE A VENENO`, m.gx, m.gy - 0.6, '#94a3b8');
+            } else {
+              m.poisoned = 3.0;
+            }
+          }
+
+          finalDmg += vulnerabilityBonus;
+
           m.hp -= finalDmg;
           audio.playHitMonster();
           screenShake = isCrit ? 7 : 4;
+
+          // Roubo de Vida por Palavra Rúnica
+          if (player.equipment && player.equipment.mainhand && player.equipment.mainhand.runeword && player.equipment.mainhand.runeword.lifeLeech) {
+            const leech = Math.floor(finalDmg * (player.equipment.mainhand.runeword.lifeLeech / 100));
+            player.hp = Math.min(player.maxHp, player.hp + leech);
+            spawnFloatingText(`🩸 +${leech} VAMPIRISMO`, player.gx, player.gy - 0.6, '#ff2255');
+          }
 
           if (gemEffect === 'fire') {
             spawnFloatingText(`🔥 +FOGO`, m.gx, m.gy - 0.4, '#ff4400');
@@ -2985,6 +3047,12 @@
             m.dying = true;
             m.deathTimer = 1.0;
             m.fallDir = Math.random() < 0.5 ? 1 : -1;
+
+            // REGISTRO DE ABATE NO BESTIÁRIO (ETAPA 13)
+            const mId = m.type || (m.isBoss ? 'warlord_boss' : 'orc');
+            if (!player.bestiaryKills) player.bestiaryKills = {};
+            player.bestiaryKills[mId] = (player.bestiaryKills[mId] || 0) + 1;
+
             // Progresso de Missões
             if (!QUESTS[0].completed) {
               QUESTS[0].current++;
@@ -3040,6 +3108,21 @@
                 bonusDmg: 12,
                 color: '#22ee55'
               });
+            }
+
+            // DROP DE RUNAS ANCESTRAIS (ETAPA 13)
+            if (m.isBoss || Math.random() < 0.35) {
+              const runepool = [
+                { name: 'Runa El 📜', type: 'rune', runeKey: 'el', statDesc: '+10 Dano / +12 Defesa', color: '#ffd700', rarity: 'rare' },
+                { name: 'Runa Tal 📜', type: 'rune', runeKey: 'tal', statDesc: '+18 Dano Venenoso', color: '#22c55e', rarity: 'rare' },
+                { name: 'Runa Ort 📜', type: 'rune', runeKey: 'ort', statDesc: '+22 Dano Elétrico', color: '#38bdf8', rarity: 'rare' },
+                { name: 'Runa Ral 📜', type: 'rune', runeKey: 'ral', statDesc: '+26 Dano de Fogo', color: '#f97316', rarity: 'epic' },
+                { name: 'Runa Amn 📜', type: 'rune', runeKey: 'amn', statDesc: '15% Roubo de Vida', color: '#ef4444', rarity: 'epic' },
+                { name: 'Runa Shael 📜', type: 'rune', runeKey: 'shael', statDesc: '+30% Vel. Ataque', color: '#a855f7', rarity: 'epic' },
+                { name: 'Runa Sol 📜', type: 'rune', runeKey: 'sol', statDesc: '+32 Dano Sagrado', color: '#fbbf24', rarity: 'legendary' }
+              ];
+              const droppedRune = m.isBoss ? runepool[Math.floor(Math.random() * 3) + 4] : runepool[Math.floor(Math.random() * runepool.length)];
+              spawnGroundLoot(m.gx + (Math.random() - 0.5) * 0.4, m.gy + (Math.random() - 0.5) * 0.4, droppedRune);
             }
           }
         }
@@ -3715,8 +3798,51 @@
         lightCtx.fill();
       });
 
-      // VELOCIDADE DE CHAMAS DAS FOGUEIRAS EM 1x (ORGANICO E SUAVE)
-      torches.forEach(t => { t.flame += dt * 2.2; });
+      // VELOCIDADE DE CHAMAS E INTERAÇÃO COM FOGUEIRAS (ETAPA 13)
+      let nearestTForUse = null;
+      let minTDistForUse = 1.8;
+
+      torches.forEach(t => {
+        if (t.lit === undefined) t.lit = true;
+        t.flame += dt * 2.2;
+        const d = Math.hypot(t.gx - player.gx, t.gy - player.gy);
+        if (d < minTDistForUse) {
+          minTDistForUse = d;
+          nearestTForUse = t;
+        }
+      });
+
+      // Regeneração de Vida por Calor da Fogueira Acesa (+4 HP a cada 1.5s)
+      if (nearestTForUse && nearestTForUse.lit !== false) {
+        player.campfireTick = (player.campfireTick || 0) + dt;
+        if (player.campfireTick >= 1.5) {
+          player.campfireTick = 0;
+          if (player.hp < player.maxHp) {
+            player.hp = Math.min(player.maxHp, player.hp + 4);
+            spawnFloatingText('💚 +4 CALOR', player.gx, player.gy - 0.6, '#44ffaa');
+          }
+        }
+      }
+
+      // Interação [F] para acender ou apagar fogueiras
+      if (keys['f'] && !keys['_f_lock']) {
+        keys['_f_lock'] = true;
+        if (nearestTForUse) {
+          nearestTForUse.lit = !nearestTForUse.lit;
+          if (nearestTForUse.lit) {
+            audio.playHitMonster();
+            showNotification('🔥 Fogueira acesa! O calor afasta as trevas.');
+            spawnFloatingText('🔥 FOGUEIRA ACESA', nearestTForUse.gx, nearestTForUse.gy - 0.8, '#ff7700');
+          } else {
+            audio.playBreakWood();
+            showNotification('💨 Fogueira apagada! As sombras camuflam seus passos.');
+            spawnFloatingText('💨 FOGUEIRA APAGADA', nearestTForUse.gx, nearestTForUse.gy - 0.8, '#94a3b8');
+          }
+        }
+      }
+      if (!keys['f']) {
+        keys['_f_lock'] = false;
+      }
 
       // Atualização do Loot Voador
       for (let i = flyingLoot.length - 1; i >= 0; i--) {
@@ -4645,6 +4771,7 @@
       lightCtx.fill();
 
       torches.forEach(t => {
+        if (t.lit === false) return; // Se apagada, não emite luz!
         const pTorch = worldToIso(t.gx, t.gy);
         const tScreenX = pTorch.x + camera.x;
         const tScreenY = pTorch.y + camera.y - 24;
@@ -6323,6 +6450,29 @@
       ctx.fillStyle = '#ff8800';
       ctx.beginPath(); ctx.arc(footX, footY - 2, 2.5, 0, Math.PI * 2); ctx.fill();
 
+      // Prompt de Interação com a Fogueira
+      const pDist = Math.hypot(t.gx - player.gx, t.gy - player.gy);
+      if (pDist < 1.8) {
+        ctx.fillStyle = '#ffd700';
+        ctx.font = 'bold 9.5px "Cinzel", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+        ctx.fillText(`[F] ${t.lit === false ? 'ACENDER FOGUEIRA' : 'APAGAR FOGUEIRA'}`, footX, footY - 32);
+        ctx.shadowBlur = 0;
+      }
+
+      // Se a fogueira estiver apagada, desenha apenas fumaça fria
+      if (t.lit === false) {
+        ctx.fillStyle = 'rgba(150, 150, 160, 0.35)';
+        for (let sm = 0; sm < 3; sm++) {
+          const smY = footY - 6 - sm * 6 - (anim % 4) * 2;
+          const smX = footX + Math.sin(anim * 1.5 + sm) * 4;
+          ctx.beginPath(); ctx.arc(smX, smY, 3 + sm, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+        return;
+      }
+
       // 4. Labaredas de Fogo Vivas em Multicamadas
       const fShift1 = Math.sin(anim * 1.8) * 2.2;
       const fShift2 = Math.cos(anim * 2.3) * 1.8;
@@ -6625,6 +6775,155 @@
       if (!isVisible) renderInventory();
     }
 
+    // =========================================================================
+    // EMBASS ENGINE ETAPA 13: PALAVRAS RÚNICAS & CÓDICE DO BESTIÁRIO
+    // =========================================================================
+    const RUNEWORDS = {
+      'ral-ort-tal': {
+        name: 'FÚRIA DOS ELEMENTOS',
+        bonusDmg: 55,
+        aura: 'tri-elemental',
+        desc: '+55 Dano Elemental & Aura Tripla (Chamas, Raios e Veneno)!',
+        color: '#f97316'
+      },
+      'amn-el': {
+        name: 'LÂMINA VAMPÍRICA',
+        bonusDmg: 30,
+        lifeLeech: 25,
+        aura: 'blood',
+        desc: '+30 Dano & 25% Roubo de Vida por acerto!',
+        color: '#ef4444'
+      },
+      'shael-sol': {
+        name: 'VELOCIDADE CELESTIAL',
+        bonusDmg: 35,
+        atkSpeed: 0.45,
+        aura: 'holy',
+        desc: '+35 Dano Sagrado & +45% Velocidade de Ataque!',
+        color: '#fbbf24'
+      },
+      'ort-sol': {
+        name: 'TROVÃO SAGRADO',
+        bonusDmg: 40,
+        shockRadius: 3.5,
+        aura: 'lightning',
+        desc: '+40 Dano Elétrico & Relâmpagos em cadeia!',
+        color: '#38bdf8'
+      },
+      'ral-amn': {
+        name: 'PACTO DE FOGO E SANGUE',
+        bonusDmg: 38,
+        lifeLeech: 15,
+        aura: 'hellfire',
+        desc: '+38 Dano Ígneo & 15% Dreno de Vida!',
+        color: '#dc2626'
+      }
+    };
+
+    const BESTIARY_DATA = [
+      {
+        id: 'orc',
+        name: 'Orc Guerreiro de Faydark',
+        icon: '👹',
+        weakness: '🔥 Fogo (+50% Dano)',
+        resistance: '🛡️ Físico',
+        lore: 'Guerreiros brutais que saqueiam as trilhas de Norrath sob o estandarte de guerra orc.'
+      },
+      {
+        id: 'skeleton',
+        name: 'Guarda Esqueleto das Catacumbas',
+        icon: '💀',
+        weakness: '✨ Sagrado (x2 Dano Puro)',
+        resistance: '🛡️ Imune a Veneno',
+        lore: 'Soldados sepultados há séculos revividos pela magia necromântica subterrânea.'
+      },
+      {
+        id: 'wolf',
+        name: 'Lobo Alfa da Floresta',
+        icon: '🐺',
+        weakness: '🔥 Fogo & ❄️ Gelo (+40% Dano)',
+        resistance: 'Nenhuma',
+        lore: 'Feras ferozes guiadas pelo faro de sangue fresco nas clareiras de Faydark.'
+      },
+      {
+        id: 'spider',
+        name: 'Aranha Rainha Venenosa',
+        icon: '🕷️',
+        weakness: '❄️ Gelo (+60% Dano & Congelamento)',
+        resistance: '🛡️ Imune a Veneno',
+        lore: 'Monstruosidades aracnídeas colossais com peçonha altamente corrosiva.'
+      },
+      {
+        id: 'goblin',
+        name: 'Xamã Goblin de Norrath',
+        icon: '👺',
+        weakness: '⚡ Eletricidade & ✨ Sagrado (+50% Dano)',
+        resistance: 'Nenhuma',
+        lore: 'Conjuradores traiçoeiros que atacam com cajados de crânio e labaredas tóxicas.'
+      },
+      {
+        id: 'demon',
+        name: 'Demônio Alado de Sangue',
+        icon: '🦇',
+        weakness: '❄️ Gelo & ✨ Sagrado (+80% Dano)',
+        resistance: '🔥 Resiste 60% a Fogo',
+        lore: 'Entidades abissais forjadas em puro enxofre e ódio nas profundezas de Lavastorm.'
+      },
+      {
+        id: 'warlord_boss',
+        name: 'Lorde Warlord de Norrath (Chefe)',
+        icon: '👑',
+        weakness: '✨ Sagrado (+40% Dano) & Golpes nas Costas',
+        resistance: '🔥 Fúria Ardente < 50% HP',
+        lore: 'O terrível campeão orc em armadura titânica de magma que guarda o portal final.'
+      }
+    ];
+
+    function toggleBestiary() {
+      const modal = document.getElementById('bestiaryModal');
+      if (!modal) return;
+      const isVisible = modal.style.display === 'block';
+      modal.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) {
+        renderBestiary();
+        audio.playCoin();
+      }
+    }
+
+    function renderBestiary() {
+      const list = document.getElementById('bestiaryList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (!player.bestiaryKills) {
+        player.bestiaryKills = { orc: 0, skeleton: 0, wolf: 0, spider: 0, goblin: 0, demon: 0, warlord_boss: 0 };
+      }
+
+      BESTIARY_DATA.forEach(b => {
+        const kills = player.bestiaryKills[b.id] || 0;
+        const item = document.createElement('div');
+        item.style.cssText = 'background:#1a1410; border:1px solid #5a4529; border-radius:6px; padding:10px; display:flex; gap:10px; align-items:center;';
+        item.innerHTML = `
+          <div style="font-size:26px; width:40px; height:40px; background:#0d0a08; border-radius:4px; display:flex; align-items:center; justify-content:center; border:1px solid #7c5e38;">
+            ${b.icon}
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h3 style="font-size:13px; color:#ffd700; margin:0; font-family:'Cinzel', serif;">${b.name}</h3>
+              <span style="font-size:11px; color:#4ade80; font-weight:bold;">⚔️ ${kills} Abates</span>
+            </div>
+            <div style="font-size:10.5px; color:#f87171; margin-top:2px;">
+              <b>Fraqueza:</b> ${b.weakness} | <span style="color:#94a3b8;"><b>Resistência:</b> ${b.resistance}</span>
+            </div>
+            <p style="font-size:10px; color:#a1a1aa; margin:4px 0 0; line-height:1.2;">
+              ${b.lore}
+            </p>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
     let selectedInspectIndex = -1;
 
     function renderInventory() {
@@ -6655,11 +6954,15 @@
       document.getElementById('slotAmulet').querySelector('.slot-name').textContent = eq.amulet.name;
 
       const socketBadge = document.getElementById('weaponSocketBadge');
-      if (eq.mainhand.socket) {
-        socketBadge.textContent = `[💎 ${eq.mainhand.socket.gemType.toUpperCase()}]`;
-        socketBadge.style.color = eq.mainhand.socket.color || '#ffcc00';
+      const sockets = eq.mainhand.sockets || (eq.mainhand.socket ? [eq.mainhand.socket] : []);
+      if (eq.mainhand.runeword) {
+        socketBadge.innerHTML = `<span style="color:#ffd700; font-weight:bold; text-shadow:0 0 6px #ff7700;">👑 [${eq.mainhand.runeword.name}]</span>`;
+      } else if (sockets.length > 0) {
+        const sLabels = sockets.map(s => s.type === 'rune' ? `📜${s.name.split(' ')[1]}` : `💎${s.gemType ? s.gemType.toUpperCase() : 'GEMA'}`).join(' ');
+        socketBadge.textContent = `[${sLabels}] (${sockets.length}/3)`;
+        socketBadge.style.color = '#ffd700';
       } else {
-        socketBadge.textContent = '[Furo Livre]';
+        socketBadge.textContent = '[0/3 Furos Livres]';
         socketBadge.style.color = '#888';
       }
 
@@ -6694,8 +6997,14 @@
 
       if (item.type === 'gem') {
         document.getElementById('inspectType').textContent = 'Gema Arcana de Norrath';
-        statsEl.innerHTML = `<span style="color:${item.color || '#ffcc00'}; font-weight:bold;">💎 Engasta na Arma concedendo +${item.bonusDmg} Dano Elemental!</span>`;
-        actionBtn.textContent = '💎 ENGASTAR NA ARMA';
+        const curSockets = (player.equipment.mainhand.sockets || []).length;
+        statsEl.innerHTML = `<span style="color:${item.color || '#ffcc00'}; font-weight:bold;">💎 Engasta na Arma concedendo +${item.bonusDmg} Dano Elemental!</span><br><span style="font-size:11px; color:#cbd5e1;">Engastes livres na arma: ${3 - curSockets}/3</span>`;
+        actionBtn.textContent = curSockets < 3 ? '💎 ENGASTAR NA ARMA' : 'ARMA LOTADA (3/3)';
+      } else if (item.type === 'rune') {
+        document.getElementById('inspectType').textContent = 'Runa Ancestral de Norrath';
+        const curSockets = (player.equipment.mainhand.sockets || []).length;
+        statsEl.innerHTML = `<span style="color:${item.color || '#ffd700'}; font-weight:bold; font-size:13px;">📜 ${item.name} (${item.statDesc})</span><br><span style="font-size:11px; color:#e2e8f0; margin-top:4px; display:inline-block;">Pode ser combinada em sequência para formar <b>Palavras Rúnicas lendárias</b> (ex: Ral+Ort+Tal, Amn+El, Shael+Sol)!</span><br><span style="font-size:11px; color:#cbd5e1;">Engastes livres na arma: ${3 - curSockets}/3</span>`;
+        actionBtn.textContent = curSockets < 3 ? '📜 ENGASTAR NA ARMA' : 'ARMA LOTADA (3/3)';
       } else if (item.type === 'potion_hp') {
         document.getElementById('inspectType').textContent = 'Consumível Alquímico';
         statsEl.innerHTML = '<span style="color:#44ff88;">🧪 Restaura 70 Pontos de Vida no cinto rápido.</span>';
@@ -6746,11 +7055,40 @@
       const item = player.inventory[idx];
       if (!item) return;
 
-      if (item.type === 'gem') {
+      if (item.type === 'gem' || item.type === 'rune') {
+        if (!player.equipment.mainhand.sockets) {
+          player.equipment.mainhand.sockets = [];
+        }
+        if (player.equipment.mainhand.sockets.length >= 3) {
+          showNotification('❌ Arma já possui o limite máximo de 3 engastes!');
+          return;
+        }
+
+        player.equipment.mainhand.sockets.push(item);
         player.equipment.mainhand.socket = item;
         player.inventory.splice(idx, 1);
         audio.playCoin();
-        showNotification(`💎 ${item.name} engastada com sucesso na Arma!`);
+
+        const rKeys = player.equipment.mainhand.sockets.map(s => s.runeKey).filter(Boolean);
+        const sequence = rKeys.join('-');
+        let foundRw = null;
+
+        for (const [seq, rw] of Object.entries(RUNEWORDS)) {
+          if (sequence.includes(seq)) {
+            foundRw = rw;
+            break;
+          }
+        }
+
+        if (foundRw) {
+          player.equipment.mainhand.runeword = foundRw;
+          audio.playLevelUp();
+          showNotification(`👑 PALAVRA RÚNICA FORMADA: [${foundRw.name}]!`);
+          spawnFloatingText(`👑 ${foundRw.name}!`, player.gx, player.gy - 1.2, '#ffd700');
+        } else {
+          showNotification(`✨ ${item.name} engastada com sucesso na Arma!`);
+        }
+
         saveGame(false);
       } else if (item.type === 'potion_hp') {
         player.potionsHp++;
@@ -6767,6 +7105,8 @@
       updateHud();
     }
 
+    document.getElementById('btnOpenBestiary').onclick = toggleBestiary;
+    document.getElementById('btnCloseBestiary').onclick = toggleBestiary;
     document.getElementById('btnOpenInventory').onclick = toggleInventory;
     document.getElementById('btnCloseInventory').onclick = toggleInventory;
     document.getElementById('btnOpenSkills').onclick = toggleSkills;
@@ -7360,6 +7700,46 @@
         }
       }
       tCtx.restore();
+
+      // AURA VISUAL DE PALAVRA RÚNICA ATIVA (ETAPA 13)
+      if (eq.mainhand && eq.mainhand.runeword) {
+        tCtx.save();
+        const rw = eq.mainhand.runeword;
+        const auraTime = Date.now() * 0.004;
+        if (rw.aura === 'tri-elemental') {
+          const colors = ['#ff4400', '#00e1ff', '#22c55e'];
+          for (let oi = 0; oi < 3; oi++) {
+            const oAng = auraTime * 2.2 + (oi * Math.PI * 2 / 3);
+            const ox = Math.cos(oAng) * 20;
+            const oy = hChestY + Math.sin(oAng) * 10;
+            tCtx.fillStyle = colors[oi];
+            tCtx.beginPath(); tCtx.arc(ox, oy, 3.5, 0, Math.PI * 2); tCtx.fill();
+          }
+        } else if (rw.aura === 'blood') {
+          tCtx.fillStyle = 'rgba(239, 68, 68, 0.5)';
+          for (let bi = 0; bi < 4; bi++) {
+            const bx = Math.sin(auraTime * 3 + bi) * 14;
+            const by = hFootY - ((auraTime * 25 + bi * 12) % 35);
+            tCtx.beginPath(); tCtx.arc(bx, by, 3, 0, Math.PI * 2); tCtx.fill();
+          }
+        } else if (rw.aura === 'holy') {
+          tCtx.strokeStyle = 'rgba(251, 191, 36, 0.6)'; tCtx.lineWidth = 1.5;
+          for (let hi = -12; hi <= 12; hi += 8) {
+            tCtx.beginPath();
+            tCtx.moveTo(hi, hFootY);
+            tCtx.lineTo(hi * 0.6, hHeadY - 8);
+            tCtx.stroke();
+          }
+        } else if (rw.aura === 'lightning') {
+          tCtx.strokeStyle = '#38bdf8'; tCtx.lineWidth = 1.8;
+          tCtx.beginPath();
+          tCtx.moveTo(-10, hChestY);
+          tCtx.lineTo(Math.sin(auraTime * 15) * 8, hChestY - 8);
+          tCtx.lineTo(10, hChestY);
+          tCtx.stroke();
+        }
+        tCtx.restore();
+      }
 
       tCtx.restore();
     }
