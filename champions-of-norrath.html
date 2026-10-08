@@ -1824,6 +1824,7 @@
 
         // Inicia na masmorra salva
         generateDungeon(data.currentFloor || 1);
+        if (!player.pet) initPlayerPet();
         player.gx = data.player.gx || 4;
         player.gy = data.player.gy || 4;
 
@@ -2986,32 +2987,200 @@
       player.mana -= skill.mana;
       audio.playMagicSpell();
 
-      if (skill.heal) {
-        player.hp = Math.min(player.maxHp, player.hp + skill.heal);
-        spawnFloatingText(`+${skill.heal} HP`, player.gx, player.gy, '#44ff44');
-        showNotification(`✨ ${skill.name} curou ${skill.heal} HP!`);
-      } else if (skill.id === 'summon_undead' || (num === 2 && (player.clsKey === 'shadowknight' || player.clsKey === 'ranger'))) {
-        summonCompanion(player.clsKey);
-        showNotification(`🐾 ${skill.name}: Companheiro invocado ao seu lado!`);
-      } else if (player.clsKey === 'wizard' || player.clsKey === 'ranger') {
-        shootProjectile(player.gx, player.gy, player.facing, player.clsKey === 'wizard' ? 'fireball' : 'ice_arrow', skill.dmg || 40);
-        showNotification(`🔥 ${skill.name} disparado!`);
-      } else {
-        monsters.forEach(m => {
-          if (!m.alive) return;
-          const dist = Math.hypot(m.gx - player.gx, m.gy - player.gy);
-          if (dist < 3.5) {
-            m.hp -= skill.dmg;
-            spawnBlood(m.gx, m.gy, 10);
-            spawnFloatingText(`💥 -${skill.dmg}`, m.gx, m.gy, '#ffd700');
-            if (m.hp <= 0) {
-              m.alive = false;
-              giveXp(40);
-              spawnFlyingLoot(m.gx, m.gy, 'gold', 20);
-            }
+      // EMBASS ENGINE ETAPA 11: EFEITOS VISUAIS E MECÂNICAS COMPLEXAS DE HABILIDADES
+      const clsKey = player.clsKey;
+      screenShake = 6;
+
+      if (clsKey === 'barbarian') {
+        if (num === 1) {
+          // BÁRBARO: TERREMOTO DE NORRATH (Impacto Sísmico com Estilhaços de Pedra)
+          screenShake = 12;
+          audio.playBreakStone();
+          spawnDestructionDebris(player.gx, player.gy, 'stone');
+          for (let i = 0; i < 16; i++) {
+            particles.push({
+              gx: player.gx, gy: player.gy,
+              vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6,
+              life: 0.8, color: Math.random() < 0.5 ? '#d4af37' : '#735738'
+            });
           }
-        });
-        showNotification(`⚡ ${skill.name} conjurado!`);
+          monsters.forEach(m => {
+            if (!m.alive) return;
+            const d = Math.hypot(m.gx - player.gx, m.gy - player.gy);
+            if (d < 4.2) {
+              const bDmg = 48 + Math.floor(Math.random() * 15);
+              m.hp -= bDmg;
+              m.staggerTimer = 0.6; // Atordoa
+              const ang = Math.atan2(m.gy - player.gy, m.gx - player.gx);
+              m.gx += Math.cos(ang) * 0.9;
+              m.gy += Math.sin(ang) * 0.9;
+              spawnBlood(m.gx, m.gy, 8);
+              spawnFloatingText(`💥 -${bDmg} (TERREMOTO!)`, m.gx, m.gy - 0.5, '#ffd700');
+              if (m.hp <= 0) {
+                m.alive = false;
+                giveXp(45);
+                spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
+              }
+            }
+          });
+          showNotification('💥 Golpe Esmagador: Terremoto estilhaçou os inimigos!');
+        } else {
+          // BÁRBARO: REDEMOINHO DE LÂMINAS (Whirlwind 360 Graus)
+          screenShake = 9;
+          audio.playSwordSwing(2);
+          for (let i = 0; i < 20; i++) {
+            const rotAng = Math.random() * Math.PI * 2;
+            particles.push({
+              gx: player.gx + Math.cos(rotAng) * 1.5,
+              gy: player.gy + Math.sin(rotAng) * 1.5,
+              vx: Math.cos(rotAng + 1.2) * 4,
+              vy: Math.sin(rotAng + 1.2) * 4,
+              life: 0.65, color: '#f3c254'
+            });
+          }
+          monsters.forEach(m => {
+            if (!m.alive) return;
+            const d = Math.hypot(m.gx - player.gx, m.gy - player.gy);
+            if (d < 3.8) {
+              const wDmg = 65 + Math.floor(Math.random() * 20);
+              m.hp -= wDmg;
+              spawnBlood(m.gx, m.gy, 10);
+              spawnFloatingText(`🌪️ -${wDmg}`, m.gx, m.gy - 0.5, '#ff5533');
+              if (m.hp <= 0) {
+                m.alive = false;
+                giveXp(50);
+                spawnFlyingLoot(m.gx, m.gy, 'gold', 30);
+              }
+            }
+          });
+          showNotification('🌪️ Fúria do Redemoinho: Lâminas giratórias rasgaram tudo ao redor!');
+        }
+
+      } else if (clsKey === 'ranger') {
+        if (num === 1) {
+          // ARQUEIRA: TIRO MÚLTIPLO EM LEQUE (5 Flechas Perfurantes)
+          audio.playBowShot();
+          const baseAng = player.facing;
+          [-0.32, -0.16, 0, 0.16, 0.32].forEach(offset => {
+            shootProjectile(player.gx, player.gy, baseAng + offset, 'arrow', 32);
+          });
+          showNotification('🎯 Tiro Múltiplo: Leque de flechas disparado!');
+        } else {
+          // ARQUEIRA: FLECHA CONGELANTE COM EXPLOSÃO DE GELO
+          audio.playBowShot();
+          shootProjectile(player.gx, player.gy, player.facing, 'ice_arrow', 45);
+          showNotification('❄️ Flecha Congelante: Alvos serão desacelerados!');
+        }
+
+      } else if (clsKey === 'wizard') {
+        if (num === 1) {
+          // MAGO: BOLA DE FOGO EXPLOSIVA
+          audio.playArcaneCast();
+          shootProjectile(player.gx, player.gy, player.facing, 'fireball', 60);
+          showNotification('🔥 Bola de Fogo Arcana disparada!');
+        } else {
+          // MAGO: TEMPESTADE DE RAIOS EM CADEIA (Chain Lightning)
+          audio.playMagicSpell();
+          screenShake = 8;
+          let hitCount = 0;
+          monsters.forEach(m => {
+            if (!m.alive || hitCount >= 5) return;
+            const d = Math.hypot(m.gx - player.gx, m.gy - player.gy);
+            if (d < 6.5) {
+              hitCount++;
+              const lDmg = 75 + Math.floor(Math.random() * 25);
+              m.hp -= lDmg;
+              for (let k = 0; k < 12; k++) {
+                particles.push({
+                  gx: m.gx, gy: m.gy,
+                  vx: (Math.random() - 0.5) * 5, vy: (Math.random() - 0.5) * 5,
+                  life: 0.5, color: '#00e1ff'
+                });
+              }
+              spawnFloatingText(`⚡ -${lDmg} (RELÂMPAGO!)`, m.gx, m.gy - 0.6, '#00e1ff');
+              if (m.hp <= 0) {
+                m.alive = false;
+                giveXp(50);
+                spawnFlyingLoot(m.gx, m.gy, 'gold', 30);
+              }
+            }
+          });
+          showNotification('⚡ Tempestade de Raios: Relâmpagos bifurcados atingiram a masmorra!');
+        }
+
+      } else if (clsKey === 'cleric') {
+        if (num === 1) {
+          // CLÉRIGA: CURA DIVINA & PILAR DE LUZ
+          audio.playLevelUp();
+          player.hp = Math.min(player.maxHp, player.hp + 85);
+          spawnFloatingText('+85 HP (LUZ DIVINA)', player.gx, player.gy - 0.6, '#44ff44');
+          for (let i = 0; i < 20; i++) {
+            particles.push({
+              gx: player.gx + (Math.random() - 0.5) * 0.8,
+              gy: player.gy + (Math.random() - 0.5) * 0.8,
+              vx: 0, vy: -Math.random() * 3 - 2,
+              life: 0.9, color: '#ffe066'
+            });
+          }
+          showNotification('✨ Cura Divina: Pilar de luz sagrada restaurou 85 HP!');
+        } else {
+          // CLÉRIGA: PUNIÇÃO SAGRADA (Smite em Área contra Profanos)
+          audio.playMagicSpell();
+          screenShake = 10;
+          monsters.forEach(m => {
+            if (!m.alive) return;
+            const d = Math.hypot(m.gx - player.gx, m.gy - player.gy);
+            if (d < 4.0) {
+              const smDmg = 55 + Math.floor(Math.random() * 18);
+              m.hp -= smDmg;
+              spawnFloatingText(`✨ -${smDmg} (PUNIÇÃO)`, m.gx, m.gy - 0.5, '#ffd700');
+              if (m.hp <= 0) {
+                m.alive = false;
+                giveXp(45);
+                spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
+              }
+            }
+          });
+          showNotification('⚡ Punição Sagrada: Julgamento celestial expurgou os monstros!');
+        }
+
+      } else if (clsKey === 'shadowknight') {
+        if (num === 1) {
+          // CAVALEIRO DAS SOMBRAS: DRENO DE VIDA (Life Tap Esmagador)
+          audio.playMagicSpell();
+          let stolenHp = 0;
+          monsters.forEach(m => {
+            if (!m.alive) return;
+            const d = Math.hypot(m.gx - player.gx, m.gy - player.gy);
+            if (d < 4.2) {
+              const ltDmg = 42;
+              m.hp -= ltDmg;
+              stolenHp += 22;
+              for (let k = 0; k < 8; k++) {
+                particles.push({
+                  gx: m.gx, gy: m.gy,
+                  vx: (player.gx - m.gx) * 2, vy: (player.gy - m.gy) * 2,
+                  life: 0.5, color: '#ff1144'
+                });
+              }
+              spawnFloatingText(`🩸 -${ltDmg}`, m.gx, m.gy - 0.5, '#ff2233');
+              if (m.hp <= 0) {
+                m.alive = false;
+                giveXp(45);
+                spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
+              }
+            }
+          });
+          if (stolenHp > 0) {
+            player.hp = Math.min(player.maxHp, player.hp + stolenHp);
+            spawnFloatingText(`+${stolenHp} HP ROUBADO`, player.gx, player.gy - 0.6, '#44ff88');
+          }
+          showNotification('🩸 Dreno de Vida: Almas drenadas regeneraram sua vitalidade!');
+        } else {
+          // CAVALEIRO DAS SOMBRAS: INVOCAR ESQUELETO GUERREIRO
+          summonCompanion('shadowknight');
+          showNotification('💀 Invocar Morto-Vivo: Guerreiro Esqueleto convocado para a batalha!');
+        }
       }
       updateHud();
     }
@@ -3656,6 +3825,99 @@
       }
 
       
+      // -------------------------------------------------------------
+      // EMBASS ENGINE ETAPA 11: IA DO MASCOTE COMPANHEIRO (AUTO-LOOT E ASSISTÊNCIA)
+      // -------------------------------------------------------------
+      if (player.pet) {
+        const pet = player.pet;
+        pet.animTimer = (pet.animTimer || 0) + dt * 4;
+
+        // 1. AUTO-LOOT INTELIGENTE: Detecta moedas de ouro ou itens caídos no chão
+        let nearestLoot = null;
+        let minLootDist = 5.2;
+
+        for (let i = flyingLoot.length - 1; i >= 0; i--) {
+          const fl = flyingLoot[i];
+          const d = Math.hypot(fl.gx - pet.gx, fl.gy - pet.gy);
+          if (d < minLootDist) {
+            minLootDist = d;
+            nearestLoot = { obj: fl, idx: i, type: 'flying' };
+          }
+        }
+        for (let i = groundLoot.length - 1; i >= 0; i--) {
+          const gl = groundLoot[i];
+          const d = Math.hypot(gl.gx - pet.gx, gl.gy - pet.gy);
+          if (d < minLootDist) {
+            minLootDist = d;
+            nearestLoot = { obj: gl, idx: i, type: 'ground' };
+          }
+        }
+
+        if (nearestLoot) {
+          // O Mascote corre em direção ao ouro/item para recolher
+          const lang = Math.atan2(nearestLoot.obj.gy - pet.gy, nearestLoot.obj.gx - pet.gx);
+          pet.gx += Math.cos(lang) * 4.6 * dt;
+          pet.gy += Math.sin(lang) * 4.6 * dt;
+
+          if (minLootDist < 0.65) {
+            if (nearestLoot.type === 'flying') {
+              const gAmt = nearestLoot.obj.amount || 25;
+              player.gold += gAmt;
+              flyingLoot.splice(nearestLoot.idx, 1);
+              audio.playCoin();
+              spawnFloatingText(`+${gAmt} 💰 (${pet.name})`, pet.gx, pet.gy - 0.45, '#ffd700');
+            } else {
+              player.inventory.push(nearestLoot.obj.item);
+              groundLoot.splice(nearestLoot.idx, 1);
+              audio.playCoin();
+              showNotification(`🎒 ${pet.name} recolheu: ${nearestLoot.obj.item.name}!`);
+            }
+            updateHud();
+          }
+        } else {
+          // 2. SEGUIR O HERÓI SUAVEMENTE
+          const dHero = Math.hypot(player.gx - pet.gx, player.gy - pet.gy);
+          if (dHero > 6.5) {
+            // Teleporte de aproximação se o herói correr muito longe
+            pet.gx = player.gx - 0.8;
+            pet.gy = player.gy - 0.8;
+          } else if (dHero > 1.35) {
+            const hang = Math.atan2(player.gy - pet.gy, player.gx - pet.gx);
+            pet.gx += Math.cos(hang) * 3.4 * dt;
+            pet.gy += Math.sin(hang) * 3.4 * dt;
+          }
+
+          // 3. COMBATE ASSISTIDO: Ataca monstros em combate próximo
+          let targetM = null;
+          let minMDist = 2.4;
+          monsters.forEach(m => {
+            if (!m.alive) return;
+            const dm = Math.hypot(m.gx - pet.gx, m.gy - pet.gy);
+            if (dm < minMDist) {
+              minMDist = dm;
+              targetM = m;
+            }
+          });
+
+          if (targetM) {
+            pet.attackCooldown = (pet.attackCooldown || 0) - dt;
+            if (pet.attackCooldown <= 0) {
+              pet.attackCooldown = 1.0;
+              const petDmg = 18;
+              targetM.hp -= petDmg;
+              audio.playHitMonster();
+              spawnBlood(targetM.gx, targetM.gy, 5);
+              spawnFloatingText(`-${petDmg} (${pet.name})`, targetM.gx, targetM.gy - 0.4, pet.color);
+              if (targetM.hp <= 0) {
+                targetM.alive = false;
+                giveXp(35);
+                spawnFlyingLoot(targetM.gx, targetM.gy, 'gold', 20);
+              }
+            }
+          }
+        }
+      }
+
       // IA DOS COMPANHEIROS ALIADOS (SEGUEM E ATACAM MONSTROS)
       allies.forEach(al => {
         al.animTimer = (al.animTimer || 0) + dt * 6;
@@ -3928,6 +4190,11 @@
       });
 
       // -------------------------------------------------------------
+      // EMBASS ENGINE ETAPA 11: NÉVOA RASTEIRA VOLUMÉTRICA (LOW-LYING GROUND MIST)
+      // -------------------------------------------------------------
+      drawVolumetricGroundMist();
+
+      // -------------------------------------------------------------
       // EMBASS ENGINE ETAPA 7: ONDULAÇÕES NA ÁGUA (WATER RIPPLES)
       // -------------------------------------------------------------
       for (let ri = waterRipples.length - 1; ri >= 0; ri--) {
@@ -4116,6 +4383,13 @@
           draw: () => drawAlly(al)
         });
       });
+
+      if (player.pet) {
+        renderables.push({
+          ySort: player.pet.gx + player.pet.gy,
+          draw: () => drawPet(player.pet)
+        });
+      }
 
       renderables.push({ ySort: player.gx + player.gy, draw: () => drawPlayer() });
 
@@ -4452,6 +4726,185 @@
       ctx.fillStyle = al.color;
       ctx.textAlign = 'center';
       ctx.fillText(al.name, footX, footY - 34 - bob);
+      ctx.restore();
+    }
+
+    // EMBASS ENGINE ETAPA 11: SOMBRA PROJETADA DINÂMICA (ALONGADA PELAS FOGUEIRAS)
+    function drawDynamicProjectedShadow(footX, footY, radius = 14) {
+      let nearestT = null;
+      let minTDist = 280;
+
+      torches.forEach(t => {
+        const iso = worldToIso(t.gx, t.gy);
+        const dist = Math.hypot(footX - iso.x, footY - (iso.y + 16));
+        if (dist < minTDist) {
+          minTDist = dist;
+          nearestT = { x: iso.x, y: iso.y + 16, dist };
+        }
+      });
+
+      ctx.save();
+      if (nearestT && nearestT.dist < 240) {
+        // Sombra alongada na direção contrária da fogueira (Champions of Norrath)
+        const ang = Math.atan2(footY - nearestT.y, footX - nearestT.x);
+        const stretch = Math.min(32, Math.max(14, (1 - nearestT.dist / 240) * 36));
+        const alpha = Math.min(0.55, Math.max(0.18, 0.58 - (nearestT.dist / 240) * 0.4));
+        const sx = footX + Math.cos(ang) * stretch;
+        const sy = footY + Math.sin(ang) * (stretch * 0.5);
+
+        ctx.fillStyle = `rgba(5, 3, 2, ${alpha})`;
+        ctx.beginPath();
+        ctx.ellipse(sx, sy, radius, radius * 0.5, ang * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Sombra de contato suave
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.46)';
+        ctx.beginPath();
+        ctx.ellipse(footX, footY, radius, radius * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // EMBASS ENGINE ETAPA 11: RENDERIZAÇÃO DO MASCOTE COMPANHEIRO
+    function drawPet(pet) {
+      const iso = worldToIso(pet.gx, pet.gy);
+      const footX = iso.x;
+      const footY = iso.y + 16;
+      const t = pet.animTimer || 0;
+
+      ctx.save();
+
+      // Sombra Dinâmica do Mascote
+      drawDynamicProjectedShadow(footX, footY, 11);
+
+      if (pet.type === 'fairy') {
+        // FADA ARCANA DE LUZ (Orbe flutuante com asas translúcidas)
+        const flyY = footY - 18 + Math.sin(t * 3.5) * 4;
+        const wingFlap = Math.sin(t * 14) * 8;
+
+        // Aura luminosa mágica
+        ctx.save();
+        ctx.shadowColor = pet.color;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = pet.color;
+        ctx.beginPath(); ctx.arc(footX, flyY, 5, 0, Math.PI * 2); ctx.fill();
+
+        // Asas de cristal
+        ctx.fillStyle = 'rgba(235, 200, 255, 0.65)';
+        ctx.beginPath();
+        ctx.ellipse(footX - 7, flyY - 4, 7, Math.abs(wingFlap), -0.4, 0, Math.PI * 2);
+        ctx.ellipse(footX + 7, flyY - 4, 7, Math.abs(wingFlap), 0.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+      } else if (pet.type === 'cherub') {
+        // QUERUBIM CELESTIAL (Espírito alado sagrado com auréola)
+        const flyY = footY - 20 + Math.sin(t * 3) * 3;
+        const wingFlap = Math.sin(t * 10) * 7;
+
+        ctx.save();
+        ctx.fillStyle = '#fff9d6';
+        ctx.beginPath(); ctx.arc(footX, flyY, 6, 0, Math.PI * 2); ctx.fill();
+
+        // Auréola dourada
+        ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.ellipse(footX, flyY - 8, 5, 2, 0, 0, Math.PI * 2); ctx.stroke();
+
+        // Asas douradas
+        ctx.fillStyle = 'rgba(255, 230, 120, 0.7)';
+        ctx.beginPath();
+        ctx.ellipse(footX - 8, flyY - 2, 8, Math.abs(wingFlap), -0.3, 0, Math.PI * 2);
+        ctx.ellipse(footX + 8, flyY - 2, 8, Math.abs(wingFlap), 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+      } else if (pet.type === 'raven') {
+        // CORVO DO ABISMO (Ave negra/púrpura com bater de asas)
+        const flyY = footY - 17 + Math.sin(t * 4) * 3;
+        const wingSpan = Math.sin(t * 12) * 9;
+
+        ctx.save();
+        ctx.fillStyle = '#181224';
+        ctx.beginPath(); ctx.ellipse(footX, flyY, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff3366';
+        ctx.fillRect(footX + 2, flyY - 2, 1.5, 1.5); // Olho rubi
+
+        // Asas sombrias
+        ctx.fillStyle = '#3a2052';
+        ctx.beginPath();
+        ctx.ellipse(footX - 8, flyY - 2, 9, Math.abs(wingSpan), -0.3, 0, Math.PI * 2);
+        ctx.ellipse(footX + 8, flyY - 2, 9, Math.abs(wingSpan), 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+      } else {
+        // LOBO ESPECTRAL DE NORRATH (Passo quadrúpede realista)
+        const stride = Math.sin(t * 4.2) * 3.5;
+        const bodyY = footY - 8;
+
+        // Patas
+        ctx.fillStyle = '#2a3b50';
+        ctx.fillRect(footX - 8 + stride, footY - 5, 2.5, 5);
+        ctx.fillRect(footX - 3 - stride, footY - 5, 2.5, 5);
+        ctx.fillRect(footX + 2 + stride, footY - 5, 2.5, 5);
+        ctx.fillRect(footX + 6 - stride, footY - 5, 2.5, 5);
+
+        // Corpo
+        ctx.fillStyle = '#3c5878';
+        ctx.beginPath(); ctx.ellipse(footX, bodyY, 9, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Cabeça e focinho
+        ctx.fillStyle = '#4c6e94';
+        ctx.beginPath(); ctx.arc(footX + 7, bodyY - 3, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#223242';
+        ctx.beginPath(); ctx.moveTo(footX + 9, bodyY - 2); ctx.lineTo(footX + 13, bodyY - 1); ctx.lineTo(footX + 9, bodyY); ctx.fill();
+
+        // Olhos azuis brilhantes
+        ctx.fillStyle = '#66ddff';
+        ctx.fillRect(footX + 8, bodyY - 4, 1.5, 1.5);
+
+        // Cauda
+        ctx.strokeStyle = '#3c5878'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(footX - 8, bodyY); ctx.quadraticCurveTo(footX - 13, bodyY - 4 + Math.sin(t * 4) * 2, footX - 11, bodyY + 2); ctx.stroke();
+
+        // Brilho espectral suave
+        ctx.save();
+        ctx.shadowColor = pet.color;
+        ctx.shadowBlur = 8;
+        ctx.strokeStyle = 'rgba(85, 170, 255, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Nome do Mascote flutuante
+      ctx.fillStyle = pet.color;
+      ctx.font = 'bold 8.5px "Cinzel", serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(pet.name, footX, footY - 24);
+
+      ctx.restore();
+    }
+
+
+    function drawVolumetricGroundMist() {
+      const time = Date.now() * 0.00035;
+      const mistColor = (currentBiomeKey === 'lavastorm') ? 'rgba(255, 80, 30, 0.045)' :
+                        (currentBiomeKey === 'catacombs') ? 'rgba(70, 160, 200, 0.05)' :
+                        'rgba(180, 220, 235, 0.042)';
+
+      ctx.save();
+      ctx.fillStyle = mistColor;
+      for (let i = 0; i < 7; i++) {
+        const driftX = Math.sin(time + i * 1.5) * 90 + (i * 170) - 220;
+        const driftY = Math.cos(time * 0.8 + i * 1.2) * 50 + (i * 100) - 120;
+        const cx = player.gx * 32 - player.gy * 32 + driftX;
+        const cy = player.gx * 16 + player.gy * 16 + driftY;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 140 + i * 18, 55 + i * 10, 0.12 * Math.sin(time + i), 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.restore();
     }
 
@@ -6467,6 +6920,49 @@
       previewBlocking = !previewBlocking;
     };
 
+    // EMBASS ENGINE ETAPA 11: SISTEMA DE MASCOTE COMPANHEIRO PERMANENTE (PET FAMILIAR)
+    function initPlayerPet() {
+      const cls = player.clsKey || 'barbarian';
+      let petType = 'wolf';
+      let petName = 'Lobo Espectral';
+      let petColor = '#55aaff';
+      let petIcon = '🐺';
+
+      if (cls === 'wizard') {
+        petType = 'fairy';
+        petName = 'Fada Arcana';
+        petColor = '#dd55ff';
+        petIcon = '🧚';
+      } else if (cls === 'cleric') {
+        petType = 'cherub';
+        petName = 'Querubim Alado';
+        petColor = '#ffe066';
+        petIcon = '👼';
+      } else if (cls === 'shadowknight') {
+        petType = 'raven';
+        petName = 'Corvo do Abismo';
+        petColor = '#a855f7';
+        petIcon = '🦅';
+      } else if (cls === 'ranger') {
+        petType = 'wolf';
+        petName = 'Lobo dos Bosques';
+        petColor = '#44ffaa';
+        petIcon = '🐺';
+      }
+
+      player.pet = {
+        type: petType,
+        name: petName,
+        icon: petIcon,
+        color: petColor,
+        gx: player.gx - 0.7,
+        gy: player.gy - 0.7,
+        animTimer: 0,
+        attackCooldown: 0,
+        targetLoot: null
+      };
+    }
+
     // Inicialização da Jornada
     function startGameWithClass(clsKey) {
       audio.init();
@@ -6475,6 +6971,7 @@
       const cls = CLASSES[clsKey] || CLASSES.barbarian;
       player.clsKey = clsKey;
       player.hp = cls.hp;
+      initPlayerPet();
       player.maxHp = cls.hp;
       player.mana = cls.mana;
       player.maxMana = cls.mana;
