@@ -2255,6 +2255,7 @@
     let previewBlocking = false; // Postura defensiva no preview
     let telegraphedAttacks = [];
     let waterRipples = [];
+    let bloodStains = [];
     let weatherTimer = 0;
     let fogPuffs = [
       { gx: 4, gy: 5, radius: 46, seed: 0 },
@@ -2329,6 +2330,11 @@
 
       // CORREDOR 2 (Passagem Sul): gx: 21..24, gy: 11..21
       carve(21, 11, 4, 11);
+
+      // CÂMARA SECRETA ESCONDIDA (EMBASS ENGINE ETAPA 9): gx: 24..27, gy: 14..17
+      carve(24, 14, 4, 4);
+      // Parede de Pedra Rachada Secreta que Bloqueia a Entrada
+      dungeonMap[15][24] = 2; // 2 = Parede Secreta Destrutível
 
       // SALA 3 (Antecâmara do Guardião da Chave): gx: 12..25, gy: 20..27
       carve(12, 20, 14, 8);
@@ -2611,6 +2617,23 @@
         return;
       }
 
+      // Ataque quebrando Paredes Secretas Rachadas (Tile 2)
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const wx = Math.floor(player.gx + dx);
+          const wy = Math.floor(player.gy + dy);
+          if (wx >= 0 && wx < MAP_SIZE && wy >= 0 && wy < MAP_SIZE && dungeonMap[wy][wx] === 2) {
+            dungeonMap[wy][wx] = 0; // Abre a passagem secreta!
+            audio.playBreakStone();
+            screenShake = 8;
+            spawnDestructionDebris(wx, wy, 'stone');
+            showNotification('🌟 PAREDE SECRETA DESTRUÍDA! Uma câmara oculta foi revelada!');
+            voices.speak('Uma passagem secreta esquecida pelos séculos!', 'elder');
+            props.push({ type: 'chest', gx: 25, gy: 15, opened: false, icon: '📦', isSecret: true });
+          }
+        }
+      }
+
       // CLASSES CORPO A CORPO: BÁRBARO, CLÉRIGA, CAVALEIRO DAS TREVAS
       audio.playSwordSwing(player.comboStep);
 
@@ -2810,8 +2833,18 @@
           spawnBlood(m.gx, m.gy, isCrit ? 14 : 7);
           spawnFloatingText(isCrit ? `CRÍTICO! -${finalDmg}` : `-${finalDmg}`, m.gx, m.gy, isCrit ? '#ffd700' : '#ff4444');
 
+          if (isCrit && m.hp > 0) {
+            m.bleedTimer = 3.0;
+            m.bleedDmg = Math.floor(finalDmg * 0.25);
+            spawnFloatingText('🩸 SANGRAMENTO!', m.gx, m.gy - 0.6, '#ff2233');
+          }
+          m.staggerTimer = 0.25;
+
           if (m.hp <= 0) {
             m.alive = false;
+            m.dying = true;
+            m.deathTimer = 1.0;
+            m.fallDir = Math.random() < 0.5 ? 1 : -1;
             // Progresso de Missões
             if (!QUESTS[0].completed) {
               QUESTS[0].current++;
@@ -3216,7 +3249,8 @@
       // MOVIMENTAÇÃO INSTANTÂNEA E DIRETA (ZERO EFEITO DE GELO / ZERO DESLIZAMENTO)
       if (inputX !== 0 || inputY !== 0) {
         player.isMoving = true;
-        player.walkTimer = (player.walkTimer || 0) + dt * 11;
+        // VELOCIDADE DE ANIMAÇÃO CALIBRADA EM 1x (CADÊNCIA NATURAL DE PASSOS)
+        player.walkTimer = (player.walkTimer || 0) + dt * 4.8;
 
         const len = Math.hypot(inputX, inputY);
         inputX /= len;
@@ -3235,7 +3269,8 @@
         player.isMoving = false;
         player.vx = 0;
         player.vy = 0;
-        player.idleTimer = (player.idleTimer || 0) + dt * 2.5;
+        // VELOCIDADE DE ANIMAÇÃO DE RESPIRAÇÃO EM 1x
+        player.idleTimer = (player.idleTimer || 0) + dt * 1.5;
       }
       if (player.hitFlash > 0) player.hitFlash -= dt * 4;
 
@@ -3341,7 +3376,8 @@
         lightCtx.fill();
       });
 
-      torches.forEach(t => { t.flame += dt * 5; });
+      // VELOCIDADE DE CHAMAS DAS FOGUEIRAS EM 1x (ORGANICO E SUAVE)
+      torches.forEach(t => { t.flame += dt * 2.2; });
 
       // Atualização do Loot Voador
       for (let i = flyingLoot.length - 1; i >= 0; i--) {
@@ -3381,8 +3417,43 @@
 
       // IA DOS MONSTROS E FALAS DUBLADAS AO AVISTAR O JOGADOR
       monsters.forEach(m => {
+        // ATUALIZAÇÃO DA MORTE DOS MONSTROS (QUEDA FÍSICA NO CHÃO)
+        if (m.dying) {
+          m.deathTimer -= dt;
+          if (m.deathTimer <= 0) {
+            m.dying = false;
+            m.dead = true;
+            bloodStains.push({ gx: m.gx, gy: m.gy, r: 12 + Math.random() * 6, color: '#3b0606' });
+          }
+          return;
+        }
         if (!m.alive) return;
-        m.animTimer = (m.animTimer || 0) + dt * 5;
+
+        // VELOCIDADE DE ANIMAÇÃO DOS MONSTROS EM 1x (NORMALIZADA)
+        m.animTimer = (m.animTimer || 0) + dt * 1.0;
+
+        // Efeito de Sangramento Contínuo (Bleed Status FX)
+        if (m.bleedTimer && m.bleedTimer > 0) {
+          m.bleedTimer -= dt;
+          m.bleedTick = (m.bleedTick || 0) + dt;
+          if (m.bleedTick >= 0.6) {
+            m.bleedTick = 0;
+            const bDmg = m.bleedDmg || 8;
+            m.hp -= bDmg;
+            spawnBlood(m.gx, m.gy, 3);
+            spawnFloatingText(`🩸 -${bDmg}`, m.gx, m.gy - 0.35, '#ff2233');
+            if (m.hp <= 0) {
+              m.alive = false;
+              m.dying = true;
+              m.deathTimer = 1.0;
+              m.fallDir = Math.random() < 0.5 ? 1 : -1;
+              giveXp(40);
+              spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
+            }
+          }
+        }
+
+        if (m.staggerTimer && m.staggerTimer > 0) m.staggerTimer -= dt;
         if (m.frozen && m.frozen > 0) { m.frozen -= dt; return; }
 
         const dist = Math.hypot(player.gx - m.gx, player.gy - m.gy);
@@ -3621,6 +3692,9 @@
             }
             if (m.hp <= 0) {
               m.alive = false;
+              m.dying = true;
+              m.deathTimer = 1.0;
+              m.fallDir = Math.random() < 0.5 ? 1 : -1;
               giveXp(45);
               spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
             }
@@ -3744,6 +3818,23 @@
           drawTile(iso.x, iso.y, dungeonMap[y][x], floorTile);
         }
       }
+
+      // -------------------------------------------------------------
+      // EMBASS ENGINE ETAPA 9: POÇAS DE SANGUE PERMANENTES (BLOOD DECAL)
+      // -------------------------------------------------------------
+      bloodStains.forEach(bs => {
+        const iso = worldToIso(bs.gx, bs.gy);
+        ctx.save();
+        ctx.fillStyle = bs.color;
+        ctx.beginPath();
+        ctx.ellipse(iso.x, iso.y + 16, bs.r, bs.r * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#1e0202';
+        ctx.beginPath();
+        ctx.ellipse(iso.x + 2, iso.y + 16, bs.r * 0.5, bs.r * 0.25, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
 
       // -------------------------------------------------------------
       // EMBASS ENGINE ETAPA 7: ONDULAÇÕES NA ÁGUA (WATER RIPPLES)
@@ -3919,7 +4010,7 @@
       renderables.push({ ySort: player.gx + player.gy, draw: () => drawPlayer() });
 
       monsters.forEach(m => {
-        if (!m.alive) return;
+        if (!m.alive && !m.dying) return;
         renderables.push({ ySort: m.gx + m.gy, draw: () => drawMonster(m) });
       });
 
@@ -4162,6 +4253,18 @@
         rightGrad.addColorStop(1, '#3b3026');
         ctx.fillStyle = rightGrad;
         ctx.fill();
+
+        // PAREDE SECRETA RACHADA COM RUNA OCULTA (TILE 2)
+        if (type === 2) {
+          ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2.0;
+          ctx.beginPath();
+          ctx.moveTo(midX - 10, y + TILE_H / 2 - wallH / 2);
+          ctx.lineTo(midX, y + TILE_H / 2 - wallH / 2 - 8);
+          ctx.lineTo(midX + 12, y + TILE_H / 2 - wallH / 2 + 4);
+          ctx.stroke();
+          ctx.fillStyle = '#ffea66';
+          ctx.beginPath(); ctx.arc(midX, y + TILE_H / 2 - wallH / 2 - 8, 3, 0, Math.PI * 2); ctx.fill();
+        }
 
         // Fiadas de blocos na face direita
         ctx.strokeStyle = '#16110c'; ctx.lineWidth = 1.2;
@@ -4457,8 +4560,23 @@
       const mFootY = iso.y + 16;
       const t = m.animTimer || 0;
 
-      // 1. Sombra de Contato
       ctx.save();
+
+      // ANIMAÇÃO DE QUEDA E MORTE DO MONSTRO (EMBASS ENGINE ETAPA 9)
+      if (m.dying) {
+        const fallPct = Math.max(0, 1 - (m.deathTimer / 1.0));
+        ctx.globalAlpha = Math.max(0, 1 - fallPct * 0.75);
+        ctx.translate(mFootX, mFootY);
+        ctx.rotate((m.fallDir || 1) * fallPct * (Math.PI / 2.2));
+        ctx.scale(1, Math.max(0.2, 1 - fallPct * 0.5));
+        ctx.translate(-mFootX, -mFootY);
+      } else if (m.staggerTimer && m.staggerTimer > 0) {
+        // Recuo e Stagger ao tomar golpe
+        const stagOffset = Math.sin(m.staggerTimer * 20) * 4;
+        ctx.translate(stagOffset, 0);
+      }
+
+      // 1. Sombra de Contato
       ctx.beginPath();
       ctx.ellipse(mFootX, mFootY, m.isBoss ? 26 : 14, m.isBoss ? 13 : 7, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
@@ -4526,8 +4644,8 @@
       const type = m.type || (m.isBoss ? 'warlord_boss' : 'orc');
 
       if (type === 'wolf') {
-        // LOBO DE FAYDARK (Quadrupede)
-        const stride = Math.sin(t * 8) * 5;
+        // LOBO DE FAYDARK (Passo 1x Realista)
+        const stride = Math.sin(t * 4.2) * 4.5;
         ctx.fillStyle = '#2d2d30';
         ctx.fillRect(mFootX - 10 + stride, mFootY - 7, 3, 7);
         ctx.fillRect(mFootX - 4 - stride, mFootY - 7, 3, 7);
@@ -4543,12 +4661,12 @@
         ctx.fillStyle = '#222';
         ctx.beginPath(); ctx.moveTo(mFootX - 10, mFootY - 16); ctx.lineTo(mFootX - 7, mFootY - 21); ctx.lineTo(mFootX - 5, mFootY - 16); ctx.fill();
         ctx.strokeStyle = '#48484e'; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(mFootX + 12, mFootY - 10); ctx.quadraticCurveTo(mFootX + 18, mFootY - 14 + Math.sin(t * 6) * 3, mFootX + 16, mFootY - 5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mFootX + 12, mFootY - 10); ctx.quadraticCurveTo(mFootX + 18, mFootY - 14 + Math.sin(t * 2.5) * 2.5, mFootX + 16, mFootY - 5); ctx.stroke();
 
       } else if (type === 'orc' || type === 'orc_boss') {
-        // ORC PATRULHEIRO OU CHEFE ORC
+        // ORC PATRULHEIRO (Passo Pesado 1x)
         const scale = type === 'orc_boss' ? 1.4 : 1.0;
-        const bob = Math.sin(t * 7) * 2;
+        const bob = Math.sin(t * 2.8) * 1.5;
         ctx.save();
         ctx.translate(mFootX, mFootY);
         ctx.scale(scale, scale);
@@ -4578,8 +4696,8 @@
         ctx.restore();
 
       } else if (type === 'goblin') {
-        // GOBLIN XAMÃ
-        const bob = Math.sin(t * 8) * 2;
+        // GOBLIN XAMÃ (Cadência 1x)
+        const bob = Math.sin(t * 3.0) * 1.5;
         ctx.fillStyle = '#1e2d14';
         ctx.fillRect(mFootX - 4, mFootY - 7, 3, 7);
         ctx.fillRect(mFootX + 1, mFootY - 7, 3, 7);
@@ -4598,8 +4716,8 @@
         ctx.beginPath(); ctx.arc(mFootX + 7, mFootY - 26 - bob, 4.5, 0, Math.PI * 2); ctx.fill();
 
       } else if (type === 'spider') {
-        // ARANHA VENENOSA (8 Pernas articuladas)
-        const crawl = Math.sin(t * 10);
+        // ARANHA VENENOSA (Rastejo Aranha 1x)
+        const crawl = Math.sin(t * 3.8);
         ctx.strokeStyle = '#222224'; ctx.lineWidth = 1.8;
         for (let i = -1; i <= 1; i += 0.65) {
           ctx.beginPath();
@@ -4625,8 +4743,8 @@
         ctx.beginPath(); ctx.arc(mFootX - 7, mFootY - 7, 1.2, 0, Math.PI * 2); ctx.fill();
 
       } else if (type === 'skeleton') {
-        // GUARDA DA MASMORRA (Esqueleto de Aço)
-        const bob = Math.sin(t * 7) * 2;
+        // GUARDA DA MASMORRA (Marcha de Ossos 1x)
+        const bob = Math.sin(t * 2.6) * 1.5;
         ctx.fillStyle = '#dcd5c5';
         ctx.fillRect(mFootX - 5, mFootY - 10, 2.5, 10);
         ctx.fillRect(mFootX + 2, mFootY - 10, 2.5, 10);
@@ -4643,9 +4761,9 @@
         ctx.fillStyle = '#9e8c76'; ctx.fillRect(mFootX + 8, mFootY - 22 - bob, 2.5, 16);
 
       } else if (type === 'demon') {
-        // DEMÔNIO ALADO (Paira no ar com asas batendo)
-        const wingFlap = Math.sin(t * 8) * 16;
-        const hoverY = Math.sin(t * 4) * 4 - 8;
+        // DEMÔNIO ALADO (Batimento Majestoso de Asas 1x)
+        const wingFlap = Math.sin(t * 2.8) * 14;
+        const hoverY = Math.sin(t * 1.6) * 3 - 8;
         const dBodyY = mFootY - 16 + hoverY;
 
         ctx.fillStyle = '#4a1215';
