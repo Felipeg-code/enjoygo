@@ -1478,6 +1478,42 @@
         osc.connect(gain); gain.connect(this.ctx.destination);
         osc.start(); osc.stop(this.ctx.currentTime + 0.18);
       }
+      playBreakCeramic() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(70, this.ctx.currentTime + 0.14);
+        gain.gain.setValueAtTime(0.38, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.14);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.14);
+      }
+      playBreakStone() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(80, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(25, this.ctx.currentTime + 0.22);
+        gain.gain.setValueAtTime(0.42, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.22);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.22);
+      }
+      playWaterSplash() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(580, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.12);
+      }
       playTrapSpike() {
         if (!this.ctx) return;
         const osc = this.ctx.createOscillator();
@@ -1784,10 +1820,18 @@
         fctx.closePath();
         fctx.clip();
 
-        // 1. Cor Base da Rocha Natural com Gradiente de Profundidade
+        // 1. Cor Base da Rocha Natural Adaptada ao Bioma (EMBASS Engine Etapa 7)
         const grad = fctx.createLinearGradient(16, 0, 48, 32);
-        grad.addColorStop(0, b.floorColor || '#231d16');
-        grad.addColorStop(1, '#15110d');
+        if (biomeKey === 'lavastorm') {
+          grad.addColorStop(0, '#2d140e');
+          grad.addColorStop(1, '#150805');
+        } else if (biomeKey === 'catacombs') {
+          grad.addColorStop(0, '#15202b');
+          grad.addColorStop(1, '#0c141d');
+        } else {
+          grad.addColorStop(0, b.floorColor || '#231d16');
+          grad.addColorStop(1, '#15110d');
+        }
         fctx.fillStyle = grad;
         fctx.fillRect(0, 0, 64, 32);
 
@@ -1818,8 +1862,47 @@
         fctx.beginPath(); fctx.moveTo(32, 3); fctx.lineTo(50, 12); fctx.stroke();
         fctx.beginPath(); fctx.moveTo(22, 12); fctx.lineTo(36, 19); fctx.stroke();
 
-        // 3. Detalhes Específicos por Variante
-        if (variant === 1) {
+        // 3. Detalhes Específicos por Variante & Bioma (EMBASS Engine Etapa 7)
+        if (biomeKey === 'lavastorm') {
+          if (variant === 1 || variant === 2) {
+            // FISSURA INCANDESCENTE DE LAVA VULCÂNICA
+            fctx.strokeStyle = '#ff3300'; fctx.lineWidth = 2.5;
+            fctx.beginPath();
+            fctx.moveTo(14, 16); fctx.lineTo(26, 12); fctx.lineTo(38, 20); fctx.lineTo(50, 16);
+            fctx.stroke();
+            // Núcleo branco-amarelado fervente
+            fctx.strokeStyle = '#ffdd44'; fctx.lineWidth = 1.2;
+            fctx.beginPath();
+            fctx.moveTo(15, 16); fctx.lineTo(26, 12); fctx.lineTo(38, 20); fctx.lineTo(49, 16);
+            fctx.stroke();
+            // Poça de magma fervilhante
+            if (variant === 2) {
+              const magGrad = fctx.createRadialGradient(32, 16, 1, 32, 16, 10);
+              magGrad.addColorStop(0, 'rgba(255, 240, 150, 0.9)');
+              magGrad.addColorStop(0.5, 'rgba(255, 80, 0, 0.7)');
+              magGrad.addColorStop(1, 'rgba(120, 20, 0, 0)');
+              fctx.fillStyle = magGrad;
+              fctx.beginPath(); fctx.ellipse(32, 16, 11, 5.5, 0, 0, Math.PI * 2); fctx.fill();
+            }
+          } else if (variant === 3) {
+            // Cinzas e brasas vulcânicas
+            fctx.fillStyle = '#ff5500';
+            fctx.beginPath(); fctx.arc(28, 14, 1.5, 0, Math.PI * 2); fctx.fill();
+            fctx.beginPath(); fctx.arc(36, 18, 1.2, 0, Math.PI * 2); fctx.fill();
+          }
+        } else if (biomeKey === 'catacombs' && variant === 3) {
+          // TABUADO DE MADEIRA (PONTE DE MINA ALAGADA)
+          fctx.fillStyle = '#3a2717';
+          fctx.fillRect(16, 8, 32, 16);
+          fctx.strokeStyle = '#1e140b'; fctx.lineWidth = 1.2;
+          for (let p = 10; p <= 22; p += 4) {
+            fctx.beginPath(); fctx.moveTo(16, p); fctx.lineTo(48, p); fctx.stroke();
+          }
+          // Pregos de ferro
+          fctx.fillStyle = '#777';
+          fctx.fillRect(18, 11, 1, 1); fctx.fillRect(45, 11, 1, 1);
+          fctx.fillRect(18, 19, 1, 1); fctx.fillRect(45, 19, 1, 1);
+        } else if (variant === 1) {
           // VARIANTE 1: Tufos de Mato e Musgo Verde nas Juntas
           fctx.fillStyle = '#263b18';
           fctx.beginPath(); fctx.arc(28, 16, 4, 0, Math.PI * 2); fctx.fill();
@@ -2017,7 +2100,17 @@
     let previewAngle = 0; // Ângulo de rotação do preview do herói
     let previewAttackTimer = 0; // Timer de ataque no preview
     let previewBlocking = false; // Postura defensiva no preview
-    let telegraphedAttacks = []; // Ondas de choque telegrafadas com círculo vermelho no piso
+    let telegraphedAttacks = [];
+    let waterRipples = [];
+    let weatherTimer = 0;
+    let fogPuffs = [
+      { gx: 4, gy: 5, radius: 46, seed: 0 },
+      { gx: 12, gy: 5, radius: 52, seed: 1.4 },
+      { gx: 21, gy: 7, radius: 60, seed: 2.8 },
+      { gx: 22, gy: 16, radius: 50, seed: 4.1 },
+      { gx: 18, gy: 23, radius: 55, seed: 5.5 },
+      { gx: 5, gy: 24, radius: 48, seed: 3.2 }
+    ]; // Ondas de choque telegrafadas com círculo vermelho no piso
     let allies = []; // Companheiros e mascotes aliados (Esqueletos, Lobos, Elementais)
     let projectiles = []; // Projéteis mágicos com iluminação dinâmica
     let groundLoot = []; // Itens no chão com feixes de luz verticais (Loot Beams)
@@ -2136,30 +2229,79 @@
         { type: 'barrel', gx: 7, gy: 23, hp: 1, icon: '🛢️', alive: true }
       ];
 
+      // -------------------------------------------------------------
+      // CONFIGURAÇÃO DOS 3 BIOMAS E ANDARES DA EMBASS ENGINE (ETAPA 7)
+      // -------------------------------------------------------------
       if (floor === 1) {
-        stairs = { gx: 4, gy: 26, icon: '🪜', desc: 'Descer para Andar 2 (Catacumbas)' };
+        // ANDAR 1: CRIPTAS DE FAYDARK
+        stairs = { gx: 4, gy: 26, icon: '🪜', desc: 'Descer para Andar 2 (Minas Alagadas)' };
         bossGate = null;
 
+        props = [
+          { type: 'barrel', gx: 6, gy: 3, hp: 1, icon: '🛢️', alive: true },
+          { type: 'crate', gx: 12, gy: 4, hp: 1, icon: '📦', alive: true },
+          { type: 'urn', gx: 20, gy: 5, hp: 1, icon: '🏺', alive: true },
+          { type: 'chest', gx: 25, gy: 4, opened: false, icon: '📦', hasKey: false },
+          { type: 'urn', gx: 22, gy: 15, hp: 1, icon: '🏺', alive: true },
+          { type: 'sarcophagus', gx: 14, gy: 22, hp: 2, icon: '⚰️', alive: true },
+          { type: 'barrel', gx: 7, gy: 23, hp: 1, icon: '🛢️', alive: true }
+        ];
+
         monsters = [
-          // Corredor 1
           { id: 1, name: 'Lobo de Faydark', gx: 11, gy: 5, hp: 60, maxHp: 60, dmg: 12, icon: '🐺', type: 'wolf', alive: true, animTimer: 0, hasSpoken: false },
-          { id: 2, name: 'Orc Patrulheiro', gx: 16, gy: 5, hp: 65, maxHp: 65, dmg: 14, icon: '👹', type: 'orc', alive: true, animTimer: 1, hasSpoken: false },
-          // Sala 2
+          // Campeão Elite 1: Orc Patrulheiro [Encantado por Fogo]
+          { id: 2, name: 'Orc Campeão', gx: 16, gy: 5, hp: 130, maxHp: 130, dmg: 18, icon: '👹', type: 'orc', isElite: true, affix: 'fire', alive: true, animTimer: 1, hasSpoken: false },
           { id: 3, name: 'Aranha Venenosa', gx: 21, gy: 8, hp: 55, maxHp: 55, dmg: 12, icon: '🕷️', type: 'spider', alive: true, animTimer: 2, hasSpoken: false },
-          // Corredor 2
           { id: 4, name: 'Goblin Xamã', gx: 22, gy: 17, hp: 60, maxHp: 60, dmg: 15, icon: '👺', type: 'goblin', alive: true, animTimer: 3, hasSpoken: false },
-          // Sala 3 & 4
-          { id: 5, name: 'Líder dos Orcs', gx: 18, gy: 23, hp: 140, maxHp: 140, dmg: 20, icon: '👹', type: 'orc_boss', isBoss: false, alive: true, animTimer: 0, hasSpoken: false },
+          // Campeão Elite 2: Líder dos Orcs [Muralha de Pedra]
+          { id: 5, name: 'Líder dos Orcs', gx: 18, gy: 23, hp: 220, maxHp: 220, dmg: 24, icon: '👹', type: 'orc_boss', isElite: true, affix: 'stone', alive: true, animTimer: 0, hasSpoken: false },
           { id: 6, name: 'Lobo Alfa de Norrath', gx: 5, gy: 24, hp: 80, maxHp: 80, dmg: 15, icon: '🐺', type: 'wolf', alive: true, animTimer: 2, hasSpoken: false }
         ];
+
+      } else if (floor === 2) {
+        // ANDAR 2: MINAS ALAGADAS & CATACUMBAS DE NORRATH
+        stairs = { gx: 4, gy: 26, icon: '🪜', desc: 'Descer para Andar 3 (Cavernas de Lavastorm)' };
+        bossGate = null;
+
+        props = [
+          { type: 'barrel', gx: 5, gy: 4, hp: 1, icon: '🛢️', alive: true },
+          { type: 'crate', gx: 14, gy: 5, hp: 1, icon: '📦', alive: true },
+          { type: 'urn', gx: 21, gy: 6, hp: 1, icon: '🏺', alive: true },
+          { type: 'sarcophagus', gx: 24, gy: 9, hp: 2, icon: '⚰️', alive: true },
+          { type: 'chest', gx: 22, gy: 16, opened: false, icon: '📦', hasKey: false },
+          { type: 'urn', gx: 16, gy: 23, hp: 1, icon: '🏺', alive: true },
+          { type: 'sarcophagus', gx: 6, gy: 25, hp: 2, icon: '⚰️', alive: true }
+        ];
+
+        monsters = [
+          { id: 101, name: 'Esqueleto Soldado', gx: 10, gy: 5, hp: 85, maxHp: 85, dmg: 16, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 0, hasSpoken: false },
+          // Campeão Elite: Guarda Esqueleto [Aura Gélida]
+          { id: 102, name: 'Guarda da Masmorra', gx: 16, gy: 5, hp: 175, maxHp: 175, dmg: 22, icon: '🛡️', type: 'skeleton', isElite: true, affix: 'frost', alive: true, animTimer: 1, hasSpoken: false },
+          { id: 103, name: 'Aranha Rainha do Abismo', gx: 22, gy: 7, hp: 95, maxHp: 95, dmg: 18, icon: '🕷️', type: 'spider', alive: true, animTimer: 2, hasSpoken: false },
+          // Campeão Elite: Demônio Alado [Teleporte Astral & Vampírico]
+          { id: 104, name: 'Demônio das Profundezas', gx: 22, gy: 16, hp: 160, maxHp: 160, dmg: 24, icon: '🦇', type: 'demon', isElite: true, affix: 'teleport', alive: true, animTimer: 0, hasSpoken: false },
+          { id: 105, name: 'Guarda Esqueleto Lanceiro', gx: 15, gy: 23, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1, hasSpoken: false }
+        ];
+
       } else {
+        // ANDAR 3: FORJA VULCÂNICA DE LAVASTORM (SALA DO CHEFE FINAL)
         stairs = null;
         bossGate = { gx: 5, gy: 23, locked: !player.hasBossKey, icon: '🚪' };
 
+        props = [
+          { type: 'urn', gx: 6, gy: 3, hp: 1, icon: '🏺', alive: true },
+          { type: 'sarcophagus', gx: 14, gy: 5, hp: 2, icon: '⚰️', alive: true },
+          { type: 'chest', gx: 25, gy: 4, opened: false, icon: '📦', hasKey: !player.hasBossKey },
+          { type: 'crate', gx: 22, gy: 15, hp: 1, icon: '📦', alive: true },
+          { type: 'sarcophagus', gx: 13, gy: 25, hp: 2, icon: '⚰️', alive: true }
+        ];
+
         monsters = [
-          { id: 1, name: 'Guarda Esqueleto da Masmorra', gx: 14, gy: 5, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, dropsKey: !player.hasBossKey, animTimer: 0, hasSpoken: false },
-          { id: 2, name: 'Demônio Alado das Sombras', gx: 22, gy: 15, hp: 90, maxHp: 90, dmg: 22, icon: '🦇', type: 'demon', alive: true, animTimer: 1, hasSpoken: false },
-          { id: 3, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 5, gy: 26, hp: 380, maxHp: 380, dmg: 38, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0, hasSpoken: false }
+          { id: 201, name: 'Guarda Esqueleto Vulcânico', gx: 13, gy: 5, hp: 110, maxHp: 110, dmg: 20, icon: '🛡️', type: 'skeleton', dropsKey: !player.hasBossKey, alive: true, animTimer: 0, hasSpoken: false },
+          // Campeão Elite: Demônio Supremo [Vampírico & Sanguinário]
+          { id: 202, name: 'Demônio de Sangue', gx: 22, gy: 15, hp: 210, maxHp: 210, dmg: 28, icon: '🦇', type: 'demon', isElite: true, affix: 'vampiric', alive: true, animTimer: 1, hasSpoken: false },
+          // O GRANDE CHEFE
+          { id: 203, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 5, gy: 26, hp: 420, maxHp: 420, dmg: 40, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0, hasSpoken: false }
         ];
       }
     }
@@ -2303,17 +2445,52 @@
 
       const totalDmg = Math.floor(baseDmg * comboMultiplier);
 
-      // Props
+      // Props Destrutíveis com Física (EMBASS Engine Etapa 7)
       props.forEach(p => {
         const dist = Math.hypot(p.gx - player.gx, p.gy - player.gy);
-        if (dist < 1.8) {
-          if (p.type === 'barrel' && p.alive) {
+        if (dist < 1.95) {
+          if ((p.type === 'barrel' || p.type === 'crate') && p.alive) {
             p.alive = false;
             audio.playBreakWood();
-            screenShake = 3;
-            spawnSplinters(p.gx, p.gy);
-            spawnFlyingLoot(p.gx, p.gy, 'gold', 14 + Math.floor(Math.random() * 14));
-            if (Math.random() < 0.4) spawnFlyingLoot(p.gx, p.gy, 'potion');
+            screenShake = 3.5;
+            spawnDestructionDebris(p.gx, p.gy, p.type);
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 16 + Math.floor(Math.random() * 16));
+            if (Math.random() < 0.45) spawnFlyingLoot(p.gx, p.gy, 'potion');
+          } else if (p.type === 'urn' && p.alive) {
+            p.alive = false;
+            audio.playBreakCeramic();
+            screenShake = 2.5;
+            spawnDestructionDebris(p.gx, p.gy, 'urn');
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 20 + Math.floor(Math.random() * 20));
+            if (Math.random() < 0.3) spawnFlyingLoot(p.gx, p.gy, 'gem');
+          } else if (p.type === 'sarcophagus' && p.alive) {
+            p.hp = (p.hp || 2) - 1;
+            if (p.hp <= 0) {
+              p.alive = false;
+              audio.playBreakStone();
+              screenShake = 6;
+              spawnDestructionDebris(p.gx, p.gy, 'sarcophagus');
+              if (Math.random() < 0.45) {
+                showNotification('💀 UM GUARDIÃO ANCIÃO DESPERTOU DO SARCÓFAGO!');
+                monsters.push({
+                  id: Date.now(),
+                  name: 'Múmia Guardiã Ancestral',
+                  gx: p.gx, gy: p.gy,
+                  hp: 90, maxHp: 90, dmg: 16,
+                  icon: '🧟',
+                  type: 'skeleton',
+                  alive: true, animTimer: 0, hasSpoken: false
+                });
+              } else {
+                spawnFlyingLoot(p.gx, p.gy, 'gold', 55 + Math.floor(Math.random() * 55));
+                spawnFlyingLoot(p.gx, p.gy, 'gem');
+              }
+            } else {
+              audio.playBreakStone();
+              screenShake = 2;
+              spawnDestructionDebris(p.gx, p.gy, 'stone');
+              spawnFloatingText('RACHOU!', p.gx, p.gy, '#ffd700');
+            }
           } else if (p.type === 'chest' && !p.opened) {
             p.opened = true;
 
@@ -2618,15 +2795,48 @@
     }
 
     function spawnSplinters(gx, gy) {
-      for (let i = 0; i < 8; i++) {
+      spawnDestructionDebris(gx, gy, 'wood');
+    }
+
+    // EMBASS ENGINE ETAPA 7: FÍSICA 3D DE ESTILHAÇOS E DESTROÇOS
+    function spawnDestructionDebris(gx, gy, material = 'wood') {
+      const count = material === 'sarcophagus' ? 14 : 10;
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.6 + Math.random() * 4.4;
+        let color = '#8b5a2b';
+        let shape = 'splinter';
+        let size = 3 + Math.random() * 3.5;
+
+        if (material === 'crate' || material === 'barrel' || material === 'wood') {
+          color = Math.random() < 0.5 ? '#7a4e28' : '#9e6d3c';
+          shape = 'splinter';
+        } else if (material === 'urn') {
+          color = Math.random() < 0.5 ? '#ba683b' : '#8c4323';
+          shape = 'shard';
+        } else if (material === 'sarcophagus' || material === 'stone') {
+          color = Math.random() < 0.5 ? '#6a6764' : '#454341';
+          shape = 'stone';
+          size = 4 + Math.random() * 4;
+        }
+
         particles.push({
           gx, gy,
-          vx: (Math.random() - 0.5) * 5,
-          vy: (Math.random() - 0.5) * 5,
-          life: 0.8,
-          color: '#8b5a2b'
+          gz: 8 + Math.random() * 14,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          vz: 3.5 + Math.random() * 4.5,
+          gravity: 14,
+          rot: Math.random() * Math.PI * 2,
+          vrot: (Math.random() - 0.5) * 16,
+          life: 0.95 + Math.random() * 0.4,
+          maxLife: 1.35,
+          size,
+          color,
+          shape
         });
       }
+      spawnDust(gx, gy);
     }
 
     function spawnBlood(gx, gy, count) {
@@ -3158,6 +3368,27 @@
         });
 
         let hit = false;
+        // Impacto do projétil em props destrutíveis (barris, caixas, urnas)
+        props.forEach(p => {
+          if (!p.alive || hit) return;
+          if (Math.hypot(p.gx - pj.gx, p.gy - pj.gy) < 1.1) {
+            hit = true;
+            if (p.type === 'barrel' || p.type === 'crate') {
+              p.alive = false;
+              audio.playBreakWood();
+              screenShake = 3;
+              spawnDestructionDebris(p.gx, p.gy, p.type);
+              spawnFlyingLoot(p.gx, p.gy, 'gold', 16);
+            } else if (p.type === 'urn') {
+              p.alive = false;
+              audio.playBreakCeramic();
+              screenShake = 2.5;
+              spawnDestructionDebris(p.gx, p.gy, 'urn');
+              spawnFlyingLoot(p.gx, p.gy, 'gold', 20);
+            }
+          }
+        });
+
         monsters.forEach(m => {
           if (!m.alive || hit) return;
           if (Math.hypot(m.gx - pj.gx, m.gy - pj.gy) < 1.1) {
@@ -3206,12 +3437,50 @@
         }
       }
 
-      // Partículas e Textos
+      // EMBASS ENGINE ETAPA 7: ATUALIZAÇÃO CLIMÁTICA, GOTEIRAS E ONDULAÇÕES
+      weatherTimer = (weatherTimer || 0) + dt;
+      if (weatherTimer >= 0.5) {
+        weatherTimer = 0;
+        const rx = Math.floor(player.gx + (Math.random() - 0.5) * 8);
+        const ry = Math.floor(player.gy + (Math.random() - 0.5) * 8);
+        if (rx >= 0 && rx < MAP_SIZE && ry >= 0 && ry < MAP_SIZE && dungeonMap[ry][rx] === 0) {
+          waterRipples.push({
+            gx: rx + Math.random() * 0.6,
+            gy: ry + Math.random() * 0.6,
+            r: 2,
+            maxR: 16 + Math.random() * 8,
+            alpha: 0.8,
+            speed: 18
+          });
+        }
+      }
+
+      for (let ri = waterRipples.length - 1; ri >= 0; ri--) {
+        const rp = waterRipples[ri];
+        rp.r += rp.speed * dt;
+        rp.alpha -= dt * 0.95;
+        if (rp.alpha <= 0 || rp.r >= rp.maxR) {
+          waterRipples.splice(ri, 1);
+        }
+      }
+
+      // Partículas com Física 3D e Quique (EMBASS Engine Etapa 7)
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.gx += p.vx * dt;
         p.gy += p.vy * dt;
-        p.life -= dt * 2.2;
+        if (p.gz !== undefined) {
+          p.gz += (p.vz || 0) * dt;
+          p.vz = (p.vz || 0) - (p.gravity || 14) * dt;
+          if (p.gz <= 0) {
+            p.gz = 0;
+            p.vz = -p.vz * 0.4;
+            p.vx *= 0.7;
+            p.vy *= 0.7;
+          }
+          if (p.rot !== undefined) p.rot += (p.vrot || 0) * dt;
+        }
+        p.life -= dt * (p.maxLife ? (1 / p.maxLife) : 2.2);
         if (p.life <= 0) particles.splice(i, 1);
       }
 
@@ -3256,6 +3525,52 @@
           const floorTile = Textures.getFloor(currentBiomeKey, variant);
           drawTile(iso.x, iso.y, dungeonMap[y][x], floorTile);
         }
+      }
+
+      // -------------------------------------------------------------
+      // EMBASS ENGINE ETAPA 7: ONDULAÇÕES NA ÁGUA (WATER RIPPLES)
+      // -------------------------------------------------------------
+      for (let ri = waterRipples.length - 1; ri >= 0; ri--) {
+        const rp = waterRipples[ri];
+        const iso = worldToIso(rp.gx, rp.gy);
+        const rFootX = iso.x;
+        const rFootY = iso.y + 16;
+        ctx.save();
+        ctx.strokeStyle = `rgba(180, 230, 255, ${rp.alpha * 0.75})`;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.ellipse(rFootX, rFootY, rp.r, rp.r * 0.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        if (rp.r > 6) {
+          ctx.strokeStyle = `rgba(220, 245, 255, ${rp.alpha * 0.35})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.ellipse(rFootX, rFootY, rp.r - 4, (rp.r - 4) * 0.5, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // -------------------------------------------------------------
+      // EMBASS ENGINE ETAPA 7: NÉVOA VOLUMÉTRICA RASTEIRA (LOW-LYING FOG)
+      // -------------------------------------------------------------
+      const fogT = Date.now() * 0.0008;
+      const bFogColor = currentBiomeKey === 'lavastorm' ? 'rgba(255, 60, 20, 0.09)' : (currentBiomeKey === 'catacombs' ? 'rgba(40, 70, 110, 0.13)' : 'rgba(120, 150, 130, 0.11)');
+      for (let fi = 0; fi < fogPuffs.length; fi++) {
+        const fp = fogPuffs[fi];
+        const iso = worldToIso(fp.gx + Math.sin(fogT + fp.seed) * 1.5, fp.gy + Math.cos(fogT * 0.7 + fp.seed) * 1.2);
+        if (iso.x + camera.x < -120 || iso.x + camera.x > canvas.width + 120 ||
+            iso.y + camera.y < -120 || iso.y + camera.y > canvas.height + 120) continue;
+
+        ctx.save();
+        const fGrad = ctx.createRadialGradient(iso.x, iso.y + 16, 10, iso.x, iso.y + 16, fp.radius);
+        fGrad.addColorStop(0, bFogColor);
+        fGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = fGrad;
+        ctx.beginPath();
+        ctx.ellipse(iso.x, iso.y + 16, fp.radius, fp.radius * 0.55, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
 
       // FEIXES DE LUZ VERTICAIS DOS ITENS LENDÁRIOS (LOOT BEAMS)
@@ -3406,10 +3721,28 @@
 
       particles.forEach(p => {
         const iso = worldToIso(p.gx, p.gy);
+        const py = iso.y - (p.gz || 0);
+        ctx.save();
         ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(iso.x, iso.y, 3, 0, Math.PI * 2);
-        ctx.fill();
+        if (p.shape === 'splinter' || p.shape === 'shard' || p.shape === 'stone') {
+          ctx.translate(iso.x, py);
+          if (p.rot) ctx.rotate(p.rot);
+          const s = p.size || 4;
+          if (p.shape === 'splinter') {
+            ctx.fillRect(-s, -s * 0.35, s * 2, s * 0.7);
+          } else if (p.shape === 'shard') {
+            ctx.beginPath();
+            ctx.moveTo(-s, s * 0.5); ctx.lineTo(0, -s); ctx.lineTo(s, s * 0.5);
+            ctx.closePath(); ctx.fill();
+          } else {
+            ctx.fillRect(-s * 0.5, -s * 0.5, s, s);
+          }
+        } else {
+          ctx.beginPath();
+          ctx.arc(iso.x, py, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
       });
 
       floatingTexts.forEach(ft => {
@@ -3878,6 +4211,59 @@
         ctx.beginPath(); ctx.arc(mFootX, mFootY - 14, 20, 0, Math.PI * 2); ctx.fill();
       }
 
+      // AURA ELEMENTAL DE CAMPEÃO ELITE (EMBASS ENGINE ETAPA 7)
+      if (m.isElite || m.affix) {
+        const affix = m.affix || 'fire';
+        const auraT = Date.now() * 0.004;
+        let auraColor1 = 'rgba(255, 68, 0, 0.6)';
+        let auraColor2 = 'rgba(255, 170, 0, 0.15)';
+        let ringColor = '#ff4400';
+
+        if (affix === 'frost') {
+          auraColor1 = 'rgba(0, 212, 255, 0.6)';
+          auraColor2 = 'rgba(100, 230, 255, 0.15)';
+          ringColor = '#00d4ff';
+        } else if (affix === 'teleport') {
+          auraColor1 = 'rgba(179, 68, 255, 0.6)';
+          auraColor2 = 'rgba(223, 136, 255, 0.15)';
+          ringColor = '#b344ff';
+        } else if (affix === 'vampiric') {
+          auraColor1 = 'rgba(255, 17, 68, 0.6)';
+          auraColor2 = 'rgba(102, 0, 17, 0.15)';
+          ringColor = '#ff1144';
+        } else if (affix === 'stone') {
+          auraColor1 = 'rgba(230, 180, 50, 0.6)';
+          auraColor2 = 'rgba(120, 90, 20, 0.15)';
+          ringColor = '#ffd700';
+        }
+
+        const auraR = 24 + Math.sin(auraT * 3) * 3;
+        const auraGrad = ctx.createRadialGradient(mFootX, mFootY, 6, mFootX, mFootY, auraR);
+        auraGrad.addColorStop(0, auraColor1);
+        auraGrad.addColorStop(0.7, auraColor2);
+        auraGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = auraGrad;
+        ctx.beginPath();
+        ctx.ellipse(mFootX, mFootY, auraR, auraR * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = ringColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(mFootX, mFootY, auraR * 0.85, auraR * 0.42, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        for (let r = 0; r < 4; r++) {
+          const rAng = auraT + (r * Math.PI / 2);
+          const rx = mFootX + Math.cos(rAng) * (auraR * 0.85);
+          const ry = mFootY + Math.sin(rAng) * (auraR * 0.42);
+          ctx.fillStyle = ringColor;
+          ctx.beginPath();
+          ctx.arc(rx, ry, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
       // 2. Renderização Procedural pelo Tipo
       const type = m.type || (m.isBoss ? 'warlord_boss' : 'orc');
 
@@ -4075,8 +4461,27 @@
       const barY = mFootY - (m.isBoss ? 72 : 44);
       ctx.fillStyle = '#000';
       ctx.fillRect(mFootX - barW / 2, barY, barW, barH);
-      ctx.fillStyle = m.isBoss ? '#ffd700' : '#e53935';
+      ctx.fillStyle = m.isBoss ? '#ffd700' : (m.isElite ? '#ffd700' : '#e53935');
       ctx.fillRect(mFootX - barW / 2 + 1, barY + 1, (barW - 2) * pct, barH - 2);
+
+      // Título do Campeão Elite (EMBASS Engine Etapa 7)
+      if (m.isElite || m.affix) {
+        const affixNames = {
+          fire: 'ENCANTADO POR FOGO',
+          frost: 'AURA GÉLIDA',
+          teleport: 'TELEPORTE ASTRAL',
+          vampiric: 'VAMPÍRICO',
+          stone: 'MURALHA ROCHOSA'
+        };
+        const affLabel = affixNames[m.affix] || 'CAMPEÃO';
+        ctx.font = 'bold 9px "Cinzel", Georgia, serif';
+        ctx.fillStyle = '#ffd700';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.fillText(`★ ${m.name} [${affLabel}] ★`, mFootX, barY - 7);
+        ctx.shadowBlur = 0;
+      }
 
       ctx.restore();
     }
@@ -4162,6 +4567,75 @@
         ctx.beginPath(); ctx.ellipse(footX, footY - 5, 9, 3, 0, 0, Math.PI * 2); ctx.stroke();
         ctx.fillStyle = '#422c19';
         ctx.beginPath(); ctx.ellipse(footX, footY - 18, 8, 3, 0, 0, Math.PI * 2); ctx.fill();
+
+      } else if (p.type === 'crate') {
+        // CAIXA DE MADEIRA REFORÇADA COM FERRO (3D)
+        const cw = 20, ch = 18;
+        ctx.fillStyle = '#6b4929';
+        ctx.fillRect(footX - cw/2, footY - ch, cw, ch);
+        ctx.fillStyle = '#221e1a';
+        ctx.fillRect(footX - cw/2, footY - ch, 3, ch);
+        ctx.fillRect(footX + cw/2 - 3, footY - ch, 3, ch);
+        ctx.fillRect(footX - cw/2, footY - ch, cw, 2.5);
+        ctx.fillRect(footX - cw/2, footY - 2.5, cw, 2.5);
+        ctx.strokeStyle = '#4a3219'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(footX - cw/2 + 3, footY - ch + 3); ctx.lineTo(footX + cw/2 - 3, footY - 3);
+        ctx.moveTo(footX + cw/2 - 3, footY - ch + 3); ctx.lineTo(footX - cw/2 + 3, footY - 3);
+        ctx.stroke();
+        ctx.fillStyle = '#999';
+        ctx.fillRect(footX - cw/2 + 1, footY - ch + 1, 1.5, 1.5);
+        ctx.fillRect(footX + cw/2 - 2.5, footY - ch + 1, 1.5, 1.5);
+        ctx.fillRect(footX - cw/2 + 1, footY - 2.5, 1.5, 1.5);
+        ctx.fillRect(footX + cw/2 - 2.5, footY - 2.5, 1.5, 1.5);
+
+      } else if (p.type === 'urn') {
+        // URNA FÚNEBRE DE CERÂMICA ANTIGA (Ânfora)
+        const urnGrad = ctx.createLinearGradient(footX - 8, 0, footX + 8, 0);
+        urnGrad.addColorStop(0, '#7d3f22');
+        urnGrad.addColorStop(0.4, '#ba683b');
+        urnGrad.addColorStop(1, '#5a2b16');
+        ctx.fillStyle = urnGrad;
+        ctx.beginPath();
+        ctx.ellipse(footX, footY - 11, 8.5, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#5a2b16';
+        ctx.fillRect(footX - 4, footY - 3, 8, 3);
+        ctx.fillStyle = '#9e4e2a';
+        ctx.fillRect(footX - 4.5, footY - 20, 9, 7);
+        ctx.fillStyle = '#b8623d';
+        ctx.beginPath(); ctx.ellipse(footX, footY - 20, 5.5, 2.2, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#421d0d'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.strokeStyle = '#7d3f22'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(footX - 8, footY - 14, 4, Math.PI * 0.5, Math.PI * 1.5);
+        ctx.arc(footX + 8, footY - 14, 4, Math.PI * 1.5, Math.PI * 0.5);
+        ctx.stroke();
+        ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.ellipse(footX, footY - 11, 8, 3, 0, 0, Math.PI * 2); ctx.stroke();
+
+      } else if (p.type === 'sarcophagus') {
+        // SARCÓFAGO GÓTICO DE PEDRA MACIÇA
+        const sw = 28, sh = 16;
+        ctx.fillStyle = '#3a3734';
+        ctx.fillRect(footX - sw/2, footY - sh, sw, sh);
+        ctx.fillStyle = '#524f4b';
+        ctx.fillRect(footX - sw/2 + 2, footY - sh + 2, sw - 4, 3);
+        ctx.fillStyle = '#262422';
+        ctx.fillRect(footX - sw/2, footY - 3, sw, 3);
+        ctx.fillStyle = '#484542';
+        ctx.beginPath();
+        ctx.moveTo(footX - sw/2, footY - sh);
+        ctx.lineTo(footX, footY - sh - 7);
+        ctx.lineTo(footX + sw/2, footY - sh);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#22201e'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = '#827f7a';
+        ctx.beginPath(); ctx.arc(footX, footY - sh/2 - 2, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffd700';
+        ctx.fillRect(footX - 1.5, footY - sh/2 - 3, 1, 1);
+        ctx.fillRect(footX + 0.5, footY - sh/2 - 3, 1, 1);
 
       } else if (p.type === 'chest') {
         // BAÚ DE TESOURO GÓTICO
@@ -4428,26 +4902,109 @@
       minimapCtx.clearRect(0, 0, 90, 90);
       const scale = 90 / MAP_SIZE;
 
+      // Fundo e Grade Tática do Radar
+      minimapCtx.fillStyle = 'rgba(12, 10, 8, 0.95)';
+      minimapCtx.fillRect(0, 0, 90, 90);
+
+      // Paredes e Salas do Calabouço
       for (let y = 0; y < MAP_SIZE; y++) {
         for (let x = 0; x < MAP_SIZE; x++) {
           if (dungeonMap[y][x] === 1) {
-            minimapCtx.fillStyle = '#261c16';
+            minimapCtx.fillStyle = '#1e1812';
+            minimapCtx.fillRect(x * scale, y * scale, scale, scale);
+          } else {
+            minimapCtx.fillStyle = '#2c241c';
             minimapCtx.fillRect(x * scale, y * scale, scale, scale);
           }
         }
       }
 
-      // Monstros no Minimapa
-      minimapCtx.fillStyle = '#ff2222';
-      monsters.forEach(m => {
-        if (m.alive) minimapCtx.fillRect(m.gx * scale - 1, m.gy * scale - 1, 3, 3);
+      // Fogueiras (pontos laranja quente)
+      torches.forEach(t => {
+        minimapCtx.fillStyle = '#ff7700';
+        minimapCtx.beginPath();
+        minimapCtx.arc(t.gx * scale, t.gy * scale, 1.5, 0, Math.PI * 2);
+        minimapCtx.fill();
       });
 
-      // Jogador no Minimapa
+      // Destrutíveis & Baús (pontos âmbar)
+      props.forEach(p => {
+        if (!p.alive && p.type !== 'chest') return;
+        minimapCtx.fillStyle = p.type === 'chest' ? '#ffd700' : '#8c6038';
+        minimapCtx.fillRect(p.gx * scale - 0.75, p.gy * scale - 0.75, 1.5, 1.5);
+      });
+
+      // Escadas / Próximo Andar (diamante ciano pulsante)
+      if (stairs) {
+        minimapCtx.fillStyle = '#00e1ff';
+        const sx = stairs.gx * scale, sy = stairs.gy * scale;
+        minimapCtx.beginPath();
+        minimapCtx.moveTo(sx, sy - 3);
+        minimapCtx.lineTo(sx + 3, sy);
+        minimapCtx.lineTo(sx, sy + 3);
+        minimapCtx.lineTo(sx - 3, sy);
+        minimapCtx.closePath();
+        minimapCtx.fill();
+      }
+
+      // NPCs / Mercador (ponto verde brilhante)
+      npcs.forEach(npc => {
+        minimapCtx.fillStyle = '#00ff88';
+        minimapCtx.beginPath();
+        minimapCtx.arc(npc.gx * scale, npc.gy * scale, 2.2, 0, Math.PI * 2);
+        minimapCtx.fill();
+      });
+
+      // Monstros no Minimapa
+      monsters.forEach(m => {
+        if (!m.alive) return;
+        const mx = m.gx * scale, my = m.gy * scale;
+        if (m.isBoss) {
+          minimapCtx.fillStyle = '#ff1111';
+          minimapCtx.beginPath();
+          minimapCtx.arc(mx, my, 4, 0, Math.PI * 2);
+          minimapCtx.fill();
+          minimapCtx.fillStyle = '#ffd700';
+          minimapCtx.fillRect(mx - 2, my - 2, 4, 1.5);
+        } else if (m.isElite) {
+          minimapCtx.fillStyle = '#ffd700';
+          minimapCtx.beginPath();
+          minimapCtx.arc(mx, my, 3, 0, Math.PI * 2);
+          minimapCtx.fill();
+          minimapCtx.fillStyle = '#b344ff';
+          minimapCtx.beginPath();
+          minimapCtx.arc(mx, my, 1.5, 0, Math.PI * 2);
+          minimapCtx.fill();
+        } else {
+          minimapCtx.fillStyle = '#ff3333';
+          minimapCtx.fillRect(mx - 1, my - 1, 2.2, 2.2);
+        }
+      });
+
+      // Jogador com Cone de Orientação
+      const px = player.gx * scale, py = player.gy * scale;
       minimapCtx.fillStyle = '#ffd700';
       minimapCtx.beginPath();
-      minimapCtx.arc(player.gx * scale, player.gy * scale, 2.5, 0, Math.PI * 2);
+      minimapCtx.arc(px, py, 2.8, 0, Math.PI * 2);
       minimapCtx.fill();
+
+      const fAngle = player.facing || 0;
+      minimapCtx.strokeStyle = '#ffffff';
+      minimapCtx.lineWidth = 1.5;
+      minimapCtx.beginPath();
+      minimapCtx.moveTo(px, py);
+      minimapCtx.lineTo(px + Math.cos(fAngle) * 5, py + Math.sin(fAngle) * 5);
+      minimapCtx.stroke();
+
+      // Moldura e Retículo Tático do Radar
+      minimapCtx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+      minimapCtx.lineWidth = 1;
+      minimapCtx.strokeRect(0.5, 0.5, 89, 89);
+      minimapCtx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
+      minimapCtx.beginPath();
+      minimapCtx.moveTo(45, 0); minimapCtx.lineTo(45, 90);
+      minimapCtx.moveTo(0, 45); minimapCtx.lineTo(90, 45);
+      minimapCtx.stroke();
     }
 
     // -------------------------------------------------------------
