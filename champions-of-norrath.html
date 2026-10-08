@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Champions of Norrath - 2.5D Isometric Action RPG</title>
+  <title>Champions of Norrath - 2.5D Isometric Engine V2</title>
   <style>
     :root {
       --gold: #f5c542;
       --gold-dark: #8c6a18;
-      --bg-dark: #0a0a0c;
-      --gothic-border: #423528;
-      --gothic-panel: rgba(20, 16, 14, 0.94);
+      --bg-dark: #070709;
+      --gothic-border: #4a3a28;
+      --gothic-panel: rgba(18, 14, 12, 0.95);
       --font-main: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
     }
 
@@ -40,9 +40,7 @@
       width: 100%;
       height: 100%;
       display: block;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      background: #050507;
+      background: #030305;
     }
 
     /* HUD OVERLAYS */
@@ -64,9 +62,9 @@
       width: 110px;
       height: 110px;
       border-radius: 50%;
-      background: radial-gradient(circle, #2b2b2b 0%, #0a0a0c 80%);
-      box-shadow: 0 0 15px rgba(0,0,0,0.9), inset 0 0 12px rgba(0,0,0,0.8);
-      border: 4px solid #33261a;
+      background: radial-gradient(circle, #222 0%, #08080a 80%);
+      box-shadow: 0 0 20px rgba(0,0,0,0.95), inset 0 0 15px rgba(0,0,0,0.9);
+      border: 4px solid #3d2d1e;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -75,12 +73,12 @@
 
     #hpGlobe {
       left: 14px;
-      border-color: #5c1818;
+      border-color: #661a1a;
     }
 
     #manaGlobe {
       right: 14px;
-      border-color: #16365c;
+      border-color: #1a3c66;
     }
 
     .globe-ring {
@@ -89,7 +87,7 @@
       border-radius: 50%;
       border: 3px solid var(--gold-dark);
       pointer-events: none;
-      box-shadow: 0 0 8px rgba(245, 197, 66, 0.3);
+      box-shadow: 0 0 10px rgba(245, 197, 66, 0.4);
     }
 
     .globe-liquid {
@@ -98,17 +96,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      transition: height 0.25s ease-out;
+      transition: height 0.2s cubic-bezier(0.1, 0.7, 0.1, 1);
     }
 
     #hpLiquid {
-      background: linear-gradient(to top, #660000 0%, #cc1111 60%, #ff4444 100%);
-      box-shadow: inset 0 0 15px #ff0000;
+      background: linear-gradient(to top, #4d0000 0%, #b31010 60%, #ff3b3b 100%);
+      box-shadow: inset 0 0 18px #ff2222;
     }
 
     #manaLiquid {
-      background: linear-gradient(to top, #001f4d 0%, #0055cc 60%, #3399ff 100%);
-      box-shadow: inset 0 0 15px #0088ff;
+      background: linear-gradient(to top, #00183b 0%, #004db3 60%, #2b8cff 100%);
+      box-shadow: inset 0 0 18px #0077ff;
     }
 
     .globe-highlight {
@@ -128,7 +126,7 @@
       font-size: 13px;
       font-weight: 900;
       color: #fff;
-      text-shadow: 0 0 5px #000, 1px 1px 2px #000, -1px -1px 2px #000;
+      text-shadow: 0 0 6px #000, 1px 1px 2px #000, -1px -1px 2px #000;
       z-index: 2;
       letter-spacing: 0.5px;
     }
@@ -143,39 +141,62 @@
       justify-content: space-between;
       align-items: center;
       padding: 6px 14px;
-      background: linear-gradient(180deg, rgba(20, 15, 12, 0.95), rgba(8, 6, 5, 0.85));
+      background: linear-gradient(180deg, rgba(24, 18, 14, 0.95), rgba(10, 8, 6, 0.9));
       border: 2px solid var(--gold-dark);
       border-radius: 6px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.85);
     }
 
     .hero-stat-badge {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .hero-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 4px;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
       border: 2px solid var(--gold);
-      background: #1e1713;
+      background: #241a14;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 22px;
+      box-shadow: 0 0 8px rgba(245, 197, 66, 0.3);
     }
 
     .hero-info-text h3 {
       font-size: 13px;
       color: var(--gold);
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
     }
 
     .hero-info-text p {
       font-size: 11px;
-      color: #aaa;
+      color: #ad9e8d;
+    }
+
+    /* COMBO INDICATOR */
+    #comboIndicator {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--gold);
+      text-shadow: 0 0 8px #ff8800;
+      letter-spacing: 2px;
+      opacity: 0;
+      transition: opacity 0.15s, transform 0.15s;
+      pointer-events: none;
+    }
+
+    #comboIndicator.active {
+      opacity: 1;
+      transform: translateX(-50%) scale(1.1);
     }
 
     /* XP BAR */
@@ -207,7 +228,7 @@
       transform: translateX(-50%);
       display: flex;
       gap: 8px;
-      background: rgba(14, 11, 9, 0.9);
+      background: rgba(14, 11, 9, 0.92);
       padding: 6px 12px;
       border: 2px solid var(--gold-dark);
       border-radius: 8px;
@@ -268,11 +289,11 @@
     #virtualJoystick {
       position: absolute;
       bottom: 130px;
-      left: 30px;
+      left: 25px;
       width: 130px;
       height: 130px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.08), rgba(0,0,0,0.4));
+      background: radial-gradient(circle, rgba(255,255,255,0.06), rgba(0,0,0,0.5));
       border: 2px dashed rgba(245, 197, 66, 0.4);
       display: flex;
       align-items: center;
@@ -281,14 +302,13 @@
     }
 
     #joystickStick {
-      width: 52px;
-      height: 52px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       background: radial-gradient(circle, var(--gold), var(--gold-dark));
       border: 2px solid #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
       transform: translate(0px, 0px);
-      transition: transform 0.05s ease-out;
       pointer-events: none;
     }
 
@@ -303,8 +323,8 @@
     }
 
     .m-btn {
-      width: 58px;
-      height: 58px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       border: 3px solid var(--gold-dark);
       background: radial-gradient(circle, #3d2b1f, #150f0b);
@@ -332,8 +352,8 @@
     }
 
     .m-btn.btn-attack {
-      width: 68px;
-      height: 68px;
+      width: 70px;
+      height: 70px;
       background: radial-gradient(circle, #801d1d, #3b0a0a);
       border-color: #e04444;
     }
@@ -343,18 +363,18 @@
       border-color: #4488e0;
     }
 
-    /* GOTHIC DIALOGS / WINDOWS (INVENTORY, STATS, SKILLS) */
+    /* GOTHIC MODAL (INVENTORY, STATS) */
     .gothic-modal {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 92%;
-      max-width: 540px;
+      max-width: 560px;
       max-height: 86vh;
       background: var(--gothic-panel);
       border: 4px solid var(--gold-dark);
-      box-shadow: 0 10px 35px rgba(0,0,0,0.95), inset 0 0 20px rgba(0,0,0,0.8);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.95), inset 0 0 25px rgba(0,0,0,0.8);
       border-radius: 10px;
       padding: 16px;
       display: none;
@@ -418,7 +438,7 @@
 
     .paperdoll-silhouette .figure {
       font-size: 72px;
-      opacity: 0.85;
+      opacity: 0.9;
       filter: drop-shadow(0 0 10px var(--gold-dark));
     }
 
@@ -672,6 +692,9 @@
       </div>
     </div>
 
+    <!-- INDICADOR DE COMBO -->
+    <div id="comboIndicator">COMBO x2!</div>
+
     <!-- NOTIFICAÇÃO SUPERIOR -->
     <div id="bannerNotification"></div>
 
@@ -808,7 +831,7 @@
   <!-- TELA INICIAL DE SELEÇÃO DE CLASSE (CHAMPIONS OF NORRATH) -->
   <div id="classSelectScreen">
     <h1 class="game-logo">Champions of Norrath</h1>
-    <div class="game-sublogo">2.5D Isometric Action RPG Engine</div>
+    <div class="game-sublogo">2.5D Isometric Action RPG Engine V2</div>
 
     <div class="class-cards">
       <div class="class-card active" data-class="barbarian">
@@ -845,12 +868,11 @@
     <button class="start-game-btn" id="btnStartGame">ENTRAR NO MUNDO</button>
   </div>
 
-  <!-- SINTETIZADOR DE ÁUDIO WEB AUDIO API (SONS RETRÔ NORRATH SEM ARQUIVOS PESADOS) -->
+  <!-- SINTETIZADOR DE ÁUDIO WEB AUDIO API RETRÔ -->
   <script>
     class SoundEngine {
       constructor() {
         this.ctx = null;
-        this.enabled = true;
       }
       init() {
         if (!this.ctx) {
@@ -861,32 +883,33 @@
           this.ctx.resume();
         }
       }
-      playSwordSwing() {
+      playSwordSwing(comboStep = 1) {
         if (!this.ctx) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         const filter = this.ctx.createBiquadFilter();
+        const baseFreq = 220 + comboStep * 60;
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(260, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.15);
+        osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(70, this.ctx.currentTime + 0.16);
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1200, this.ctx.currentTime);
-        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+        filter.frequency.setValueAtTime(1400, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.16);
         osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(this.ctx.currentTime + 0.15);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.16);
       }
       playShieldBlock() {
         if (!this.ctx) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(880, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(440, this.ctx.currentTime + 0.2);
-        gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+        osc.frequency.setValueAtTime(950, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(420, this.ctx.currentTime + 0.22);
+        gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.22);
         osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.22);
       }
       playMagicSpell() {
         if (!this.ctx) return;
@@ -907,7 +930,7 @@
         osc.type = 'sine';
         osc.frequency.setValueAtTime(987, this.ctx.currentTime);
         osc.frequency.setValueAtTime(1318, this.ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.22, this.ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
         osc.connect(gain); gain.connect(this.ctx.destination);
         osc.start(); osc.stop(this.ctx.currentTime + 0.25);
@@ -917,37 +940,52 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'square';
-        osc.frequency.setValueAtTime(140, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+        osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.14);
+        gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.14);
         osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(this.ctx.currentTime + 0.12);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.14);
+      }
+      playBreakWood() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.18);
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.18);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.18);
       }
     }
     const audio = new SoundEngine();
   </script>
 
-  <!-- MOTOR PRINCIPAL DO JOGO (ISOMÉTRICO 2.5D NORRATH ENGINE) -->
+  <!-- MOTOR ISOMÉTRICO 2.5D COM ILUMINAÇÃO DINÂMICA E TEXTURAS PROCEDURAIS -->
   <script>
-    // -------------------------------------------------------------
-    // 1. CONFIGURAÇÕES & PROJEÇÃO ISOMÉTRICA
-    // -------------------------------------------------------------
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
+    // Canvas auxiliar para a camada de luz/escuridão (Snowblind Lighting)
+    const lightCanvas = document.createElement('canvas');
+    const lightCtx = lightCanvas.getContext('2d');
+
     const TILE_W = 64;
     const TILE_H = 32;
-    const MAP_SIZE = 32; // Mapa de masmorra 32x32
+    const MAP_SIZE = 34;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      lightCanvas.width = window.innerWidth;
+      lightCanvas.height = window.innerHeight;
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Converte Coordenadas do Mundo (Grid X, Y) para Tela Isométrica
+    // Projeção Isométrica 2.5D
     function worldToIso(gx, gy, gz = 0) {
       return {
         x: (gx - gy) * (TILE_W / 2),
@@ -956,90 +994,97 @@
     }
 
     // -------------------------------------------------------------
-    // 2. DADOS DAS CLASSES (CHAMPIONS OF NORRATH AUTÊNTICO)
+    // GERADOR DE TEXTURAS PROCEDURAIS DE PEDRA GÓTICA
+    // -------------------------------------------------------------
+    const Textures = {
+      floor: null,
+      wallTop: null,
+      wallSide: null,
+      init() {
+        // Textura do Chão (Lajota de pedra de masmorra)
+        const fc = document.createElement('canvas');
+        fc.width = 64; fc.height = 32;
+        const fctx = fc.getContext('2d');
+        fctx.beginPath();
+        fctx.moveTo(32, 0); fctx.lineTo(64, 16); fctx.lineTo(32, 32); fctx.lineTo(0, 16);
+        fctx.closePath();
+        fctx.fillStyle = '#1c1713'; fctx.fill();
+        fctx.strokeStyle = '#2b231c'; fctx.lineWidth = 1.5; fctx.stroke();
+
+        // Rachaduras e ruído de pedra
+        fctx.strokeStyle = '#120f0c'; fctx.lineWidth = 1;
+        fctx.beginPath(); fctx.moveTo(18, 14); fctx.lineTo(26, 20); fctx.lineTo(38, 18); fctx.stroke();
+        this.floor = fc;
+
+        // Textura Parede Topo
+        const wt = document.createElement('canvas');
+        wt.width = 64; wt.height = 32;
+        const wtctx = wt.getContext('2d');
+        wtctx.beginPath();
+        wtctx.moveTo(32, 0); wtctx.lineTo(64, 16); wtctx.lineTo(32, 32); wtctx.lineTo(0, 16);
+        wtctx.closePath();
+        wtctx.fillStyle = '#423528'; wtctx.fill();
+        wtctx.strokeStyle = '#5c4b38'; wtctx.lineWidth = 1.5; wtctx.stroke();
+        this.wallTop = wt;
+      }
+    };
+    Textures.init();
+
+    // -------------------------------------------------------------
+    // DADOS DAS CLASSES
     // -------------------------------------------------------------
     const CLASSES = {
       barbarian: {
-        name: 'Bárbaro Guerreiro',
-        icon: '🪓',
-        hp: 160,
-        mana: 50,
-        str: 20,
-        dex: 12,
-        int: 8,
-        weapon: 'Espada Larga de Ferro',
-        skill1: { name: 'Golpe Esmagador', icon: '💥', mana: 12, dmg: 35 },
-        skill2: { name: 'Grito de Guerra', icon: '🗣️', mana: 18, dmg: 10 }
+        name: 'Bárbaro Guerreiro', icon: '🪓', hp: 170, mana: 50,
+        str: 22, dex: 12, int: 8, weapon: 'Espada Larga de Aço',
+        skill1: { name: 'Golpe Esmagador', icon: '💥', mana: 12, dmg: 38 },
+        skill2: { name: 'Grito de Guerra', icon: '🗣️', mana: 18, dmg: 14 }
       },
       ranger: {
-        name: 'Elfa Ranger',
-        icon: '🏹',
-        hp: 110,
-        mana: 90,
-        str: 12,
-        dex: 22,
-        int: 12,
-        weapon: 'Arco Longo Élfico',
-        skill1: { name: 'Tiro Múltiplo', icon: '🎯', mana: 15, dmg: 26 },
-        skill2: { name: 'Flecha Congelante', icon: '❄️', mana: 20, dmg: 32 }
+        name: 'Elfa Ranger', icon: '🏹', hp: 115, mana: 95,
+        str: 12, dex: 24, int: 12, weapon: 'Arco Longo Élfico',
+        skill1: { name: 'Tiro Múltiplo', icon: '🎯', mana: 15, dmg: 28 },
+        skill2: { name: 'Flecha Congelante', icon: '❄️', mana: 20, dmg: 34 }
       },
       cleric: {
-        name: 'Clériga',
-        icon: '🔨',
-        hp: 140,
-        mana: 110,
-        str: 15,
-        dex: 10,
-        int: 18,
-        weapon: 'Maça Sagrada',
-        skill1: { name: 'Cura Divina', icon: '✨', mana: 25, heal: 60 },
-        skill2: { name: 'Punição Sagrada', icon: '⚡', mana: 20, dmg: 38 }
+        name: 'Clériga', icon: '🔨', hp: 145, mana: 115,
+        str: 16, dex: 10, int: 18, weapon: 'Maça Sagrada de Guerra',
+        skill1: { name: 'Cura Divina', icon: '✨', mana: 25, heal: 65 },
+        skill2: { name: 'Punição Sagrada', icon: '⚡', mana: 20, dmg: 40 }
       },
       wizard: {
-        name: 'Mago Erudita',
-        icon: '🔮',
-        hp: 85,
-        mana: 160,
-        str: 8,
-        dex: 12,
-        int: 25,
-        weapon: 'Cajado Rúnico',
-        skill1: { name: 'Bola de Fogo', icon: '🔥', mana: 18, dmg: 48 },
-        skill2: { name: 'Tempestade de Raios', icon: '⚡', mana: 30, dmg: 65 }
+        name: 'Mago Erudita', icon: '🔮', hp: 90, mana: 170,
+        str: 8, dex: 12, int: 26, weapon: 'Cajado Rúnico de Cristal',
+        skill1: { name: 'Bola de Fogo', icon: '🔥', mana: 18, dmg: 52 },
+        skill2: { name: 'Tempestade de Raios', icon: '⚡', mana: 30, dmg: 70 }
       },
       shadowknight: {
-        name: 'Cavaleiro das Sombras',
-        icon: '💀',
-        hp: 145,
-        mana: 100,
-        str: 17,
-        dex: 11,
-        int: 16,
-        weapon: 'Lâmina da Praga',
-        skill1: { name: 'Dreno de Vida (Life Tap)', icon: '🩸', mana: 22, dmg: 32, lifesteal: 20 },
-        skill2: { name: 'Nuvem de Doença', icon: '☣️', mana: 25, dmg: 40 }
+        name: 'Cavaleiro das Sombras', icon: '💀', hp: 150, mana: 105,
+        str: 18, dex: 11, int: 16, weapon: 'Lâmina da Praga',
+        skill1: { name: 'Dreno de Vida (Life Tap)', icon: '🩸', mana: 22, dmg: 34, lifesteal: 22 },
+        skill2: { name: 'Nuvem de Doença', icon: '☣️', mana: 25, dmg: 42 }
       }
     };
 
     // -------------------------------------------------------------
-    // 3. ESTADO DO JOGADOR
+    // ESTADO DO JOGADOR COM FÍSICA E FLUIDEZ
     // -------------------------------------------------------------
     let player = {
-      gx: 4,
-      gy: 4,
-      facing: 0, // Ângulo em radianos
+      gx: 4, gy: 4,
+      vx: 0, vy: 0,
+      facing: 0,
+      targetFacing: 0,
       clsKey: 'barbarian',
-      hp: 160,
-      maxHp: 160,
-      mana: 50,
-      maxMana: 50,
-      lvl: 1,
-      xp: 0,
-      maxXp: 100,
+      hp: 170, maxHp: 170,
+      mana: 50, maxMana: 50,
+      lvl: 1, xp: 0, maxXp: 100,
       gold: 150,
       blocking: false,
       attacking: 0,
-      speed: 3.8,
+      comboStep: 0,
+      comboTimer: 0,
+      weaponTrail: [],
+      speed: 4.4,
       potionsHp: 3,
       potionsMana: 2,
       equipment: {
@@ -1047,69 +1092,89 @@
         chest: { name: 'Cota de Malha', def: 8, icon: '🦺' },
         gloves: { name: 'Luvas de Couro', def: 2, icon: '🧤' },
         boots: { name: 'Botas de Guerra', def: 3, icon: '👢' },
-        mainhand: { name: 'Espada Larga', dmg: 16, icon: '🗡️' },
+        mainhand: { name: 'Espada Larga', dmg: 18, icon: '🗡️' },
         offhand: { name: 'Escudo Torre', def: 7, icon: '🛡️' },
         ring: { name: 'Anel de Rubi', dmg: 3, icon: '💍' },
         amulet: { name: 'Amuleto Vital', hp: 20, icon: '📿' }
       },
       inventory: [
-        { name: 'Adaga Élfica', type: 'mainhand', dmg: 12, icon: '🗡️' },
+        { name: 'Adaga Élfica', type: 'mainhand', dmg: 14, icon: '🗡️' },
         { name: 'Escudo Redondo', type: 'offhand', def: 5, icon: '🛡️' },
-        { name: 'Gema Rubi Fogo', type: 'gem', stats: '+6 Fogo', icon: '💎' },
-        { name: 'Poção Maior de Vida', type: 'potion_hp', val: 50, icon: '🧪' }
+        { name: 'Gema Rubi de Fogo', type: 'gem', stats: '+8 Fogo', icon: '💎' },
+        { name: 'Poção de Vida', type: 'potion_hp', val: 60, icon: '🧪' }
       ]
     };
 
+    // Câmera Suave (Lerp)
+    let camera = { x: 0, y: 0 };
+    let screenShake = 0;
+    let hitStopTimer = 0;
+
     // -------------------------------------------------------------
-    // 4. MAPA DA MASMORRA ISOMÉTRICA (DUNGEON GENERATOR)
+    // MAPA DA MASMORRA, PROPS E TOCHAS
     // -------------------------------------------------------------
     let dungeonMap = [];
     let torches = [];
+    let props = []; // Barris e baús
     let monsters = [];
     let particles = [];
     let floatingTexts = [];
+    let flyingLoot = []; // Loot com física parabólica
 
     function generateDungeon() {
       dungeonMap = [];
       torches = [];
+      props = [];
       monsters = [];
+      particles = [];
+      floatingTexts = [];
+      flyingLoot = [];
 
       for (let y = 0; y < MAP_SIZE; y++) {
         dungeonMap[y] = [];
         for (let x = 0; x < MAP_SIZE; x++) {
-          // Borda externa é parede
           if (x === 0 || y === 0 || x === MAP_SIZE - 1 || y === MAP_SIZE - 1) {
-            dungeonMap[y][x] = 1; // Parede de pedra
-          } else if ((x % 6 === 0 && y % 6 === 0) || (x === 10 && y > 5 && y < 15)) {
-            dungeonMap[y][x] = 1; // Pilares / divisórias
+            dungeonMap[y][x] = 1;
+          } else if ((x % 7 === 0 && y % 7 === 0) || (x === 12 && y > 6 && y < 16)) {
+            dungeonMap[y][x] = 1;
           } else {
-            dungeonMap[y][x] = 0; // Chão transitável de masmorra
+            dungeonMap[y][x] = 0;
           }
         }
       }
 
-      // Tochas nas paredes (Luz Dinâmica)
-      torches.push({ gx: 4, gy: 1, color: '#ff9933' });
-      torches.push({ gx: 12, gy: 1, color: '#ff9933' });
-      torches.push({ gx: 18, gy: 12, color: '#ff7722' });
-      torches.push({ gx: 8, gy: 20, color: '#ffaa44' });
+      // Tochas nas paredes (Luz Dinâmica com chama viva)
+      torches = [
+        { gx: 4, gy: 1, flame: 0 },
+        { gx: 12, gy: 1, flame: 1.5 },
+        { gx: 18, gy: 14, flame: 3 },
+        { gx: 8, gy: 22, flame: 4.2 },
+        { gx: 22, gy: 8, flame: 2.1 },
+        { gx: 26, gy: 24, flame: 0.8 }
+      ];
+
+      // Barris quebráveis e Baús góticos
+      props = [
+        { type: 'barrel', gx: 6, gy: 3, hp: 1, icon: '🛢️', alive: true },
+        { type: 'barrel', gx: 7, gy: 3, hp: 1, icon: '🛢️', alive: true },
+        { type: 'barrel', gx: 14, gy: 8, hp: 1, icon: '🛢️', alive: true },
+        { type: 'chest', gx: 16, gy: 4, opened: false, icon: '📦' },
+        { type: 'barrel', gx: 10, gy: 14, hp: 1, icon: '🛢️', alive: true },
+        { type: 'chest', gx: 28, gy: 28, opened: false, icon: '📦' }
+      ];
 
       // Monstros clássicos de Champions of Norrath
-      spawnMonsters();
-    }
-
-    function spawnMonsters() {
       monsters = [
-        { id: 1, name: 'Guerreiro Orc', gx: 8, gy: 7, hp: 60, maxHp: 60, dmg: 14, icon: '👹', alive: true, aggro: false },
-        { id: 2, name: 'Esqueleto Guerreiro', gx: 14, gy: 9, hp: 45, maxHp: 45, dmg: 12, icon: '💀', alive: true, aggro: false },
-        { id: 3, name: 'Goblin Xamã', gx: 18, gy: 15, hp: 50, maxHp: 50, dmg: 16, icon: '👺', alive: true, aggro: false },
-        { id: 4, name: 'Aranha de Norrath', gx: 10, gy: 18, hp: 40, maxHp: 40, dmg: 10, icon: '🕷️', alive: true, aggro: false },
-        { id: 5, name: 'Lorde Warlord Orc (CHEFE)', gx: 22, gy: 22, hp: 220, maxHp: 220, dmg: 28, icon: '👑', isBoss: true, alive: true, aggro: false }
+        { id: 1, name: 'Guerreiro Orc', gx: 9, gy: 7, hp: 70, maxHp: 70, dmg: 14, icon: '👹', alive: true },
+        { id: 2, name: 'Esqueleto Legionário', gx: 15, gy: 10, hp: 55, maxHp: 55, dmg: 12, icon: '💀', alive: true },
+        { id: 3, name: 'Goblin Xamã', gx: 19, gy: 16, hp: 60, maxHp: 60, dmg: 16, icon: '👺', alive: true },
+        { id: 4, name: 'Aranha das Catacumbas', gx: 11, gy: 19, hp: 50, maxHp: 50, dmg: 11, icon: '🕷️', alive: true },
+        { id: 5, name: 'Warlord Orc de Norrath (CHEFE)', gx: 24, gy: 24, hp: 260, maxHp: 260, dmg: 30, icon: '👑', isBoss: true, alive: true }
       ];
     }
 
     // -------------------------------------------------------------
-    // 5. ENTRADA E CONTROLES (TECLADO / MOUSE / JOYSTICK TOUCH)
+    // CONTROLES E ENTRADAS (WASD / TOUCH)
     // -------------------------------------------------------------
     const keys = {};
     window.addEventListener('keydown', e => {
@@ -1169,7 +1234,6 @@
       joyStick.style.transform = `translate(${joyDelta.x * maxR}px, ${joyDelta.y * maxR}px)`;
     }
 
-    // Botões mobile
     document.getElementById('btnAttack').addEventListener('touchstart', e => {
       e.preventDefault();
       audio.init();
@@ -1186,60 +1250,108 @@
     shieldBtn.addEventListener('touchend', () => { player.blocking = false; });
 
     // -------------------------------------------------------------
-    // 6. LÓGICA DE COMBATE E ATACAR
+    // COMBATE COM SISTEMA DE COMBO DE 3 GOLPES & HIT-STOP
     // -------------------------------------------------------------
-    let screenShake = 0;
-
     function doAttack() {
       if (player.attacking > 0 || player.blocking) return;
-      player.attacking = 12; // Duração da animação de golpe
-      audio.playSwordSwing();
 
-      // Cálculo de dano total
-      const totalDmg = 15 + player.equipment.mainhand.dmg + Math.floor(Math.random() * 8);
+      // Avança no combo (1 -> 2 -> 3)
+      if (player.comboTimer > 0) {
+        player.comboStep = (player.comboStep % 3) + 1;
+      } else {
+        player.comboStep = 1;
+      }
+      player.comboTimer = 0.9; // Janela de combo
+      player.attacking = 14;
 
-      // Checa colisão com monstros no alcance frontal
+      // Indicador visual de combo
+      const comboIndicator = document.getElementById('comboIndicator');
+      if (player.comboStep > 1) {
+        comboIndicator.textContent = player.comboStep === 3 ? '🔥 GOLPE FINALIZADOR!' : `⚔️ COMBO x${player.comboStep}!`;
+        comboIndicator.classList.add('active');
+        clearTimeout(comboIndicator._timer);
+        comboIndicator._timer = setTimeout(() => comboIndicator.classList.remove('active'), 600);
+      }
+
+      audio.playSwordSwing(player.comboStep);
+
+      // Multiplicador de dano do combo
+      const comboMultiplier = player.comboStep === 3 ? 1.9 : (player.comboStep === 2 ? 1.3 : 1.0);
+      const baseDmg = 15 + player.equipment.mainhand.dmg + Math.floor(Math.random() * 8);
+      const totalDmg = Math.floor(baseDmg * comboMultiplier);
+
+      // 1. Quebra de Barris e Abertura de Baús
+      props.forEach(p => {
+        const dist = Math.hypot(p.gx - player.gx, p.gy - player.gy);
+        if (dist < 1.8) {
+          if (p.type === 'barrel' && p.alive) {
+            p.alive = false;
+            audio.playBreakWood();
+            screenShake = 3;
+            spawnSplinters(p.gx, p.gy);
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 12 + Math.floor(Math.random() * 15));
+            if (Math.random() < 0.45) spawnFlyingLoot(p.gx, p.gy, 'potion');
+          } else if (p.type === 'chest' && !p.opened) {
+            p.opened = true;
+            audio.playCoin();
+            screenShake = 4;
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 45);
+            spawnFlyingLoot(p.gx, p.gy, 'item', null, 'Espada de Prata');
+            showNotification('👑 Baú aberto! Itens encontrados.');
+          }
+        }
+      });
+
+      // 2. Acerto em Monstros
       monsters.forEach(m => {
         if (!m.alive) return;
         const dist = Math.hypot(m.gx - player.gx, m.gy - player.gy);
-        if (dist < 1.7) {
-          const isCrit = Math.random() < 0.25;
-          const finalDmg = isCrit ? Math.floor(totalDmg * 1.8) : totalDmg;
+        if (dist < 1.8) {
+          hitStopTimer = 0.035; // Micro-pausa de impacto (Hit-Stop)
+          const isCrit = Math.random() < 0.28 || player.comboStep === 3;
+          const finalDmg = isCrit ? Math.floor(totalDmg * 1.6) : totalDmg;
+
           m.hp -= finalDmg;
           audio.playHitMonster();
-          screenShake = isCrit ? 6 : 3;
+          screenShake = isCrit ? 7 : 4;
 
-          // Efeito de sangue / partículas
-          spawnBlood(m.gx, m.gy, isCrit ? 12 : 6);
+          // Repulsão (Knockback) no golpe pesado
+          const knockAngle = Math.atan2(m.gy - player.gy, m.gx - player.gx);
+          const knockDist = player.comboStep === 3 ? 0.6 : 0.25;
+          if (canWalk(m.gx + Math.cos(knockAngle) * knockDist, m.gy + Math.sin(knockAngle) * knockDist)) {
+            m.gx += Math.cos(knockAngle) * knockDist;
+            m.gy += Math.sin(knockAngle) * knockDist;
+          }
+
+          spawnBlood(m.gx, m.gy, isCrit ? 14 : 7);
           spawnFloatingText(isCrit ? `CRÍTICO! -${finalDmg}` : `-${finalDmg}`, m.gx, m.gy, isCrit ? '#ffd700' : '#ff4444');
 
-          // Morte do monstro
           if (m.hp <= 0) {
             m.alive = false;
-            const xpGained = m.isBoss ? 150 : 35;
-            const goldGained = m.isBoss ? 80 : 15 + Math.floor(Math.random() * 10);
+            const xpGained = m.isBoss ? 180 : 40;
+            const goldGained = m.isBoss ? 90 : 16 + Math.floor(Math.random() * 12);
             giveXp(xpGained);
-            player.gold += goldGained;
-            audio.playCoin();
-            spawnFloatingText(`+${goldGained} Ouro!`, m.gx, m.gy, '#ffd700');
+            spawnFlyingLoot(m.gx, m.gy, 'gold', goldGained);
+            if (m.isBoss || Math.random() < 0.3) spawnFlyingLoot(m.gx, m.gy, 'potion');
             showNotification(`Inimigo derrotado! +${xpGained} XP`);
           }
         }
       });
+
       updateHud();
     }
 
     function usePotion(type) {
       if (type === 'hp' && player.potionsHp > 0 && player.hp < player.maxHp) {
         player.potionsHp--;
-        player.hp = Math.min(player.maxHp, player.hp + 60);
+        player.hp = Math.min(player.maxHp, player.hp + 65);
         audio.playCoin();
-        showNotification('💚 Poção de Vida usada (+60 HP)');
+        showNotification('💚 Poção de Vida usada (+65 HP)');
       } else if (type === 'mana' && player.potionsMana > 0 && player.mana < player.maxMana) {
         player.potionsMana--;
-        player.mana = Math.min(player.maxMana, player.mana + 45);
+        player.mana = Math.min(player.maxMana, player.mana + 50);
         audio.playCoin();
-        showNotification('🔮 Poção de Mana usada (+45 Mana)');
+        showNotification('🔮 Poção de Mana usada (+50 Mana)');
       }
       updateHud();
     }
@@ -1259,18 +1371,17 @@
         spawnFloatingText(`+${skill.heal} HP`, player.gx, player.gy, '#44ff44');
         showNotification(`✨ ${skill.name} curou ${skill.heal} HP!`);
       } else {
-        // Dano em área em monstros ao redor
         monsters.forEach(m => {
           if (!m.alive) return;
           const dist = Math.hypot(m.gx - player.gx, m.gy - player.gy);
-          if (dist < 3.2) {
+          if (dist < 3.4) {
             m.hp -= skill.dmg;
-            spawnBlood(m.gx, m.gy, 8);
+            spawnBlood(m.gx, m.gy, 10);
             spawnFloatingText(`💥 -${skill.dmg}`, m.gx, m.gy, '#ffd700');
             if (m.hp <= 0) {
               m.alive = false;
-              giveXp(35);
-              player.gold += 15;
+              giveXp(40);
+              spawnFlyingLoot(m.gx, m.gy, 'gold', 20);
             }
           }
         });
@@ -1314,31 +1425,62 @@
     }
 
     // -------------------------------------------------------------
-    // 7. PARTICULAS & TEXTOS FLUTUANTES
+    // FÍSICA DE LOOT EM PARÁBOLA & PARTÍCULAS
     // -------------------------------------------------------------
+    function spawnFlyingLoot(gx, gy, type, val = 0, name = '') {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 0.6 + Math.random() * 0.8;
+      flyingLoot.push({
+        gx, gy,
+        targetGx: gx + Math.cos(angle) * dist,
+        targetGy: gy + Math.sin(angle) * dist,
+        height: 0,
+        type, val, name,
+        t: 0
+      });
+    }
+
+    function spawnSplinters(gx, gy) {
+      for (let i = 0; i < 8; i++) {
+        particles.push({
+          gx, gy,
+          vx: (Math.random() - 0.5) * 5,
+          vy: (Math.random() - 0.5) * 5,
+          life: 0.8,
+          color: '#8b5a2b'
+        });
+      }
+    }
+
     function spawnBlood(gx, gy, count) {
       for (let i = 0; i < count; i++) {
         particles.push({
           gx, gy,
           vx: (Math.random() - 0.5) * 4,
           vy: (Math.random() - 0.5) * 4,
-          life: 1.0,
+          life: 0.9,
           color: '#aa1111'
         });
       }
     }
 
-    function spawnFloatingText(text, gx, gy, color = '#fff') {
-      floatingTexts.push({
-        text, gx, gy,
-        offsetY: 0,
-        life: 1.0,
-        color
+    function spawnDust(gx, gy) {
+      particles.push({
+        gx: gx + (Math.random() - 0.5) * 0.2,
+        gy: gy + (Math.random() - 0.5) * 0.2,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        life: 0.45,
+        color: 'rgba(160, 140, 120, 0.4)'
       });
     }
 
+    function spawnFloatingText(text, gx, gy, color = '#fff') {
+      floatingTexts.push({ text, gx, gy, offsetY: 0, life: 1.0, color });
+    }
+
     // -------------------------------------------------------------
-    // 8. LOOP DO JOGO E RENDERIZAÇÃO 2.5D
+    // LOOP PRINCIPAL COM FÍSICA SUAVE (LERP DE MOVIMENTO E CÂMERA)
     // -------------------------------------------------------------
     let lastTime = performance.now();
 
@@ -1346,64 +1488,157 @@
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
 
-      update(dt);
-      render();
+      // Trata Hit-Stop (pausa de impacto)
+      if (hitStopTimer > 0) {
+        hitStopTimer -= dt;
+      } else {
+        update(dt);
+      }
 
+      render();
       requestAnimationFrame(gameLoop);
     }
 
     function update(dt) {
-      // Movimentação do Jogador
-      let moveX = 0, moveY = 0;
+      // 1. Entrada de Movimento
+      let inputX = 0, inputY = 0;
 
-      // Teclado
-      if (keys['w'] || keys['arrowup']) { moveX -= 1; moveY -= 1; }
-      if (keys['s'] || keys['arrowdown']) { moveX += 1; moveY += 1; }
-      if (keys['a'] || keys['arrowleft']) { moveX -= 1; moveY += 1; }
-      if (keys['d'] || keys['arrowright']) { moveX += 1; moveY -= 1; }
+      if (keys['w'] || keys['arrowup']) { inputX -= 1; inputY -= 1; }
+      if (keys['s'] || keys['arrowdown']) { inputX += 1; inputY += 1; }
+      if (keys['a'] || keys['arrowleft']) { inputX -= 1; inputY += 1; }
+      if (keys['d'] || keys['arrowright']) { inputX += 1; inputY -= 1; }
 
-      // Joystick touch
       if (joyDelta.x !== 0 || joyDelta.y !== 0) {
-        // Converte vetor de tela para direção do mundo isométrico
-        moveX += (joyDelta.x + joyDelta.y);
-        moveY += (-joyDelta.x + joyDelta.y);
+        inputX += (joyDelta.x + joyDelta.y);
+        inputY += (-joyDelta.x + joyDelta.y);
       }
 
-      if (moveX !== 0 || moveY !== 0) {
-        const len = Math.hypot(moveX, moveY);
-        moveX /= len;
-        moveY /= len;
+      // 2. Aceleração, Inércia e Fricção Suave
+      const friction = 14;
+      const accel = 26;
 
-        const newGx = player.gx + moveX * player.speed * dt;
-        const newGy = player.gy + moveY * player.speed * dt;
+      if (inputX !== 0 || inputY !== 0) {
+        const len = Math.hypot(inputX, inputY);
+        inputX /= len;
+        inputY /= len;
 
-        // Colisão com paredes da masmorra
-        if (canWalk(newGx, player.gy)) player.gx = newGx;
-        if (canWalk(player.gx, newGy)) player.gy = newGy;
+        player.vx += inputX * accel * dt;
+        player.vy += inputY * accel * dt;
 
-        player.facing = Math.atan2(moveY, moveX);
+        // Limita à velocidade máxima
+        const currentSpeed = Math.hypot(player.vx, player.vy);
+        if (currentSpeed > player.speed) {
+          player.vx = (player.vx / currentSpeed) * player.speed;
+          player.vy = (player.vy / currentSpeed) * player.speed;
+        }
+
+        // Interpolação suave do ângulo de giro (Smooth Facing Lerp)
+        player.targetFacing = Math.atan2(inputY, inputX);
+        let angleDiff = player.targetFacing - player.facing;
+        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+        player.facing += angleDiff * 14 * dt;
+
+        // Poeira nos passos ao correr
+        if (Math.random() < 0.25) spawnDust(player.gx, player.gy);
+      } else {
+        // Desaceleração natural
+        player.vx -= player.vx * friction * dt;
+        player.vy -= player.vy * friction * dt;
+        if (Math.hypot(player.vx, player.vy) < 0.05) {
+          player.vx = 0; player.vy = 0;
+        }
       }
 
-      if (player.attacking > 0) player.attacking--;
+      // 3. Deslizamento Inteligente em Paredes
+      const nextGx = player.gx + player.vx * dt;
+      const nextGy = player.gy + player.vy * dt;
 
-      // IA dos Monstros (Perseguição e Ataque)
+      if (canWalk(nextGx, player.gy)) {
+        player.gx = nextGx;
+      } else {
+        player.vx = 0; // Desliza no eixo Y
+      }
+
+      if (canWalk(player.gx, nextGy)) {
+        player.gy = nextGy;
+      } else {
+        player.vy = 0; // Desliza no eixo X
+      }
+
+      // Rastro da Espada (Weapon Arc Ribbon)
+      if (player.attacking > 0) {
+        player.attacking--;
+        const iso = worldToIso(player.gx, player.gy);
+        const arcProgress = (14 - player.attacking) / 14;
+        const currentArcAngle = player.facing - 0.9 + arcProgress * 1.8;
+        player.weaponTrail.push({
+          x: iso.x + Math.cos(currentArcAngle) * 36,
+          y: iso.y - 14 + Math.sin(currentArcAngle) * 22,
+          life: 1.0
+        });
+      }
+      for (let i = player.weaponTrail.length - 1; i >= 0; i--) {
+        player.weaponTrail[i].life -= dt * 4;
+        if (player.weaponTrail[i].life <= 0) player.weaponTrail.splice(i, 1);
+      }
+
+      // Timer de Combo
+      if (player.comboTimer > 0) player.comboTimer -= dt;
+
+      // 4. Câmera Suave com Antecipação (Camera Lerp)
+      const playerIso = worldToIso(player.gx, player.gy);
+      const targetCamX = canvas.width / 2 - playerIso.x - player.vx * 12;
+      const targetCamY = canvas.height / 2 - playerIso.y - player.vy * 8;
+      camera.x += (targetCamX - camera.x) * (1 - Math.exp(-8 * dt));
+      camera.y += (targetCamY - camera.y) * (1 - Math.exp(-8 * dt));
+
+      // 5. Tochas Dinâmicas (Animação de Fogo)
+      torches.forEach(t => { t.flame += dt * 5; });
+
+      // 6. Atualização do Loot Voador (Física Parabólica)
+      for (let i = flyingLoot.length - 1; i >= 0; i--) {
+        const loot = flyingLoot[i];
+        loot.t += dt * 2.2;
+        loot.gx += (loot.targetGx - loot.gx) * 0.15;
+        loot.gy += (loot.targetGy - loot.gy) * 0.15;
+        loot.height = Math.sin(Math.min(Math.PI, loot.t * Math.PI)) * 26;
+
+        if (loot.t >= 1.0) {
+          // Coleta automática
+          if (loot.type === 'gold') {
+            player.gold += loot.val;
+            audio.playCoin();
+            spawnFloatingText(`+${loot.val} Ouro!`, loot.gx, loot.gy, '#ffd700');
+          } else if (loot.type === 'potion') {
+            player.potionsHp++;
+            audio.playCoin();
+            spawnFloatingText(`+1 Poção!`, loot.gx, loot.gy, '#ff4444');
+          } else if (loot.type === 'item') {
+            player.inventory.push({ name: loot.name, type: 'mainhand', dmg: 22, icon: '🗡️' });
+            audio.playCoin();
+            showNotification(`Loot Coletado: ${loot.name}`);
+          }
+          flyingLoot.splice(i, 1);
+          updateHud();
+        }
+      }
+
+      // 7. IA dos Monstros
       monsters.forEach(m => {
         if (!m.alive) return;
         const dist = Math.hypot(player.gx - m.gx, player.gy - m.gy);
-        if (dist < 6.5) {
-          m.aggro = true;
-          // Move em direção ao jogador
-          if (dist > 1.1) {
+        if (dist < 7.0) {
+          if (dist > 1.2) {
             const angle = Math.atan2(player.gy - m.gy, player.gx - m.gx);
-            const mgx = m.gx + Math.cos(angle) * 1.8 * dt;
-            const mgy = m.gy + Math.sin(angle) * 1.8 * dt;
+            const mgx = m.gx + Math.cos(angle) * 1.9 * dt;
+            const mgy = m.gy + Math.sin(angle) * 1.9 * dt;
             if (canWalk(mgx, m.gy)) m.gx = mgx;
             if (canWalk(m.gx, mgy)) m.gy = mgy;
           } else {
-            // Ataque do monstro
             m.atkCooldown = (m.atkCooldown || 0) - dt;
             if (m.atkCooldown <= 0) {
-              m.atkCooldown = 1.3;
+              m.atkCooldown = 1.2;
               let dmg = m.dmg;
               if (player.blocking) {
                 dmg = Math.max(1, Math.floor(dmg * 0.2));
@@ -1415,10 +1650,9 @@
               }
               player.hp = Math.max(0, player.hp - dmg);
               if (player.hp <= 0) {
-                // Ressurreição no ponto inicial
                 player.hp = Math.floor(player.maxHp * 0.6);
                 player.gx = 4; player.gy = 4;
-                showNotification('💀 Você caiu em combate! Ressuscitado no Acampamento.');
+                showNotification('💀 Você caiu em combate! Ressuscitado no Santuário.');
               }
               updateHud();
             }
@@ -1426,24 +1660,23 @@
         }
       });
 
-      // Partículas
+      // Partículas e Textos
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.gx += p.vx * dt;
         p.gy += p.vy * dt;
-        p.life -= dt * 2;
+        p.life -= dt * 2.2;
         if (p.life <= 0) particles.splice(i, 1);
       }
 
-      // Textos flutuantes
       for (let i = floatingTexts.length - 1; i >= 0; i--) {
         const ft = floatingTexts[i];
-        ft.offsetY += dt * 30;
+        ft.offsetY += dt * 32;
         ft.life -= dt * 1.5;
         if (ft.life <= 0) floatingTexts.splice(i, 1);
       }
 
-      if (screenShake > 0) screenShake *= 0.88;
+      if (screenShake > 0) screenShake *= 0.86;
     }
 
     function canWalk(gx, gy) {
@@ -1454,46 +1687,36 @@
     }
 
     // -------------------------------------------------------------
-    // 9. RENDERIZAÇÃO GRÁFICA ISOMÉTRICA
+    // RENDERIZAÇÃO GRÁFICA & ILUMINAÇÃO DINÂMICA (SNOWBLIND LIGHTING)
     // -------------------------------------------------------------
     function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       ctx.save();
-      // Aplica Screen Shake
       if (screenShake > 0.5) {
         ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
       }
+      ctx.translate(camera.x, camera.y);
 
-      // Centraliza a câmera no jogador
-      const pIso = worldToIso(player.gx, player.gy);
-      const camX = canvas.width / 2 - pIso.x;
-      const camY = canvas.height / 2 - pIso.y;
-
-      ctx.translate(camX, camY);
-
-      // 1. Desenha o chão da Masmorra
+      // 1. Chão da Masmorra com Lajotas de Pedra
       for (let y = 0; y < MAP_SIZE; y++) {
         for (let x = 0; x < MAP_SIZE; x++) {
           const iso = worldToIso(x, y);
-          // Otimização de frustum culling
-          if (iso.x + camX < -100 || iso.x + camX > canvas.width + 100 ||
-              iso.y + camY < -100 || iso.y + camY > canvas.height + 100) continue;
+          if (iso.x + camera.x < -100 || iso.x + camera.x > canvas.width + 100 ||
+              iso.y + camera.y < -100 || iso.y + camera.y > canvas.height + 100) continue;
 
           drawTile(iso.x, iso.y, dungeonMap[y][x]);
         }
       }
 
-      // 2. Cria lista de entidades para ordenação de profundidade (Y-Sorting Isométrico)
+      // 2. Ordenação de Profundidade Isométrica (Y-Sorting)
       const renderables = [];
 
-      // Jogador
       renderables.push({
         ySort: player.gx + player.gy,
         draw: () => drawPlayer()
       });
 
-      // Monstros
       monsters.forEach(m => {
         if (!m.alive) return;
         renderables.push({
@@ -1502,7 +1725,14 @@
         });
       });
 
-      // Tochas nas paredes
+      props.forEach(p => {
+        if (p.type === 'barrel' && !p.alive) return;
+        renderables.push({
+          ySort: p.gx + p.gy,
+          draw: () => drawProp(p)
+        });
+      });
+
       torches.forEach(t => {
         renderables.push({
           ySort: t.gx + t.gy,
@@ -1510,11 +1740,31 @@
         });
       });
 
-      // Ordena por profundidade e renderiza
+      // Itens voando
+      flyingLoot.forEach(fl => {
+        renderables.push({
+          ySort: fl.gx + fl.gy,
+          draw: () => drawFlyingLoot(fl)
+        });
+      });
+
       renderables.sort((a, b) => a.ySort - b.ySort);
       renderables.forEach(r => r.draw());
 
-      // 3. Efeitos de Partículas
+      // 3. Rastro da Lâmina (Weapon Ribbon Arc)
+      if (player.weaponTrail.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(player.weaponTrail[0].x, player.weaponTrail[0].y);
+        for (let i = 1; i < player.weaponTrail.length; i++) {
+          ctx.lineTo(player.weaponTrail[i].x, player.weaponTrail[i].y);
+        }
+        ctx.strokeStyle = player.comboStep === 3 ? 'rgba(255, 215, 0, 0.85)' : 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+
+      // 4. Partículas
       particles.forEach(p => {
         const iso = worldToIso(p.gx, p.gy);
         ctx.fillStyle = p.color;
@@ -1523,44 +1773,75 @@
         ctx.fill();
       });
 
-      // 4. Textos Flutuantes (Dano)
+      // 5. Textos de Dano
       floatingTexts.forEach(ft => {
         const iso = worldToIso(ft.gx, ft.gy);
         ctx.fillStyle = ft.color;
-        ctx.font = 'bold 14px "Cinzel", Georgia, serif';
+        ctx.font = 'bold 15px "Cinzel", Georgia, serif';
         ctx.textAlign = 'center';
         ctx.shadowColor = '#000';
         ctx.shadowBlur = 4;
-        ctx.fillText(ft.text, iso.x, iso.y - 30 - ft.offsetY);
+        ctx.fillText(ft.text, iso.x, iso.y - 32 - ft.offsetY);
         ctx.shadowBlur = 0;
       });
 
       ctx.restore();
+
+      // -------------------------------------------------------------
+      // 6. CAMADA DE ILUMINAÇÃO DINÂMICA (SNOWBLIND LIGHTING MASK)
+      // -------------------------------------------------------------
+      lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
+
+      // Penumbra escura da masmorra
+      lightCtx.fillStyle = 'rgba(6, 6, 12, 0.88)';
+      lightCtx.fillRect(0, 0, lightCanvas.width, lightCanvas.height);
+
+      lightCtx.save();
+      lightCtx.globalCompositeOperation = 'destination-out';
+
+      // Luz do Herói
+      const pHero = worldToIso(player.gx, player.gy);
+      const heroScreenX = pHero.x + camera.x;
+      const heroScreenY = pHero.y + camera.y - 16;
+      const heroLightGrad = lightCtx.createRadialGradient(heroScreenX, heroScreenY, 15, heroScreenX, heroScreenY, 175);
+      heroLightGrad.addColorStop(0, 'rgba(0,0,0,1)');
+      heroLightGrad.addColorStop(0.65, 'rgba(0,0,0,0.85)');
+      heroLightGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      lightCtx.fillStyle = heroLightGrad;
+      lightCtx.beginPath();
+      lightCtx.arc(heroScreenX, heroScreenY, 175, 0, Math.PI * 2);
+      lightCtx.fill();
+
+      // Luzes das Tochas
+      torches.forEach(t => {
+        const pTorch = worldToIso(t.gx, t.gy);
+        const tScreenX = pTorch.x + camera.x;
+        const tScreenY = pTorch.y + camera.y - 24;
+        const flickerRadius = 150 + Math.sin(t.flame) * 12 + Math.cos(t.flame * 2.3) * 6;
+        const torchLight = lightCtx.createRadialGradient(tScreenX, tScreenY, 10, tScreenX, tScreenY, flickerRadius);
+        torchLight.addColorStop(0, 'rgba(0,0,0,1)');
+        torchLight.addColorStop(0.7, 'rgba(0,0,0,0.8)');
+        torchLight.addColorStop(1, 'rgba(0,0,0,0)');
+        lightCtx.fillStyle = torchLight;
+        lightCtx.beginPath();
+        lightCtx.arc(tScreenX, tScreenY, flickerRadius, 0, Math.PI * 2);
+        lightCtx.fill();
+      });
+
+      lightCtx.restore();
+
+      // Aplica a máscara de luz por cima do jogo
+      ctx.drawImage(lightCanvas, 0, 0);
     }
 
-    // Desenha Tile de Chão ou Parede Isométrica
+    // Desenha Tile
     function drawTile(x, y, type) {
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2);
-      ctx.lineTo(x, y + TILE_H);
-      ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2);
-      ctx.closePath();
-
       if (type === 0) {
-        // Chão de Pedra Gótica
-        ctx.fillStyle = '#1c1714';
-        ctx.fill();
-        ctx.strokeStyle = '#2d241e';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        // Chão de Pedra Texturizado
+        ctx.drawImage(Textures.floor, x - 32, y);
       } else {
-        // Parede de Pedra 3D com Altura
-        const wallH = 40;
-        ctx.fillStyle = '#3a2e24';
-        ctx.fill();
-        ctx.strokeStyle = '#4f3f32';
-        ctx.stroke();
+        // Parede 3D com Altura
+        const wallH = 42;
 
         // Face esquerda da parede
         ctx.beginPath();
@@ -1569,8 +1850,9 @@
         ctx.lineTo(x, y + TILE_H - wallH);
         ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2 - wallH);
         ctx.closePath();
-        ctx.fillStyle = '#221b15';
+        ctx.fillStyle = '#241c16';
         ctx.fill();
+        ctx.strokeStyle = '#18120d';
         ctx.stroke();
 
         // Face direita da parede
@@ -1580,122 +1862,117 @@
         ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2 - wallH);
         ctx.lineTo(x, y + TILE_H - wallH);
         ctx.closePath();
-        ctx.fillStyle = '#2c231b';
+        ctx.fillStyle = '#2f241d';
         ctx.fill();
+        ctx.strokeStyle = '#18120d';
         ctx.stroke();
 
         // Topo da parede
-        ctx.beginPath();
-        ctx.moveTo(x, y - wallH);
-        ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2 - wallH);
-        ctx.lineTo(x, y + TILE_H - wallH);
-        ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2 - wallH);
-        ctx.closePath();
-        ctx.fillStyle = '#4a3c30';
-        ctx.fill();
-        ctx.stroke();
+        ctx.drawImage(Textures.wallTop, x - 32, y - wallH);
       }
     }
 
-    // Desenha o Herói com Armas e Escudo
+    // Desenha o Herói
     function drawPlayer() {
       const iso = worldToIso(player.gx, player.gy);
 
-      // Sombra
+      // Sombra volumétrica suave
       ctx.beginPath();
-      ctx.ellipse(iso.x, iso.y + TILE_H / 2, 16, 8, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.ellipse(iso.x, iso.y + TILE_H / 2, 17, 8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
       ctx.fill();
 
-      // Corpo / Sprite do Herói
       ctx.save();
       ctx.translate(iso.x, iso.y);
 
-      // Arco de ataque com espada
-      if (player.attacking > 0) {
-        ctx.beginPath();
-        ctx.arc(0, -10, 32, player.facing - 0.7, player.facing + 0.7);
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 4;
-        ctx.shadowColor = '#ffd700';
-        ctx.shadowBlur = 8;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-      }
-
       // Escudo levantado no bloqueio
       if (player.blocking) {
-        ctx.fillStyle = 'rgba(68, 136, 255, 0.35)';
+        ctx.fillStyle = 'rgba(68, 136, 255, 0.4)';
         ctx.beginPath();
-        ctx.arc(0, -16, 26, 0, Math.PI * 2);
+        ctx.arc(0, -18, 28, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#4488ff';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#66aaff';
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       }
 
-      // Emoji/Avatar representativo da classe equipada
-      ctx.font = '28px sans-serif';
+      // Sprite / Avatar com rotação sutil
+      ctx.rotate(player.facing * 0.1);
+      ctx.font = '30px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(CLASSES[player.clsKey].icon, 0, -18);
+      ctx.fillText(CLASSES[player.clsKey].icon, 0, -20);
 
       ctx.restore();
     }
 
-    // Desenha Monstro com Barra de Vida
+    // Desenha Props (Barris e Baús)
+    function drawProp(p) {
+      const iso = worldToIso(p.gx, p.gy);
+      ctx.beginPath();
+      ctx.ellipse(iso.x, iso.y + TILE_H / 2, 14, 7, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.fill();
+
+      ctx.font = '26px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.icon, iso.x, iso.y - 16);
+    }
+
+    // Desenha Loot Saltando em Parábola
+    function drawFlyingLoot(fl) {
+      const iso = worldToIso(fl.gx, fl.gy);
+      const icon = fl.type === 'gold' ? '💰' : (fl.type === 'potion' ? '🧪' : '🗡️');
+
+      // Sombra no chão
+      ctx.beginPath();
+      ctx.ellipse(iso.x, iso.y + TILE_H / 2, 10, 5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.fill();
+
+      // Item no ar
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(icon, iso.x, iso.y - 12 - fl.height);
+    }
+
+    // Desenha Monstro
     function drawMonster(m) {
       const iso = worldToIso(m.gx, m.gy);
-
-      // Sombra
       ctx.beginPath();
       ctx.ellipse(iso.x, iso.y + TILE_H / 2, m.isBoss ? 24 : 14, m.isBoss ? 12 : 7, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
       ctx.fill();
 
-      // Sprite do Monstro
-      ctx.font = m.isBoss ? '36px sans-serif' : '26px sans-serif';
+      ctx.font = m.isBoss ? '38px sans-serif' : '28px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(m.icon, iso.x, iso.y - (m.isBoss ? 26 : 16));
+      ctx.fillText(m.icon, iso.x, iso.y - (m.isBoss ? 28 : 18));
 
-      // Barra de Vida do Monstro
-      const barW = m.isBoss ? 50 : 32;
+      // Barra de Vida
+      const barW = m.isBoss ? 52 : 34;
       const barH = 5;
       const pct = Math.max(0, m.hp / m.maxHp);
-
       ctx.fillStyle = '#000';
-      ctx.fillRect(iso.x - barW / 2, iso.y - (m.isBoss ? 50 : 36), barW, barH);
+      ctx.fillRect(iso.x - barW / 2, iso.y - (m.isBoss ? 54 : 38), barW, barH);
       ctx.fillStyle = m.isBoss ? '#ffd700' : '#e53935';
-      ctx.fillRect(iso.x - barW / 2 + 1, iso.y - (m.isBoss ? 49 : 35), (barW - 2) * pct, barH - 2);
+      ctx.fillRect(iso.x - barW / 2 + 1, iso.y - (m.isBoss ? 53 : 37), (barW - 2) * pct, barH - 2);
     }
 
-    // Desenha Tocha com Brilho Dinâmico
+    // Desenha Tocha com Chama Viva
     function drawTorch(t) {
       const iso = worldToIso(t.gx, t.gy);
-
-      // Luz ambiente radiante
-      const flicker = 0.9 + Math.random() * 0.2;
-      const grad = ctx.createRadialGradient(iso.x, iso.y - 20, 5, iso.x, iso.y - 20, 110 * flicker);
-      grad.addColorStop(0, 'rgba(255, 170, 51, 0.35)');
-      grad.addColorStop(1, 'rgba(255, 120, 0, 0)');
-
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(iso.x, iso.y - 20, 110 * flicker, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Ícone da tocha
-      ctx.font = '16px sans-serif';
+      const flameShift = Math.sin(t.flame) * 2;
+      ctx.font = '18px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🔥', iso.x, iso.y - 24);
+      ctx.fillText('🔥', iso.x + flameShift, iso.y - 24);
     }
 
     // -------------------------------------------------------------
-    // 10. ATUALIZAÇÃO DO HUD E INVENTÁRIO
+    // ATUALIZAÇÃO DO HUD E INVENTÁRIO
     // -------------------------------------------------------------
     function updateHud() {
-      // Globos de Vida e Mana
       const hpPct = (player.hp / player.maxHp) * 100;
       const manaPct = (player.mana / player.maxMana) * 100;
       document.getElementById('hpLiquid').style.height = `${hpPct}%`;
@@ -1703,13 +1980,11 @@
       document.getElementById('hpText').textContent = `${Math.round(player.hp)} / ${player.maxHp}`;
       document.getElementById('manaText').textContent = `${Math.round(player.mana)} / ${player.maxMana}`;
 
-      // XP e Ouro
       const xpPct = (player.xp / player.maxXp) * 100;
       document.getElementById('xpBarFill').style.width = `${xpPct}%`;
       document.getElementById('heroLevelXp').textContent = `Nível ${player.lvl} • ${player.xp} / ${player.maxXp} XP`;
       document.getElementById('goldVal').textContent = player.gold;
 
-      // Cinto de poções
       document.getElementById('potionHpCount').textContent = player.potionsHp;
       document.getElementById('potionManaCount').textContent = player.potionsMana;
     }
@@ -1734,7 +2009,6 @@
         grid.appendChild(d);
       });
 
-      // Atualiza slots de equipamento
       const eq = player.equipment;
       document.getElementById('slotHelm').querySelector('.slot-name').textContent = eq.helm.name;
       document.getElementById('slotChest').querySelector('.slot-name').textContent = eq.chest.name;
@@ -1760,7 +2034,6 @@
         player.inventory.splice(idx, 1);
         showNotification('🧪 Poção guardada no cinto!');
       } else if (item.type && player.equipment[item.type]) {
-        // Troca o item equipado
         const oldItem = player.equipment[item.type];
         player.equipment[item.type] = item;
         player.inventory[idx] = oldItem;
@@ -1771,7 +2044,6 @@
       updateHud();
     }
 
-    // Configuração de botões do HUD
     document.getElementById('btnOpenInventory').onclick = toggleInventory;
     document.getElementById('btnCloseInventory').onclick = toggleInventory;
     document.getElementById('slotPotionHp').onclick = () => usePotion('hp');
@@ -1781,7 +2053,7 @@
     document.getElementById('slotTownPortal').onclick = castTownPortal;
 
     // -------------------------------------------------------------
-    // 11. INICIALIZAÇÃO E SELEÇÃO DE CLASSE
+    // SELEÇÃO DE CLASSE & INÍCIO
     // -------------------------------------------------------------
     const classCards = document.querySelectorAll('.class-card');
     let selectedClass = 'barbarian';
@@ -1816,7 +2088,7 @@
 
       generateDungeon();
       updateHud();
-      showNotification(`Bem-vindo ao Norrath! Jogue com WASD/Setas ou Joystick.`);
+      showNotification(`Bem-vindo ao Norrath V2! Movimentação com física fluida.`);
 
       requestAnimationFrame(gameLoop);
     };
