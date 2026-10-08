@@ -1120,6 +1120,9 @@
         <button id="btnOpenInventory" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
           🎒 ITENS [I]
         </button>
+        <button id="btnToggleMusic" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);" title="Música Ambiente BGM">
+          🎵 BGM: ON
+        </button>
       </div>
     </div>
 
@@ -1218,6 +1221,29 @@
     </div>
 
     <!-- JANELA DE INVENTÁRIO (PAPERDOLL COM ENGASTE) -->
+    
+    <!-- JANELA DE FORJA DO FERREIRO (+1 A +10) -->
+    <div id="forgeModal" class="gothic-modal interactive" style="display:none; max-width:420px; z-index:250;">
+      <div class="modal-header">
+        <h2>⚒️ Forja Ancestral de Norrath</h2>
+        <div class="close-btn" id="btnCloseForge">✕</div>
+      </div>
+      <div style="text-align:center; padding:12px 16px;">
+        <div id="forgeWeaponIcon" style="font-size:42px; margin-bottom:6px;">🗡️</div>
+        <h3 id="forgeWeaponName" style="color:var(--gold); font-family:'Cinzel', serif; margin:0; font-size:16px;">Espada Larga (+0)</h3>
+        <p id="forgeWeaponStats" style="color:#c5b49e; font-size:11.5px; margin:4px 0 14px;">Dano Atual: 22 ⚔️</p>
+
+        <div id="forgeUpgradeCard" style="background: linear-gradient(180deg, #1c1510 0%, #0d0a07 100%); border:1.5px solid #5a452d; border-radius:8px; padding:12px; margin-bottom:14px; box-shadow:inset 0 0 10px rgba(0,0,0,0.85);">
+          <div style="font-size:12px; color:#ddd; margin-bottom:4px;">Nível de Reforço: <b id="forgeNextLevel" style="color:#44ff88;">+1</b></div>
+          <div id="forgeGlowType" style="font-size:11px; color:#ffd700; margin-bottom:6px;">✨ Brilho: Aço Dourado Polido</div>
+          <div style="font-size:12px; color:#44ff88; font-weight:bold;">Bônus: +4 Dano de Ataque ⚔️</div>
+          <div style="font-size:12px; color:var(--gold); margin-top:8px; font-weight:bold;">Custo do Ferreiro: <span id="forgeCost">60</span> 💰 Ouro</div>
+        </div>
+
+        <button class="dialog-btn" id="btnUpgradeWeapon" style="font-size:12px; padding:10px 28px; border-color:var(--gold); background:rgba(212,175,55,0.25); cursor:pointer;">⚒️ MARTELAR NA BIGORNA</button>
+      </div>
+    </div>
+
     <div id="inventoryModal" class="gothic-modal interactive">
       <div class="modal-header">
         <h2>Equipamentos & Gemas</h2>
@@ -1435,6 +1461,48 @@
         for (let i = 0; i < bufferSize; i++) {
           output[i] = Math.random() * 2 - 1;
         }
+      }
+
+      // 14. IMPACTO DE MARTELO NA BIGORNA (FORJA DO FERREIRO)
+      playAnvilHit() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1750, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.35);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.35);
+
+        if (this.noiseBuffer) {
+          const noise = this.ctx.createBufferSource();
+          noise.buffer = this.noiseBuffer;
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'highpass'; filter.frequency.setValueAtTime(2800, now);
+          const nGain = this.ctx.createGain();
+          nGain.gain.setValueAtTime(0.38, now);
+          nGain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+          noise.connect(filter); filter.connect(nGain); nGain.connect(this.ctx.destination);
+          noise.start(now); noise.stop(now + 0.09);
+        }
+      }
+
+      // 15. RANGER DE TÁBUAS DE MADEIRA (PONTE SUSPENSA DE NORRATH)
+      playWoodCreak() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140 + Math.random() * 40, now);
+        osc.frequency.linearRampToValueAtTime(85, now + 0.12);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.12);
       }
 
       // 1. SWOOSH VISCERAL DE LÂMINA PESADA DE AÇO
@@ -1707,10 +1775,15 @@
         this.playing = false;
         this.timer = null;
         this.step = 0;
-        this.notes = [110, 130.81, 146.83, 164.81, 196, 220, 246.94]; // Escala menor gótica
+        this.enabled = true;
+        this.biomes = {
+          faydark: [130.81, 146.83, 164.81, 196.00, 220.00, 261.63], // Floresta mística (Ré menor / Fá Maior)
+          catacombs: [98.00, 110.00, 116.54, 130.81, 146.83, 164.81], // Catacumbas sombrias e profundas
+          lavastorm: [110.00, 123.47, 138.59, 146.83, 185.00, 220.00]  // Forja vulcânica tensa
+        };
       }
       start() {
-        if (this.playing || !this.ctx) return;
+        if (this.playing || !this.ctx || !this.enabled) return;
         this.playing = true;
         this.scheduleNextNote();
       }
@@ -1718,34 +1791,42 @@
         this.playing = false;
         if (this.timer) clearTimeout(this.timer);
       }
+      toggle() {
+        this.enabled = !this.enabled;
+        if (!this.enabled) this.stop();
+        else this.start();
+        return this.enabled;
+      }
       scheduleNextNote() {
-        if (!this.playing || !this.ctx) return;
+        if (!this.playing || !this.ctx || !this.enabled) return;
         try {
+          const notes = this.biomes[currentBiomeKey] || this.biomes.faydark;
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           const filter = this.ctx.createBiquadFilter();
 
-          const freq = this.notes[this.step % this.notes.length];
-          this.step = (this.step + 1) % this.notes.length;
+          const freq = notes[this.step % notes.length];
+          this.step = (this.step + 1) % notes.length;
 
-          osc.type = (this.step % 4 === 0) ? 'triangle' : 'sine';
+          osc.type = (currentBiomeKey === 'lavastorm') ? 'sawtooth' : ((this.step % 3 === 0) ? 'triangle' : 'sine');
           osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
 
           filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(600, this.ctx.currentTime);
+          filter.frequency.setValueAtTime((currentBiomeKey === 'faydark') ? 650 : 420, this.ctx.currentTime);
 
-          gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.2);
+          gain.gain.setValueAtTime(0.045, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.4);
 
           osc.connect(filter);
           filter.connect(gain);
           gain.connect(this.ctx.destination);
 
           osc.start();
-          osc.stop(this.ctx.currentTime + 1.2);
+          osc.stop(this.ctx.currentTime + 1.4);
         } catch (e) {}
 
-        this.timer = setTimeout(() => this.scheduleNextNote(), 750);
+        const interval = (currentBiomeKey === 'lavastorm') ? 620 : 850;
+        this.timer = setTimeout(() => this.scheduleNextNote(), interval);
       }
     }
 
@@ -2284,6 +2365,7 @@
     let projectiles = []; // Projéteis mágicos com iluminação dinâmica
     let groundLoot = []; // Itens no chão com feixes de luz verticais (Loot Beams)
     let dungeonLevers = []; // Alavancas mecânicas de portão
+    let dungeonBridges = []; // Pontes suspensas de madeira sobre o abismo
     let bossCutsceneTimer = 0; // Timer da cena de abertura do chefe
     let bossCutsceneTriggered = false; // Flag de ativação única da cutscene
     let gpBtnCooldown = {}; // Cooldown de botões do controle físico
@@ -2386,7 +2468,13 @@
       if (floor === 1) {
         npcs.push({ gx: 4, gy: 5, name: 'Ancião de Norrath', icon: '🧙‍♂️', type: 'elder', hasSpoken: false });
         npcs.push({ gx: 7, gy: 5, name: 'Mercador de Norrath', icon: '🧔', type: 'merchant', hasSpoken: false });
+        npcs.push({ gx: 10, gy: 5, name: 'Ferreiro de Norrath', icon: '⚒️', type: 'blacksmith', hasSpoken: false });
       }
+
+      // EMBASS ENGINE ETAPA 12: PONTES SUSPENSAS DE MADEIRA SOBRE O ABISMO
+      dungeonBridges = [
+        { gx1: 8, gx2: 12, gy: 24, type: 'wood_bridge' }
+      ];
 
       if (floor >= 2) {
         dungeonLevers = [{ gx: 18, gy: 14, pulled: false, icon: '🕹️' }];
@@ -2573,6 +2661,8 @@
           interactedNpc = true;
           if (npc.type === 'merchant') {
             toggleShop();
+          } else if (npc.type === 'blacksmith') {
+            toggleForge();
           } else {
             openDialog(npc.name, 'Saudações, Campeão de Norrath! Minhas missões estão abertas para você no Diário [J]. Limpe as terras e torne-se uma lenda!');
           }
@@ -3470,6 +3560,15 @@
         // VELOCIDADE DE ANIMAÇÃO CALIBRADA EM 1x (CADÊNCIA NATURAL DE PASSOS)
         player.walkTimer = (player.walkTimer || 0) + dt * 4.8;
 
+        // Ranger de madeira ao caminhar sobre a ponte suspensa
+        if (Math.floor(player.gy) === 24 && Math.floor(player.gx) >= 8 && Math.floor(player.gx) <= 12) {
+          player.bridgeCreakTimer = (player.bridgeCreakTimer || 0) + dt;
+          if (player.bridgeCreakTimer >= 0.38) {
+            player.bridgeCreakTimer = 0;
+            audio.playWoodCreak();
+          }
+        }
+
         const len = Math.hypot(inputX, inputY);
         inputX /= len;
         inputY /= len;
@@ -4187,6 +4286,41 @@
         ctx.ellipse(iso.x + 2, iso.y + 16, bs.r * 0.5, bs.r * 0.25, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
+      });
+
+      // -------------------------------------------------------------
+      // EMBASS ENGINE ETAPA 12: PONTES SUSPENSAS DE MADEIRA SOBRE O ABISMO
+      // -------------------------------------------------------------
+      dungeonBridges.forEach(br => {
+        for (let bx = br.gx1; bx <= br.gx2; bx++) {
+          const iso = worldToIso(bx, br.gy);
+          const px = iso.x;
+          const py = iso.y + 16;
+
+          // Abismo escuro nas frestas abaixo da tábua
+          ctx.save();
+          ctx.fillStyle = '#060303';
+          ctx.beginPath();
+          ctx.moveTo(px - 32, py - 16); ctx.lineTo(px + 32, py); ctx.lineTo(px, py + 16); ctx.lineTo(px - 32, py); ctx.fill();
+
+          // Tábuas de Carvalho Rústicas
+          ctx.fillStyle = (bx % 2 === 0) ? '#4a3321' : '#3b2616';
+          ctx.fillRect(px - 26, py - 6, 52, 10);
+          ctx.strokeStyle = '#1d120a'; ctx.lineWidth = 1.2;
+          ctx.strokeRect(px - 26, py - 6, 52, 10);
+
+          // Pregos de ferro reforçado
+          ctx.fillStyle = '#111';
+          ctx.fillRect(px - 22, py - 3, 2, 2);
+          ctx.fillRect(px + 20, py - 3, 2, 2);
+
+          // Cordas laterais de sustentação da ponte
+          ctx.strokeStyle = '#7c5a36'; ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(px - 28, py - 10); ctx.lineTo(px + 28, py - 6);
+          ctx.stroke();
+          ctx.restore();
+        }
       });
 
       // -------------------------------------------------------------
@@ -5584,6 +5718,59 @@
       ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.fill();
 
+      if (npc.type === 'blacksmith') {
+        // FERREIRO DE NORRATH COM BIGORNA E MARTELO (3D)
+        // Avental de Couro Grosso
+        ctx.fillStyle = '#6b4724';
+        ctx.beginPath();
+        ctx.moveTo(footX - 8, footY - 24); ctx.lineTo(footX + 8, footY - 24);
+        ctx.lineTo(footX + 9, footY - 2); ctx.lineTo(footX - 9, footY - 2);
+        ctx.closePath(); ctx.fill();
+
+        // Cabeça e Faixa de Couro
+        ctx.fillStyle = '#cbb39e';
+        ctx.beginPath(); ctx.arc(footX, footY - 28, 5.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#221912';
+        ctx.fillRect(footX - 5, footY - 30, 10, 2.5); // Faixa na testa
+        ctx.fillStyle = '#4a3219';
+        ctx.beginPath(); ctx.arc(footX, footY - 25, 3.5, 0, Math.PI); ctx.fill(); // Barba
+
+        // Bigorna de Ferro ao lado
+        ctx.fillStyle = '#1e2124';
+        ctx.fillRect(footX + 11, footY - 14, 12, 14);
+        ctx.fillStyle = '#3a3e42';
+        ctx.fillRect(footX + 8, footY - 16, 18, 5);
+        ctx.beginPath(); ctx.moveTo(footX + 26, footY - 16); ctx.lineTo(footX + 32, footY - 13); ctx.lineTo(footX + 26, footY - 11); ctx.fill();
+
+        // Martelo de Forja e Faíscas Vivas
+        const hammerBob = Math.sin(Date.now() * 0.006);
+        ctx.fillStyle = '#5c3d1e';
+        ctx.fillRect(footX + 5, footY - 26 - hammerBob * 6, 3, 14);
+        ctx.fillStyle = '#7a8288';
+        ctx.fillRect(footX + 2, footY - 28 - hammerBob * 6, 9, 5);
+
+        if (hammerBob > 0.85) {
+          ctx.fillStyle = '#ffcc00';
+          for (let sp = 0; sp < 4; sp++) {
+            ctx.fillRect(footX + 16 + (Math.random() - 0.5) * 8, footY - 18 - Math.random() * 8, 2, 2);
+          }
+        }
+
+        // Nome e Título
+        const floatY = Math.sin(t * 3) * 3;
+        ctx.fillStyle = '#ffd700';
+        ctx.font = 'bold 11px "Cinzel", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+        ctx.fillText('⚒️ ' + npc.name, footX, footY - 44 + floatY);
+        ctx.fillStyle = '#ffea66';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.fillText('[REFORÇAR ARMAS]', footX, footY - 56 + floatY);
+        ctx.shadowBlur = 0;
+        ctx.restore();
+        return;
+      }
+
       // Manto Azul Celeste do Ancião
       ctx.fillStyle = '#1c2d54';
       ctx.beginPath();
@@ -6858,6 +7045,38 @@
 
         // Ponta Afiada da Lâmina
         tCtx.beginPath(); tCtx.moveTo(-2, 26); tCtx.lineTo(0, 30); tCtx.lineTo(2, 26); tCtx.fill();
+
+        // EMBASS ENGINE ETAPA 12: BRILHO ELEMENTAL VIVO DE REFORÇO (+1 A +10)
+        const upLvl = (charData.equipment && charData.equipment.mainhand && charData.equipment.mainhand.upgradeLevel) || 0;
+        if (upLvl > 0) {
+          tCtx.save();
+          if (upLvl >= 7) {
+            // Chamas de Magma Ancestral (+7 a +10)
+            tCtx.shadowColor = '#ff3300';
+            tCtx.shadowBlur = 10;
+            tCtx.strokeStyle = 'rgba(255, 68, 0, 0.85)';
+            tCtx.lineWidth = 3.5;
+            tCtx.beginPath(); tCtx.moveTo(0, 6); tCtx.lineTo(0, 29); tCtx.stroke();
+            const fX = (Math.sin(Date.now() * 0.02) - 0.5) * 4;
+            tCtx.fillStyle = '#ffcc00';
+            tCtx.beginPath(); tCtx.arc(fX, 22, 2.5, 0, Math.PI * 2); tCtx.fill();
+          } else if (upLvl >= 4) {
+            // Runas Elétricas (+4 a +6)
+            tCtx.shadowColor = '#00e1ff';
+            tCtx.shadowBlur = 8;
+            tCtx.strokeStyle = 'rgba(0, 225, 255, 0.8)';
+            tCtx.lineWidth = 2.5;
+            tCtx.beginPath(); tCtx.moveTo(0, 7); tCtx.lineTo(0, 28); tCtx.stroke();
+          } else {
+            // Aço Polido Reluzente Dourado (+1 a +3)
+            tCtx.shadowColor = '#ffd700';
+            tCtx.shadowBlur = 6;
+            tCtx.strokeStyle = 'rgba(255, 215, 0, 0.75)';
+            tCtx.lineWidth = 2;
+            tCtx.beginPath(); tCtx.moveTo(0, 8); tCtx.lineTo(0, 27); tCtx.stroke();
+          }
+          tCtx.restore();
+        }
       }
 
       tCtx.restore();
@@ -7255,6 +7474,87 @@
         mc.style.opacity = '0.35';
       }
     }
+
+  
+    // -------------------------------------------------------------
+    // EMBASS ENGINE ETAPA 12: SISTEMA DA FORJA DO FERREIRO (+1 A +10)
+    // -------------------------------------------------------------
+    function toggleForge() {
+      const modal = document.getElementById('forgeModal');
+      const isVis = modal.style.display === 'block';
+      modal.style.display = isVis ? 'none' : 'block';
+      if (!isVis) {
+        audio.playAnvilHit();
+        voices.speak('Traga seu aço! O fogo da forja molda as lendas!', 'boss');
+        renderForge();
+      }
+    }
+
+    function renderForge() {
+      const weapon = player.equipment.mainhand;
+      const curLvl = weapon.upgradeLevel || 0;
+      document.getElementById('forgeWeaponIcon').innerHTML = weapon.icon || '🗡️';
+      document.getElementById('forgeWeaponName').textContent = `${weapon.name} (+${curLvl})`;
+      document.getElementById('forgeWeaponStats').textContent = `Dano Atual: ${weapon.dmg} ⚔️`;
+
+      if (curLvl >= 10) {
+        document.getElementById('forgeNextLevel').textContent = 'MÁXIMO (+10)';
+        document.getElementById('forgeGlowType').textContent = '🔥 ARMA LENDÁRIA DE MAGMA MÁXIMA!';
+        document.getElementById('forgeCost').textContent = '---';
+        const btn = document.getElementById('btnUpgradeWeapon');
+        btn.disabled = true;
+        btn.textContent = 'NÍVEL MÁXIMO ALCANÇADO';
+        return;
+      }
+
+      const nextLvl = curLvl + 1;
+      const cost = 50 + nextLvl * 35;
+      document.getElementById('forgeNextLevel').textContent = `+${nextLvl}`;
+
+      let glowDesc = '✨ Brilho: Aço Dourado Polido (+1 a +3)';
+      if (nextLvl >= 7) glowDesc = '🔥 Chamas de Magma Ancestral (+7 a +10)';
+      else if (nextLvl >= 4) glowDesc = '⚡ Runas de Choque Elétrico (+4 a +6)';
+      document.getElementById('forgeGlowType').textContent = glowDesc;
+      document.getElementById('forgeCost').textContent = cost;
+
+      const btn = document.getElementById('btnUpgradeWeapon');
+      btn.disabled = false;
+      btn.textContent = '⚒️ MARTELAR NA BIGORNA';
+      btn.onclick = () => {
+        if (player.gold < cost) {
+          showNotification('❌ Ouro insuficiente para reforçar o aço!');
+          audio.playShieldBlock();
+          return;
+        }
+        player.gold -= cost;
+        weapon.upgradeLevel = nextLvl;
+        weapon.dmg += 4;
+        audio.playAnvilHit();
+        screenShake = 7;
+        for (let i = 0; i < 22; i++) {
+          particles.push({
+            gx: player.gx, gy: player.gy,
+            vx: (Math.random() - 0.5) * 5, vy: -Math.random() * 4 - 1.5,
+            life: 0.65, color: Math.random() < 0.5 ? '#ffd700' : '#ff4400'
+          });
+        }
+        showNotification(`⚒️ SUCESSO! ${weapon.name} aprimorada para +${nextLvl} (+4 Dano)!`);
+        spawnFloatingText(`+${nextLvl} FORJADA!`, player.gx, player.gy - 0.6, '#ffd700');
+        voices.speak('O aço canta a canção da vitória!', 'elder');
+        renderForge();
+        updateHud();
+        saveGame(false);
+      };
+    }
+
+    document.getElementById('btnCloseForge').onclick = toggleForge;
+    document.getElementById('btnToggleMusic').onclick = () => {
+      if (audio.bgm) {
+        const isEnabled = audio.bgm.toggle();
+        document.getElementById('btnToggleMusic').textContent = isEnabled ? '🎵 BGM: ON' : '🔇 BGM: OFF';
+        showNotification(isEnabled ? '🎵 Trilha Sonora Ativada' : '🔇 Trilha Sonora Silenciada');
+      }
+    };
 
   </script>
 </body>
