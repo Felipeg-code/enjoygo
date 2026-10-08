@@ -727,18 +727,20 @@
     }
 
     
-    /* MENU PRINCIPAL DE ABERTURA */
+    /* MENU UNIFICADO: ABERTURA + PREVIEW DO CAMPEÃO 2.5D EM TEMPO REAL */
     #mainMenuScreen {
       position: absolute;
       inset: 0;
-      background: #070608;
+      background: radial-gradient(circle at 50% 35%, #22160d 0%, #0a0705 70%, #020202 100%);
       z-index: 300;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow: hidden;
+      justify-content: flex-start;
+      padding: 12px 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     #titleBgCanvas {
@@ -747,6 +749,7 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
+      z-index: 1;
     }
 
     .main-menu-content {
@@ -755,137 +758,51 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .menu-header-bar {
       text-align: center;
-      max-width: 580px;
-      width: 100%;
-    }
-
-    .game-emblem {
-      font-size: 54px;
-      filter: drop-shadow(0 0 16px rgba(245, 197, 66, 0.65));
       margin-bottom: 6px;
-      animation: emblemPulse 3s ease-in-out infinite alternate;
     }
 
-    @keyframes emblemPulse {
-      0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(245, 197, 66, 0.4)); }
-      100% { transform: scale(1.06); filter: drop-shadow(0 0 25px rgba(245, 197, 66, 0.85)); }
-    }
-
-    .main-menu-title {
-      font-size: 34px;
-      color: var(--gold);
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 20px rgba(245, 197, 66, 0.5);
-      margin-bottom: 4px;
-      font-weight: 900;
-    }
-
-    .main-menu-subtitle {
-      font-size: 13px;
-      color: #ad9477;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      margin-bottom: 28px;
-    }
-
-    .main-menu-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      width: 100%;
-      max-width: 340px;
-    }
-
-    .menu-btn {
-      padding: 14px 24px;
-      font-size: 14px;
-      font-family: var(--font-main);
-      font-weight: bold;
-      color: #f7e6c4;
-      background: linear-gradient(180deg, #2b1f17, #130d0a);
-      border: 2px solid #5a442e;
-      border-radius: 8px;
-      cursor: pointer;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-      transition: all 0.18s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .menu-btn:hover, .menu-btn:active {
-      border-color: var(--gold);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(245, 197, 66, 0.4);
-      background: linear-gradient(180deg, #443224, #1f140e);
-    }
-
-    .menu-btn.primary {
-      background: linear-gradient(180deg, #d4a024, #8c6a18);
-      color: #120a04;
-      border-color: #ffe680;
-      font-size: 15px;
-      box-shadow: 0 4px 20px rgba(212, 160, 36, 0.5);
-    }
-
-    .menu-btn.primary:hover, .menu-btn.primary:active {
-      background: linear-gradient(180deg, #ffe066, #b8861b);
-      transform: scale(1.03);
-    }
-
-    /* TELA DE SELEÇÃO COM PREVIEW 2.5D */
-    #classSelectScreen {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at center, #1e140d 0%, #0a0705 85%, #000 100%);
-      z-index: 250;
-      display: none;
-      flex-direction: column;
-      padding: 12px;
-      overflow-y: auto;
-    }
-
-    .select-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto 10px auto;
-      border-bottom: 2px solid #4a3824;
-      padding-bottom: 8px;
-    }
-
-    .select-header h2 {
-      font-size: 18px;
+    .menu-game-title {
+      font-size: 24px;
       color: var(--gold);
       letter-spacing: 2px;
       text-transform: uppercase;
+      font-weight: 900;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(245, 197, 66, 0.45);
+      line-height: 1.1;
     }
 
-    .class-tabs {
+    .menu-game-subtitle {
+      font-size: 11px;
+      color: #bfa588;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* SELETOR DE CLASSES EM ABAS TOUCH */
+    .class-tabs-container {
       display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      max-width: 900px;
-      margin: 0 auto 12px auto;
+      gap: 6px;
       width: 100%;
-      padding-bottom: 4px;
+      justify-content: center;
+      margin: 6px 0 8px 0;
+      flex-wrap: nowrap;
     }
 
-    .class-tab {
+    .c-tab {
       flex: 1;
-      min-width: 110px;
-      background: #1c1510;
-      border: 2px solid #4a3725;
+      max-width: 90px;
+      background: rgba(28, 21, 16, 0.85);
+      border: 1.5px solid #4a3725;
       border-radius: 6px;
-      padding: 8px 6px;
+      padding: 6px 2px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -893,214 +810,239 @@
       transition: all 0.15s ease;
     }
 
-    .class-tab.active {
+    .c-tab.active {
       border-color: var(--gold);
-      background: linear-gradient(180deg, #38281b, #18110c);
-      box-shadow: 0 0 12px rgba(245, 197, 66, 0.4);
+      background: linear-gradient(180deg, #443224, #1a120c);
+      box-shadow: 0 0 12px rgba(245, 197, 66, 0.45);
       transform: translateY(-2px);
     }
 
-    .class-tab .tab-icon {
-      font-size: 24px;
-      margin-bottom: 2px;
-    }
+    .c-tab .tab-ico { font-size: 20px; }
+    .c-tab .tab-lbl { font-size: 10px; font-weight: bold; color: #dcd0bc; margin-top: 2px; }
+    .c-tab.active .tab-lbl { color: var(--gold); }
 
-    .class-tab .tab-name {
-      font-size: 11px;
-      font-weight: bold;
-      color: #e0d2be;
-      text-align: center;
-    }
-
-    .class-tab.active .tab-name {
-      color: var(--gold);
-    }
-
-    .stage-container {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 16px;
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
-      align-items: start;
-    }
-
-    .preview-box {
-      background: radial-gradient(circle, #241912 0%, #100b08 90%);
-      border: 2px solid #4a3826;
+    /* PALCO 2.5D COM HERÓI GIRANDO E TESTES */
+    .hero-stage-card {
+      background: radial-gradient(circle, rgba(32, 23, 17, 0.95) 0%, rgba(14, 10, 8, 0.98) 95%);
+      border: 2px solid #543f29;
       border-radius: 10px;
+      padding: 8px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.85);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.85);
       position: relative;
     }
 
     #heroPreviewCanvas {
-      width: 320px;
-      height: 320px;
+      width: 280px;
+      height: 230px;
       display: block;
+      margin: 0 auto;
     }
 
-    .preview-controls {
+    .preview-action-row {
       display: flex;
-      gap: 8px;
-      margin-top: 8px;
+      gap: 6px;
       width: 100%;
       justify-content: center;
+      margin: 4px 0 8px 0;
     }
 
     .p-btn {
-      padding: 6px 12px;
-      background: #241b14;
+      padding: 6px 10px;
+      background: #251c15;
       border: 1px solid #57412a;
       color: #dfd2be;
       font-size: 11px;
+      font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
       font-family: var(--font-main);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .p-btn:hover, .p-btn:active {
       border-color: var(--gold);
       color: var(--gold);
+      background: #332419;
     }
 
-    .char-details {
-      background: rgba(18, 14, 11, 0.95);
-      border: 2px solid #4a3826;
-      border-radius: 10px;
-      padding: 16px;
+    /* DETALHES COMPACTOS DO HERÓI */
+    .hero-stat-card {
+      width: 100%;
+      background: rgba(14, 11, 8, 0.7);
+      border: 1px solid #3d2b1b;
+      border-radius: 6px;
+      padding: 6px 10px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.85);
+      gap: 4px;
     }
 
-    .char-header h3 {
-      font-size: 20px;
+    .hero-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #332316;
+      padding-bottom: 3px;
+    }
+
+    .hero-title-row h4 {
+      font-size: 14px;
       color: var(--gold);
-      margin-bottom: 2px;
+      letter-spacing: 1px;
     }
 
-    .char-header p {
-      font-size: 11px;
+    .hero-title-row span {
+      font-size: 10px;
       color: #9c8e7e;
-      line-height: 1.3;
     }
 
-    .stats-bars {
+    .attr-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 12px;
+      font-size: 10px;
+      color: #d1c1ab;
+    }
+
+    .attr-grid div {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(255,255,255,0.06);
+      padding: 1px 0;
+    }
+
+    /* BOTÕES PRINCIPAIS DE ENTRADA NA AVENTURA */
+    .menu-action-buttons {
       display: flex;
       flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-enter-game {
+      padding: 12px 18px;
+      font-size: 15px;
+      font-family: var(--font-main);
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #120902;
+      background: linear-gradient(180deg, #ffe066 0%, #e6ac24 50%, #8c6a18 100%);
+      border: 2px solid #ffe680;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(245, 197, 66, 0.45);
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-enter-game:hover, .btn-enter-game:active {
+      transform: scale(1.02);
+      box-shadow: 0 6px 24px rgba(245, 197, 66, 0.7);
+    }
+
+    .btn-secondary-menu {
+      padding: 9px 14px;
+      font-size: 12px;
+      font-family: var(--font-main);
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #dfd0bc;
+      background: linear-gradient(180deg, #281d16, #140d09);
+      border: 1.5px solid #4d3824;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 6px;
     }
 
-    .stat-row {
-      display: grid;
-      grid-template-columns: 80px 1fr 30px;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: #cbb89e;
+    .btn-secondary-menu:hover, .btn-secondary-menu:active {
+      border-color: var(--gold);
+      color: #fff;
     }
 
-    .stat-bar-track {
-      background: #140f0c;
-      border: 1px solid #3d2c1c;
-      height: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .stat-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #8c6a18, #f5c542);
-      border-radius: 3px;
-    }
-
-    .skills-preview-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .skill-preview-card {
-      background: #16100d;
-      border: 1px solid #3d2b1a;
-      border-radius: 6px;
-      padding: 6px 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .skill-preview-card .sp-icon {
-      font-size: 20px;
-    }
-
-    .skill-preview-card .sp-info b {
-      font-size: 11px;
-      color: var(--gold);
-      display: block;
-    }
-
-    .skill-preview-card .sp-info span {
-      font-size: 9px;
-      color: #9c8e7e;
-      display: block;
-    }
-
-    .btn-enter-world {
-      margin-top: 8px;
-      padding: 14px;
-      font-size: 15px;
-      font-family: var(--font-main);
-      font-weight: bold;
-      color: #120904;
-      background: linear-gradient(180deg, #ffe066, #cfa029);
-      border: 2px solid #fff2a8;
-      border-radius: 8px;
-      cursor: pointer;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-align: center;
-      box-shadow: 0 4px 18px rgba(212, 160, 36, 0.6);
-      transition: all 0.15s ease;
-    }
-
-    .btn-enter-world:hover, .btn-enter-world:active {
-      transform: scale(1.02);
-      box-shadow: 0 6px 25px rgba(245, 197, 66, 0.85);
-    }
-
-    @media (max-width: 720px) {
-      .stage-container {
-        grid-template-columns: 1fr;
-        justify-items: center;
-      }
-      .preview-box {
-        width: 100%;
-        max-width: 340px;
-      }
-      .skills-preview-list {
-        grid-template-columns: 1fr;
-      }
-    }
-
+    /* REFINAMENTO DO HUD IN-GAME PARA DISPOSITIVOS MÓVEIS (SEM SOBREPOSIÇÃO) */
     @media (max-width: 600px) {
-      .globe-container { width: 82px; height: 82px; }
-      .globe-text { font-size: 11px; }
-      #virtualJoystick { width: 110px; height: 110px; bottom: 110px; }
-      #joystickStick { width: 44px; height: 44px; }
-      #mobileActionButtons { bottom: 110px; right: 15px; }
-      .m-btn { width: 50px; height: 50px; font-size: 18px; }
-      .m-btn.btn-attack { width: 60px; height: 60px; }
-      .paperdoll-container { grid-template-columns: 1fr; justify-items: center; }
-      #minimapContainer { width: 75px; height: 75px; }
+      #topBar {
+        top: 6px; left: 6px; right: 6px;
+        padding: 3px 6px;
+        height: 38px;
+        max-width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .hero-stat-badge { gap: 5px; }
+      .hero-avatar { width: 28px; height: 28px; font-size: 14px; }
+      .hero-info-text h3 { font-size: 11px; }
+      .hero-info-text p { font-size: 8.5px; }
+      .hud-btn { padding: 3px 6px; font-size: 9px; }
+
+      #minimapContainer {
+        top: 48px; right: 8px;
+        width: 66px; height: 66px;
+      }
+
+      .globe-container {
+        bottom: 8px;
+        width: 72px; height: 72px;
+        border-width: 3px;
+      }
+      #hpGlobe { left: 8px; }
+      #manaGlobe { right: 8px; }
+      .globe-text {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 10.5px;
+        bottom: auto;
+      }
+
+      #bottomBelt {
+        bottom: 8px;
+        padding: 3px 6px;
+        gap: 4px;
+      }
+      .belt-slot {
+        width: 33px; height: 33px;
+      }
+      .belt-slot .icon { font-size: 15px; }
+      .belt-slot .key-hint { font-size: 7px; }
+
+      #virtualJoystick {
+        bottom: 90px; left: 14px;
+        width: 100px; height: 100px;
+      }
+      #joystickStick { width: 40px; height: 40px; }
+
+      #mobileActionButtons {
+        bottom: 88px; right: 14px;
+        gap: 10px;
+      }
+      .m-btn.btn-attack {
+        width: 60px; height: 60px; font-size: 22px;
+      }
+      .m-btn.btn-shield {
+        width: 46px; height: 46px; font-size: 18px;
+      }
     }
-  </style>
+  </style></style>
 </head>
 <body>
 
@@ -1308,106 +1250,75 @@
 
   </div>
 
-    <!-- MENU PRINCIPAL DE ABERTURA CINEMATOGRÁFICA -->
+    <!-- MENU PRINCIPAL UNIFICADO: ABERTURA + PREVIEW 2.5D INTERATIVO -->
   <div id="mainMenuScreen">
     <canvas id="titleBgCanvas"></canvas>
+
     <div class="main-menu-content">
-      <div class="game-emblem">⚔️</div>
-      <h1 class="main-menu-title">Champions of Norrath</h1>
-      <div class="main-menu-subtitle">✦ Realms of EverQuest ✦</div>
-
-      <div class="main-menu-buttons">
-        <button class="menu-btn primary" id="btnMenuNewGame">⚔️ Nova Jornada (Escolher Herói)</button>
-        <button class="menu-btn" id="btnMenuContinue">📜 Continuar Aventura</button>
-        <button class="menu-btn" id="btnMenuAudio">🔊 Vozes PT-BR: Ativadas</button>
+      <div class="menu-header-bar">
+        <h1 class="menu-game-title">⚔️ Champions of Norrath</h1>
+        <div class="menu-game-subtitle">✦ Realms of EverQuest ✦</div>
       </div>
 
-      <p style="font-size: 10px; color: #736252; margin-top: 24px; letter-spacing: 1px;">
-        ENGINE 2.5D COM DUBLAGEM EM PORTUGUÊS • ZERO DESLIZAMENTO • AUTO-ATAQUE
-      </p>
-    </div>
-  </div>
+      <!-- SELETOR DE CLASSES DAS 5 CLASSES -->
+      <div class="class-tabs-container">
+        <div class="c-tab active" data-class="barbarian">
+          <span class="tab-ico">🪓</span>
+          <span class="tab-lbl">Bárbaro</span>
+        </div>
+        <div class="c-tab" data-class="ranger">
+          <span class="tab-ico">🏹</span>
+          <span class="tab-lbl">Ranger</span>
+        </div>
+        <div class="c-tab" data-class="cleric">
+          <span class="tab-ico">🔨</span>
+          <span class="tab-lbl">Clériga</span>
+        </div>
+        <div class="c-tab" data-class="wizard">
+          <span class="tab-ico">🔮</span>
+          <span class="tab-lbl">Mago</span>
+        </div>
+        <div class="c-tab" data-class="shadowknight">
+          <span class="tab-ico">💀</span>
+          <span class="tab-lbl">Cavaleiro</span>
+        </div>
+      </div>
 
-  <!-- TELA DE SELEÇÃO DE CLASSE COM PREVIEW 2.5D INTERATIVO -->
-  <div id="classSelectScreen">
-    <div class="select-header">
-      <button class="p-btn" id="btnBackToMenu">← Voltar</button>
-      <h2>Escolha seu Campeão</h2>
-      <div style="font-size: 11px; color: var(--gold);">Norrath V5</div>
-    </div>
+      <!-- PALCO COM PREVIEW DO HERÓI NO PEDESTAL -->
+      <div class="hero-stage-card">
+        <canvas id="heroPreviewCanvas" width="280" height="230"></canvas>
 
-    <!-- ABAS DAS 5 CLASSES -->
-    <div class="class-tabs">
-      <div class="class-tab active" data-class="barbarian">
-        <span class="tab-icon">🪓</span>
-        <span class="tab-name">Bárbaro</span>
-      </div>
-      <div class="class-tab" data-class="ranger">
-        <span class="tab-icon">🏹</span>
-        <span class="tab-name">Ranger</span>
-      </div>
-      <div class="class-tab" data-class="cleric">
-        <span class="tab-icon">🔨</span>
-        <span class="tab-name">Clériga</span>
-      </div>
-      <div class="class-tab" data-class="wizard">
-        <span class="tab-icon">🔮</span>
-        <span class="tab-name">Mago</span>
-      </div>
-      <div class="class-tab" data-class="shadowknight">
-        <span class="tab-icon">💀</span>
-        <span class="tab-name">Cav. Sombras</span>
-      </div>
-    </div>
-
-    <!-- PALCO DO PREVIEW 2.5D & FICHA -->
-    <div class="stage-container">
-      <div class="preview-box">
-        <canvas id="heroPreviewCanvas" width="320" height="320"></canvas>
-        <div class="preview-controls">
+        <div class="preview-action-row">
           <button class="p-btn" id="btnRotateLeft">◀ Girar</button>
           <button class="p-btn" id="btnPreviewAttack">⚔️ Testar Golpe</button>
           <button class="p-btn" id="btnPreviewShield">🛡️ Postura</button>
           <button class="p-btn" id="btnRotateRight">Girar ▶</button>
         </div>
+
+        <div class="hero-stat-card">
+          <div class="hero-title-row">
+            <h4 id="previewClassName">Bárbaro Guerreiro</h4>
+            <span id="previewClassWeapon">Arma: Espada Larga</span>
+          </div>
+          <div class="attr-grid">
+            <div><span>FORÇA (STR):</span> <b id="valStr" style="color:var(--gold);">22</b></div>
+            <div><span>DESTREZA (DEX):</span> <b id="valDex" style="color:var(--gold);">12</b></div>
+            <div><span>INTELIGÊNCIA:</span> <b id="valInt" style="color:var(--gold);">8</b></div>
+            <div><span>VITALIDADE:</span> <b id="valVit" style="color:var(--gold);">21</b></div>
+          </div>
+        </div>
       </div>
 
-      <div class="char-details">
-        <div class="char-header">
-          <h3 id="previewClassName">Bárbaro Guerreiro</h3>
-          <p id="previewClassDesc">Combate brutal corpo a corpo, força massiva e ataques com espada de duas mãos.</p>
-        </div>
-
-        <div class="stats-bars">
-          <div class="stat-row">
-            <span>FORÇA (STR)</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" id="barStr" style="width: 88%;"></div></div>
-            <b id="valStr">22</b>
-          </div>
-          <div class="stat-row">
-            <span>DESTREZA (DEX)</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" id="barDex" style="width: 48%;"></div></div>
-            <b id="valDex">12</b>
-          </div>
-          <div class="stat-row">
-            <span>INTELIGÊNCIA</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" id="barInt" style="width: 32%;"></div></div>
-            <b id="valInt">8</b>
-          </div>
-          <div class="stat-row">
-            <span>VITALIDADE</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" id="barVit" style="width: 78%;"></div></div>
-            <b id="valVit">18</b>
-          </div>
-        </div>
-
-        <div>
-          <b style="font-size: 11px; color: var(--gold); display: block; margin-bottom: 6px;">HABILIDADES INICIAIS</b>
-          <div class="skills-preview-list" id="previewSkillsList"></div>
-        </div>
-
-        <button class="btn-enter-world" id="btnStartGame">⚔️ Entrar nas Masmorras</button>
+      <!-- BOTÕES DE AÇÃO: ENTRAR NO JOGO / CONTINUAR / ÁUDIO -->
+      <div class="menu-action-buttons">
+        <button class="btn-enter-game" id="btnStartGame">⚔️ Entrar nas Masmorras</button>
+        <button class="btn-secondary-menu" id="btnMenuContinue">📜 Continuar Aventura</button>
+        <button class="btn-secondary-menu" id="btnMenuAudio">🔊 Vozes PT-BR: Ativadas</button>
       </div>
+
+      <p style="font-size: 9px; color: #736252; margin-top: 8px; letter-spacing: 1px; text-align: center;">
+        ENGINE 2.5D COM DUBLAGEM EM PORTUGUÊS • ZERO DESLIZAMENTO • AUTO-ATAQUE
+      </p>
     </div>
   </div>
 
@@ -1421,6 +1332,10 @@
           if (AudioContext) this.ctx = new AudioContext();
         }
         if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        if (!this.bgm && this.ctx) {
+          this.bgm = new MusicPlayer(this.ctx);
+          this.bgm.start();
+        }
       }
       playSwordSwing(comboStep = 1) {
         if (!this.ctx) return;
@@ -1511,6 +1426,56 @@
         osc.start(); osc.stop(this.ctx.currentTime + 0.2);
       }
     }
+    
+    // Trilha sonora ambiente medieval sintetizada em tempo real (BGM)
+    class MusicPlayer {
+      constructor(audioCtx) {
+        this.ctx = audioCtx;
+        this.playing = false;
+        this.timer = null;
+        this.step = 0;
+        this.notes = [110, 130.81, 146.83, 164.81, 196, 220, 246.94]; // Escala menor gótica
+      }
+      start() {
+        if (this.playing || !this.ctx) return;
+        this.playing = true;
+        this.scheduleNextNote();
+      }
+      stop() {
+        this.playing = false;
+        if (this.timer) clearTimeout(this.timer);
+      }
+      scheduleNextNote() {
+        if (!this.playing || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const filter = this.ctx.createBiquadFilter();
+
+          const freq = this.notes[this.step % this.notes.length];
+          this.step = (this.step + 1) % this.notes.length;
+
+          osc.type = (this.step % 4 === 0) ? 'triangle' : 'sine';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(600, this.ctx.currentTime);
+
+          gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.2);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start();
+          osc.stop(this.ctx.currentTime + 1.2);
+        } catch (e) {}
+
+        this.timer = setTimeout(() => this.scheduleNextNote(), 750);
+      }
+    }
+
     const audio = new SoundEngine();
 
     // -------------------------------------------------------------
@@ -1881,7 +1846,15 @@
     let floatingTexts = [];
     let flyingLoot = [];
     let dialogueBalloons = [];
+    let selectedClass = 'barbarian'; // Classe atualmente selecionada (Padrão: Bárbaro)
+    let previewAngle = 0; // Ângulo de rotação do preview do herói
+    let previewAttackTimer = 0; // Timer de ataque no preview
+    let previewBlocking = false; // Postura defensiva no preview
     let telegraphedAttacks = []; // Ondas de choque telegrafadas com círculo vermelho no piso
+    let allies = []; // Companheiros e mascotes aliados (Esqueletos, Lobos, Elementais)
+    let projectiles = []; // Projéteis mágicos com iluminação dinâmica
+    let groundLoot = []; // Itens no chão com feixes de luz verticais (Loot Beams)
+    let dungeonLevers = []; // Alavancas mecânicas de portão
     let stairs = null;
     let bossGate = null;
     let activeBoss = null;
@@ -2148,9 +2121,37 @@
             if (Math.random() < 0.4) spawnFlyingLoot(p.gx, p.gy, 'potion');
           } else if (p.type === 'chest' && !p.opened) {
             p.opened = true;
+
+            if (p.isMimic || (player.currentFloor >= 2 && Math.random() < 0.45)) {
+              audio.playBreakWood();
+              screenShake = 8;
+              showNotification('⚠️ ARMADILHA! O baú era um MÍMICO DEVORADOR!');
+              voices.speak('Surpresa, tolo! Você é o meu almoço!', 'boss', { gx: p.gx, gy: p.gy });
+              monsters.push({
+                id: Date.now(),
+                name: 'Baú Mímico Devorador',
+                gx: p.gx, gy: p.gy,
+                hp: 110, maxHp: 110, dmg: 22,
+                icon: '📦',
+                type: 'orc',
+                alive: true,
+                animTimer: 0,
+                hasSpoken: true
+              });
+              return;
+            }
+
             audio.playCoin();
             screenShake = 4;
-            spawnFlyingLoot(p.gx, p.gy, 'gold', 55);
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 65);
+            spawnGroundLoot(p.gx, p.gy, {
+              name: 'Gema Rubi Vulcânica',
+              rarity: 'epic',
+              type: 'gem',
+              gemType: 'fire',
+              bonusDmg: 15,
+              color: '#ff3322'
+            });
             if (p.hasKey) {
               player.hasBossKey = true;
               QUESTS[1].current = 1;
@@ -2254,11 +2255,38 @@
               saveGame(false);
             }
 
-            const xpGained = m.isBoss ? 260 : 45;
-            const goldGained = m.isBoss ? 130 : 18 + Math.floor(Math.random() * 14);
+            const xpGained = m.isBoss ? 320 : 45;
+            const goldGained = m.isBoss ? 180 : 18 + Math.floor(Math.random() * 14);
             giveXp(xpGained);
             spawnFlyingLoot(m.gx, m.gy, 'gold', goldGained);
-            if (m.isBoss || Math.random() < 0.35) spawnFlyingLoot(m.gx, m.gy, 'gem');
+
+            if (m.isBoss) {
+              spawnGroundLoot(m.gx, m.gy, {
+                name: 'Lâmina do Sol de Norrath',
+                rarity: 'legendary',
+                type: 'gem',
+                gemType: 'fire',
+                bonusDmg: 25,
+                color: '#ffd700'
+              });
+              spawnGroundLoot(m.gx + 0.6, m.gy, {
+                name: 'Safira Congelante de Veeshan',
+                rarity: 'epic',
+                type: 'gem',
+                gemType: 'ice',
+                bonusDmg: 18,
+                color: '#00ddff'
+              });
+            } else if (Math.random() < 0.28) {
+              spawnGroundLoot(m.gx, m.gy, {
+                name: 'Gema Esmeralda de Veneno',
+                rarity: 'rare',
+                type: 'gem',
+                gemType: 'poison',
+                bonusDmg: 12,
+                color: '#22ee55'
+              });
+            }
           }
         }
       });
@@ -2299,6 +2327,12 @@
         player.hp = Math.min(player.maxHp, player.hp + skill.heal);
         spawnFloatingText(`+${skill.heal} HP`, player.gx, player.gy, '#44ff44');
         showNotification(`✨ ${skill.name} curou ${skill.heal} HP!`);
+      } else if (skill.id === 'summon_undead' || (num === 2 && (player.clsKey === 'shadowknight' || player.clsKey === 'ranger'))) {
+        summonCompanion(player.clsKey);
+        showNotification(`🐾 ${skill.name}: Companheiro invocado ao seu lado!`);
+      } else if (player.clsKey === 'wizard' || player.clsKey === 'ranger') {
+        shootProjectile(player.gx, player.gy, player.facing, player.clsKey === 'wizard' ? 'fireball' : 'ice_arrow', skill.dmg || 40);
+        showNotification(`🔥 ${skill.name} disparado!`);
       } else {
         monsters.forEach(m => {
           if (!m.alive) return;
@@ -2405,6 +2439,101 @@
     }
 
     
+    
+    // -------------------------------------------------------------
+    // SISTEMA DE SAQUE COM FEIXES DE LUZ VERTICAIS (LOOT BEAMS)
+    // -------------------------------------------------------------
+    function spawnGroundLoot(gx, gy, item) {
+      groundLoot.push({
+        id: Date.now() + Math.random(),
+        name: item.name,
+        rarity: item.rarity || 'rare',
+        type: item.type,
+        color: item.color || '#ffd700',
+        bonusDmg: item.bonusDmg || 0,
+        gemType: item.gemType || null,
+        gx: gx + (Math.random() - 0.5) * 0.4,
+        gy: gy + (Math.random() - 0.5) * 0.4,
+        life: 180,
+        shineTimer: Math.random() * 5
+      });
+      audio.playCoin();
+    }
+
+    // -------------------------------------------------------------
+    // INVOCAÇÃO DE COMPANHEIROS E MASCOTES ALIADOS (ALLIES)
+    // -------------------------------------------------------------
+    function summonCompanion(clsKey) {
+      if (allies.length >= 2) {
+        allies.shift();
+      }
+
+      let ally = null;
+      if (clsKey === 'shadowknight') {
+        ally = {
+          name: 'Esqueleto Guardião',
+          type: 'ally_skeleton',
+          gx: player.gx + 0.8, gy: player.gy + 0.8,
+          hp: 90, maxHp: 90, dmg: 18,
+          color: '#00ddff',
+          animTimer: 0
+        };
+        voices.speak("Erga-se das trevas, servo da morte! Destrua nossos inimigos!", 'shadowknight');
+      } else if (clsKey === 'ranger') {
+        ally = {
+          name: 'Lobo Alfa Guardião',
+          type: 'ally_wolf',
+          gx: player.gx + 0.8, gy: player.gy + 0.8,
+          hp: 105, maxHp: 105, dmg: 19,
+          color: '#55ff88',
+          animTimer: 0
+        };
+        voices.speak("Ao meu lado, leal fera da floresta!", 'ranger');
+      } else if (clsKey === 'wizard') {
+        ally = {
+          name: 'Familiar Arcano de Fogo',
+          type: 'ally_elemental',
+          gx: player.gx + 0.8, gy: player.gy + 0.8,
+          hp: 80, maxHp: 80, dmg: 24,
+          color: '#ff6600',
+          animTimer: 0
+        };
+        voices.speak("Espírito das chamas arcanas, queime os hereges!", 'wizard');
+      } else {
+        ally = {
+          name: 'Espírito Guerreiro de Norrath',
+          type: 'ally_warrior',
+          gx: player.gx + 0.8, gy: player.gy + 0.8,
+          hp: 110, maxHp: 110, dmg: 20,
+          color: '#ffd700',
+          animTimer: 0
+        };
+        voices.speak("Pelos antepassados de Norrath, lute ao meu lado!", clsKey);
+      }
+
+      allies.push(ally);
+      spawnFloatingText(`+${ally.name} INVOCADO!`, ally.gx, ally.gy, ally.color);
+      audio.playMagicSpell();
+    }
+
+    // -------------------------------------------------------------
+    // DISPARO DE PROJÉTEIS MÁGICOS
+    // -------------------------------------------------------------
+    function shootProjectile(startX, startY, targetAngle, type = 'fireball', dmg = 35) {
+      const speed = 7.5;
+      projectiles.push({
+        gx: startX, gy: startY,
+        vx: Math.cos(targetAngle) * speed,
+        vy: Math.sin(targetAngle) * speed,
+        type: type,
+        dmg: dmg,
+        life: 1.8,
+        lightColor: type === 'fireball' ? 'rgba(255, 100, 20, 0.8)' : (type === 'ice_arrow' ? 'rgba(60, 200, 255, 0.8)' : 'rgba(120, 255, 80, 0.8)'),
+        lightRadius: 130
+      });
+      audio.playMagicSpell();
+    }
+
     function spawnDialogueBalloon(text, gx, gy, profile = 'elder') {
       dialogueBalloons.push({
         text, gx, gy, profile,
@@ -2565,6 +2694,21 @@
       const targetCamY = canvas.height / 2 - playerIso.y - player.vy * 8;
       camera.x += (targetCamX - camera.x) * (1 - Math.exp(-8 * dt));
       camera.y += (targetCamY - camera.y) * (1 - Math.exp(-8 * dt));
+
+      
+      projectiles.forEach(pj => {
+        const pIso = worldToIso(pj.gx, pj.gy);
+        const pScreenX = pIso.x + camera.x;
+        const pScreenY = pIso.y + camera.y - 12;
+        const pGrad = lightCtx.createRadialGradient(pScreenX, pScreenY, 8, pScreenX, pScreenY, pj.lightRadius);
+        pGrad.addColorStop(0, 'rgba(0,0,0,1)');
+        pGrad.addColorStop(0.7, 'rgba(0,0,0,0.85)');
+        pGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        lightCtx.fillStyle = pGrad;
+        lightCtx.beginPath();
+        lightCtx.arc(pScreenX, pScreenY, pj.lightRadius, 0, Math.PI * 2);
+        lightCtx.fill();
+      });
 
       torches.forEach(t => { t.flame += dt * 5; });
 
@@ -2728,6 +2872,126 @@
         }
       }
 
+      // Atualização de Balões de Fala
+      for (let i = dialogueBalloons.length - 1; i >= 0; i--) {
+        const b = dialogueBalloons[i];
+        b.life -= dt;
+        b.offsetY = (b.offsetY || 0) + dt * 6;
+        if (b.life <= 0) {
+          dialogueBalloons.splice(i, 1);
+        }
+      }
+
+      
+      // IA DOS COMPANHEIROS ALIADOS (SEGUEM E ATACAM MONSTROS)
+      allies.forEach(al => {
+        al.animTimer = (al.animTimer || 0) + dt * 6;
+
+        let targetM = null;
+        let mDistMin = 999;
+        monsters.forEach(m => {
+          if (!m.alive) return;
+          const d = Math.hypot(m.gx - al.gx, m.gy - al.gy);
+          if (d < mDistMin) {
+            mDistMin = d;
+            targetM = m;
+          }
+        });
+
+        if (targetM && mDistMin < 6.0) {
+          if (mDistMin > 1.2) {
+            const ang = Math.atan2(targetM.gy - al.gy, targetM.gx - al.gx);
+            al.gx += Math.cos(ang) * 2.8 * dt;
+            al.gy += Math.sin(ang) * 2.8 * dt;
+          } else {
+            al.attackCooldown = (al.attackCooldown || 0) - dt;
+            if (al.attackCooldown <= 0) {
+              al.attackCooldown = 0.9;
+              targetM.hp -= al.dmg;
+              audio.playHitMonster();
+              spawnBlood(targetM.gx, targetM.gy, 6);
+              spawnFloatingText(`-${al.dmg} (${al.name})`, targetM.gx, targetM.gy, al.color);
+              if (targetM.hp <= 0) {
+                targetM.alive = false;
+                giveXp(35);
+                spawnFlyingLoot(targetM.gx, targetM.gy, 'gold', 15);
+              }
+            }
+          }
+        } else {
+          const heroDist = Math.hypot(player.gx - al.gx, player.gy - al.gy);
+          if (heroDist > 1.8) {
+            const ang = Math.atan2(player.gy - al.gy, player.gx - al.gx);
+            al.gx += Math.cos(ang) * 3.5 * dt;
+            al.gy += Math.sin(ang) * 3.5 * dt;
+          }
+        }
+      });
+
+      // PROJÉTEIS MÁGICOS (COLISÃO E DANO)
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        const pj = projectiles[i];
+        pj.gx += pj.vx * dt;
+        pj.gy += pj.vy * dt;
+        pj.life -= dt;
+
+        particles.push({
+          gx: pj.gx, gy: pj.gy,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8,
+          life: 0.35,
+          color: pj.type === 'fireball' ? '#ff4400' : '#44ccff'
+        });
+
+        let hit = false;
+        monsters.forEach(m => {
+          if (!m.alive || hit) return;
+          if (Math.hypot(m.gx - pj.gx, m.gy - pj.gy) < 1.1) {
+            hit = true;
+            m.hp -= pj.dmg;
+            audio.playHitMonster();
+            screenShake = 4;
+            spawnBlood(m.gx, m.gy, 10);
+            spawnFloatingText(`💥 -${pj.dmg}`, m.gx, m.gy, '#ffd700');
+            if (pj.type === 'ice_arrow') {
+              m.frozen = 2.0;
+            }
+            if (m.hp <= 0) {
+              m.alive = false;
+              giveXp(45);
+              spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
+            }
+          }
+        });
+
+        if (hit || pj.life <= 0 || !canWalk(pj.gx, pj.gy)) {
+          projectiles.splice(i, 1);
+        }
+      }
+
+      // COLETA DE ITENS NO CHÃO COM FEIXES DE LUZ
+      for (let i = groundLoot.length - 1; i >= 0; i--) {
+        const gl = groundLoot[i];
+        gl.shineTimer = (gl.shineTimer || 0) + dt * 4;
+        if (Math.hypot(player.gx - gl.gx, player.gy - gl.gy) < 1.2) {
+          audio.playCoin();
+          player.inventory.push({
+            name: gl.name,
+            type: gl.type || 'gem',
+            gemType: gl.gemType || 'fire',
+            bonusDmg: gl.bonusDmg || 12,
+            icon: '💎',
+            color: gl.color
+          });
+          showNotification(`🌟 SAQUE LENDÁRIO: [${gl.name}] Coletado!`);
+          voices.speak("Um tesouro lendário de Norrath!", 'elder');
+          spawnFloatingText(`+${gl.name}!`, player.gx, player.gy, gl.color);
+          saveGame(false);
+          groundLoot.splice(i, 1);
+          updateHud();
+        }
+      }
+
       // Partículas e Textos
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -2780,6 +3044,64 @@
       }
 
 
+
+      // FEIXES DE LUZ VERTICAIS DOS ITENS LENDÁRIOS (LOOT BEAMS)
+      groundLoot.forEach(gl => {
+        const iso = worldToIso(gl.gx, gl.gy);
+        const footX = iso.x;
+        const footY = iso.y + 16;
+        const beamH = 140;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(footX, footY, 12, 6, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fill();
+
+        const beamGrad = ctx.createLinearGradient(footX, footY, footX, footY - beamH);
+        beamGrad.addColorStop(0, gl.color);
+        beamGrad.addColorStop(0.3, gl.color);
+        beamGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(footX - 8, footY);
+        ctx.lineTo(footX - 16, footY - beamH);
+        ctx.lineTo(footX + 16, footY - beamH);
+        ctx.lineTo(footX + 8, footY);
+        ctx.closePath();
+        ctx.fill();
+
+        const pulse = Math.sin(gl.shineTimer) * 3;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(footX, footY - 8 + pulse, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.font = 'bold 10px "Cinzel", Georgia';
+        ctx.fillStyle = gl.color;
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.fillText(`✦ ${gl.name} ✦`, footX, footY - 22 + pulse);
+        ctx.restore();
+      });
+
+      // PROJÉTEIS MÁGICOS VISÍVEIS NO MUNDO
+      projectiles.forEach(pj => {
+        const iso = worldToIso(pj.gx, pj.gy);
+        ctx.save();
+        ctx.fillStyle = pj.type === 'fireball' ? '#ff3300' : '#44ccff';
+        ctx.beginPath();
+        ctx.arc(iso.x, iso.y - 12, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(iso.x, iso.y - 12, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
       // Círculos de Perigo Telegrafados no Piso Isométrico (Avisos de Ataque do Chefe)
       telegraphedAttacks.forEach(ta => {
         const iso = worldToIso(ta.gx, ta.gy);
@@ -2808,6 +3130,14 @@
 
       // Ordenação Y-Sorting
       const renderables = [];
+
+      
+      allies.forEach(al => {
+        renderables.push({
+          ySort: al.gx + al.gy,
+          draw: () => drawAlly(al)
+        });
+      });
 
       renderables.push({ ySort: player.gx + player.gy, draw: () => drawPlayer() });
 
@@ -2920,19 +3250,12 @@
 
       lightCtx.restore();
 
-      // Atualização e Renderização de Balões de Fala
-      for (let i = dialogueBalloons.length - 1; i >= 0; i--) {
+      // Renderização de Balões de Fala (Sem mutação de tempo)
+      for (let i = 0; i < dialogueBalloons.length; i++) {
         const b = dialogueBalloons[i];
-        b.life -= dt;
-        b.offsetY += dt * 6;
-        if (b.life <= 0) {
-          dialogueBalloons.splice(i, 1);
-          continue;
-        }
-
         const iso = worldToIso(b.gx, b.gy);
         const scrX = iso.x;
-        const scrY = iso.y - 42 - b.offsetY;
+        const scrY = iso.y - 42 - (b.offsetY || 0);
 
         ctx.save();
         ctx.font = 'bold 11px "Cinzel", Georgia, serif';
@@ -2945,7 +3268,6 @@
         ctx.strokeStyle = b.profile === 'boss' ? '#ff3b3b' : '#ffd700';
         ctx.lineWidth = 1.5;
 
-        // Caixa arredondada
         ctx.beginPath();
         if (ctx.roundRect) {
           ctx.roundRect(scrX - bW / 2, scrY - bH / 2, bW, bH, 5);
@@ -3001,6 +3323,53 @@
     // -------------------------------------------------------------
     // RENDERIZAÇÃO PROCEDURAL 2.5D (SEM EMOJIS, ANCORAGEM NO PISO)
     // -------------------------------------------------------------
+
+    
+    function drawAlly(al) {
+      const iso = worldToIso(al.gx, al.gy);
+      const footX = iso.x;
+      const footY = iso.y + 16;
+      const bob = Math.sin(al.animTimer || 0) * 2;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(footX, footY, 13, 6.5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.fill();
+
+      ctx.fillStyle = al.color;
+      ctx.beginPath();
+      ctx.ellipse(footX, footY, 10, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (al.type === 'ally_skeleton') {
+        ctx.fillStyle = '#e8decb';
+        ctx.fillRect(footX - 4, footY - 10, 2, 10);
+        ctx.fillRect(footX + 2, footY - 10, 2, 10);
+        ctx.fillStyle = '#3a4a60';
+        ctx.fillRect(footX - 6, footY - 20 - bob, 12, 10);
+        ctx.fillStyle = '#00ddff';
+        ctx.beginPath(); ctx.arc(footX, footY - 25 - bob, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#c0d0e0'; ctx.fillRect(footX + 6, footY - 24 - bob, 2.5, 16);
+      } else if (al.type === 'ally_wolf') {
+        ctx.fillStyle = '#55555c';
+        ctx.beginPath(); ctx.ellipse(footX, footY - 10, 13, 7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#3a3a3e';
+        ctx.beginPath(); ctx.ellipse(footX - 9, footY - 13, 6, 5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#00ff66'; ctx.beginPath(); ctx.arc(footX - 9, footY - 14, 1.5, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.fillStyle = '#ff4400';
+        ctx.beginPath(); ctx.arc(footX, footY - 16 - bob, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffcc00';
+        ctx.beginPath(); ctx.arc(footX, footY - 16 - bob, 4.5, 0, Math.PI * 2); ctx.fill();
+      }
+
+      ctx.font = 'bold 9px "Cinzel", Georgia';
+      ctx.fillStyle = al.color;
+      ctx.textAlign = 'center';
+      ctx.fillText(al.name, footX, footY - 34 - bob);
+      ctx.restore();
+    }
 
     function drawPlayer() {
       const iso = worldToIso(player.gx, player.gy);
@@ -3973,8 +4342,7 @@
     }
 
     // -------------------------------------------------------------
-    // MENU PRINCIPAL DE ABERTURA: BRASAS E NÉVOA NO CANVAS
-    // -------------------------------------------------------------
+    // MENU PRINCIPAL UNIFICADO: BRASAS NO CANVAS E PREVIEW DO HERÓI
     const titleBgCanvas = document.getElementById('titleBgCanvas');
     const titleBgCtx = titleBgCanvas ? titleBgCanvas.getContext('2d') : null;
     let menuParticles = [];
@@ -3987,76 +4355,55 @@
     window.addEventListener('resize', resizeTitleCanvas);
     resizeTitleCanvas();
 
-    function initTitleParticles() {
-      menuParticles = [];
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      for (let i = 0; i < 60; i++) {
-        menuParticles.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.8,
-          vy: -0.6 - Math.random() * 1.5,
-          size: 1.5 + Math.random() * 3,
-          color: Math.random() < 0.6 ? '#ffaa33' : '#ff4411',
-          alpha: Math.random() * 0.8 + 0.2
-        });
-      }
+    for (let i = 0; i < 40; i++) {
+      menuParticles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vy: -0.35 - Math.random() * 0.75,
+        vx: (Math.random() - 0.5) * 0.35,
+        radius: 1.2 + Math.random() * 2.2,
+        alpha: 0.25 + Math.random() * 0.7,
+        color: Math.random() > 0.4 ? '#f5c542' : '#ff4400'
+      });
     }
-    initTitleParticles();
 
     function updateAndRenderTitleParticles() {
       if (!titleBgCtx) return;
       titleBgCtx.clearRect(0, 0, titleBgCanvas.width, titleBgCanvas.height);
 
-      // Fundo em gradiente suave
-      const grad = titleBgCtx.createRadialGradient(titleBgCanvas.width / 2, titleBgCanvas.height / 2, 80, titleBgCanvas.width / 2, titleBgCanvas.height / 2, titleBgCanvas.width / 1.2);
-      grad.addColorStop(0, 'rgba(42, 22, 12, 0.8)');
-      grad.addColorStop(1, 'rgba(6, 4, 3, 0.98)');
-      titleBgCtx.fillStyle = grad;
-      titleBgCtx.fillRect(0, 0, titleBgCanvas.width, titleBgCanvas.height);
-
-      // Brasas subindo
       menuParticles.forEach(p => {
-        p.x += p.vx;
         p.y += p.vy;
-        p.alpha -= 0.002;
-        if (p.y < -10 || p.alpha <= 0) {
+        p.x += p.vx;
+        if (p.y < 0) {
           p.y = titleBgCanvas.height + 10;
           p.x = Math.random() * titleBgCanvas.width;
-          p.alpha = Math.random() * 0.8 + 0.2;
         }
 
         titleBgCtx.save();
-        titleBgCtx.globalAlpha = Math.max(0, p.alpha);
+        titleBgCtx.globalAlpha = p.alpha;
         titleBgCtx.fillStyle = p.color;
         titleBgCtx.beginPath();
-        titleBgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        titleBgCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         titleBgCtx.fill();
         titleBgCtx.restore();
       });
 
-      if (document.getElementById('mainMenuScreen').style.display !== 'none') {
+      if (document.getElementById('mainMenuScreen') && document.getElementById('mainMenuScreen').style.display !== 'none') {
         requestAnimationFrame(updateAndRenderTitleParticles);
       }
     }
     requestAnimationFrame(updateAndRenderTitleParticles);
 
-    // -------------------------------------------------------------
     // PREVIEW DO HERÓI NO PALCO 2.5D
-    // -------------------------------------------------------------
     const heroPreviewCanvas = document.getElementById('heroPreviewCanvas');
     const hpCtx = heroPreviewCanvas ? heroPreviewCanvas.getContext('2d') : null;
-    let previewAngle = 0;
-    let previewAttackTimer = 0;
-    let previewBlocking = false;
 
     function renderHeroPreview() {
-      if (!hpCtx) return;
+      if (!hpCtx || !heroPreviewCanvas) return;
       hpCtx.clearRect(0, 0, heroPreviewCanvas.width, heroPreviewCanvas.height);
 
       const cx = heroPreviewCanvas.width / 2;
-      const cy = heroPreviewCanvas.height / 2 + 55;
+      const cy = heroPreviewCanvas.height / 2 + 35;
 
       hpCtx.save();
       hpCtx.translate(cx, cy);
@@ -4064,43 +4411,43 @@
       // Pedestal de Pedra Rúnica 3D
       hpCtx.fillStyle = '#140f0c';
       hpCtx.beginPath();
-      hpCtx.ellipse(0, 26, 92, 42, 0, 0, Math.PI * 2);
+      hpCtx.ellipse(0, 22, 85, 38, 0, 0, Math.PI * 2);
       hpCtx.fill();
       hpCtx.strokeStyle = '#382a1d'; hpCtx.lineWidth = 2; hpCtx.stroke();
 
       hpCtx.fillStyle = '#221912';
       hpCtx.beginPath();
-      hpCtx.moveTo(-88, 0); hpCtx.lineTo(88, 0); hpCtx.lineTo(92, 26); hpCtx.lineTo(-92, 26);
+      hpCtx.moveTo(-80, 0); hpCtx.lineTo(80, 0); hpCtx.lineTo(85, 22); hpCtx.lineTo(-85, 22);
       hpCtx.closePath(); hpCtx.fill();
 
       hpCtx.fillStyle = '#3a2b1f';
       hpCtx.beginPath();
-      hpCtx.ellipse(0, 0, 88, 40, 0, 0, Math.PI * 2);
+      hpCtx.ellipse(0, 0, 80, 36, 0, 0, Math.PI * 2);
       hpCtx.fill();
       hpCtx.strokeStyle = '#57412e'; hpCtx.lineWidth = 2.5; hpCtx.stroke();
 
       // Círculo rúnico com brilho dourado
       hpCtx.strokeStyle = 'rgba(245, 197, 66, 0.45)'; hpCtx.lineWidth = 1.5;
       hpCtx.beginPath();
-      hpCtx.ellipse(0, 0, 68, 30, 0, 0, Math.PI * 2);
+      hpCtx.ellipse(0, 0, 62, 28, 0, 0, Math.PI * 2);
       hpCtx.stroke();
 
       // Tochas laterais
-      const fShift = Math.sin(Date.now() * 0.009) * 3;
+      const fShift = Math.sin(Date.now() * 0.009) * 2.5;
       // Tocha esquerda
-      hpCtx.fillStyle = '#1c1510'; hpCtx.fillRect(-105, -34, 6, 44);
-      hpCtx.fillStyle = '#ff4400'; hpCtx.beginPath(); hpCtx.arc(-102 + fShift, -38, 9, 0, Math.PI * 2); hpCtx.fill();
-      hpCtx.fillStyle = '#ffcc00'; hpCtx.beginPath(); hpCtx.arc(-102, -41, 5, 0, Math.PI * 2); hpCtx.fill();
+      hpCtx.fillStyle = '#1c1510'; hpCtx.fillRect(-96, -30, 5, 40);
+      hpCtx.fillStyle = '#ff4400'; hpCtx.beginPath(); hpCtx.arc(-93 + fShift, -34, 8, 0, Math.PI * 2); hpCtx.fill();
+      hpCtx.fillStyle = '#ffcc00'; hpCtx.beginPath(); hpCtx.arc(-93, -37, 4.5, 0, Math.PI * 2); hpCtx.fill();
 
       // Tocha direita
-      hpCtx.fillStyle = '#1c1510'; hpCtx.fillRect(99, -34, 6, 44);
-      hpCtx.fillStyle = '#ff4400'; hpCtx.beginPath(); hpCtx.arc(102 - fShift, -38, 9, 0, Math.PI * 2); hpCtx.fill();
-      hpCtx.fillStyle = '#ffcc00'; hpCtx.beginPath(); hpCtx.arc(102, -41, 5, 0, Math.PI * 2); hpCtx.fill();
+      hpCtx.fillStyle = '#1c1510'; hpCtx.fillRect(91, -30, 5, 40);
+      hpCtx.fillStyle = '#ff4400'; hpCtx.beginPath(); hpCtx.arc(94 - fShift, -34, 8, 0, Math.PI * 2); hpCtx.fill();
+      hpCtx.fillStyle = '#ffcc00'; hpCtx.beginPath(); hpCtx.arc(94, -37, 4.5, 0, Math.PI * 2); hpCtx.fill();
 
-      // Renderização do Herói em Destaque (Escala 3.6x!)
-      hpCtx.scale(3.6, 3.6);
+      // Escala 3.4x do Herói
+      hpCtx.scale(3.4, 3.4);
 
-      // Objeto herói simulado para preview
+      const clsData = CLASSES[selectedClass] || CLASSES.barbarian;
       const previewHero = {
         gx: 0, gy: 0,
         facing: previewAngle,
@@ -4111,32 +4458,30 @@
         attacking: previewAttackTimer,
         blocking: previewBlocking,
         equipment: {
-          mainhand: { name: CLASSES[selectedClass].weapon, dmg: 20, socket: { gemType: 'fire', color: '#ff3333' } }
+          mainhand: { name: clsData.weapon, dmg: 20, socket: { gemType: 'fire', color: '#ff3333' } }
         }
       };
 
-      // Desenha o personagem
       drawCharacterOnContext(hpCtx, previewHero, 0, -4);
 
       hpCtx.restore();
 
       if (previewAttackTimer > 0) previewAttackTimer--;
 
-      if (document.getElementById('classSelectScreen').style.display !== 'none') {
+      if (document.getElementById('mainMenuScreen') && document.getElementById('mainMenuScreen').style.display !== 'none') {
         requestAnimationFrame(renderHeroPreview);
       }
     }
+    requestAnimationFrame(renderHeroPreview);
 
-    // Função de desenho de personagem reutilizável
+    // Função de desenho do herói
     function drawCharacterOnContext(tCtx, charData, footX, footY) {
-      // 1. Sombra de Contato
       tCtx.save();
       tCtx.beginPath();
       tCtx.ellipse(footX, footY, 16, 8, 0, 0, Math.PI * 2);
       tCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
       tCtx.fill();
 
-      // 2. Animação
       const walkCycle = charData.walkTimer || 0;
       const idleCycle = charData.idleTimer || 0;
       const bob = charData.isMoving ? Math.abs(Math.sin(walkCycle)) * 3.5 : Math.sin(idleCycle) * 1.5;
@@ -4288,14 +4633,13 @@
         tCtx.fillStyle = '#8b5a2b'; tCtx.fillRect(-1.5, 0, 3, 5);
         tCtx.fillStyle = '#d4af37'; tCtx.fillRect(-5, 5, 10, 2.5);
 
-        // Cor da lâmina baseada em gemas engastadas
         const gem = charData.equipment && charData.equipment.mainhand ? charData.equipment.mainhand.socket : null;
         if (gem && gem.gemType === 'fire') {
-          tCtx.fillStyle = '#ff4411'; // Lâmina incandescente de fogo
+          tCtx.fillStyle = '#ff4411';
         } else if (gem && gem.gemType === 'ice') {
-          tCtx.fillStyle = '#55ccff'; // Lâmina de gelo cristalino
+          tCtx.fillStyle = '#55ccff';
         } else if (gem && gem.gemType === 'poison') {
-          tCtx.fillStyle = '#33dd44'; // Lâmina verde envenenada
+          tCtx.fillStyle = '#33dd44';
         } else {
           tCtx.fillStyle = charData.clsKey === 'shadowknight' ? '#4a1525' : '#c8d1db';
         }
@@ -4304,7 +4648,6 @@
         tCtx.beginPath(); tCtx.moveTo(-2, 25); tCtx.lineTo(0, 29); tCtx.lineTo(2, 25); tCtx.fill();
         tCtx.fillStyle = '#ffffff'; tCtx.fillRect(0, 8, 1, 16);
 
-        // Partículas e Brilho Elemental Vivo na Lâmina
         if (gem) {
           const auraShift = Math.sin(Date.now() * 0.01) * 2;
           tCtx.fillStyle = gem.color || '#ff4444';
@@ -4331,50 +4674,26 @@
       tCtx.restore();
     }
 
-    // Atualiza a ficha de detalhes e habilidades na seleção
+    // Atualiza ficha e fala da classe
     function updateClassPreviewInfo(clsKey) {
-      const cls = CLASSES[clsKey];
+      selectedClass = clsKey;
+      const cls = CLASSES[clsKey] || CLASSES.barbarian;
       document.getElementById('previewClassName').textContent = cls.name;
+      document.getElementById('previewClassWeapon').textContent = `Arma: ${cls.weapon}`;
 
-      const descMap = {
-        barbarian: 'Combate brutal corpo a corpo, força massiva e ataques com espada de duas mãos.',
-        ranger: 'Tiro com arco mortal, alta destreza e flechas perfurantes à distância.',
-        cleric: 'Maças de guerra pesadas, magias sagradas de cura divina e auras protetoras.',
-        wizard: 'Destruição mágica em área: Bolas de Fogo incandescentes e Raios eletrizantes.',
-        shadowknight: 'Lâminas demoníacas, drenagem de vida (Life Tap) e pactos nefastos.'
+      const statsMap = {
+        barbarian: { str: 22, dex: 12, int: 8, vit: 21 },
+        ranger: { str: 14, dex: 22, int: 11, vit: 15 },
+        cleric: { str: 16, dex: 10, int: 18, vit: 18 },
+        wizard: { str: 8, dex: 14, int: 24, vit: 12 },
+        shadowknight: { str: 19, dex: 13, int: 15, vit: 19 }
       };
-      document.getElementById('previewClassDesc').textContent = descMap[clsKey] || '';
+      const st = statsMap[clsKey] || statsMap.barbarian;
+      document.getElementById('valStr').textContent = st.str;
+      document.getElementById('valDex').textContent = st.dex;
+      document.getElementById('valInt').textContent = st.int;
+      document.getElementById('valVit').textContent = st.vit;
 
-      document.getElementById('valStr').textContent = cls.str;
-      document.getElementById('barStr').style.width = `${Math.min(100, cls.str * 4)}%`;
-
-      document.getElementById('valDex').textContent = cls.dex;
-      document.getElementById('barDex').style.width = `${Math.min(100, cls.dex * 4)}%`;
-
-      document.getElementById('valInt').textContent = cls.int;
-      document.getElementById('barInt').style.width = `${Math.min(100, cls.int * 4)}%`;
-
-      const vit = Math.floor(cls.hp / 8);
-      document.getElementById('valVit').textContent = vit;
-      document.getElementById('barVit').style.width = `${Math.min(100, vit * 4.5)}%`;
-
-      // Habilidades
-      const sContainer = document.getElementById('previewSkillsList');
-      sContainer.innerHTML = '';
-      cls.skills.forEach(sk => {
-        const div = document.createElement('div');
-        div.className = 'skill-preview-card';
-        div.innerHTML = `
-          <div class="sp-icon">${sk.icon}</div>
-          <div class="sp-info">
-            <b>${sk.name}</b>
-            <span>${sk.desc.slice(0, 36)}...</span>
-          </div>
-        `;
-        sContainer.appendChild(div);
-      });
-
-      // Fala dublada de apresentação da classe!
       const greetings = {
         barbarian: "Pelo sangue e honra de Norrath! Minha espada aniquilará a horda!",
         ranger: "O olho de águia nunca erra o alvo. Nenhuma presa escapa.",
@@ -4385,17 +4704,66 @@
       voices.speak(greetings[clsKey] || greetings.barbarian, clsKey);
     }
 
-    // CONTROLES DE EVENTOS DA ABERTURA E SELEÇÃO
-    document.getElementById('btnMenuNewGame').onclick = () => {
+    // Abas de seleção de classe
+    document.querySelectorAll('.c-tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll('.c-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const cKey = tab.dataset.class;
+        audio.init();
+        audio.playMagicSpell();
+        updateClassPreviewInfo(cKey);
+      };
+    });
+
+    // Controles de teste no Preview
+    document.getElementById('btnRotateLeft').onclick = () => { previewAngle -= 0.6; };
+    document.getElementById('btnRotateRight').onclick = () => { previewAngle += 0.6; };
+    document.getElementById('btnPreviewAttack').onclick = () => {
       audio.init();
-      audio.playMagicSpell();
-      document.getElementById('mainMenuScreen').style.display = 'none';
-      document.getElementById('classSelectScreen').style.display = 'flex';
-      updateClassPreviewInfo(selectedClass);
-      requestAnimationFrame(renderHeroPreview);
+      audio.playSwordSwing(1);
+      previewAttackTimer = 14;
+      triggerHeroVoice(selectedClass);
+    };
+    document.getElementById('btnPreviewShield').onclick = () => {
+      audio.init();
+      audio.playShieldBlock();
+      previewBlocking = !previewBlocking;
     };
 
-        // Verifica save ao abrir o menu
+    // Inicialização da Jornada
+    function startGameWithClass(clsKey) {
+      audio.init();
+      audio.playMagicSpell();
+
+      const cls = CLASSES[clsKey] || CLASSES.barbarian;
+      player.clsKey = clsKey;
+      player.hp = cls.hp;
+      player.maxHp = cls.hp;
+      player.mana = cls.mana;
+      player.maxMana = cls.mana;
+      player.equipment.mainhand.name = cls.weapon;
+
+      document.getElementById('heroClassName').textContent = cls.name.toUpperCase();
+      document.getElementById('heroAvatar').textContent = cls.icon;
+      document.getElementById('silhouetteHero').textContent = cls.icon;
+      document.getElementById('skill1Icon').textContent = cls.skills[0].icon;
+      document.getElementById('skill2Icon').textContent = cls.skills[1].icon;
+
+      document.getElementById('mainMenuScreen').style.display = 'none';
+
+      generateDungeon(1);
+      updateHud();
+      showNotification(`Bem-vindo a Norrath V5! Siga o caminho linear e converse com o Ancião [💬].`);
+
+      voices.speak("Estou pronto para a batalha nas profundezas!", clsKey);
+      requestAnimationFrame(gameLoop);
+    }
+
+    document.getElementById('btnStartGame').onclick = () => {
+      startGameWithClass(selectedClass);
+    };
+
     function refreshContinueButton() {
       const summary = getSaveSummary();
       const contBtn = document.getElementById('btnMenuContinue');
@@ -4419,11 +4787,7 @@
         loadGame();
         requestAnimationFrame(gameLoop);
       } else {
-        showNotification('Nenhum jogo salvo encontrado. Escolha seu herói!');
-        document.getElementById('mainMenuScreen').style.display = 'none';
-        document.getElementById('classSelectScreen').style.display = 'flex';
-        updateClassPreviewInfo(selectedClass);
-        requestAnimationFrame(renderHeroPreview);
+        showNotification('Nenhum jogo salvo encontrado. Escolha seu herói acima e clique em Entrar nas Masmorras!');
       }
     };
 
@@ -4433,76 +4797,6 @@
       if (voices.enabled) {
         voices.speak("Vozes dubladas em português ativadas com sucesso!", 'elder');
       }
-    };
-
-    document.getElementById('btnBackToMenu').onclick = () => {
-      document.getElementById('classSelectScreen').style.display = 'none';
-      document.getElementById('mainMenuScreen').style.display = 'flex';
-      requestAnimationFrame(updateAndRenderTitleParticles);
-    };
-
-    // Abas de seleção de classe
-    document.querySelectorAll('.class-tab').forEach(tab => {
-      tab.onclick = () => {
-        document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        selectedClass = tab.dataset.class;
-        updateClassPreviewInfo(selectedClass);
-      };
-    });
-
-    // Controles do Preview
-    document.getElementById('btnRotateLeft').onclick = () => {
-      previewAngle -= 0.6;
-    };
-    document.getElementById('btnRotateRight').onclick = () => {
-      previewAngle += 0.6;
-    };
-    document.getElementById('btnPreviewAttack').onclick = () => {
-      audio.init();
-      audio.playSwordSwing(1);
-      previewAttackTimer = 14;
-      triggerHeroVoice(selectedClass);
-    };
-    document.getElementById('btnPreviewShield').onclick = () => {
-      audio.init();
-      audio.playShieldBlock();
-      previewBlocking = !previewBlocking;
-    };
-
-    function startGameWithClass(clsKey) {
-      audio.init();
-      audio.playMagicSpell();
-
-      const cls = CLASSES[clsKey];
-      player.clsKey = clsKey;
-      player.hp = cls.hp;
-      player.maxHp = cls.hp;
-      player.mana = cls.mana;
-      player.maxMana = cls.mana;
-      player.equipment.mainhand.name = cls.weapon;
-
-      document.getElementById('heroClassName').textContent = cls.name.toUpperCase();
-      document.getElementById('heroAvatar').textContent = cls.icon;
-      document.getElementById('silhouetteHero').textContent = cls.icon;
-      document.getElementById('skill1Icon').textContent = cls.skills[0].icon;
-      document.getElementById('skill2Icon').textContent = cls.skills[1].icon;
-
-      document.getElementById('classSelectScreen').style.display = 'none';
-      document.getElementById('mainMenuScreen').style.display = 'none';
-
-      generateDungeon(1);
-      updateHud();
-      showNotification(`Bem-vindo a Norrath V5! Siga o caminho linear e converse com o Ancião [💬].`);
-
-      // Voz de entrada do herói
-      voices.speak("Estou pronto para a batalha nas profundezas!", clsKey);
-
-      requestAnimationFrame(gameLoop);
-    }
-
-    document.getElementById('btnStartGame').onclick = () => {
-      startGameWithClass(selectedClass);
     };
 
   </script>
