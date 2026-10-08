@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Champions of Norrath - 2.5D Isometric Engine V4</title>
+  <title>Champions of Norrath - EMBASS Engine Photo-Real 2.5D</title>
   <style>
     :root {
       --gold: #f5c542;
@@ -1042,6 +1042,52 @@
         width: 46px; height: 46px; font-size: 18px;
       }
     }
+  
+    .shop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    @media (max-width: 600px) {
+      .shop-grid { grid-template-columns: 1fr; max-height: 280px; }
+    }
+    .shop-item-card {
+      background: #18120d;
+      border: 1.5px solid #4a3725;
+      border-radius: 6px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .shop-item-card:hover, .shop-item-card:active {
+      border-color: var(--gold);
+      background: #2b1f14;
+    }
+    .shop-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .shop-item-info b { font-size: 11px; color: #ebdcc7; }
+    .shop-item-info p { font-size: 9.5px; color: #a3917d; }
+    .shop-price-tag {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--gold);
+      background: rgba(0,0,0,0.5);
+      padding: 3px 6px;
+      border-radius: 4px;
+      border: 1px solid #574229;
+      white-space: nowrap;
+    }
+
   </style></style>
 </head>
 <body>
@@ -1239,6 +1285,24 @@
       <div class="skills-list" id="skillsList"></div>
     </div>
 
+    <!-- JANELA DO MERCADOR DE NORRATH (EMPÓRIO GÓTICO) -->
+    <div id="shopModal" class="gothic-modal interactive">
+      <div class="modal-header">
+        <h2>🏪 Empório de Norrath (<span id="shopPlayerGold" style="color:var(--gold);">150</span> 💰)</h2>
+        <div class="close-btn" id="btnCloseShop">✕</div>
+      </div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button class="dialog-btn" id="btnShopTabBuy" style="flex:1; border-color:var(--gold);">🛒 Comprar Equipamentos</button>
+        <button class="dialog-btn" id="btnShopTabSell" style="flex:1;">💰 Vender da Mochila</button>
+      </div>
+      <div id="shopBuyView">
+        <div class="shop-grid" id="shopBuyGrid"></div>
+      </div>
+      <div id="shopSellView" style="display:none;">
+        <div class="shop-grid" id="shopSellGrid"></div>
+      </div>
+    </div>
+
     <!-- JANELA DE MISSÕES -->
     <div id="questsModal" class="gothic-modal interactive">
       <div class="modal-header">
@@ -1257,6 +1321,7 @@
     <div class="main-menu-content">
       <div class="menu-header-bar">
         <h1 class="menu-game-title">⚔️ Champions of Norrath</h1>
+        <div style="font-size:10px; color:#c79a3b; letter-spacing:3px; font-weight:bold; margin-top:2px;">EMBASS ENGINE • FOTO-REALISMO 2.5D</div>
         <div class="menu-game-subtitle">✦ Realms of EverQuest ✦</div>
       </div>
 
@@ -1317,7 +1382,7 @@
       </div>
 
       <p style="font-size: 9px; color: #736252; margin-top: 8px; letter-spacing: 1px; text-align: center;">
-        ENGINE 2.5D COM DUBLAGEM EM PORTUGUÊS • ZERO DESLIZAMENTO • AUTO-ATAQUE
+        EMBASS ENGINE 2.5D • CENÁRIO COM LAJES & POÇAS D'ÁGUA • FOGUEIRAS NO CHÃO • VISUAL DINÂMICO DE ARMADURAS
       </p>
     </div>
   </div>
@@ -1697,23 +1762,125 @@
     let currentBiomeKey = 'faydark';
 
     // Texturas Dinâmicas
+    // -------------------------------------------------------------
+    // EMBASS ENGINE: GERADOR PROCEDURAL DE TERRENO FOTO-REALISTA
+    // Lajes de Pedra Entalhada, Poças d'Água Reflexivas e Tufos de Mato
+    // -------------------------------------------------------------
     const Textures = {
       canvasMap: {},
-      getFloor(biomeKey) {
-        if (this.canvasMap[biomeKey]) return this.canvasMap[biomeKey];
-        const b = BIOMES[biomeKey];
+      getFloor(biomeKey, variant = 0) {
+        const cacheKey = `${biomeKey}_${variant}`;
+        if (this.canvasMap[cacheKey]) return this.canvasMap[cacheKey];
+
+        const b = BIOMES[biomeKey] || BIOMES.faydark;
         const fc = document.createElement('canvas');
         fc.width = 64; fc.height = 32;
         const fctx = fc.getContext('2d');
+
+        // Losango Isométrico Base
+        fctx.save();
         fctx.beginPath();
         fctx.moveTo(32, 0); fctx.lineTo(64, 16); fctx.lineTo(32, 32); fctx.lineTo(0, 16);
         fctx.closePath();
-        fctx.fillStyle = b.floorColor; fctx.fill();
-        fctx.strokeStyle = '#2d241c'; fctx.lineWidth = 1.5; fctx.stroke();
+        fctx.clip();
 
-        fctx.strokeStyle = 'rgba(0,0,0,0.4)'; fctx.lineWidth = 1;
-        fctx.beginPath(); fctx.moveTo(18, 14); fctx.lineTo(26, 20); fctx.lineTo(38, 18); fctx.stroke();
-        this.canvasMap[biomeKey] = fc;
+        // 1. Cor Base da Rocha Natural com Gradiente de Profundidade
+        const grad = fctx.createLinearGradient(16, 0, 48, 32);
+        grad.addColorStop(0, b.floorColor || '#231d16');
+        grad.addColorStop(1, '#15110d');
+        fctx.fillStyle = grad;
+        fctx.fillRect(0, 0, 64, 32);
+
+        // 2. Lajes de Pedra de Cantaria Esculpidas em 3D
+        // Pedra Superior
+        fctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        fctx.beginPath();
+        fctx.moveTo(32, 2); fctx.lineTo(52, 12); fctx.lineTo(38, 18); fctx.lineTo(20, 9);
+        fctx.closePath(); fctx.fill();
+        fctx.strokeStyle = '#0e0b08'; fctx.lineWidth = 1.2; fctx.stroke();
+
+        // Pedra Inferior
+        fctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        fctx.beginPath();
+        fctx.moveTo(22, 11); fctx.lineTo(38, 19); fctx.lineTo(32, 30); fctx.lineTo(14, 19);
+        fctx.closePath(); fctx.fill();
+        fctx.strokeStyle = '#0e0b08'; fctx.lineWidth = 1.2; fctx.stroke();
+
+        // Pedra Direita
+        fctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+        fctx.beginPath();
+        fctx.moveTo(39, 18); fctx.lineTo(61, 16); fctx.lineTo(48, 26); fctx.lineTo(34, 25);
+        fctx.closePath(); fctx.fill();
+        fctx.strokeStyle = '#0e0b08'; fctx.lineWidth = 1.2; fctx.stroke();
+
+        // Chanfros e Bevels Claros de Relevo 3D
+        fctx.strokeStyle = 'rgba(255, 230, 180, 0.15)'; fctx.lineWidth = 1;
+        fctx.beginPath(); fctx.moveTo(32, 3); fctx.lineTo(50, 12); fctx.stroke();
+        fctx.beginPath(); fctx.moveTo(22, 12); fctx.lineTo(36, 19); fctx.stroke();
+
+        // 3. Detalhes Específicos por Variante
+        if (variant === 1) {
+          // VARIANTE 1: Tufos de Mato e Musgo Verde nas Juntas
+          fctx.fillStyle = '#263b18';
+          fctx.beginPath(); fctx.arc(28, 16, 4, 0, Math.PI * 2); fctx.fill();
+          fctx.fillStyle = '#3c5a24';
+          fctx.beginPath(); fctx.arc(31, 15, 2.5, 0, Math.PI * 2); fctx.fill();
+
+          // Lâminas de grama individuais
+          fctx.strokeStyle = '#5a8832'; fctx.lineWidth = 1.2;
+          fctx.beginPath(); fctx.moveTo(27, 18); fctx.quadraticCurveTo(24, 13, 22, 11); fctx.stroke();
+          fctx.beginPath(); fctx.moveTo(29, 17); fctx.quadraticCurveTo(29, 11, 28, 8); fctx.stroke();
+          fctx.beginPath(); fctx.moveTo(31, 17); fctx.quadraticCurveTo(34, 12, 36, 10); fctx.stroke();
+        } else if (variant === 2) {
+          // VARIANTE 2: Poça d'Água Reflexiva (Water Puddle) com Brilho Especular
+          // Borda molhada escura da poça
+          fctx.fillStyle = 'rgba(10, 8, 6, 0.85)';
+          fctx.beginPath();
+          fctx.ellipse(33, 17, 13, 6.5, 0, 0, Math.PI * 2);
+          fctx.fill();
+
+          // Água translúcida profunda
+          fctx.fillStyle = 'rgba(20, 36, 48, 0.8)';
+          fctx.beginPath();
+          fctx.ellipse(33, 17, 11, 5.2, 0, 0, Math.PI * 2);
+          fctx.fill();
+
+          // Reflexo Especular da Luz na Água
+          const waterRefl = fctx.createRadialGradient(31, 15, 1, 33, 17, 9);
+          waterRefl.addColorStop(0, 'rgba(180, 230, 255, 0.75)');
+          waterRefl.addColorStop(0.3, 'rgba(70, 150, 200, 0.45)');
+          waterRefl.addColorStop(1, 'rgba(20, 40, 60, 0)');
+          fctx.fillStyle = waterRefl;
+          fctx.beginPath();
+          fctx.ellipse(32, 16, 9, 3.8, 0, 0, Math.PI * 2);
+          fctx.fill();
+
+          // Ondulação suave da água
+          fctx.strokeStyle = 'rgba(220, 245, 255, 0.4)'; fctx.lineWidth = 0.8;
+          fctx.beginPath();
+          fctx.arc(33, 17, 4.5, 0.2, Math.PI * 1.8);
+          fctx.stroke();
+        } else if (variant === 3) {
+          // VARIANTE 3: Rachaduras e Fissuras na Laje
+          fctx.strokeStyle = 'rgba(0, 0, 0, 0.7)'; fctx.lineWidth = 1;
+          fctx.beginPath();
+          fctx.moveTo(18, 14); fctx.lineTo(25, 17); fctx.lineTo(29, 15); fctx.lineTo(35, 21);
+          fctx.stroke();
+          // Cascalho solto
+          fctx.fillStyle = '#42362b';
+          fctx.beginPath(); fctx.arc(44, 22, 1.5, 0, Math.PI * 2); fctx.fill();
+          fctx.beginPath(); fctx.arc(47, 24, 1.2, 0, Math.PI * 2); fctx.fill();
+        }
+
+        // Borda do ladrilho isométrico
+        fctx.restore();
+        fctx.strokeStyle = '#18120d'; fctx.lineWidth = 1.2;
+        fctx.beginPath();
+        fctx.moveTo(32, 0); fctx.lineTo(64, 16); fctx.lineTo(32, 32); fctx.lineTo(0, 16);
+        fctx.closePath();
+        fctx.stroke();
+
+        this.canvasMap[cacheKey] = fc;
         return fc;
       }
     };
@@ -1855,6 +2022,9 @@
     let projectiles = []; // Projéteis mágicos com iluminação dinâmica
     let groundLoot = []; // Itens no chão com feixes de luz verticais (Loot Beams)
     let dungeonLevers = []; // Alavancas mecânicas de portão
+    let bossCutsceneTimer = 0; // Timer da cena de abertura do chefe
+    let bossCutsceneTriggered = false; // Flag de ativação única da cutscene
+    let gpBtnCooldown = {}; // Cooldown de botões do controle físico
     let stairs = null;
     let bossGate = null;
     let activeBoss = null;
@@ -1948,6 +2118,13 @@
       // NPC Ancião no Santuário Inicial (Sala 1)
       if (floor === 1) {
         npcs.push({ gx: 4, gy: 5, name: 'Ancião de Norrath', icon: '🧙‍♂️', type: 'elder', hasSpoken: false });
+        npcs.push({ gx: 7, gy: 5, name: 'Mercador de Norrath', icon: '🧔', type: 'merchant', hasSpoken: false });
+      }
+
+      if (floor >= 2) {
+        dungeonLevers = [{ gx: 18, gy: 14, pulled: false, icon: '🕹️' }];
+      } else {
+        dungeonLevers = [];
       }
 
       props = [
@@ -2070,11 +2247,29 @@
     function doAttack() {
       if (player.attacking > 0 || player.blocking) return;
 
-      // Interação com NPC Ancião
+      // Interação com NPCs (Ancião ou Mercador de Norrath)
+      let interactedNpc = false;
       npcs.forEach(npc => {
-        if (Math.hypot(npc.gx - player.gx, npc.gy - player.gy) < 1.8) {
-          openDialog(npc.name, 'Saudações, Campeão de Norrath! Minhas missões estão abertas para você no Diário [J]. Limpe as terras e torne-se uma lenda!');
-          return;
+        if (Math.hypot(npc.gx - player.gx, npc.gy - player.gy) < 1.9) {
+          interactedNpc = true;
+          if (npc.type === 'merchant') {
+            toggleShop();
+          } else {
+            openDialog(npc.name, 'Saudações, Campeão de Norrath! Minhas missões estão abertas para você no Diário [J]. Limpe as terras e torne-se uma lenda!');
+          }
+        }
+      });
+      if (interactedNpc) return;
+
+      // Interação com Alavancas de Portão
+      dungeonLevers.forEach(lev => {
+        if (!lev.pulled && Math.hypot(lev.gx - player.gx, lev.gy - player.gy) < 1.8) {
+          lev.pulled = true;
+          audio.playBreakWood();
+          screenShake = 8;
+          showNotification('⚙️ Mecanismo antigo acionado! Os portões se abriram!');
+          voices.speak('As engrenagens ecoam pelas catacumbas... o caminho está livre!', 'elder');
+          if (bossGate) bossGate.locked = false;
         }
       });
 
@@ -2210,6 +2405,25 @@
           } else if (gemEffect === 'ice') {
             spawnFloatingText(`❄️ LENTIDÃO`, m.gx, m.gy - 0.4, '#00ccff');
             m.frozen = 1.5;
+          }
+
+          // REAÇÃO ELEMENTAL: ESTILHAÇO DE GELO (SHATTER)
+          if (m.frozen && m.frozen > 0 && (gemEffect === 'fire' || player.clsKey === 'wizard' || player.comboStep === 3)) {
+            m.frozen = 0;
+            const shatterBonus = Math.round(totalDmg * 1.5);
+            m.hp -= shatterBonus;
+            screenShake = 8;
+            audio.playBreakWood();
+            spawnFloatingText(`❄️💥 ESTILHAÇO (+${shatterBonus})!`, m.gx, m.gy, '#00ffff');
+            voices.speak('Estilhaçar!', player.clsKey);
+
+            monsters.forEach(otherM => {
+              if (otherM !== m && otherM.alive && Math.hypot(otherM.gx - m.gx, otherM.gy - m.gy) < 2.5) {
+                otherM.hp -= 22;
+                spawnBlood(otherM.gx, otherM.gy, 5);
+                spawnFloatingText(`-22 (Estilhaço)`, otherM.gx, otherM.gy, '#00ffff');
+              }
+            });
           }
 
           if (m.isBoss) {
@@ -3031,19 +3245,18 @@
       }
       ctx.translate(camera.x, camera.y);
 
-      // Chão do Bioma Atual
-      const floorTile = Textures.getFloor(currentBiomeKey);
+      // Chão do Bioma Atual com Variantes Foto-Realistas da EMBASS Engine
       for (let y = 0; y < MAP_SIZE; y++) {
         for (let x = 0; x < MAP_SIZE; x++) {
           const iso = worldToIso(x, y);
           if (iso.x + camera.x < -100 || iso.x + camera.x > canvas.width + 100 ||
               iso.y + camera.y < -100 || iso.y + camera.y > canvas.height + 100) continue;
 
+          const variant = (x * 7 + y * 13) % 4;
+          const floorTile = Textures.getFloor(currentBiomeKey, variant);
           drawTile(iso.x, iso.y, dungeonMap[y][x], floorTile);
         }
       }
-
-
 
       // FEIXES DE LUZ VERTICAIS DOS ITENS LENDÁRIOS (LOOT BEAMS)
       groundLoot.forEach(gl => {
@@ -3250,7 +3463,29 @@
 
       lightCtx.restore();
 
-      // Renderização de Balões de Fala (Sem mutação de tempo)
+      // BARRAS DE CINEMA DA CUTSCENE DO CHEFE (ESTILO PS2)
+      if (bossCutsceneTimer > 0) {
+        ctx.save();
+        ctx.fillStyle = '#050302';
+        ctx.fillRect(0, 0, canvas.width, 48);
+        ctx.fillRect(0, canvas.height - 48, canvas.width, 48);
+
+        ctx.strokeStyle = '#8c6a18';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, 48); ctx.lineTo(canvas.width, 48);
+        ctx.moveTo(0, canvas.height - 48); ctx.lineTo(canvas.width, canvas.height - 48);
+        ctx.stroke();
+
+        ctx.font = '900 13px "Cinzel", Georgia, serif';
+        ctx.fillStyle = 'var(--gold)';
+        ctx.textAlign = 'center';
+        ctx.letterSpacing = '2px';
+        ctx.fillText('✦ ENCONTRO COM O CHEFE: WARLORD DOS ORCS ✦', canvas.width / 2, 30);
+        ctx.restore();
+      }
+
+            // Renderização de Balões de Fala (Sem mutação de tempo)
       for (let i = 0; i < dialogueBalloons.length; i++) {
         const b = dialogueBalloons[i];
         const iso = worldToIso(b.gx, b.gy);
@@ -3291,32 +3526,77 @@
       if (type === 0) {
         ctx.drawImage(floorTile, x - 32, y);
       } else {
-        const b = BIOMES[currentBiomeKey];
-        const wallH = 42;
+        const b = BIOMES[currentBiomeKey] || BIOMES.faydark;
+        const wallH = 44;
+        const leftX = x - TILE_W / 2;
+        const rightX = x + TILE_W / 2;
+        const midX = x;
 
+        // 1. Face Esquerda da Parede de Pedra (Sombreada com Fiadas de Blocos)
+        ctx.save();
         ctx.beginPath();
-        ctx.moveTo(x - TILE_W / 2, y + TILE_H / 2);
-        ctx.lineTo(x, y + TILE_H);
-        ctx.lineTo(x, y + TILE_H - wallH);
-        ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2 - wallH);
+        ctx.moveTo(leftX, y + TILE_H / 2);
+        ctx.lineTo(midX, y + TILE_H);
+        ctx.lineTo(midX, y + TILE_H - wallH);
+        ctx.lineTo(leftX, y + TILE_H / 2 - wallH);
         ctx.closePath();
-        ctx.fillStyle = b.wallColor; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
+        ctx.fillStyle = b.wallColor || '#1c1713';
+        ctx.fill();
 
+        // Fiadas horizontais de blocos entalhados
+        ctx.strokeStyle = '#100c08'; ctx.lineWidth = 1.2;
+        for (let h = 11; h < wallH; h += 11) {
+          ctx.beginPath();
+          ctx.moveTo(leftX, y + TILE_H / 2 - h);
+          ctx.lineTo(midX, y + TILE_H - h);
+          ctx.stroke();
+        }
+        // Juntas verticais das pedras
         ctx.beginPath();
-        ctx.moveTo(x, y + TILE_H);
-        ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2);
-        ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2 - wallH);
-        ctx.lineTo(x, y + TILE_H - wallH);
-        ctx.closePath();
-        ctx.fillStyle = b.wallColor; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
+        ctx.moveTo(leftX + 16, y + TILE_H / 2 + 8 - 11); ctx.lineTo(leftX + 16, y + TILE_H / 2 + 8);
+        ctx.moveTo(leftX + 16, y + TILE_H / 2 + 8 - 33); ctx.lineTo(leftX + 16, y + TILE_H / 2 + 8 - 22);
+        ctx.stroke();
+        ctx.restore();
 
+        // 2. Face Direita da Parede (Iluminada com Gradiente Angular)
+        ctx.save();
         ctx.beginPath();
-        ctx.moveTo(x, y - wallH);
-        ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2 - wallH);
-        ctx.lineTo(x, y + TILE_H - wallH);
-        ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2 - wallH);
+        ctx.moveTo(midX, y + TILE_H);
+        ctx.lineTo(rightX, y + TILE_H / 2);
+        ctx.lineTo(rightX, y + TILE_H / 2 - wallH);
+        ctx.lineTo(midX, y + TILE_H - wallH);
         ctx.closePath();
-        ctx.fillStyle = b.wallTop; ctx.fill(); ctx.strokeStyle = '#2b231c'; ctx.stroke();
+        const rightGrad = ctx.createLinearGradient(midX, y, rightX, y);
+        rightGrad.addColorStop(0, b.wallColor || '#2c231b');
+        rightGrad.addColorStop(1, '#3b3026');
+        ctx.fillStyle = rightGrad;
+        ctx.fill();
+
+        // Fiadas de blocos na face direita
+        ctx.strokeStyle = '#16110c'; ctx.lineWidth = 1.2;
+        for (let h = 11; h < wallH; h += 11) {
+          ctx.beginPath();
+          ctx.moveTo(midX, y + TILE_H - h);
+          ctx.lineTo(rightX, y + TILE_H / 2 - h);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.moveTo(midX + 16, y + TILE_H - 8 - 22); ctx.lineTo(midX + 16, y + TILE_H - 8 - 11);
+        ctx.stroke();
+        ctx.restore();
+
+        // 3. Topo da Parede de Pedra
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(midX, y - wallH);
+        ctx.lineTo(rightX, y + TILE_H / 2 - wallH);
+        ctx.lineTo(midX, y + TILE_H - wallH);
+        ctx.lineTo(leftX, y + TILE_H / 2 - wallH);
+        ctx.closePath();
+        ctx.fillStyle = b.wallTop || '#44372c';
+        ctx.fill();
+        ctx.strokeStyle = '#5a493b'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.restore();
       }
     }
 
@@ -3373,15 +3653,10 @@
 
     function drawPlayer() {
       const iso = worldToIso(player.gx, player.gy);
+      drawCharacterOnContext(ctx, player, iso.x, iso.y + 16);
+      return;
       const footX = iso.x;
-      const footY = iso.y + 16; // Ponto exato de contato com o chão isométrico
-
-      // 1. Sombra de Contato com o Piso
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(footX, footY, 16, 8, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-      ctx.fill();
+      const footY = iso.y + 16;
 
       // 2. Animação de Passos (Walk Cycle) & Respiração
       const walkCycle = player.walkTimer || 0;
@@ -4048,30 +4323,101 @@
       ctx.restore();
     }
 
+    // -------------------------------------------------------------
+    // EMBASS ENGINE: FOGUEIRA DE PEDRA REALISTA NO CHÃO (CAMPFIRE)
+    // Anel de Pedras de Rio, Lenha Cruzada em Brasa, Chamas e Brasas Vivas
+    // -------------------------------------------------------------
     function drawTorch(t) {
       const iso = worldToIso(t.gx, t.gy);
       const footX = iso.x;
       const footY = iso.y + 16;
+      const anim = Date.now() * 0.005 + (t.flame || 0);
 
       ctx.save();
-      ctx.strokeStyle = '#2d241c'; ctx.lineWidth = 3;
+      // 1. Mancha de Fuligem e Cinzas Escuras no Piso de Pedra
       ctx.beginPath();
-      ctx.moveTo(footX, footY - 8);
-      ctx.lineTo(footX, footY - 20);
+      ctx.ellipse(footX, footY, 18, 9, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(10, 7, 5, 0.75)';
+      ctx.fill();
+
+      // 2. Anel de Pedras Rústicas de Rio no Chão (Círculo Isométrico 3D)
+      const stoneCount = 9;
+      for (let i = 0; i < stoneCount; i++) {
+        const ang = (i / stoneCount) * Math.PI * 2;
+        const stX = footX + Math.cos(ang) * 14;
+        const stY = footY + Math.sin(ang) * 7.5;
+        const stR = 3.2 + (i % 3) * 0.8;
+
+        // Sombra da pedra
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath(); ctx.ellipse(stX, stY + 2, stR + 1, stR * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Pedra com Relevo 3D
+        const stGrad = ctx.createRadialGradient(stX - 1, stY - 1, 1, stX, stY, stR);
+        stGrad.addColorStop(0, '#5a4634');
+        stGrad.addColorStop(0.7, '#382a1e');
+        stGrad.addColorStop(1, '#1e1610');
+        ctx.fillStyle = stGrad;
+        ctx.beginPath(); ctx.ellipse(stX, stY, stR, stR * 0.75, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#221912'; ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      // 3. Troncos de Lenha Cruzados em Brasa Ardente
+      ctx.strokeStyle = '#2e1c10'; ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(footX - 10, footY + 2); ctx.lineTo(footX + 10, footY - 3);
+      ctx.moveTo(footX + 8, footY + 2); ctx.lineTo(footX - 8, footY - 3);
+      ctx.moveTo(footX - 2, footY + 4); ctx.lineTo(footX + 2, footY - 5);
       ctx.stroke();
 
-      ctx.fillStyle = '#42372c';
-      ctx.fillRect(footX - 3, footY - 23, 6, 4);
-
-      const flameShift = Math.sin(t.flame) * 1.8;
-      const fY = footY - 26;
-
+      // Centro de Carvão em Brasa Incandescente
       ctx.fillStyle = '#ff3300';
-      ctx.beginPath(); ctx.arc(footX + flameShift, fY, 5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#ff9900';
-      ctx.beginPath(); ctx.arc(footX + flameShift * 0.7, fY - 2, 3.5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#ffee44';
-      ctx.beginPath(); ctx.arc(footX, fY - 3, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(footX, footY - 1, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff8800';
+      ctx.beginPath(); ctx.arc(footX, footY - 2, 2.5, 0, Math.PI * 2); ctx.fill();
+
+      // 4. Labaredas de Fogo Vivas em Multicamadas
+      const fShift1 = Math.sin(anim * 1.8) * 2.2;
+      const fShift2 = Math.cos(anim * 2.3) * 1.8;
+      const fPulse = Math.sin(anim * 3.1) * 2;
+      const fireBaseY = footY - 3;
+      const fireTipY = footY - 24 + fPulse;
+
+      // Camada Externa: Labaredas Vermelhas e Alaranjadas
+      ctx.fillStyle = 'rgba(255, 60, 0, 0.85)';
+      ctx.beginPath();
+      ctx.moveTo(footX - 8, fireBaseY);
+      ctx.quadraticCurveTo(footX - 11 + fShift1, fireBaseY - 12, footX + fShift1, fireTipY);
+      ctx.quadraticCurveTo(footX + 11 + fShift2, fireBaseY - 12, footX + 8, fireBaseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Camada Intermediária: Chamas Amarelo-Ouro Vivas
+      ctx.fillStyle = 'rgba(255, 180, 0, 0.9)';
+      ctx.beginPath();
+      ctx.moveTo(footX - 5, fireBaseY);
+      ctx.quadraticCurveTo(footX - 6 + fShift2, fireBaseY - 8, footX + fShift2 * 0.7, fireTipY + 5);
+      ctx.quadraticCurveTo(footX + 6 + fShift1, fireBaseY - 8, footX + 5, fireBaseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Núcleo Branco Incandescente de Altíssima Temperatura
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.moveTo(footX - 2.5, fireBaseY);
+      ctx.quadraticCurveTo(footX - 3, fireBaseY - 5, footX, fireTipY + 11);
+      ctx.quadraticCurveTo(footX + 3, fireBaseY - 5, footX + 2.5, fireBaseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // 5. Faíscas e Brasas Subindo ao Ar (Embers)
+      for (let s = 0; s < 3; s++) {
+        const sSeed = anim * 2 + s * 2.1;
+        const sY = fireTipY - ((sSeed * 10) % 24);
+        const sX = footX + Math.sin(sSeed * 3) * 5;
+        ctx.fillStyle = s % 2 === 0 ? '#ffcc00' : '#ff4400';
+        ctx.beginPath(); ctx.arc(sX, sY, 1.2, 0, Math.PI * 2); ctx.fill();
+      }
 
       ctx.restore();
     }
@@ -4476,12 +4822,14 @@
 
     // Função de desenho do herói
     function drawCharacterOnContext(tCtx, charData, footX, footY) {
+      // 1. Sombra de Contato Suave com o Piso
       tCtx.save();
       tCtx.beginPath();
       tCtx.ellipse(footX, footY, 16, 8, 0, 0, Math.PI * 2);
-      tCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      tCtx.fillStyle = 'rgba(0, 0, 0, 0.65)';
       tCtx.fill();
 
+      // 2. Animação de Passos (Walk Cycle) & Respiração
       const walkCycle = charData.walkTimer || 0;
       const idleCycle = charData.idleTimer || 0;
       const bob = charData.isMoving ? Math.abs(Math.sin(walkCycle)) * 3.5 : Math.sin(idleCycle) * 1.5;
@@ -4496,33 +4844,82 @@
 
       const hipY = footY - 12 - bob;
       const chestY = footY - 22 - bob;
-      const headY = footY - 32 - bob;
+      const headY = footY - 33 - bob;
 
-      // Pernas
-      tCtx.fillStyle = '#261b14';
-      tCtx.fillRect(footX - 6, hipY, 4, 8);
-      tCtx.fillStyle = '#4a3625';
-      tCtx.fillRect(footX - 6 + (isFacingRight ? -legStride * 0.5 : legStride * 0.5), footY - 6, 5, 6);
+      // Extração dos Equipamentos Visuais Reais
+      const eq = charData.equipment || {};
+      const helmName = (eq.helm && eq.helm.name) ? eq.helm.name : '';
+      const chestName = (eq.chest && eq.chest.name) ? eq.chest.name : '';
+      const bootsName = (eq.boots && eq.boots.name) ? eq.boots.name : '';
+      const wepName = (eq.mainhand && eq.mainhand.name) ? eq.mainhand.name : '';
+      const offName = (eq.offhand && eq.offhand.name) ? eq.offhand.name : '';
+      const gem = (eq.mainhand && eq.mainhand.socket) ? eq.mainhand.socket : null;
 
-      tCtx.fillStyle = '#1e140e';
-      tCtx.fillRect(footX + 2, hipY, 4, 8);
-      tCtx.fillStyle = '#3d2b1c';
-      tCtx.fillRect(footX + 2 + (isFacingRight ? legStride * 0.5 : -legStride * 0.5), footY - 6, 5, 6);
+      // 3. Pernas & Botas Visuais
+      const isPlateBoots = bootsName.includes('Guerra') || bootsName.includes('Placas') || bootsName.includes('Ferro');
+      tCtx.fillStyle = isPlateBoots ? '#4a5568' : '#261b14';
+      tCtx.fillRect(footX - 6, hipY, 4.5, 8);
+      tCtx.fillStyle = isPlateBoots ? '#718096' : '#4a3625';
+      tCtx.fillRect(footX - 6 + (isFacingRight ? -legStride * 0.5 : legStride * 0.5), footY - 7, 5.5, 7);
 
-      // Capa (Se Ranger ou Mago)
-      if (isFacingFront && (charData.clsKey === 'ranger' || charData.clsKey === 'wizard')) {
-        tCtx.fillStyle = charData.clsKey === 'ranger' ? '#1c3619' : '#1b1b4d';
+      tCtx.fillStyle = isPlateBoots ? '#3b4352' : '#1e140e';
+      tCtx.fillRect(footX + 2, hipY, 4.5, 8);
+      tCtx.fillStyle = isPlateBoots ? '#5f6c80' : '#3d2b1c';
+      tCtx.fillRect(footX + 2 + (isFacingRight ? legStride * 0.5 : -legStride * 0.5), footY - 7, 5.5, 7);
+
+      // 4. Capa Dinâmica com Física de Movimento
+      if (isFacingFront && (charData.clsKey === 'ranger' || charData.clsKey === 'wizard' || chestName.includes('Real'))) {
+        const capeSwing = Math.sin(walkCycle) * 2.5;
+        tCtx.fillStyle = charData.clsKey === 'ranger' ? '#1c3619' : (charData.clsKey === 'wizard' ? '#1b1b4d' : '#4a1515');
         tCtx.beginPath();
-        tCtx.moveTo(footX - 8, chestY);
-        tCtx.lineTo(footX + 8, chestY);
-        tCtx.lineTo(footX + 11, footY - 4);
-        tCtx.lineTo(footX - 11, footY - 4);
+        tCtx.moveTo(footX - 9, chestY);
+        tCtx.lineTo(footX + 9, chestY);
+        tCtx.lineTo(footX + 12 + capeSwing, footY - 3);
+        tCtx.lineTo(footX - 12 + capeSwing, footY - 3);
         tCtx.closePath();
         tCtx.fill();
+        tCtx.strokeStyle = 'rgba(0,0,0,0.4)'; tCtx.lineWidth = 1; tCtx.stroke();
       }
 
-      // Torso & Armadura
-      if (charData.clsKey === 'barbarian') {
+      // 5. Torso & Peitoral / Armadura Visual Dinâmica Real
+      const isHeavyPlate = chestName.includes('Placas') || chestName.includes('Real');
+      const isChainmail = chestName.includes('Malha');
+
+      if (isHeavyPlate) {
+        // Armadura de Placas de Aço Polido Reluzente
+        const plateGrad = tCtx.createLinearGradient(footX - 8, chestY, footX + 8, chestY + 12);
+        plateGrad.addColorStop(0, '#718096');
+        plateGrad.addColorStop(0.5, '#e2e8f0');
+        plateGrad.addColorStop(1, '#4a5568');
+        tCtx.fillStyle = plateGrad;
+        tCtx.fillRect(footX - 8, chestY, 16, 12);
+        tCtx.strokeStyle = '#2d3748'; tCtx.lineWidth = 1.5; tCtx.strokeRect(footX - 8, chestY, 16, 12);
+
+        // Insígnia Real Dourada no Peito
+        tCtx.fillStyle = '#d4af37';
+        tCtx.beginPath();
+        tCtx.moveTo(footX, chestY + 2); tCtx.lineTo(footX + 4, chestY + 6); tCtx.lineTo(footX, chestY + 10); tCtx.lineTo(footX - 4, chestY + 6);
+        tCtx.closePath(); tCtx.fill();
+
+        // Ombreiras Pesadas Metálicas
+        tCtx.fillStyle = '#a0aec0';
+        tCtx.beginPath(); tCtx.arc(footX - 9, chestY + 2, 5.5, 0, Math.PI * 2); tCtx.fill();
+        tCtx.beginPath(); tCtx.arc(footX + 9, chestY + 2, 5.5, 0, Math.PI * 2); tCtx.fill();
+        tCtx.fillStyle = '#2d3748'; tCtx.fillRect(footX - 8, hipY - 2, 16, 4);
+      } else if (isChainmail) {
+        // Cota de Malha Metálica com Textura e Cinto
+        tCtx.fillStyle = '#64748b';
+        tCtx.fillRect(footX - 7, chestY, 14, 11);
+        tCtx.strokeStyle = '#334155'; tCtx.lineWidth = 1.2;
+        tCtx.beginPath();
+        tCtx.moveTo(footX - 7, chestY + 3); tCtx.lineTo(footX + 7, chestY + 3);
+        tCtx.moveTo(footX - 7, chestY + 7); tCtx.lineTo(footX + 7, chestY + 7);
+        tCtx.stroke();
+        // Cinto com fivela dourada
+        tCtx.fillStyle = '#3e2714'; tCtx.fillRect(footX - 7, hipY - 2, 14, 4);
+        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 2, hipY - 2, 4, 4);
+      } else if (charData.clsKey === 'barbarian') {
+        // Torso Musculoso do Bárbaro com Suspensórios de Couro
         tCtx.fillStyle = '#b87d54';
         tCtx.fillRect(footX - 7, chestY, 14, 10);
         tCtx.strokeStyle = '#5a483a'; tCtx.lineWidth = 2;
@@ -4533,90 +4930,99 @@
         tCtx.beginPath(); tCtx.arc(footX + 8, chestY + 2, 4.5, 0, Math.PI * 2); tCtx.fill();
         tCtx.fillStyle = '#261b14'; tCtx.fillRect(footX - 7, hipY - 2, 14, 4);
         tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 2, hipY - 2, 4, 4);
-      } else if (charData.clsKey === 'ranger') {
+      } else if (charData.clsKey === 'wizard') {
+        // Túnica Mística Arcana
+        tCtx.fillStyle = '#212459';
+        tCtx.beginPath();
+        tCtx.moveTo(footX - 7, chestY); tCtx.lineTo(footX + 7, chestY); tCtx.lineTo(footX + 9, footY - 2); tCtx.lineTo(footX - 9, footY - 2);
+        tCtx.closePath(); tCtx.fill();
+        tCtx.strokeStyle = '#d4af37'; tCtx.lineWidth = 1.2;
+        tCtx.beginPath(); tCtx.moveTo(footX, chestY); tCtx.lineTo(footX, footY - 2); tCtx.stroke();
+      } else {
+        // Colete de Couro Reforçado
         tCtx.fillStyle = '#2e532b';
         tCtx.fillRect(footX - 6, chestY, 12, 10);
         tCtx.fillStyle = '#5c3d24';
         tCtx.fillRect(footX - 5, chestY + 1, 10, 7);
-        tCtx.strokeStyle = '#3e2714'; tCtx.lineWidth = 2;
-        tCtx.beginPath(); tCtx.moveTo(footX - 6, chestY); tCtx.lineTo(footX + 5, hipY); tCtx.stroke();
         tCtx.fillStyle = '#3e2714'; tCtx.fillRect(footX - 6, hipY - 2, 12, 3);
-      } else if (charData.clsKey === 'cleric') {
-        tCtx.fillStyle = '#8a929a';
-        tCtx.fillRect(footX - 7, chestY, 14, 11);
-        tCtx.fillStyle = '#d4af37';
-        tCtx.fillRect(footX - 5, chestY + 4, 10, 2.5);
-        tCtx.fillRect(footX - 1.5, chestY + 1, 3, 8);
-        tCtx.fillStyle = '#a6b0b8';
-        tCtx.beginPath(); tCtx.arc(footX - 8, chestY + 2, 4, 0, Math.PI * 2); tCtx.fill();
-        tCtx.beginPath(); tCtx.arc(footX + 8, chestY + 2, 4, 0, Math.PI * 2); tCtx.fill();
-        tCtx.fillStyle = '#40352c'; tCtx.fillRect(footX - 7, hipY - 2, 14, 3);
-      } else if (charData.clsKey === 'wizard') {
-        tCtx.fillStyle = '#212459';
-        tCtx.beginPath();
-        tCtx.moveTo(footX - 7, chestY);
-        tCtx.lineTo(footX + 7, chestY);
-        tCtx.lineTo(footX + 9, footY - 2);
-        tCtx.lineTo(footX - 9, footY - 2);
-        tCtx.closePath();
-        tCtx.fill();
-        tCtx.strokeStyle = '#d4af37'; tCtx.lineWidth = 1;
-        tCtx.beginPath(); tCtx.moveTo(footX, chestY); tCtx.lineTo(footX, footY - 2); tCtx.stroke();
-      } else if (charData.clsKey === 'shadowknight') {
-        tCtx.fillStyle = '#1c1b22';
-        tCtx.fillRect(footX - 7, chestY, 14, 11);
-        tCtx.strokeStyle = '#b81424'; tCtx.lineWidth = 1.5;
-        tCtx.beginPath(); tCtx.moveTo(footX - 5, chestY + 2); tCtx.lineTo(footX, chestY + 7); tCtx.lineTo(footX + 5, chestY + 2); tCtx.stroke();
-        tCtx.fillStyle = '#2c2b38';
-        tCtx.beginPath(); tCtx.moveTo(footX - 11, chestY); tCtx.lineTo(footX - 6, chestY - 4); tCtx.lineTo(footX - 6, chestY + 5); tCtx.fill();
-        tCtx.beginPath(); tCtx.moveTo(footX + 11, chestY); tCtx.lineTo(footX + 6, chestY - 4); tCtx.lineTo(footX + 6, chestY + 5); tCtx.fill();
       }
 
-      // Cabeça & Elmo
+      // 6. Cabeça & Elmo Dinâmico Real
       tCtx.beginPath();
       tCtx.arc(footX, headY, 6.5, 0, Math.PI * 2);
-      if (charData.clsKey === 'barbarian') {
-        tCtx.fillStyle = '#b87d54'; tCtx.fill();
-        tCtx.fillStyle = '#55555c';
+      tCtx.fillStyle = '#b87d54'; tCtx.fill();
+
+      const hasIronHelm = helmName.includes('Ferro') || helmName.includes('Placas');
+      const hasHorns = helmName.includes('Chifres') || (charData.clsKey === 'barbarian' && !hasIronHelm);
+
+      if (hasIronHelm) {
+        // Elmo de Ferro de Cavaleiro com Viseira Gótica
+        tCtx.fillStyle = '#64748b';
+        tCtx.beginPath(); tCtx.arc(footX, headY - 1, 7, Math.PI * 0.9, Math.PI * 2.1); tCtx.fill();
+        tCtx.fillStyle = '#1e293b'; // Fenda da viseira
+        tCtx.fillRect(footX - 4, headY - 1, 8, 2);
+        tCtx.strokeStyle = '#94a3b8'; tCtx.lineWidth = 1.5;
+        tCtx.beginPath(); tCtx.moveTo(footX, headY - 7); tCtx.lineTo(footX, headY); tCtx.stroke();
+      } else if (hasHorns) {
+        // Elmo de Guerra Nórdico com Chifres de Marfim
+        tCtx.fillStyle = '#475569';
         tCtx.beginPath(); tCtx.arc(footX, headY - 2, 6, Math.PI, 0); tCtx.fill();
-        tCtx.strokeStyle = '#c4b899'; tCtx.lineWidth = 2;
-        tCtx.beginPath(); tCtx.moveTo(footX - 5, headY - 2); tCtx.quadraticCurveTo(footX - 9, headY - 6, footX - 7, headY - 10); tCtx.stroke();
-        tCtx.beginPath(); tCtx.moveTo(footX + 5, headY - 2); tCtx.quadraticCurveTo(footX + 9, headY - 6, footX + 7, headY - 10); tCtx.stroke();
+        tCtx.strokeStyle = '#e2e8f0'; tCtx.lineWidth = 2.2;
+        // Chifre Esquerdo
+        tCtx.beginPath(); tCtx.moveTo(footX - 5, headY - 2); tCtx.quadraticCurveTo(footX - 10, headY - 7, footX - 8, headY - 11); tCtx.stroke();
+        // Chifre Direito
+        tCtx.beginPath(); tCtx.moveTo(footX + 5, headY - 2); tCtx.quadraticCurveTo(footX + 10, headY - 7, footX + 8, headY - 11); tCtx.stroke();
       } else if (charData.clsKey === 'ranger') {
+        // Capuz Élfico Verde
         tCtx.fillStyle = '#1e381b';
         tCtx.beginPath(); tCtx.arc(footX, headY - 1, 7, 0, Math.PI * 2); tCtx.fill();
         tCtx.fillStyle = '#c89269';
         tCtx.beginPath(); tCtx.arc(footX, headY, 4, 0, Math.PI * 2); tCtx.fill();
       } else if (charData.clsKey === 'wizard') {
+        // Chapéu Arcano Cônico com Aba Dourada
         tCtx.fillStyle = '#1b1d47';
-        tCtx.beginPath(); tCtx.moveTo(footX - 8, headY + 1); tCtx.lineTo(footX, headY - 13); tCtx.lineTo(footX + 8, headY + 1); tCtx.closePath(); tCtx.fill();
+        tCtx.beginPath(); tCtx.moveTo(footX - 8, headY + 1); tCtx.lineTo(footX, headY - 14); tCtx.lineTo(footX + 8, headY + 1); tCtx.closePath(); tCtx.fill();
         tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 7, headY - 1, 14, 2);
-        tCtx.fillStyle = '#c89269'; tCtx.beginPath(); tCtx.arc(footX, headY + 1, 4, 0, Math.PI * 2); tCtx.fill();
       } else if (charData.clsKey === 'cleric') {
-        tCtx.fillStyle = '#8a929a'; tCtx.fill();
-        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 4, headY - 1, 8, 2);
-      } else if (charData.clsKey === 'shadowknight') {
-        tCtx.fillStyle = '#16151c'; tCtx.fill();
-        tCtx.fillStyle = '#ff1e1e'; tCtx.fillRect(footX - 3, headY, 2, 1.5); tCtx.fillRect(footX + 1, headY, 2, 1.5);
+        // Tiara Sagrada Dourada
+        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 5, headY - 3, 10, 2.5);
+        tCtx.fillStyle = '#00ddff'; tCtx.beginPath(); tCtx.arc(footX, headY - 2, 1.8, 0, Math.PI * 2); tCtx.fill();
       }
 
-      // Escudo
+      // 7. Escudo (Offhand)
       const shieldX = footX + (isFacingRight ? -9 : 9);
       const shieldY = chestY + 2;
+      const isTowerShield = offName.includes('Torre');
+
       if (charData.blocking) {
         tCtx.fillStyle = '#3a4a60';
         tCtx.strokeStyle = '#6bb0f2'; tCtx.lineWidth = 2;
-        tCtx.beginPath(); tCtx.arc(footX, chestY + 2, 9, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
-        tCtx.fillStyle = 'rgba(68, 136, 255, 0.25)';
-        tCtx.strokeStyle = '#66aaff'; tCtx.lineWidth = 2.5;
-        tCtx.beginPath(); tCtx.arc(footX, chestY, 24, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
+        tCtx.beginPath(); tCtx.arc(footX, chestY + 2, 10, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
+        // Barreira Arcana de Bloqueio Reluzente
+        tCtx.fillStyle = 'rgba(68, 160, 255, 0.3)';
+        tCtx.strokeStyle = '#77b5ff'; tCtx.lineWidth = 3;
+        tCtx.beginPath(); tCtx.arc(footX, chestY, 26, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
+      } else if (isTowerShield) {
+        // Escudo Torre Maciço de Aço
+        tCtx.fillStyle = '#475569';
+        tCtx.fillRect(shieldX - 5, shieldY - 7, 10, 15);
+        tCtx.strokeStyle = '#94a3b8'; tCtx.lineWidth = 1.5;
+        tCtx.strokeRect(shieldX - 5, shieldY - 7, 10, 15);
+        // Cruz do Escudo
+        tCtx.strokeStyle = '#d4af37'; tCtx.lineWidth = 1.5;
+        tCtx.beginPath();
+        tCtx.moveTo(shieldX, shieldY - 7); tCtx.lineTo(shieldX, shieldY + 8);
+        tCtx.moveTo(shieldX - 4, shieldY); tCtx.lineTo(shieldX + 4, shieldY);
+        tCtx.stroke();
       } else {
-        tCtx.fillStyle = '#404552';
-        tCtx.strokeStyle = '#6b7280'; tCtx.lineWidth = 1.5;
-        tCtx.beginPath(); tCtx.ellipse(shieldX, shieldY, 5, 8, 0, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
+        // Escudo Redondo Clássico com Umbo
+        tCtx.fillStyle = '#78350f';
+        tCtx.beginPath(); tCtx.arc(shieldX, shieldY, 6.5, 0, Math.PI * 2); tCtx.fill();
+        tCtx.strokeStyle = '#d4af37'; tCtx.lineWidth = 1.5; tCtx.stroke();
+        tCtx.fillStyle = '#cbd5e1'; tCtx.beginPath(); tCtx.arc(shieldX, shieldY, 2.5, 0, Math.PI * 2); tCtx.fill();
       }
 
-      // Arma
+      // 8. Arma (Mainhand) Dinâmica com Efeito Elemental Vivo
       const wepHandX = footX + (isFacingRight ? 9 : -9);
       const wepHandY = chestY + 3;
       tCtx.save();
@@ -4629,52 +5035,65 @@
       }
       tCtx.rotate(wepAngle);
 
-      if (charData.clsKey === 'barbarian' || charData.clsKey === 'cleric' || charData.clsKey === 'shadowknight') {
-        tCtx.fillStyle = '#8b5a2b'; tCtx.fillRect(-1.5, 0, 3, 5);
-        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(-5, 5, 10, 2.5);
-
-        const gem = charData.equipment && charData.equipment.mainhand ? charData.equipment.mainhand.socket : null;
-        if (gem && gem.gemType === 'fire') {
-          tCtx.fillStyle = '#ff4411';
-        } else if (gem && gem.gemType === 'ice') {
-          tCtx.fillStyle = '#55ccff';
-        } else if (gem && gem.gemType === 'poison') {
-          tCtx.fillStyle = '#33dd44';
-        } else {
-          tCtx.fillStyle = charData.clsKey === 'shadowknight' ? '#4a1525' : '#c8d1db';
-        }
-
-        tCtx.fillRect(-2, 7, 4, 18);
-        tCtx.beginPath(); tCtx.moveTo(-2, 25); tCtx.lineTo(0, 29); tCtx.lineTo(2, 25); tCtx.fill();
-        tCtx.fillStyle = '#ffffff'; tCtx.fillRect(0, 8, 1, 16);
-
-        if (gem) {
-          const auraShift = Math.sin(Date.now() * 0.01) * 2;
-          tCtx.fillStyle = gem.color || '#ff4444';
-          tCtx.beginPath(); tCtx.arc(auraShift, 18, 4, 0, Math.PI * 2); tCtx.fill();
-          tCtx.beginPath(); tCtx.arc(-auraShift, 24, 3, 0, Math.PI * 2); tCtx.fill();
-        }
-      } else if (charData.clsKey === 'ranger') {
-        tCtx.strokeStyle = '#6d4c2a'; tCtx.lineWidth = 2.5;
-        tCtx.beginPath(); tCtx.arc(0, 10, 12, -Math.PI * 0.4, Math.PI * 0.4); tCtx.stroke();
-        tCtx.strokeStyle = '#e0e0e0'; tCtx.lineWidth = 1;
-        tCtx.beginPath(); tCtx.moveTo(4, 0); tCtx.lineTo(4, 20); tCtx.stroke();
-      } else if (charData.clsKey === 'wizard') {
-        tCtx.fillStyle = '#5c3d1e'; tCtx.fillRect(-1.5, -4, 3, 26);
-        tCtx.fillStyle = '#d4af37'; tCtx.beginPath(); tCtx.arc(0, 23, 3, 0, Math.PI * 2); tCtx.fill();
-        const orbGlow = tCtx.createRadialGradient(0, 24, 1, 0, 24, 7);
+      if (wepName.includes('Arco') || charData.clsKey === 'ranger') {
+        // Arco Longo Recurvo Nobre
+        tCtx.strokeStyle = '#5a3818'; tCtx.lineWidth = 2.8;
+        tCtx.beginPath(); tCtx.arc(0, 10, 13, -Math.PI * 0.4, Math.PI * 0.4); tCtx.stroke();
+        tCtx.strokeStyle = '#f1f5f9'; tCtx.lineWidth = 1;
+        tCtx.beginPath(); tCtx.moveTo(4, -1); tCtx.lineTo(4, 21); tCtx.stroke();
+      } else if (wepName.includes('Cajado') || charData.clsKey === 'wizard') {
+        // Cajado Arcano com Orbe Luminoso de Cristal
+        tCtx.fillStyle = '#5c3d1e'; tCtx.fillRect(-1.5, -4, 3, 27);
+        tCtx.fillStyle = '#d4af37'; tCtx.beginPath(); tCtx.arc(0, 24, 3.5, 0, Math.PI * 2); tCtx.fill();
+        const orbGlow = tCtx.createRadialGradient(0, 24, 1, 0, 24, 8);
         orbGlow.addColorStop(0, '#ffffff');
-        orbGlow.addColorStop(0.4, '#4dc9ff');
+        orbGlow.addColorStop(0.4, '#38bdf8');
         orbGlow.addColorStop(1, 'rgba(0, 100, 255, 0)');
         tCtx.fillStyle = orbGlow;
-        tCtx.beginPath(); tCtx.arc(0, 24, 7, 0, Math.PI * 2); tCtx.fill();
+        tCtx.beginPath(); tCtx.arc(0, 24, 8, 0, Math.PI * 2); tCtx.fill();
+      } else {
+        // Espada Longa / Lâmina de Aço Forjado com Guarda-Mão em Cruz
+        tCtx.fillStyle = '#8b5a2b'; tCtx.fillRect(-1.5, 0, 3, 5); // Empunhadura
+        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(-5, 5, 10, 2.5); // Guarda-mão
+
+        // Lâmina com gradiente metálico ou efeito elemental
+        if (gem && gem.gemType === 'fire') {
+          // Lâmina Incandescente em Chamas Vivas
+          tCtx.fillStyle = '#ff4400';
+          tCtx.fillRect(-2, 7, 4, 19);
+          tCtx.fillStyle = '#ffcc00';
+          tCtx.fillRect(-1, 8, 2, 17);
+          const fShift = Math.sin(Date.now() * 0.02) * 2;
+          tCtx.fillStyle = 'rgba(255, 60, 0, 0.8)';
+          tCtx.beginPath(); tCtx.arc(fShift, 20, 4, 0, Math.PI * 2); tCtx.fill();
+        } else if (gem && gem.gemType === 'ice') {
+          // Lâmina Congelada em Cristal de Gelo Translúcido
+          tCtx.fillStyle = '#38bdf8';
+          tCtx.fillRect(-2, 7, 4, 19);
+          tCtx.fillStyle = '#ffffff';
+          tCtx.fillRect(-0.8, 8, 1.6, 17);
+        } else if (gem && gem.gemType === 'poison') {
+          // Lâmina Gotejando Ácido Verde Tóxico
+          tCtx.fillStyle = '#22c55e';
+          tCtx.fillRect(-2, 7, 4, 19);
+          tCtx.fillStyle = '#86efac';
+          tCtx.fillRect(-0.8, 8, 1.6, 17);
+        } else {
+          // Aço Polido com Brilho Especular Prateado
+          tCtx.fillStyle = '#94a3b8';
+          tCtx.fillRect(-2, 7, 4, 19);
+          tCtx.fillStyle = '#ffffff'; // Canaleta de sangue brilhante
+          tCtx.fillRect(0, 8, 1.2, 17);
+        }
+
+        // Ponta Afiada da Lâmina
+        tCtx.beginPath(); tCtx.moveTo(-2, 26); tCtx.lineTo(0, 30); tCtx.lineTo(2, 26); tCtx.fill();
       }
 
       tCtx.restore();
       tCtx.restore();
     }
 
-    // Atualiza ficha e fala da classe
     function updateClassPreviewInfo(clsKey) {
       selectedClass = clsKey;
       const cls = CLASSES[clsKey] || CLASSES.barbarian;
@@ -4798,6 +5217,230 @@
         voices.speak("Vozes dubladas em português ativadas com sucesso!", 'elder');
       }
     };
+
+  
+    // -------------------------------------------------------------
+    // SISTEMA DE LOJA & COMÉRCIO DO MERCADOR DE NORRATH
+    // -------------------------------------------------------------
+    const SHOP_CATALOG = [
+      { id: 'hp_pot', name: 'Poção de Vida Superior', icon: '🧪', type: 'potion_hp', price: 30, desc: '+100 Pontos de Vida' },
+      { id: 'mana_pot', name: 'Poção de Mana Maior', icon: '⚗️', type: 'potion_mana', price: 35, desc: '+70 Pontos de Mana' },
+      { id: 'sword_rare', name: 'Lâmina Forjada de Aço', icon: '🗡️', type: 'mainhand', price: 110, dmg: 22, desc: '+22 Dano • Aço Polido' },
+      { id: 'shield_iron', name: 'Escudo Torre de Ferro', icon: '🛡️', type: 'offhand', price: 90, def: 18, desc: '+18 Defesa • Aço Maciço' },
+      { id: 'chest_plate', name: 'Peitoral de Placas de Aço', icon: '🦺', type: 'chest', price: 130, def: 24, desc: '+24 Defesa • Placas Reluzentes' },
+      { id: 'gem_fire', name: 'Rubi Vulcânico Bruto', icon: '💎', type: 'gem', gemType: 'fire', color: '#ff3311', bonusDmg: 16, price: 75, desc: '+16 Dano de Fogo' },
+      { id: 'gem_ice', name: 'Safira Glacial Rúnica', icon: '💎', type: 'gem', gemType: 'ice', color: '#00ddff', bonusDmg: 14, price: 80, desc: '+14 Dano de Gelo' },
+      { id: 'gem_pois', name: 'Esmeralda Venenosa', icon: '💎', type: 'gem', gemType: 'poison', color: '#22ee55', bonusDmg: 12, price: 70, desc: '+12 Dano Tóxico' }
+    ];
+
+    function toggleShop() {
+      const modal = document.getElementById('shopModal');
+      const isVisible = modal.style.display === 'flex';
+      modal.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible) {
+        audio.playCoin();
+        voices.speak("Saudações, viajante! Dê uma olhada no meu aço e nas minhas melhores poções!", 'merchant');
+        renderShopBuy();
+      }
+    }
+
+    function renderShopBuy() {
+      document.getElementById('shopBuyView').style.display = 'block';
+      document.getElementById('shopSellView').style.display = 'none';
+      document.getElementById('btnShopTabBuy').style.borderColor = 'var(--gold)';
+      document.getElementById('btnShopTabSell').style.borderColor = '#4a3826';
+      document.getElementById('shopPlayerGold').textContent = player.gold;
+
+      const grid = document.getElementById('shopBuyGrid');
+      grid.innerHTML = '';
+
+      SHOP_CATALOG.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'shop-item-card';
+        card.innerHTML = `
+          <div style="font-size:24px;">${item.icon}</div>
+          <div class="shop-item-info">
+            <b>${item.name}</b>
+            <p>${item.desc}</p>
+          </div>
+          <div class="shop-price-tag">💰 ${item.price}</div>
+        `;
+        card.onclick = () => buyShopItem(item);
+        grid.appendChild(card);
+      });
+    }
+
+    function renderShopSell() {
+      document.getElementById('shopBuyView').style.display = 'none';
+      document.getElementById('shopSellView').style.display = 'block';
+      document.getElementById('btnShopTabBuy').style.borderColor = '#4a3826';
+      document.getElementById('btnShopTabSell').style.borderColor = 'var(--gold)';
+      document.getElementById('shopPlayerGold').textContent = player.gold;
+
+      const grid = document.getElementById('shopSellGrid');
+      grid.innerHTML = '';
+
+      if (player.inventory.length === 0) {
+        grid.innerHTML = '<p style="font-size:11px; color:#888; text-align:center; padding:16px;">Sua mochila está vazia no momento.</p>';
+        return;
+      }
+
+      player.inventory.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'shop-item-card';
+        const sellValue = Math.max(15, Math.floor((item.bonusDmg || 10) * 4));
+        card.innerHTML = `
+          <div style="font-size:24px;">${item.icon || '📦'}</div>
+          <div class="shop-item-info">
+            <b>${item.name}</b>
+            <p>${item.type === 'gem' ? 'Gema Elemental' : 'Item de Equipamento'}</p>
+          </div>
+          <div class="shop-price-tag" style="color:#55ff77;">+${sellValue} 💰 Vender</div>
+        `;
+        card.onclick = () => sellShopItem(idx, sellValue, item.name);
+        grid.appendChild(card);
+      });
+    }
+
+    function buyShopItem(item) {
+      if (player.gold < item.price) {
+        showNotification('⚠️ Ouro insuficiente para comprar este item!');
+        audio.playShieldBlock();
+        return;
+      }
+
+      player.gold -= item.price;
+      audio.playCoin();
+
+      if (item.type === 'potion_hp') {
+        player.potionsHp++;
+      } else if (item.type === 'potion_mana') {
+        player.potionsMana++;
+      } else if (item.type === 'mainhand' || item.type === 'chest' || item.type === 'offhand') {
+        player.inventory.push({ name: item.name, type: item.type, bonusDmg: item.dmg || 8, icon: item.icon });
+      } else if (item.type === 'gem') {
+        player.inventory.push({ name: item.name, type: 'gem', gemType: item.gemType, color: item.color, bonusDmg: item.bonusDmg, icon: item.icon });
+      } else {
+        player.inventory.push({ name: item.name, type: item.type, icon: item.icon, bonusDmg: 6 });
+      }
+
+      voices.speak("Excelente escolha! Que este aço sirva bem em sua jornada!", 'merchant');
+      showNotification(`🛒 [${item.name}] comprado! Toque na Mochila [🎒] para equipar.`);
+      saveGame(false);
+      updateHud();
+      renderShopBuy();
+    }
+
+    function sellShopItem(index, value, name) {
+      player.inventory.splice(index, 1);
+      player.gold += value;
+      audio.playCoin();
+      voices.speak("Negócio fechado! Ouro na mão!", 'merchant');
+      showNotification(`💰 [${name}] vendido por ${value} moedas de ouro!`);
+      saveGame(false);
+      updateHud();
+      renderShopSell();
+    }
+
+    document.getElementById('btnCloseShop').onclick = () => {
+      document.getElementById('shopModal').style.display = 'none';
+    };
+    document.getElementById('btnShopTabBuy').onclick = renderShopBuy;
+    document.getElementById('btnShopTabSell').onclick = renderShopSell;
+
+    // -------------------------------------------------------------
+    // SUPORTE A CONTROLE BLUETOOTH / GAMEPAD (GAMEPAD API)
+    // -------------------------------------------------------------
+    function updateGamepadInput() {
+      if (!navigator.getGamepads) return;
+      const gamepads = navigator.getGamepads();
+      let hasActive = false;
+
+      for (let i = 0; i < gamepads.length; i++) {
+        const gp = gamepads[i];
+        if (!gp) continue;
+        hasActive = true;
+
+        // Analógico Esquerdo 360°
+        const dz = 0.15;
+        const ax = Math.abs(gp.axes[0]) > dz ? gp.axes[0] : 0;
+        const ay = Math.abs(gp.axes[1]) > dz ? gp.axes[1] : 0;
+        if (ax !== 0 || ay !== 0) {
+          joyDelta.x = ax * 40;
+          joyDelta.y = ay * 40;
+        }
+
+        // Botão A / Cruz -> Atacar
+        if (gp.buttons[0] && gp.buttons[0].pressed) {
+          if (!gpBtnCooldown['b0']) {
+            doAttack();
+            gpBtnCooldown['b0'] = true;
+          }
+        } else {
+          gpBtnCooldown['b0'] = false;
+        }
+
+        // Botão B / Círculo -> Bloquear com Escudo
+        if (gp.buttons[1]) {
+          player.blocking = gp.buttons[1].pressed;
+        }
+
+        // Botão X / Quadrado -> Magia Primária
+        if (gp.buttons[2] && gp.buttons[2].pressed) {
+          if (!gpBtnCooldown['b2']) {
+            castSkill(1);
+            gpBtnCooldown['b2'] = true;
+          }
+        } else {
+          gpBtnCooldown['b2'] = false;
+        }
+
+        // Botão Y / Triângulo -> Magia Secundária
+        if (gp.buttons[3] && gp.buttons[3].pressed) {
+          if (!gpBtnCooldown['b3']) {
+            castSkill(2);
+            gpBtnCooldown['b3'] = true;
+          }
+        } else {
+          gpBtnCooldown['b3'] = false;
+        }
+
+        // Gatilho L1 / LB -> Poção de Vida
+        if (gp.buttons[4] && gp.buttons[4].pressed) {
+          if (!gpBtnCooldown['b4']) {
+            usePotion('hp');
+            gpBtnCooldown['b4'] = true;
+          }
+        } else {
+          gpBtnCooldown['b4'] = false;
+        }
+
+        // Gatilho R1 / RB -> Poção de Mana
+        if (gp.buttons[5] && gp.buttons[5].pressed) {
+          if (!gpBtnCooldown['b5']) {
+            usePotion('mana');
+            gpBtnCooldown['b5'] = true;
+          }
+        } else {
+          gpBtnCooldown['b5'] = false;
+        }
+
+        // Botão Start -> Inventário
+        if (gp.buttons[9] && gp.buttons[9].pressed) {
+          if (!gpBtnCooldown['b9']) {
+            toggleInventory();
+            gpBtnCooldown['b9'] = true;
+          }
+        } else {
+          gpBtnCooldown['b9'] = false;
+        }
+      }
+
+      const mc = document.getElementById('mobileControls');
+      if (mc && hasActive) {
+        mc.style.opacity = '0.35';
+      }
+    }
 
   </script>
 </body>
