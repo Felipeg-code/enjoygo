@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Champions of Norrath - 2.5D Isometric Engine V2</title>
+  <title>Champions of Norrath - 2.5D Isometric Engine V3</title>
   <style>
     :root {
       --gold: #f5c542;
       --gold-dark: #8c6a18;
       --bg-dark: #070709;
       --gothic-border: #4a3a28;
-      --gothic-panel: rgba(18, 14, 12, 0.95);
+      --gothic-panel: rgba(18, 14, 12, 0.96);
       --font-main: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
     }
 
@@ -176,6 +176,49 @@
     .hero-info-text p {
       font-size: 11px;
       color: #ad9e8d;
+    }
+
+    /* BARRA DE CHEFE NO TOPO */
+    #bossBarContainer {
+      position: absolute;
+      top: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 440px;
+      background: rgba(10, 6, 4, 0.95);
+      border: 2px solid #8c2020;
+      border-radius: 6px;
+      padding: 4px 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.9);
+      display: none;
+      z-index: 15;
+    }
+
+    #bossName {
+      font-size: 11px;
+      font-weight: bold;
+      color: #ff9999;
+      text-align: center;
+      letter-spacing: 1.5px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    #bossHpBar {
+      width: 100%;
+      height: 10px;
+      background: #220000;
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid #440000;
+    }
+
+    #bossHpFill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #990000, #ff2222);
+      transition: width 0.2s ease;
     }
 
     /* COMBO INDICATOR */
@@ -363,7 +406,7 @@
       border-color: #4488e0;
     }
 
-    /* GOTHIC MODAL (INVENTORY, STATS) */
+    /* GOTHIC MODAL (INVENTORY, SKILLS, SHOP) */
     .gothic-modal {
       position: absolute;
       top: 50%;
@@ -478,6 +521,13 @@
       line-height: 1.2;
     }
 
+    .socket-badge {
+      display: inline-block;
+      font-size: 9px;
+      color: #ffcc00;
+      margin-left: 4px;
+    }
+
     .inventory-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -507,6 +557,87 @@
     .inv-item:hover, .inv-item.selected {
       border-color: var(--gold);
       background: #33271c;
+    }
+
+    /* SKILL TREE MODAL */
+    .skills-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .skill-card {
+      background: #1e1713;
+      border: 2px solid #4d3a27;
+      border-radius: 6px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .skill-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .skill-icon {
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      background: #2b2018;
+      border: 2px solid var(--gold-dark);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .skill-desc h4 {
+      font-size: 13px;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .skill-desc p {
+      font-size: 10px;
+      color: #ad9e8e;
+    }
+
+    .skill-upgrade-btn {
+      padding: 6px 14px;
+      background: linear-gradient(180deg, #d4a017, #8c6a18);
+      border: 2px solid var(--gold);
+      border-radius: 4px;
+      color: #000;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: var(--font-main);
+    }
+
+    /* SHOP MODAL */
+    .shop-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .shop-card {
+      background: #1c1511;
+      border: 2px solid #4a3825;
+      border-radius: 6px;
+      padding: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .shop-card:hover {
+      border-color: var(--gold);
     }
 
     /* NOTIFICAÇÃO E POPUPS */
@@ -629,39 +760,15 @@
     }
 
     @media (max-width: 600px) {
-      .globe-container {
-        width: 82px;
-        height: 82px;
-      }
-      .globe-text {
-        font-size: 11px;
-      }
-      #virtualJoystick {
-        width: 110px;
-        height: 110px;
-        bottom: 110px;
-      }
-      #joystickStick {
-        width: 44px;
-        height: 44px;
-      }
-      #mobileActionButtons {
-        bottom: 110px;
-        right: 15px;
-      }
-      .m-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 18px;
-      }
-      .m-btn.btn-attack {
-        width: 60px;
-        height: 60px;
-      }
-      .paperdoll-container {
-        grid-template-columns: 1fr;
-        justify-items: center;
-      }
+      .globe-container { width: 82px; height: 82px; }
+      .globe-text { font-size: 11px; }
+      #virtualJoystick { width: 110px; height: 110px; bottom: 110px; }
+      #joystickStick { width: 44px; height: 44px; }
+      #mobileActionButtons { bottom: 110px; right: 15px; }
+      .m-btn { width: 50px; height: 50px; font-size: 18px; }
+      .m-btn.btn-attack { width: 60px; height: 60px; }
+      .paperdoll-container { grid-template-columns: 1fr; justify-items: center; }
+      .shop-items { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -679,16 +786,27 @@
         <div class="hero-avatar" id="heroAvatar">⚔️</div>
         <div class="hero-info-text">
           <h3 id="heroClassName">BÁRBARO</h3>
-          <p id="heroLevelXp">Nível 1 • 0 / 100 XP</p>
+          <p id="heroLevelXp">Nível 1 • 0 / 100 XP • Andar <span id="currentFloorText">1</span></p>
         </div>
       </div>
-      <div style="display: flex; gap: 14px; align-items: center;">
-        <div style="font-size: 13px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 5px;">
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 4px;">
           <span>💰</span> <span id="goldVal">120</span>
         </div>
-        <button id="btnOpenInventory" class="interactive close-btn" style="width: auto; padding: 4px 10px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
-          🎒 INVENTÁRIO [I]
+        <button id="btnOpenSkills" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
+          ⚡ TALENTOS [K] <span id="skillPtsBadge" style="display:none; color:#ff4444;">(1)</span>
         </button>
+        <button id="btnOpenInventory" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
+          🎒 ITENS [I]
+        </button>
+      </div>
+    </div>
+
+    <!-- BARRA DO CHEFE (NORRATH BOSS HEALTH BAR) -->
+    <div id="bossBarContainer">
+      <div id="bossName">WARLORD ORC DE NORRATH</div>
+      <div id="bossHpBar">
+        <div id="bossHpFill"></div>
       </div>
     </div>
 
@@ -762,10 +880,10 @@
       </div>
     </div>
 
-    <!-- JANELA DE INVENTÁRIO (NORRATH PAPERDOLL) -->
+    <!-- JANELA DE INVENTÁRIO (NORRATH PAPERDOLL COM ENGASTE DE GEMAS) -->
     <div id="inventoryModal" class="gothic-modal interactive">
       <div class="modal-header">
-        <h2>Equipamentos & Mochila</h2>
+        <h2>Equipamentos & Gemas</h2>
         <div class="close-btn" id="btnCloseInventory">✕</div>
       </div>
 
@@ -803,7 +921,7 @@
         <div class="equip-col">
           <div class="equip-slot" id="slotMainHand" data-slot="mainhand">
             <span class="slot-icon">🗡️</span>
-            <div><b style="font-size:10px; color:var(--gold);">ARMA</b><p class="slot-name">Espada Larga</p></div>
+            <div><b style="font-size:10px; color:var(--gold);">ARMA</b><span class="socket-badge" id="weaponSocketBadge">[1/1 💎]</span><p class="slot-name">Espada Larga</p></div>
           </div>
           <div class="equip-slot" id="slotOffHand" data-slot="offhand">
             <span class="slot-icon">🛡️</span>
@@ -820,30 +938,47 @@
         </div>
       </div>
 
-      <h3 style="font-size: 12px; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px;">MOCHILA (TOQUE PARA EQUIPAR)</h3>
-      <div class="inventory-grid" id="invGrid">
-        <!-- Itens inseridos dinamicamente -->
+      <h3 style="font-size: 12px; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px;">MOCHILA (TOQUE EM GEMA PARA ENGASTAR NA ARMA)</h3>
+      <div class="inventory-grid" id="invGrid"></div>
+    </div>
+
+    <!-- JANELA DE ÁRVORE DE HABILIDADES (TALENTOS DE NORRATH) -->
+    <div id="skillsModal" class="gothic-modal interactive">
+      <div class="modal-header">
+        <h2>Árvore de Talentos (<span id="skillPtsCount">0</span> Pontos Disponíveis)</h2>
+        <div class="close-btn" id="btnCloseSkills">✕</div>
       </div>
+      <div class="skills-list" id="skillsList"></div>
+    </div>
+
+    <!-- JANELA DO FERREIRO / MERCADOR (SANTUÁRIO DE NORRATH) -->
+    <div id="shopModal" class="gothic-modal interactive">
+      <div class="modal-header">
+        <h2>Ferreiro de Norrath (Santuário)</h2>
+        <div class="close-btn" id="btnCloseShop">✕</div>
+      </div>
+      <p style="font-size: 11px; color: #ad9e8d; margin-bottom: 10px;">Armas, elmos e gemas forjados no fogo sagrado de Norrath.</p>
+      <div class="shop-items" id="shopItemsGrid"></div>
     </div>
 
   </div>
 
-  <!-- TELA INICIAL DE SELEÇÃO DE CLASSE (CHAMPIONS OF NORRATH) -->
+  <!-- TELA INICIAL DE SELEÇÃO DE CLASSE -->
   <div id="classSelectScreen">
     <h1 class="game-logo">Champions of Norrath</h1>
-    <div class="game-sublogo">2.5D Isometric Action RPG Engine V2</div>
+    <div class="game-sublogo">2.5D Isometric Action RPG Engine V3</div>
 
     <div class="class-cards">
       <div class="class-card active" data-class="barbarian">
         <div class="icon">🪓</div>
         <div class="name">Bárbaro Guerreiro</div>
-        <div class="desc">Combate brutal corpo a corpo, alta força e resistência a dano.</div>
+        <div class="desc">Combate brutal corpo a corpo, alta força e ataques giratórios.</div>
       </div>
 
       <div class="class-card" data-class="ranger">
         <div class="icon">🏹</div>
         <div class="name">Elfa Ranger</div>
-        <div class="desc">Tiro com arco mortal, alta destreza e flechas mágicas múltiplas.</div>
+        <div class="desc">Tiro com arco mortal, alta destreza e flechas congelantes.</div>
       </div>
 
       <div class="class-card" data-class="cleric">
@@ -861,7 +996,7 @@
       <div class="class-card" data-class="shadowknight">
         <div class="icon">💀</div>
         <div class="name">Cavaleiro das Sombras</div>
-        <div class="desc">Necromancia, roubo de vida (Life Tap) e invocação de mortos-vivos.</div>
+        <div class="desc">Necromancia, roubo de vida (Life Tap) e invocação de esqueletos.</div>
       </div>
     </div>
 
@@ -871,24 +1006,20 @@
   <!-- SINTETIZADOR DE ÁUDIO WEB AUDIO API RETRÔ -->
   <script>
     class SoundEngine {
-      constructor() {
-        this.ctx = null;
-      }
+      constructor() { this.ctx = null; }
       init() {
         if (!this.ctx) {
           const AudioContext = window.AudioContext || window.webkitAudioContext;
           if (AudioContext) this.ctx = new AudioContext();
         }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
       }
       playSwordSwing(comboStep = 1) {
         if (!this.ctx) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         const filter = this.ctx.createBiquadFilter();
-        const baseFreq = 220 + comboStep * 60;
+        const baseFreq = 220 + comboStep * 65;
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(70, this.ctx.currentTime + 0.16);
@@ -963,12 +1094,11 @@
     const audio = new SoundEngine();
   </script>
 
-  <!-- MOTOR ISOMÉTRICO 2.5D COM ILUMINAÇÃO DINÂMICA E TEXTURAS PROCEDURAIS -->
+  <!-- MOTOR ISOMÉTRICO 2.5D V3 (SKILLS, GEMAS, ANDARES, CHEFE & MERCADOR) -->
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Canvas auxiliar para a camada de luz/escuridão (Snowblind Lighting)
     const lightCanvas = document.createElement('canvas');
     const lightCtx = lightCanvas.getContext('2d');
 
@@ -985,7 +1115,6 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Projeção Isométrica 2.5D
     function worldToIso(gx, gy, gz = 0) {
       return {
         x: (gx - gy) * (TILE_W / 2),
@@ -994,14 +1123,12 @@
     }
 
     // -------------------------------------------------------------
-    // GERADOR DE TEXTURAS PROCEDURAIS DE PEDRA GÓTICA
+    // TEXTURAS PROCEDURAIS DE PEDRA GÓTICA
     // -------------------------------------------------------------
     const Textures = {
       floor: null,
       wallTop: null,
-      wallSide: null,
       init() {
-        // Textura do Chão (Lajota de pedra de masmorra)
         const fc = document.createElement('canvas');
         fc.width = 64; fc.height = 32;
         const fctx = fc.getContext('2d');
@@ -1011,12 +1138,10 @@
         fctx.fillStyle = '#1c1713'; fctx.fill();
         fctx.strokeStyle = '#2b231c'; fctx.lineWidth = 1.5; fctx.stroke();
 
-        // Rachaduras e ruído de pedra
         fctx.strokeStyle = '#120f0c'; fctx.lineWidth = 1;
         fctx.beginPath(); fctx.moveTo(18, 14); fctx.lineTo(26, 20); fctx.lineTo(38, 18); fctx.stroke();
         this.floor = fc;
 
-        // Textura Parede Topo
         const wt = document.createElement('canvas');
         wt.width = 64; wt.height = 32;
         const wtctx = wt.getContext('2d');
@@ -1031,43 +1156,63 @@
     Textures.init();
 
     // -------------------------------------------------------------
-    // DADOS DAS CLASSES
+    // CLASSES & ÁRVORES DE HABILIDADES
     // -------------------------------------------------------------
     const CLASSES = {
       barbarian: {
         name: 'Bárbaro Guerreiro', icon: '🪓', hp: 170, mana: 50,
         str: 22, dex: 12, int: 8, weapon: 'Espada Larga de Aço',
-        skill1: { name: 'Golpe Esmagador', icon: '💥', mana: 12, dmg: 38 },
-        skill2: { name: 'Grito de Guerra', icon: '🗣️', mana: 18, dmg: 14 }
+        skills: [
+          { id: 'bash', name: 'Golpe Esmagador', icon: '💥', mana: 12, dmg: 38, rank: 1, maxRank: 5, desc: 'Golpe pesado que atordoa o monstro.' },
+          { id: 'whirlwind', name: 'Fúria do Redemoinho', icon: '🌪️', mana: 22, dmg: 55, rank: 0, maxRank: 5, desc: 'Gira com a arma atingindo todos ao redor.' },
+          { id: 'iron_skin', name: 'Pele de Ferro (Passiva)', icon: '🛡️', rank: 0, maxRank: 5, desc: 'Aumenta sua defesa física permanentemente em +6 por ponto.' },
+          { id: 'weapon_master', name: 'Maestria em Armas (Passiva)', icon: '⚔️', rank: 0, maxRank: 5, desc: 'Aumenta o dano crítico em +15% por ponto.' }
+        ]
       },
       ranger: {
         name: 'Elfa Ranger', icon: '🏹', hp: 115, mana: 95,
         str: 12, dex: 24, int: 12, weapon: 'Arco Longo Élfico',
-        skill1: { name: 'Tiro Múltiplo', icon: '🎯', mana: 15, dmg: 28 },
-        skill2: { name: 'Flecha Congelante', icon: '❄️', mana: 20, dmg: 34 }
+        skills: [
+          { id: 'multi_shot', name: 'Tiro Múltiplo', icon: '🎯', mana: 15, dmg: 30, rank: 1, maxRank: 5, desc: 'Dispara um leque mortal de flechas.' },
+          { id: 'frost_arrow', name: 'Flecha Congelante', icon: '❄️', mana: 20, dmg: 36, rank: 0, maxRank: 5, desc: 'Congela e desacelera o inimigo.' },
+          { id: 'nimble_dodge', name: 'Esquiva Ágil (Passiva)', icon: '💨', rank: 0, maxRank: 5, desc: 'Chance de esquivar completamente de golpes.' },
+          { id: 'eagle_eye', name: 'Olho de Falcão (Passiva)', icon: '👁️', rank: 0, maxRank: 5, desc: 'Aumenta o alcance e chance de acerto crítico.' }
+        ]
       },
       cleric: {
         name: 'Clériga', icon: '🔨', hp: 145, mana: 115,
         str: 16, dex: 10, int: 18, weapon: 'Maça Sagrada de Guerra',
-        skill1: { name: 'Cura Divina', icon: '✨', mana: 25, heal: 65 },
-        skill2: { name: 'Punição Sagrada', icon: '⚡', mana: 20, dmg: 40 }
+        skills: [
+          { id: 'heal', name: 'Cura Divina', icon: '✨', mana: 25, heal: 70, rank: 1, maxRank: 5, desc: 'Restaura sua vida com luz sagrada.' },
+          { id: 'smite', name: 'Punição Sagrada', icon: '⚡', mana: 20, dmg: 42, rank: 0, maxRank: 5, desc: 'Raio divino que destrói demônios e mortos-vivos.' },
+          { id: 'aura_light', name: 'Aura de Luz (Passiva)', icon: '🌟', rank: 0, maxRank: 5, desc: 'Regenera sua vida continuamente durante a batalha.' },
+          { id: 'shield_faith', name: 'Escudo da Fé (Passiva)', icon: '🛡️', rank: 0, maxRank: 5, desc: 'O bloqueio absorve 95% do dano recebido.' }
+        ]
       },
       wizard: {
         name: 'Mago Erudita', icon: '🔮', hp: 90, mana: 170,
         str: 8, dex: 12, int: 26, weapon: 'Cajado Rúnico de Cristal',
-        skill1: { name: 'Bola de Fogo', icon: '🔥', mana: 18, dmg: 52 },
-        skill2: { name: 'Tempestade de Raios', icon: '⚡', mana: 30, dmg: 70 }
+        skills: [
+          { id: 'fireball', name: 'Bola de Fogo', icon: '🔥', mana: 18, dmg: 55, rank: 1, maxRank: 5, desc: 'Lança esfera ardente que explode no impacto.' },
+          { id: 'lightning', name: 'Tempestade de Raios', icon: '⚡', mana: 30, dmg: 75, rank: 0, maxRank: 5, desc: 'Eletrocuta múltiplos monstros em área.' },
+          { id: 'meditation', name: 'Meditação Arcana (Passiva)', icon: '🧘', rank: 0, maxRank: 5, desc: 'Aumenta a velocidade de regeneração de Mana.' },
+          { id: 'elemental_focus', name: 'Foco Elemental (Passiva)', icon: '💠', rank: 0, maxRank: 5, desc: 'Aumenta o dano de todas as magias em +12% por ponto.' }
+        ]
       },
       shadowknight: {
         name: 'Cavaleiro das Sombras', icon: '💀', hp: 150, mana: 105,
         str: 18, dex: 11, int: 16, weapon: 'Lâmina da Praga',
-        skill1: { name: 'Dreno de Vida (Life Tap)', icon: '🩸', mana: 22, dmg: 34, lifesteal: 22 },
-        skill2: { name: 'Nuvem de Doença', icon: '☣️', mana: 25, dmg: 42 }
+        skills: [
+          { id: 'lifetap', name: 'Dreno de Vida (Life Tap)', icon: '🩸', mana: 22, dmg: 36, lifesteal: 24, rank: 1, maxRank: 5, desc: 'Rouba a essência vital do inimigo.' },
+          { id: 'summon_undead', name: 'Invocar Esqueleto', icon: '💀', mana: 35, rank: 0, maxRank: 5, desc: 'Ergue um lacaio esqueleto para lutar ao seu lado.' },
+          { id: 'cursed_blood', name: 'Sangue Amaldiçoado (Passiva)', icon: '☣️', rank: 0, maxRank: 5, desc: 'Inimigos que atacam você recebem dano de veneno de volta.' },
+          { id: 'death_aura', name: 'Aura da Morte (Passiva)', icon: '☠️', rank: 0, maxRank: 5, desc: 'Gera dano contínuo a monstros próximos.' }
+        ]
       }
     };
 
     // -------------------------------------------------------------
-    // ESTADO DO JOGADOR COM FÍSICA E FLUIDEZ
+    // ESTADO DO JOGADOR
     // -------------------------------------------------------------
     let player = {
       gx: 4, gy: 4,
@@ -1079,6 +1224,9 @@
       mana: 50, maxMana: 50,
       lvl: 1, xp: 0, maxXp: 100,
       gold: 150,
+      skillPts: 1,
+      currentFloor: 1,
+      hasBossKey: false,
       blocking: false,
       attacking: 0,
       comboStep: 0,
@@ -1092,36 +1240,44 @@
         chest: { name: 'Cota de Malha', def: 8, icon: '🦺' },
         gloves: { name: 'Luvas de Couro', def: 2, icon: '🧤' },
         boots: { name: 'Botas de Guerra', def: 3, icon: '👢' },
-        mainhand: { name: 'Espada Larga', dmg: 18, icon: '🗡️' },
+        mainhand: { name: 'Espada Larga', dmg: 18, icon: '🗡️', socket: null }, // Slot de Gema!
         offhand: { name: 'Escudo Torre', def: 7, icon: '🛡️' },
         ring: { name: 'Anel de Rubi', dmg: 3, icon: '💍' },
         amulet: { name: 'Amuleto Vital', hp: 20, icon: '📿' }
       },
       inventory: [
-        { name: 'Adaga Élfica', type: 'mainhand', dmg: 14, icon: '🗡️' },
-        { name: 'Escudo Redondo', type: 'offhand', def: 5, icon: '🛡️' },
-        { name: 'Gema Rubi de Fogo', type: 'gem', stats: '+8 Fogo', icon: '💎' },
-        { name: 'Poção de Vida', type: 'potion_hp', val: 60, icon: '🧪' }
-      ]
+        { name: 'Gema Rubi de Fogo', type: 'gem', gemType: 'fire', bonusDmg: 8, icon: '💎', color: '#ff3b3b' },
+        { name: 'Gema Safira de Gelo', type: 'gem', gemType: 'ice', bonusDmg: 6, icon: '💎', color: '#3b88ff' },
+        { name: 'Adaga Élfica', type: 'mainhand', dmg: 14, icon: '🗡️', socket: null },
+        { name: 'Poção de Vida', type: 'potion_hp', val: 65, icon: '🧪' }
+      ],
+      summonedSkeleton: null // Lacaio do Shadow Knight
     };
 
-    // Câmera Suave (Lerp)
     let camera = { x: 0, y: 0 };
     let screenShake = 0;
     let hitStopTimer = 0;
 
     // -------------------------------------------------------------
-    // MAPA DA MASMORRA, PROPS E TOCHAS
+    // MASMORRA EM ANDARES COM PORTÃO DO CHEFE E ESCADAS
     // -------------------------------------------------------------
     let dungeonMap = [];
     let torches = [];
-    let props = []; // Barris e baús
+    let props = [];
     let monsters = [];
     let particles = [];
     let floatingTexts = [];
-    let flyingLoot = []; // Loot com física parabólica
+    let flyingLoot = [];
+    let stairs = null;
+    let bossGate = null;
+    let activeBoss = null;
 
-    function generateDungeon() {
+    function generateDungeon(floor = 1) {
+      player.currentFloor = floor;
+      document.getElementById('currentFloorText').textContent = floor;
+      document.getElementById('bossBarContainer').style.display = 'none';
+      activeBoss = null;
+
       dungeonMap = [];
       torches = [];
       props = [];
@@ -1143,7 +1299,7 @@
         }
       }
 
-      // Tochas nas paredes (Luz Dinâmica com chama viva)
+      // Tochas nas paredes
       torches = [
         { gx: 4, gy: 1, flame: 0 },
         { gx: 12, gy: 1, flame: 1.5 },
@@ -1153,34 +1309,50 @@
         { gx: 26, gy: 24, flame: 0.8 }
       ];
 
-      // Barris quebráveis e Baús góticos
+      // Props destrutíveis
       props = [
         { type: 'barrel', gx: 6, gy: 3, hp: 1, icon: '🛢️', alive: true },
         { type: 'barrel', gx: 7, gy: 3, hp: 1, icon: '🛢️', alive: true },
         { type: 'barrel', gx: 14, gy: 8, hp: 1, icon: '🛢️', alive: true },
-        { type: 'chest', gx: 16, gy: 4, opened: false, icon: '📦' },
-        { type: 'barrel', gx: 10, gy: 14, hp: 1, icon: '🛢️', alive: true },
-        { type: 'chest', gx: 28, gy: 28, opened: false, icon: '📦' }
+        { type: 'chest', gx: 16, gy: 4, opened: false, icon: '📦', hasKey: (floor === 2 && !player.hasBossKey) },
+        { type: 'barrel', gx: 10, gy: 14, hp: 1, icon: '🛢️', alive: true }
       ];
 
-      // Monstros clássicos de Champions of Norrath
-      monsters = [
-        { id: 1, name: 'Guerreiro Orc', gx: 9, gy: 7, hp: 70, maxHp: 70, dmg: 14, icon: '👹', alive: true },
-        { id: 2, name: 'Esqueleto Legionário', gx: 15, gy: 10, hp: 55, maxHp: 55, dmg: 12, icon: '💀', alive: true },
-        { id: 3, name: 'Goblin Xamã', gx: 19, gy: 16, hp: 60, maxHp: 60, dmg: 16, icon: '👺', alive: true },
-        { id: 4, name: 'Aranha das Catacumbas', gx: 11, gy: 19, hp: 50, maxHp: 50, dmg: 11, icon: '🕷️', alive: true },
-        { id: 5, name: 'Warlord Orc de Norrath (CHEFE)', gx: 24, gy: 24, hp: 260, maxHp: 260, dmg: 30, icon: '👑', isBoss: true, alive: true }
-      ];
+      if (floor === 1) {
+        // Andar 1: Escada descendo para o Andar 2
+        stairs = { gx: 28, gy: 28, icon: '🪜', desc: 'Descer para Andar 2' };
+        bossGate = null;
+
+        monsters = [
+          { id: 1, name: 'Guerreiro Orc', gx: 9, gy: 7, hp: 70, maxHp: 70, dmg: 14, icon: '👹', alive: true },
+          { id: 2, name: 'Esqueleto Legionário', gx: 15, gy: 10, hp: 55, maxHp: 55, dmg: 12, icon: '💀', alive: true },
+          { id: 3, name: 'Goblin Xamã', gx: 19, gy: 16, hp: 60, maxHp: 60, dmg: 16, icon: '👺', alive: true },
+          { id: 4, name: 'Aranha das Catacumbas', gx: 11, gy: 19, hp: 50, maxHp: 50, dmg: 11, icon: '🕷️', alive: true },
+          { id: 5, name: 'Capitão Esqueleto', gx: 24, gy: 24, hp: 130, maxHp: 130, dmg: 18, icon: '☠️', alive: true }
+        ];
+      } else {
+        // Andar 2: Câmara do Chefe protegida por Portão Trancado
+        stairs = null;
+        bossGate = { gx: 20, gy: 20, locked: !player.hasBossKey, icon: '🚪' };
+
+        monsters = [
+          { id: 1, name: 'Guarda da Masmorra', gx: 10, gy: 10, hp: 90, maxHp: 90, dmg: 18, icon: '🛡️', alive: true, dropsKey: !player.hasBossKey },
+          { id: 2, name: 'Demônio Alado', gx: 16, gy: 12, hp: 85, maxHp: 85, dmg: 20, icon: '🦇', alive: true },
+          { id: 3, name: 'Xamã das Sombras', gx: 14, gy: 18, hp: 80, maxHp: 80, dmg: 22, icon: '🧙‍♂️', alive: true },
+          { id: 4, name: 'WARLORD ORC DE NORRATH (CHEFE)', gx: 26, gy: 26, hp: 350, maxHp: 350, dmg: 35, icon: '👑', isBoss: true, alive: true }
+        ];
+      }
     }
 
     // -------------------------------------------------------------
-    // CONTROLES E ENTRADAS (WASD / TOUCH)
+    // CONTROLES E ENTRADAS
     // -------------------------------------------------------------
     const keys = {};
     window.addEventListener('keydown', e => {
       keys[e.key.toLowerCase()] = true;
       audio.init();
       if (e.key.toLowerCase() === 'i') toggleInventory();
+      if (e.key.toLowerCase() === 'k') toggleSkills();
       if (e.key === '1') usePotion('hp');
       if (e.key === '2') usePotion('mana');
       if (e.key === '3') castSkill(1);
@@ -1250,21 +1422,19 @@
     shieldBtn.addEventListener('touchend', () => { player.blocking = false; });
 
     // -------------------------------------------------------------
-    // COMBATE COM SISTEMA DE COMBO DE 3 GOLPES & HIT-STOP
+    // COMBATE COM GEMAS, HIT-STOP & CHEFE
     // -------------------------------------------------------------
     function doAttack() {
       if (player.attacking > 0 || player.blocking) return;
 
-      // Avança no combo (1 -> 2 -> 3)
       if (player.comboTimer > 0) {
         player.comboStep = (player.comboStep % 3) + 1;
       } else {
         player.comboStep = 1;
       }
-      player.comboTimer = 0.9; // Janela de combo
+      player.comboTimer = 0.9;
       player.attacking = 14;
 
-      // Indicador visual de combo
       const comboIndicator = document.getElementById('comboIndicator');
       if (player.comboStep > 1) {
         comboIndicator.textContent = player.comboStep === 3 ? '🔥 GOLPE FINALIZADOR!' : `⚔️ COMBO x${player.comboStep}!`;
@@ -1275,12 +1445,20 @@
 
       audio.playSwordSwing(player.comboStep);
 
-      // Multiplicador de dano do combo
       const comboMultiplier = player.comboStep === 3 ? 1.9 : (player.comboStep === 2 ? 1.3 : 1.0);
-      const baseDmg = 15 + player.equipment.mainhand.dmg + Math.floor(Math.random() * 8);
+      let baseDmg = 16 + player.equipment.mainhand.dmg + Math.floor(Math.random() * 8);
+
+      // Efeito de Gema Engastada na Arma
+      let gemEffect = null;
+      if (player.equipment.mainhand.socket) {
+        const g = player.equipment.mainhand.socket;
+        baseDmg += (g.bonusDmg || 6);
+        gemEffect = g.gemType;
+      }
+
       const totalDmg = Math.floor(baseDmg * comboMultiplier);
 
-      // 1. Quebra de Barris e Abertura de Baús
+      // 1. Interação com Props
       props.forEach(p => {
         const dist = Math.hypot(p.gx - player.gx, p.gy - player.gy);
         if (dist < 1.8) {
@@ -1289,25 +1467,47 @@
             audio.playBreakWood();
             screenShake = 3;
             spawnSplinters(p.gx, p.gy);
-            spawnFlyingLoot(p.gx, p.gy, 'gold', 12 + Math.floor(Math.random() * 15));
-            if (Math.random() < 0.45) spawnFlyingLoot(p.gx, p.gy, 'potion');
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 14 + Math.floor(Math.random() * 14));
+            if (Math.random() < 0.4) spawnFlyingLoot(p.gx, p.gy, 'potion');
           } else if (p.type === 'chest' && !p.opened) {
             p.opened = true;
             audio.playCoin();
             screenShake = 4;
-            spawnFlyingLoot(p.gx, p.gy, 'gold', 45);
-            spawnFlyingLoot(p.gx, p.gy, 'item', null, 'Espada de Prata');
-            showNotification('👑 Baú aberto! Itens encontrados.');
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 50);
+            if (p.hasKey) {
+              player.hasBossKey = true;
+              showNotification('🗝️ Você encontrou a Chave Dourada do Chefe!');
+            }
           }
         }
       });
 
-      // 2. Acerto em Monstros
+      // 2. Interação com Escadas / Portão
+      if (stairs && Math.hypot(stairs.gx - player.gx, stairs.gy - player.gy) < 1.6) {
+        generateDungeon(2);
+        player.gx = 4; player.gy = 4;
+        showNotification('🏰 Você desceu para o Andar 2 da Masmorra!');
+        return;
+      }
+
+      if (bossGate && Math.hypot(bossGate.gx - player.gx, bossGate.gy - player.gy) < 1.8) {
+        if (bossGate.locked) {
+          if (player.hasBossKey) {
+            bossGate.locked = false;
+            audio.playBreakWood();
+            showNotification('🔓 Portão de Ferro aberto com a Chave Dourada!');
+          } else {
+            showNotification('🔒 Trancado! Encontre a Chave Dourada com o Guarda.');
+          }
+        }
+      }
+
+      // 3. Acerto em Monstros
       monsters.forEach(m => {
         if (!m.alive) return;
         const dist = Math.hypot(m.gx - player.gx, m.gy - player.gy);
         if (dist < 1.8) {
-          hitStopTimer = 0.035; // Micro-pausa de impacto (Hit-Stop)
+          hitStopTimer = 0.035;
           const isCrit = Math.random() < 0.28 || player.comboStep === 3;
           const finalDmg = isCrit ? Math.floor(totalDmg * 1.6) : totalDmg;
 
@@ -1315,7 +1515,22 @@
           audio.playHitMonster();
           screenShake = isCrit ? 7 : 4;
 
-          // Repulsão (Knockback) no golpe pesado
+          // Efeitos Elementais da Gema
+          if (gemEffect === 'fire') {
+            spawnFloatingText(`🔥 +FOGO`, m.gx, m.gy - 0.4, '#ff4400');
+            m.hp -= 8;
+          } else if (gemEffect === 'ice') {
+            spawnFloatingText(`❄️ LENTIDÃO`, m.gx, m.gy - 0.4, '#00ccff');
+            m.frozen = 1.5;
+          }
+
+          if (m.isBoss) {
+            activeBoss = m;
+            document.getElementById('bossBarContainer').style.display = 'block';
+            document.getElementById('bossName').textContent = m.name;
+            document.getElementById('bossHpFill').style.width = `${Math.max(0, m.hp / m.maxHp * 100)}%`;
+          }
+
           const knockAngle = Math.atan2(m.gy - player.gy, m.gx - player.gx);
           const knockDist = player.comboStep === 3 ? 0.6 : 0.25;
           if (canWalk(m.gx + Math.cos(knockAngle) * knockDist, m.gy + Math.sin(knockAngle) * knockDist)) {
@@ -1328,12 +1543,19 @@
 
           if (m.hp <= 0) {
             m.alive = false;
-            const xpGained = m.isBoss ? 180 : 40;
-            const goldGained = m.isBoss ? 90 : 16 + Math.floor(Math.random() * 12);
+            if (m.dropsKey) {
+              player.hasBossKey = true;
+              showNotification('🗝️ Chave Dourada obtida!');
+            }
+            if (m.isBoss) {
+              document.getElementById('bossBarContainer').style.display = 'none';
+              showNotification('🏆 CHEFE DERROTADO! Você conquistou Norrath!');
+            }
+            const xpGained = m.isBoss ? 240 : 45;
+            const goldGained = m.isBoss ? 120 : 18 + Math.floor(Math.random() * 14);
             giveXp(xpGained);
             spawnFlyingLoot(m.gx, m.gy, 'gold', goldGained);
-            if (m.isBoss || Math.random() < 0.3) spawnFlyingLoot(m.gx, m.gy, 'potion');
-            showNotification(`Inimigo derrotado! +${xpGained} XP`);
+            if (m.isBoss || Math.random() < 0.35) spawnFlyingLoot(m.gx, m.gy, 'gem');
           }
         }
       });
@@ -1344,21 +1566,25 @@
     function usePotion(type) {
       if (type === 'hp' && player.potionsHp > 0 && player.hp < player.maxHp) {
         player.potionsHp--;
-        player.hp = Math.min(player.maxHp, player.hp + 65);
+        player.hp = Math.min(player.maxHp, player.hp + 70);
         audio.playCoin();
-        showNotification('💚 Poção de Vida usada (+65 HP)');
+        showNotification('💚 Poção de Vida usada (+70 HP)');
       } else if (type === 'mana' && player.potionsMana > 0 && player.mana < player.maxMana) {
         player.potionsMana--;
-        player.mana = Math.min(player.maxMana, player.mana + 50);
+        player.mana = Math.min(player.maxMana, player.mana + 55);
         audio.playCoin();
-        showNotification('🔮 Poção de Mana usada (+50 Mana)');
+        showNotification('🔮 Poção de Mana usada (+55 Mana)');
       }
       updateHud();
     }
 
     function castSkill(num) {
       const cls = CLASSES[player.clsKey];
-      const skill = num === 1 ? cls.skill1 : cls.skill2;
+      const skill = cls.skills[num - 1];
+      if (!skill || skill.rank === 0) {
+        showNotification('❌ Habilidade ainda não desbloqueada nos Talentos [K]!');
+        return;
+      }
       if (player.mana < skill.mana) {
         showNotification('❌ Mana insuficiente!');
         return;
@@ -1374,7 +1600,7 @@
         monsters.forEach(m => {
           if (!m.alive) return;
           const dist = Math.hypot(m.gx - player.gx, m.gy - player.gy);
-          if (dist < 3.4) {
+          if (dist < 3.5) {
             m.hp -= skill.dmg;
             spawnBlood(m.gx, m.gy, 10);
             spawnFloatingText(`💥 -${skill.dmg}`, m.gx, m.gy, '#ffd700');
@@ -1390,20 +1616,18 @@
       updateHud();
     }
 
+    // Portal para o Santuário com NPC Mercador
     function castTownPortal() {
       audio.playMagicSpell();
-      player.gx = 4;
-      player.gy = 4;
-      player.hp = player.maxHp;
-      player.mana = player.maxMana;
-      showNotification('🌀 Portal de Retorno: Descanso no Santuário de Norrath');
-      updateHud();
+      toggleShop();
+      showNotification('🏛️ Santuário de Norrath: Bem-vindo à tenda do Ferreiro!');
     }
 
     function giveXp(amount) {
       player.xp += amount;
       if (player.xp >= player.maxXp) {
         player.lvl++;
+        player.skillPts++;
         player.xp -= player.maxXp;
         player.maxXp = Math.floor(player.maxXp * 1.5);
         player.maxHp += 20;
@@ -1411,7 +1635,7 @@
         player.maxMana += 15;
         player.mana = player.maxMana;
         audio.playCoin();
-        showNotification(`🏆 LEVEL UP! Nível ${player.lvl}`);
+        showNotification(`🏆 LEVEL UP! Nível ${player.lvl} (+1 Ponto de Talento)`);
       }
       updateHud();
     }
@@ -1421,21 +1645,21 @@
       banner.textContent = txt;
       banner.style.display = 'block';
       clearTimeout(banner._timer);
-      banner._timer = setTimeout(() => { banner.style.display = 'none'; }, 2200);
+      banner._timer = setTimeout(() => { banner.style.display = 'none'; }, 2400);
     }
 
     // -------------------------------------------------------------
     // FÍSICA DE LOOT EM PARÁBOLA & PARTÍCULAS
     // -------------------------------------------------------------
-    function spawnFlyingLoot(gx, gy, type, val = 0, name = '') {
+    function spawnFlyingLoot(gx, gy, type, val = 0) {
       const angle = Math.random() * Math.PI * 2;
-      const dist = 0.6 + Math.random() * 0.8;
+      const dist = 0.7 + Math.random() * 0.8;
       flyingLoot.push({
         gx, gy,
         targetGx: gx + Math.cos(angle) * dist,
         targetGy: gy + Math.sin(angle) * dist,
         height: 0,
-        type, val, name,
+        type, val,
         t: 0
       });
     }
@@ -1480,7 +1704,7 @@
     }
 
     // -------------------------------------------------------------
-    // LOOP PRINCIPAL COM FÍSICA SUAVE (LERP DE MOVIMENTO E CÂMERA)
+    // LOOP PRINCIPAL DO JOGO
     // -------------------------------------------------------------
     let lastTime = performance.now();
 
@@ -1488,7 +1712,6 @@
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
 
-      // Trata Hit-Stop (pausa de impacto)
       if (hitStopTimer > 0) {
         hitStopTimer -= dt;
       } else {
@@ -1500,7 +1723,6 @@
     }
 
     function update(dt) {
-      // 1. Entrada de Movimento
       let inputX = 0, inputY = 0;
 
       if (keys['w'] || keys['arrowup']) { inputX -= 1; inputY -= 1; }
@@ -1513,7 +1735,6 @@
         inputY += (-joyDelta.x + joyDelta.y);
       }
 
-      // 2. Aceleração, Inércia e Fricção Suave
       const friction = 14;
       const accel = 26;
 
@@ -1525,24 +1746,20 @@
         player.vx += inputX * accel * dt;
         player.vy += inputY * accel * dt;
 
-        // Limita à velocidade máxima
         const currentSpeed = Math.hypot(player.vx, player.vy);
         if (currentSpeed > player.speed) {
           player.vx = (player.vx / currentSpeed) * player.speed;
           player.vy = (player.vy / currentSpeed) * player.speed;
         }
 
-        // Interpolação suave do ângulo de giro (Smooth Facing Lerp)
         player.targetFacing = Math.atan2(inputY, inputX);
         let angleDiff = player.targetFacing - player.facing;
         while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
         while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
         player.facing += angleDiff * 14 * dt;
 
-        // Poeira nos passos ao correr
         if (Math.random() < 0.25) spawnDust(player.gx, player.gy);
       } else {
-        // Desaceleração natural
         player.vx -= player.vx * friction * dt;
         player.vy -= player.vy * friction * dt;
         if (Math.hypot(player.vx, player.vy) < 0.05) {
@@ -1550,23 +1767,22 @@
         }
       }
 
-      // 3. Deslizamento Inteligente em Paredes
       const nextGx = player.gx + player.vx * dt;
       const nextGy = player.gy + player.vy * dt;
 
       if (canWalk(nextGx, player.gy)) {
         player.gx = nextGx;
       } else {
-        player.vx = 0; // Desliza no eixo Y
+        player.vx = 0;
       }
 
       if (canWalk(player.gx, nextGy)) {
         player.gy = nextGy;
       } else {
-        player.vy = 0; // Desliza no eixo X
+        player.vy = 0;
       }
 
-      // Rastro da Espada (Weapon Arc Ribbon)
+      // Rastro da Espada
       if (player.attacking > 0) {
         player.attacking--;
         const iso = worldToIso(player.gx, player.gy);
@@ -1583,20 +1799,18 @@
         if (player.weaponTrail[i].life <= 0) player.weaponTrail.splice(i, 1);
       }
 
-      // Timer de Combo
       if (player.comboTimer > 0) player.comboTimer -= dt;
 
-      // 4. Câmera Suave com Antecipação (Camera Lerp)
+      // Câmera Suave com Antecipação
       const playerIso = worldToIso(player.gx, player.gy);
       const targetCamX = canvas.width / 2 - playerIso.x - player.vx * 12;
       const targetCamY = canvas.height / 2 - playerIso.y - player.vy * 8;
       camera.x += (targetCamX - camera.x) * (1 - Math.exp(-8 * dt));
       camera.y += (targetCamY - camera.y) * (1 - Math.exp(-8 * dt));
 
-      // 5. Tochas Dinâmicas (Animação de Fogo)
       torches.forEach(t => { t.flame += dt * 5; });
 
-      // 6. Atualização do Loot Voador (Física Parabólica)
+      // Atualização do Loot Voador
       for (let i = flyingLoot.length - 1; i >= 0; i--) {
         const loot = flyingLoot[i];
         loot.t += dt * 2.2;
@@ -1605,7 +1819,6 @@
         loot.height = Math.sin(Math.min(Math.PI, loot.t * Math.PI)) * 26;
 
         if (loot.t >= 1.0) {
-          // Coleta automática
           if (loot.type === 'gold') {
             player.gold += loot.val;
             audio.playCoin();
@@ -1614,21 +1827,23 @@
             player.potionsHp++;
             audio.playCoin();
             spawnFloatingText(`+1 Poção!`, loot.gx, loot.gy, '#ff4444');
-          } else if (loot.type === 'item') {
-            player.inventory.push({ name: loot.name, type: 'mainhand', dmg: 22, icon: '🗡️' });
+          } else if (loot.type === 'gem') {
+            player.inventory.push({ name: 'Gema Esmeralda de Veneno', type: 'gem', gemType: 'poison', bonusDmg: 7, icon: '💎', color: '#22cc44' });
             audio.playCoin();
-            showNotification(`Loot Coletado: ${loot.name}`);
+            showNotification('💎 Gema Esmeralda encontrada!');
           }
           flyingLoot.splice(i, 1);
           updateHud();
         }
       }
 
-      // 7. IA dos Monstros
+      // IA dos Monstros
       monsters.forEach(m => {
         if (!m.alive) return;
+        if (m.frozen && m.frozen > 0) { m.frozen -= dt; return; }
+
         const dist = Math.hypot(player.gx - m.gx, player.gy - m.gy);
-        if (dist < 7.0) {
+        if (dist < 7.5) {
           if (dist > 1.2) {
             const angle = Math.atan2(player.gy - m.gy, player.gx - m.gx);
             const mgx = m.gx + Math.cos(angle) * 1.9 * dt;
@@ -1683,11 +1898,13 @@
       const ix = Math.floor(gx);
       const iy = Math.floor(gy);
       if (ix < 0 || iy < 0 || ix >= MAP_SIZE || iy >= MAP_SIZE) return false;
+      // Portão fechado bloqueia passagem
+      if (bossGate && bossGate.locked && Math.hypot(bossGate.gx - gx, bossGate.gy - gy) < 1.1) return false;
       return dungeonMap[iy][ix] === 0;
     }
 
     // -------------------------------------------------------------
-    // RENDERIZAÇÃO GRÁFICA & ILUMINAÇÃO DINÂMICA (SNOWBLIND LIGHTING)
+    // RENDERIZAÇÃO GRÁFICA & ILUMINAÇÃO DINÂMICA
     // -------------------------------------------------------------
     function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1698,7 +1915,7 @@
       }
       ctx.translate(camera.x, camera.y);
 
-      // 1. Chão da Masmorra com Lajotas de Pedra
+      // Chão
       for (let y = 0; y < MAP_SIZE; y++) {
         for (let x = 0; x < MAP_SIZE; x++) {
           const iso = worldToIso(x, y);
@@ -1709,49 +1926,41 @@
         }
       }
 
-      // 2. Ordenação de Profundidade Isométrica (Y-Sorting)
+      // Ordenação Y-Sorting
       const renderables = [];
 
-      renderables.push({
-        ySort: player.gx + player.gy,
-        draw: () => drawPlayer()
-      });
+      renderables.push({ ySort: player.gx + player.gy, draw: () => drawPlayer() });
 
       monsters.forEach(m => {
         if (!m.alive) return;
-        renderables.push({
-          ySort: m.gx + m.gy,
-          draw: () => drawMonster(m)
-        });
+        renderables.push({ ySort: m.gx + m.gy, draw: () => drawMonster(m) });
       });
 
       props.forEach(p => {
         if (p.type === 'barrel' && !p.alive) return;
-        renderables.push({
-          ySort: p.gx + p.gy,
-          draw: () => drawProp(p)
-        });
+        renderables.push({ ySort: p.gx + p.gy, draw: () => drawProp(p) });
       });
+
+      if (stairs) {
+        renderables.push({ ySort: stairs.gx + stairs.gy, draw: () => drawStairs() });
+      }
+
+      if (bossGate) {
+        renderables.push({ ySort: bossGate.gx + bossGate.gy, draw: () => drawBossGate() });
+      }
 
       torches.forEach(t => {
-        renderables.push({
-          ySort: t.gx + t.gy,
-          draw: () => drawTorch(t)
-        });
+        renderables.push({ ySort: t.gx + t.gy, draw: () => drawTorch(t) });
       });
 
-      // Itens voando
       flyingLoot.forEach(fl => {
-        renderables.push({
-          ySort: fl.gx + fl.gy,
-          draw: () => drawFlyingLoot(fl)
-        });
+        renderables.push({ ySort: fl.gx + fl.gy, draw: () => drawFlyingLoot(fl) });
       });
 
       renderables.sort((a, b) => a.ySort - b.ySort);
       renderables.forEach(r => r.draw());
 
-      // 3. Rastro da Lâmina (Weapon Ribbon Arc)
+      // Rastro da Lâmina
       if (player.weaponTrail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(player.weaponTrail[0].x, player.weaponTrail[0].y);
@@ -1764,7 +1973,6 @@
         ctx.stroke();
       }
 
-      // 4. Partículas
       particles.forEach(p => {
         const iso = worldToIso(p.gx, p.gy);
         ctx.fillStyle = p.color;
@@ -1773,7 +1981,6 @@
         ctx.fill();
       });
 
-      // 5. Textos de Dano
       floatingTexts.forEach(ft => {
         const iso = worldToIso(ft.gx, ft.gy);
         ctx.fillStyle = ft.color;
@@ -1787,19 +1994,14 @@
 
       ctx.restore();
 
-      // -------------------------------------------------------------
-      // 6. CAMADA DE ILUMINAÇÃO DINÂMICA (SNOWBLIND LIGHTING MASK)
-      // -------------------------------------------------------------
+      // MÁSCARA DE ILUMINAÇÃO DINÂMICA
       lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
-
-      // Penumbra escura da masmorra
       lightCtx.fillStyle = 'rgba(6, 6, 12, 0.88)';
       lightCtx.fillRect(0, 0, lightCanvas.width, lightCanvas.height);
 
       lightCtx.save();
       lightCtx.globalCompositeOperation = 'destination-out';
 
-      // Luz do Herói
       const pHero = worldToIso(player.gx, player.gy);
       const heroScreenX = pHero.x + camera.x;
       const heroScreenY = pHero.y + camera.y - 16;
@@ -1812,7 +2014,6 @@
       lightCtx.arc(heroScreenX, heroScreenY, 175, 0, Math.PI * 2);
       lightCtx.fill();
 
-      // Luzes das Tochas
       torches.forEach(t => {
         const pTorch = worldToIso(t.gx, t.gy);
         const tScreenX = pTorch.x + camera.x;
@@ -1829,54 +2030,36 @@
       });
 
       lightCtx.restore();
-
-      // Aplica a máscara de luz por cima do jogo
       ctx.drawImage(lightCanvas, 0, 0);
     }
 
-    // Desenha Tile
     function drawTile(x, y, type) {
       if (type === 0) {
-        // Chão de Pedra Texturizado
         ctx.drawImage(Textures.floor, x - 32, y);
       } else {
-        // Parede 3D com Altura
         const wallH = 42;
-
-        // Face esquerda da parede
         ctx.beginPath();
         ctx.moveTo(x - TILE_W / 2, y + TILE_H / 2);
         ctx.lineTo(x, y + TILE_H);
         ctx.lineTo(x, y + TILE_H - wallH);
         ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2 - wallH);
         ctx.closePath();
-        ctx.fillStyle = '#241c16';
-        ctx.fill();
-        ctx.strokeStyle = '#18120d';
-        ctx.stroke();
+        ctx.fillStyle = '#241c16'; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
 
-        // Face direita da parede
         ctx.beginPath();
         ctx.moveTo(x, y + TILE_H);
         ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2);
         ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2 - wallH);
         ctx.lineTo(x, y + TILE_H - wallH);
         ctx.closePath();
-        ctx.fillStyle = '#2f241d';
-        ctx.fill();
-        ctx.strokeStyle = '#18120d';
-        ctx.stroke();
+        ctx.fillStyle = '#2f241d'; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
 
-        // Topo da parede
         ctx.drawImage(Textures.wallTop, x - 32, y - wallH);
       }
     }
 
-    // Desenha o Herói
     function drawPlayer() {
       const iso = worldToIso(player.gx, player.gy);
-
-      // Sombra volumétrica suave
       ctx.beginPath();
       ctx.ellipse(iso.x, iso.y + TILE_H / 2, 17, 8, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
@@ -1885,7 +2068,6 @@
       ctx.save();
       ctx.translate(iso.x, iso.y);
 
-      // Escudo levantado no bloqueio
       if (player.blocking) {
         ctx.fillStyle = 'rgba(68, 136, 255, 0.4)';
         ctx.beginPath();
@@ -1896,48 +2078,52 @@
         ctx.stroke();
       }
 
-      // Sprite / Avatar com rotação sutil
       ctx.rotate(player.facing * 0.1);
       ctx.font = '30px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(CLASSES[player.clsKey].icon, 0, -20);
-
       ctx.restore();
     }
 
-    // Desenha Props (Barris e Baús)
     function drawProp(p) {
       const iso = worldToIso(p.gx, p.gy);
       ctx.beginPath();
       ctx.ellipse(iso.x, iso.y + TILE_H / 2, 14, 7, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.fill();
-
       ctx.font = '26px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(p.icon, iso.x, iso.y - 16);
     }
 
-    // Desenha Loot Saltando em Parábola
+    function drawStairs() {
+      const iso = worldToIso(stairs.gx, stairs.gy);
+      ctx.font = '30px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🪜', iso.x, iso.y - 10);
+    }
+
+    function drawBossGate() {
+      const iso = worldToIso(bossGate.gx, bossGate.gy);
+      ctx.font = '32px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(bossGate.locked ? '🔒' : '🚪', iso.x, iso.y - 12);
+    }
+
     function drawFlyingLoot(fl) {
       const iso = worldToIso(fl.gx, fl.gy);
-      const icon = fl.type === 'gold' ? '💰' : (fl.type === 'potion' ? '🧪' : '🗡️');
-
-      // Sombra no chão
+      const icon = fl.type === 'gold' ? '💰' : (fl.type === 'potion' ? '🧪' : '💎');
       ctx.beginPath();
       ctx.ellipse(iso.x, iso.y + TILE_H / 2, 10, 5, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.fill();
-
-      // Item no ar
       ctx.font = '20px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(icon, iso.x, iso.y - 12 - fl.height);
     }
 
-    // Desenha Monstro
     function drawMonster(m) {
       const iso = worldToIso(m.gx, m.gy);
       ctx.beginPath();
@@ -1950,7 +2136,6 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(m.icon, iso.x, iso.y - (m.isBoss ? 28 : 18));
 
-      // Barra de Vida
       const barW = m.isBoss ? 52 : 34;
       const barH = 5;
       const pct = Math.max(0, m.hp / m.maxHp);
@@ -1960,7 +2145,6 @@
       ctx.fillRect(iso.x - barW / 2 + 1, iso.y - (m.isBoss ? 53 : 37), (barW - 2) * pct, barH - 2);
     }
 
-    // Desenha Tocha com Chama Viva
     function drawTorch(t) {
       const iso = worldToIso(t.gx, t.gy);
       const flameShift = Math.sin(t.flame) * 2;
@@ -1970,7 +2154,104 @@
     }
 
     // -------------------------------------------------------------
-    // ATUALIZAÇÃO DO HUD E INVENTÁRIO
+    // MODAL DE TALENTOS & HABILIDADES
+    // -------------------------------------------------------------
+    function toggleSkills() {
+      const modal = document.getElementById('skillsModal');
+      const isVisible = modal.style.display === 'flex';
+      modal.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible) renderSkillsTree();
+    }
+
+    function renderSkillsTree() {
+      const container = document.getElementById('skillsList');
+      container.innerHTML = '';
+      document.getElementById('skillPtsCount').textContent = player.skillPts;
+
+      const cls = CLASSES[player.clsKey];
+      cls.skills.forEach((sk, idx) => {
+        const card = document.createElement('div');
+        card.className = 'skill-card';
+        card.innerHTML = `
+          <div class="skill-info">
+            <div class="skill-icon">${sk.icon}</div>
+            <div class="skill-desc">
+              <h4>${sk.name} (Grau ${sk.rank}/${sk.maxRank})</h4>
+              <p>${sk.desc}</p>
+            </div>
+          </div>
+          <button class="skill-upgrade-btn" ${player.skillPts <= 0 || sk.rank >= sk.maxRank ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+            ${sk.rank >= sk.maxRank ? 'MAX' : '+ APRENDER'}
+          </button>
+        `;
+        const btn = card.querySelector('.skill-upgrade-btn');
+        if (player.skillPts > 0 && sk.rank < sk.maxRank) {
+          btn.onclick = () => {
+            player.skillPts--;
+            sk.rank++;
+            if (sk.dmg) sk.dmg = Math.floor(sk.dmg * 1.25);
+            if (sk.heal) sk.heal = Math.floor(sk.heal * 1.3);
+            audio.playCoin();
+            renderSkillsTree();
+            updateHud();
+            showNotification(`⚡ ${sk.name} evoluído para Grau ${sk.rank}!`);
+          };
+        }
+        container.appendChild(card);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // MODAL DO MERCADOR / FERREIRO NO SANTUÁRIO
+    // -------------------------------------------------------------
+    const SHOP_ITEMS = [
+      { name: 'Poção Maior de Vida', cost: 25, type: 'potion_hp', icon: '🧪', desc: '+80 HP' },
+      { name: 'Poção Maior de Mana', cost: 25, type: 'potion_mana', icon: '⚗️', desc: '+70 Mana' },
+      { name: 'Gema Rubi de Fogo', cost: 60, type: 'gem', gemType: 'fire', bonusDmg: 9, icon: '💎', desc: '+9 Dano de Fogo' },
+      { name: 'Gema Safira de Gelo', cost: 60, type: 'gem', gemType: 'ice', bonusDmg: 8, icon: '💎', desc: '+8 Dano de Gelo e Lentidão' },
+      { name: 'Espada de Aço Valírio', cost: 140, type: 'mainhand', dmg: 26, icon: '🗡️', desc: 'Arma afiada (+26 Dano)' }
+    ];
+
+    function toggleShop() {
+      const modal = document.getElementById('shopModal');
+      const isVisible = modal.style.display === 'flex';
+      modal.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible) renderShop();
+    }
+
+    function renderShop() {
+      const grid = document.getElementById('shopItemsGrid');
+      grid.innerHTML = '';
+
+      SHOP_ITEMS.forEach(it => {
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div>
+            <b style="font-size:12px; color:var(--gold);">${it.icon} ${it.name}</b>
+            <p style="font-size:10px; color:#aaa;">${it.desc}</p>
+          </div>
+          <div style="font-size:12px; font-weight:bold; color:#ffd700;">💰 ${it.cost}</div>
+        `;
+        card.onclick = () => {
+          if (player.gold >= it.cost) {
+            player.gold -= it.cost;
+            audio.playCoin();
+            if (it.type === 'potion_hp') player.potionsHp++;
+            else if (it.type === 'potion_mana') player.potionsMana++;
+            else player.inventory.push({ ...it });
+            updateHud();
+            showNotification(`Comprado: ${it.name}!`);
+          } else {
+            showNotification('❌ Ouro insuficiente!');
+          }
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // ATUALIZAÇÃO DO HUD E INVENTÁRIO COM GEMA ENGASTADA
     // -------------------------------------------------------------
     function updateHud() {
       const hpPct = (player.hp / player.maxHp) * 100;
@@ -1982,8 +2263,16 @@
 
       const xpPct = (player.xp / player.maxXp) * 100;
       document.getElementById('xpBarFill').style.width = `${xpPct}%`;
-      document.getElementById('heroLevelXp').textContent = `Nível ${player.lvl} • ${player.xp} / ${player.maxXp} XP`;
+      document.getElementById('heroLevelXp').textContent = `Nível ${player.lvl} • ${player.xp} / ${player.maxXp} XP • Andar ${player.currentFloor}`;
       document.getElementById('goldVal').textContent = player.gold;
+
+      const badge = document.getElementById('skillPtsBadge');
+      if (player.skillPts > 0) {
+        badge.style.display = 'inline';
+        badge.textContent = `(${player.skillPts})`;
+      } else {
+        badge.style.display = 'none';
+      }
 
       document.getElementById('potionHpCount').textContent = player.potionsHp;
       document.getElementById('potionManaCount').textContent = player.potionsMana;
@@ -2004,8 +2293,8 @@
         const d = document.createElement('div');
         d.className = 'inv-item';
         d.innerHTML = item.icon;
-        d.title = `${item.name} (${item.stats || (item.dmg ? '+' + item.dmg + ' Dano' : '+' + item.def + ' Def')})`;
-        d.onclick = () => equipFromInventory(idx);
+        d.title = `${item.name} (${item.type === 'gem' ? 'Gema: Toque para engastar na Arma' : (item.dmg ? '+' + item.dmg + ' Dano' : '')})`;
+        d.onclick = () => equipOrSocket(idx);
         grid.appendChild(d);
       });
 
@@ -2019,17 +2308,32 @@
       document.getElementById('slotRing').querySelector('.slot-name').textContent = eq.ring.name;
       document.getElementById('slotAmulet').querySelector('.slot-name').textContent = eq.amulet.name;
 
-      const totDmg = 15 + eq.mainhand.dmg + (eq.ring.dmg || 0);
+      const socketBadge = document.getElementById('weaponSocketBadge');
+      if (eq.mainhand.socket) {
+        socketBadge.textContent = `[💎 ${eq.mainhand.socket.gemType.toUpperCase()}]`;
+        socketBadge.style.color = eq.mainhand.socket.color || '#ffcc00';
+      } else {
+        socketBadge.textContent = '[Furo Livre]';
+        socketBadge.style.color = '#888';
+      }
+
+      const totDmg = 16 + eq.mainhand.dmg + (eq.mainhand.socket ? eq.mainhand.socket.bonusDmg : 0) + (eq.ring.dmg || 0);
       const totDef = eq.helm.def + eq.chest.def + eq.gloves.def + eq.boots.def + eq.offhand.def;
       document.getElementById('charTotalDmg').textContent = `Dano: ${totDmg}`;
       document.getElementById('charTotalDef').textContent = `Defesa: ${totDef}`;
     }
 
-    function equipFromInventory(idx) {
+    function equipOrSocket(idx) {
       const item = player.inventory[idx];
       if (!item) return;
 
-      if (item.type === 'potion_hp') {
+      if (item.type === 'gem') {
+        // Engasta na arma equipada
+        player.equipment.mainhand.socket = item;
+        player.inventory.splice(idx, 1);
+        audio.playCoin();
+        showNotification(`💎 ${item.name} engastada com sucesso na Arma!`);
+      } else if (item.type === 'potion_hp') {
         player.potionsHp++;
         player.inventory.splice(idx, 1);
         showNotification('🧪 Poção guardada no cinto!');
@@ -2046,6 +2350,9 @@
 
     document.getElementById('btnOpenInventory').onclick = toggleInventory;
     document.getElementById('btnCloseInventory').onclick = toggleInventory;
+    document.getElementById('btnOpenSkills').onclick = toggleSkills;
+    document.getElementById('btnCloseSkills').onclick = toggleSkills;
+    document.getElementById('btnCloseShop').onclick = toggleShop;
     document.getElementById('slotPotionHp').onclick = () => usePotion('hp');
     document.getElementById('slotPotionMana').onclick = () => usePotion('mana');
     document.getElementById('slotSkill1').onclick = () => castSkill(1);
@@ -2081,14 +2388,14 @@
       document.getElementById('heroClassName').textContent = cls.name.toUpperCase();
       document.getElementById('heroAvatar').textContent = cls.icon;
       document.getElementById('silhouetteHero').textContent = cls.icon;
-      document.getElementById('skill1Icon').textContent = cls.skill1.icon;
-      document.getElementById('skill2Icon').textContent = cls.skill2.icon;
+      document.getElementById('skill1Icon').textContent = cls.skills[0].icon;
+      document.getElementById('skill2Icon').textContent = cls.skills[1].icon;
 
       document.getElementById('classSelectScreen').style.display = 'none';
 
-      generateDungeon();
+      generateDungeon(1);
       updateHud();
-      showNotification(`Bem-vindo ao Norrath V2! Movimentação com física fluida.`);
+      showNotification(`Bem-vindo ao Norrath V3! Derrote monstros e desça ao Andar 2.`);
 
       requestAnimationFrame(gameLoop);
     };
