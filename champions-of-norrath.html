@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Champions of Norrath - 2.5D Isometric Engine V3</title>
+  <title>Champions of Norrath - 2.5D Isometric Engine V4</title>
   <style>
     :root {
       --gold: #f5c542;
@@ -53,6 +53,40 @@
 
     .interactive {
       pointer-events: auto;
+    }
+
+    /* MINIMAPA GÓTICO NO CANTO SUPERIOR DIREITO */
+    #minimapContainer {
+      position: absolute;
+      top: 64px;
+      right: 14px;
+      width: 100px;
+      height: 100px;
+      background: rgba(10, 8, 6, 0.85);
+      border: 2px solid var(--gold-dark);
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.85);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #minimapCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #minimapLabel {
+      position: absolute;
+      bottom: 2px;
+      font-size: 8px;
+      color: var(--gold);
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 3px #000;
     }
 
     /* GLOBOS GÓTICOS - NORRATH STYLE */
@@ -406,14 +440,14 @@
       border-color: #4488e0;
     }
 
-    /* GOTHIC MODAL (INVENTORY, SKILLS, SHOP) */
+    /* GOTHIC MODAL (INVENTORY, SKILLS, QUESTS, SHOP) */
     .gothic-modal {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 92%;
-      max-width: 560px;
+      max-width: 580px;
       max-height: 86vh;
       background: var(--gothic-panel);
       border: 4px solid var(--gold-dark);
@@ -457,7 +491,7 @@
       cursor: pointer;
     }
 
-    /* PAPERDOLL LAYOUT (CHAMPIONS OF NORRATH STYLE) */
+    /* PAPERDOLL LAYOUT */
     .paperdoll-container {
       display: grid;
       grid-template-columns: 1fr 140px 1fr;
@@ -559,14 +593,14 @@
       background: #33271c;
     }
 
-    /* SKILL TREE MODAL */
-    .skills-list {
+    /* SKILLS & QUESTS MODAL */
+    .skills-list, .quests-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    .skill-card {
+    .skill-card, .quest-card {
       background: #1e1713;
       border: 2px solid #4d3a27;
       border-radius: 6px;
@@ -576,13 +610,13 @@
       align-items: center;
     }
 
-    .skill-info {
+    .skill-info, .quest-info {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .skill-icon {
+    .skill-icon, .quest-icon {
       font-size: 28px;
       width: 44px;
       height: 44px;
@@ -594,18 +628,18 @@
       justify-content: center;
     }
 
-    .skill-desc h4 {
+    .skill-desc h4, .quest-desc h4 {
       font-size: 13px;
       color: var(--gold);
       margin-bottom: 2px;
     }
 
-    .skill-desc p {
+    .skill-desc p, .quest-desc p {
       font-size: 10px;
       color: #ad9e8e;
     }
 
-    .skill-upgrade-btn {
+    .skill-upgrade-btn, .quest-claim-btn {
       padding: 6px 14px;
       background: linear-gradient(180deg, #d4a017, #8c6a18);
       border: 2px solid var(--gold);
@@ -617,27 +651,59 @@
       font-family: var(--font-main);
     }
 
-    /* SHOP MODAL */
-    .shop-items {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
+    /* DIALOG MODAL (ANCIÃO DE NORRATH) */
+    #dialogModal {
+      display: none;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 600px;
+      background: var(--gothic-panel);
+      border: 3px solid var(--gold);
+      border-radius: 8px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.9);
+      z-index: 60;
     }
 
-    .shop-card {
-      background: #1c1511;
-      border: 2px solid #4a3825;
-      border-radius: 6px;
-      padding: 8px;
+    .dialog-speaker {
+      font-size: 13px;
+      color: var(--gold);
+      font-weight: bold;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+
+    .dialog-text {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #e0d7c7;
+      margin-bottom: 10px;
+    }
+
+    .dialog-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .dialog-btn {
+      padding: 6px 16px;
+      font-size: 11px;
+      font-family: var(--font-main);
+      font-weight: bold;
+      background: #2a1f17;
+      border: 2px solid var(--gold-dark);
+      color: var(--gold);
+      border-radius: 4px;
       cursor: pointer;
     }
 
-    .shop-card:hover {
-      border-color: var(--gold);
+    .dialog-btn:hover {
+      background: var(--gold);
+      color: #000;
     }
 
     /* NOTIFICAÇÃO E POPUPS */
@@ -768,7 +834,7 @@
       .m-btn { width: 50px; height: 50px; font-size: 18px; }
       .m-btn.btn-attack { width: 60px; height: 60px; }
       .paperdoll-container { grid-template-columns: 1fr; justify-items: center; }
-      .shop-items { grid-template-columns: 1fr; }
+      #minimapContainer { width: 75px; height: 75px; }
     }
   </style>
 </head>
@@ -786,13 +852,16 @@
         <div class="hero-avatar" id="heroAvatar">⚔️</div>
         <div class="hero-info-text">
           <h3 id="heroClassName">BÁRBARO</h3>
-          <p id="heroLevelXp">Nível 1 • 0 / 100 XP • Andar <span id="currentFloorText">1</span></p>
+          <p id="heroLevelXp">Nível 1 • 0 / 100 XP • <span id="biomeText">Faydark Forest</span></p>
         </div>
       </div>
       <div style="display: flex; gap: 8px; align-items: center;">
         <div style="font-size: 13px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 4px;">
-          <span>💰</span> <span id="goldVal">120</span>
+          <span>💰</span> <span id="goldVal">150</span>
         </div>
+        <button id="btnOpenQuests" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
+          📜 MISSÕES [J]
+        </button>
         <button id="btnOpenSkills" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
           ⚡ TALENTOS [K] <span id="skillPtsBadge" style="display:none; color:#ff4444;">(1)</span>
         </button>
@@ -802,7 +871,13 @@
       </div>
     </div>
 
-    <!-- BARRA DO CHEFE (NORRATH BOSS HEALTH BAR) -->
+    <!-- MINIMAPA DE NORRATH -->
+    <div id="minimapContainer" class="interactive">
+      <canvas id="minimapCanvas" width="90" height="90"></canvas>
+      <div id="minimapLabel">MAPA</div>
+    </div>
+
+    <!-- BARRA DO CHEFE -->
     <div id="bossBarContainer">
       <div id="bossName">WARLORD ORC DE NORRATH</div>
       <div id="bossHpBar">
@@ -880,7 +955,17 @@
       </div>
     </div>
 
-    <!-- JANELA DE INVENTÁRIO (NORRATH PAPERDOLL COM ENGASTE DE GEMAS) -->
+    <!-- CAIXA DE DIÁLOGO DO ANCIÃO DE NORRATH -->
+    <div id="dialogModal" class="interactive">
+      <div class="dialog-speaker" id="dialogSpeaker">Ancião de Norrath</div>
+      <div class="dialog-text" id="dialogText">Saudações, campeão. As sombras se agitam na Floresta de Faydark e o calor profano de Lavastorm ameaça nossas terras. Aceite minha missão!</div>
+      <div class="dialog-actions">
+        <button class="dialog-btn" id="btnDialogAccept">ACEITAR MISSÃO</button>
+        <button class="dialog-btn" id="btnDialogClose">FECHAR</button>
+      </div>
+    </div>
+
+    <!-- JANELA DE INVENTÁRIO (PAPERDOLL COM ENGASTE) -->
     <div id="inventoryModal" class="gothic-modal interactive">
       <div class="modal-header">
         <h2>Equipamentos & Gemas</h2>
@@ -888,7 +973,6 @@
       </div>
 
       <div class="paperdoll-container">
-        <!-- COLUNA ESQUERDA -->
         <div class="equip-col">
           <div class="equip-slot" id="slotHelm" data-slot="helm">
             <span class="slot-icon">⛑️</span>
@@ -908,7 +992,6 @@
           </div>
         </div>
 
-        <!-- SILHUETA CENTRAL -->
         <div class="paperdoll-silhouette">
           <div class="figure" id="silhouetteHero">⚔️</div>
           <div style="position: absolute; bottom: 8px; font-size: 10px; color: var(--gold); text-align: center;">
@@ -917,7 +1000,6 @@
           </div>
         </div>
 
-        <!-- COLUNA DIREITA -->
         <div class="equip-col">
           <div class="equip-slot" id="slotMainHand" data-slot="mainhand">
             <span class="slot-icon">🗡️</span>
@@ -938,11 +1020,11 @@
         </div>
       </div>
 
-      <h3 style="font-size: 12px; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px;">MOCHILA (TOQUE EM GEMA PARA ENGASTAR NA ARMA)</h3>
+      <h3 style="font-size: 12px; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px;">MOCHILA (TOQUE NA GEMA PARA ENGASTAR NA ARMA)</h3>
       <div class="inventory-grid" id="invGrid"></div>
     </div>
 
-    <!-- JANELA DE ÁRVORE DE HABILIDADES (TALENTOS DE NORRATH) -->
+    <!-- JANELA DE TALENTOS -->
     <div id="skillsModal" class="gothic-modal interactive">
       <div class="modal-header">
         <h2>Árvore de Talentos (<span id="skillPtsCount">0</span> Pontos Disponíveis)</h2>
@@ -951,14 +1033,13 @@
       <div class="skills-list" id="skillsList"></div>
     </div>
 
-    <!-- JANELA DO FERREIRO / MERCADOR (SANTUÁRIO DE NORRATH) -->
-    <div id="shopModal" class="gothic-modal interactive">
+    <!-- JANELA DE MISSÕES -->
+    <div id="questsModal" class="gothic-modal interactive">
       <div class="modal-header">
-        <h2>Ferreiro de Norrath (Santuário)</h2>
-        <div class="close-btn" id="btnCloseShop">✕</div>
+        <h2>Diário de Missões de Norrath</h2>
+        <div class="close-btn" id="btnCloseQuests">✕</div>
       </div>
-      <p style="font-size: 11px; color: #ad9e8d; margin-bottom: 10px;">Armas, elmos e gemas forjados no fogo sagrado de Norrath.</p>
-      <div class="shop-items" id="shopItemsGrid"></div>
+      <div class="quests-list" id="questsList"></div>
     </div>
 
   </div>
@@ -966,7 +1047,7 @@
   <!-- TELA INICIAL DE SELEÇÃO DE CLASSE -->
   <div id="classSelectScreen">
     <h1 class="game-logo">Champions of Norrath</h1>
-    <div class="game-sublogo">2.5D Isometric Action RPG Engine V3</div>
+    <div class="game-sublogo">2.5D Isometric Action RPG Engine V4</div>
 
     <div class="class-cards">
       <div class="class-card active" data-class="barbarian">
@@ -1090,17 +1171,32 @@
         osc.connect(gain); gain.connect(this.ctx.destination);
         osc.start(); osc.stop(this.ctx.currentTime + 0.18);
       }
+      playTrapSpike() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+      }
     }
     const audio = new SoundEngine();
   </script>
 
-  <!-- MOTOR ISOMÉTRICO 2.5D V3 (SKILLS, GEMAS, ANDARES, CHEFE & MERCADOR) -->
+  <!-- MOTOR ISOMÉTRICO 2.5D V4 (BIOMAS, MISSÕES, ARMADILHAS & MINIMAPA) -->
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
     const lightCanvas = document.createElement('canvas');
     const lightCtx = lightCanvas.getContext('2d');
+
+    const minimapCanvas = document.getElementById('minimapCanvas');
+    const minimapCtx = minimapCanvas.getContext('2d');
 
     const TILE_W = 64;
     const TILE_H = 32;
@@ -1123,37 +1219,60 @@
     }
 
     // -------------------------------------------------------------
-    // TEXTURAS PROCEDURAIS DE PEDRA GÓTICA
+    // SISTEMA DE BIOMAS (FAYDARK, CATACUMBAS E LAVASTORM)
     // -------------------------------------------------------------
+    const BIOMES = {
+      faydark: {
+        name: 'Floresta de Faydark',
+        floorColor: '#1a2618',
+        wallColor: '#2d3b24',
+        wallTop: '#3f5233',
+        ambientColor: 'rgba(5, 12, 6, 0.86)',
+        torchGlow: 'rgba(68, 255, 136, 0.35)',
+        musicNote: '🍃 Faydark Forest'
+      },
+      catacombs: {
+        name: 'Catacumbas de Pedra',
+        floorColor: '#1c1713',
+        wallColor: '#241c16',
+        wallTop: '#423528',
+        ambientColor: 'rgba(6, 6, 12, 0.88)',
+        torchGlow: 'rgba(255, 170, 51, 0.35)',
+        musicNote: '💀 Catacombs'
+      },
+      lavastorm: {
+        name: 'Cavernas de Lavastorm',
+        floorColor: '#241410',
+        wallColor: '#3d1c14',
+        wallTop: '#5e291b',
+        ambientColor: 'rgba(16, 4, 3, 0.84)',
+        torchGlow: 'rgba(255, 68, 17, 0.45)',
+        musicNote: '🌋 Lavastorm Mountains'
+      }
+    };
+    let currentBiomeKey = 'faydark';
+
+    // Texturas Dinâmicas
     const Textures = {
-      floor: null,
-      wallTop: null,
-      init() {
+      canvasMap: {},
+      getFloor(biomeKey) {
+        if (this.canvasMap[biomeKey]) return this.canvasMap[biomeKey];
+        const b = BIOMES[biomeKey];
         const fc = document.createElement('canvas');
         fc.width = 64; fc.height = 32;
         const fctx = fc.getContext('2d');
         fctx.beginPath();
         fctx.moveTo(32, 0); fctx.lineTo(64, 16); fctx.lineTo(32, 32); fctx.lineTo(0, 16);
         fctx.closePath();
-        fctx.fillStyle = '#1c1713'; fctx.fill();
-        fctx.strokeStyle = '#2b231c'; fctx.lineWidth = 1.5; fctx.stroke();
+        fctx.fillStyle = b.floorColor; fctx.fill();
+        fctx.strokeStyle = '#2d241c'; fctx.lineWidth = 1.5; fctx.stroke();
 
-        fctx.strokeStyle = '#120f0c'; fctx.lineWidth = 1;
+        fctx.strokeStyle = 'rgba(0,0,0,0.4)'; fctx.lineWidth = 1;
         fctx.beginPath(); fctx.moveTo(18, 14); fctx.lineTo(26, 20); fctx.lineTo(38, 18); fctx.stroke();
-        this.floor = fc;
-
-        const wt = document.createElement('canvas');
-        wt.width = 64; wt.height = 32;
-        const wtctx = wt.getContext('2d');
-        wtctx.beginPath();
-        wtctx.moveTo(32, 0); wtctx.lineTo(64, 16); wtctx.lineTo(32, 32); wtctx.lineTo(0, 16);
-        wtctx.closePath();
-        wtctx.fillStyle = '#423528'; wtctx.fill();
-        wtctx.strokeStyle = '#5c4b38'; wtctx.lineWidth = 1.5; wtctx.stroke();
-        this.wallTop = wt;
+        this.canvasMap[biomeKey] = fc;
+        return fc;
       }
     };
-    Textures.init();
 
     // -------------------------------------------------------------
     // CLASSES & ÁRVORES DE HABILIDADES
@@ -1212,6 +1331,15 @@
     };
 
     // -------------------------------------------------------------
+    // SISTEMA DE MISSÕES & DIÁLOGOS (HISTÓRIA DE NORRATH)
+    // -------------------------------------------------------------
+    const QUESTS = [
+      { id: 'q1', title: 'Purificação de Faydark', desc: 'Derrote 4 Orcs na Floresta.', target: 4, current: 0, rewardGold: 80, rewardXp: 120, completed: false, claimed: false },
+      { id: 'q2', title: 'A Chave do Santuário', desc: 'Encontre a Chave Dourada nas Catacumbas.', target: 1, current: 0, rewardGold: 150, rewardXp: 200, completed: false, claimed: false },
+      { id: 'q3', title: 'A Queda do Warlord', desc: 'Derrote o terrível Chefe Warlord Orc.', target: 1, current: 0, rewardGold: 300, rewardXp: 400, completed: false, claimed: false }
+    ];
+
+    // -------------------------------------------------------------
     // ESTADO DO JOGADOR
     // -------------------------------------------------------------
     let player = {
@@ -1219,6 +1347,10 @@
       vx: 0, vy: 0,
       facing: 0,
       targetFacing: 0,
+      isMoving: false,
+      walkTimer: 0,
+      idleTimer: 0,
+      hitFlash: 0,
       clsKey: 'barbarian',
       hp: 170, maxHp: 170,
       mana: 50, maxMana: 50,
@@ -1240,7 +1372,7 @@
         chest: { name: 'Cota de Malha', def: 8, icon: '🦺' },
         gloves: { name: 'Luvas de Couro', def: 2, icon: '🧤' },
         boots: { name: 'Botas de Guerra', def: 3, icon: '👢' },
-        mainhand: { name: 'Espada Larga', dmg: 18, icon: '🗡️', socket: null }, // Slot de Gema!
+        mainhand: { name: 'Espada Larga', dmg: 18, icon: '🗡️', socket: null },
         offhand: { name: 'Escudo Torre', def: 7, icon: '🛡️' },
         ring: { name: 'Anel de Rubi', dmg: 3, icon: '💍' },
         amulet: { name: 'Amuleto Vital', hp: 20, icon: '📿' }
@@ -1250,8 +1382,7 @@
         { name: 'Gema Safira de Gelo', type: 'gem', gemType: 'ice', bonusDmg: 6, icon: '💎', color: '#3b88ff' },
         { name: 'Adaga Élfica', type: 'mainhand', dmg: 14, icon: '🗡️', socket: null },
         { name: 'Poção de Vida', type: 'potion_hp', val: 65, icon: '🧪' }
-      ],
-      summonedSkeleton: null // Lacaio do Shadow Knight
+      ]
     };
 
     let camera = { x: 0, y: 0 };
@@ -1259,11 +1390,13 @@
     let hitStopTimer = 0;
 
     // -------------------------------------------------------------
-    // MASMORRA EM ANDARES COM PORTÃO DO CHEFE E ESCADAS
+    // MASMORRAS PROCEDURAIS, ARMADILHAS E ENTIDADES
     // -------------------------------------------------------------
     let dungeonMap = [];
     let torches = [];
     let props = [];
+    let traps = []; // Armadilhas de espinhos no piso
+    let npcs = []; // Ancião de Norrath
     let monsters = [];
     let particles = [];
     let floatingTexts = [];
@@ -1274,13 +1407,21 @@
 
     function generateDungeon(floor = 1) {
       player.currentFloor = floor;
-      document.getElementById('currentFloorText').textContent = floor;
+
+      // Seleção de Bioma baseada no Andar
+      if (floor === 1) currentBiomeKey = 'faydark';
+      else if (floor === 2) currentBiomeKey = 'catacombs';
+      else currentBiomeKey = 'lavastorm';
+
+      document.getElementById('biomeText').textContent = BIOMES[currentBiomeKey].name;
       document.getElementById('bossBarContainer').style.display = 'none';
       activeBoss = null;
 
       dungeonMap = [];
       torches = [];
       props = [];
+      traps = [];
+      npcs = [];
       monsters = [];
       particles = [];
       floatingTexts = [];
@@ -1309,7 +1450,18 @@
         { gx: 26, gy: 24, flame: 0.8 }
       ];
 
-      // Props destrutíveis
+      // Armadilhas de espinho no piso (Traps)
+      traps = [
+        { gx: 10, gy: 5, active: false, timer: 0 },
+        { gx: 16, gy: 10, active: false, timer: 1.2 },
+        { gx: 22, gy: 18, active: false, timer: 2.1 }
+      ];
+
+      // NPC Ancião no início do Andar 1
+      if (floor === 1) {
+        npcs.push({ gx: 4, gy: 6, name: 'Ancião de Norrath', icon: '🧙‍♂️' });
+      }
+
       props = [
         { type: 'barrel', gx: 6, gy: 3, hp: 1, icon: '🛢️', alive: true },
         { type: 'barrel', gx: 7, gy: 3, hp: 1, icon: '🛢️', alive: true },
@@ -1319,27 +1471,24 @@
       ];
 
       if (floor === 1) {
-        // Andar 1: Escada descendo para o Andar 2
         stairs = { gx: 28, gy: 28, icon: '🪜', desc: 'Descer para Andar 2' };
         bossGate = null;
 
         monsters = [
-          { id: 1, name: 'Guerreiro Orc', gx: 9, gy: 7, hp: 70, maxHp: 70, dmg: 14, icon: '👹', alive: true },
-          { id: 2, name: 'Esqueleto Legionário', gx: 15, gy: 10, hp: 55, maxHp: 55, dmg: 12, icon: '💀', alive: true },
-          { id: 3, name: 'Goblin Xamã', gx: 19, gy: 16, hp: 60, maxHp: 60, dmg: 16, icon: '👺', alive: true },
-          { id: 4, name: 'Aranha das Catacumbas', gx: 11, gy: 19, hp: 50, maxHp: 50, dmg: 11, icon: '🕷️', alive: true },
-          { id: 5, name: 'Capitão Esqueleto', gx: 24, gy: 24, hp: 130, maxHp: 130, dmg: 18, icon: '☠️', alive: true }
+          { id: 1, name: 'Lobo de Faydark', gx: 9, gy: 7, hp: 60, maxHp: 60, dmg: 12, icon: '🐺', type: 'wolf', alive: true, animTimer: Math.random() * 5 },
+          { id: 2, name: 'Orc Patrulheiro', gx: 15, gy: 10, hp: 65, maxHp: 65, dmg: 14, icon: '👹', type: 'orc', alive: true, animTimer: Math.random() * 5 },
+          { id: 3, name: 'Goblin Xamã', gx: 19, gy: 16, hp: 60, maxHp: 60, dmg: 15, icon: '👺', type: 'goblin', alive: true, animTimer: Math.random() * 5 },
+          { id: 4, name: 'Aranha Venenosa', gx: 11, gy: 19, hp: 55, maxHp: 55, dmg: 12, icon: '🕷️', type: 'spider', alive: true, animTimer: Math.random() * 5 },
+          { id: 5, name: 'Líder dos Orcs', gx: 24, gy: 24, hp: 140, maxHp: 140, dmg: 20, icon: '👹', type: 'orc_boss', isBoss: false, alive: true, animTimer: Math.random() * 5 }
         ];
       } else {
-        // Andar 2: Câmara do Chefe protegida por Portão Trancado
         stairs = null;
         bossGate = { gx: 20, gy: 20, locked: !player.hasBossKey, icon: '🚪' };
 
         monsters = [
-          { id: 1, name: 'Guarda da Masmorra', gx: 10, gy: 10, hp: 90, maxHp: 90, dmg: 18, icon: '🛡️', alive: true, dropsKey: !player.hasBossKey },
-          { id: 2, name: 'Demônio Alado', gx: 16, gy: 12, hp: 85, maxHp: 85, dmg: 20, icon: '🦇', alive: true },
-          { id: 3, name: 'Xamã das Sombras', gx: 14, gy: 18, hp: 80, maxHp: 80, dmg: 22, icon: '🧙‍♂️', alive: true },
-          { id: 4, name: 'WARLORD ORC DE NORRATH (CHEFE)', gx: 26, gy: 26, hp: 350, maxHp: 350, dmg: 35, icon: '👑', isBoss: true, alive: true }
+          { id: 1, name: 'Guarda da Masmorra', gx: 10, gy: 10, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, dropsKey: !player.hasBossKey, animTimer: Math.random() * 5 },
+          { id: 2, name: 'Demônio Alado', gx: 16, gy: 12, hp: 90, maxHp: 90, dmg: 22, icon: '🦇', type: 'demon', alive: true, animTimer: Math.random() * 5 },
+          { id: 3, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 26, gy: 26, hp: 380, maxHp: 380, dmg: 38, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0 }
         ];
       }
     }
@@ -1353,6 +1502,7 @@
       audio.init();
       if (e.key.toLowerCase() === 'i') toggleInventory();
       if (e.key.toLowerCase() === 'k') toggleSkills();
+      if (e.key.toLowerCase() === 'j') toggleQuests();
       if (e.key === '1') usePotion('hp');
       if (e.key === '2') usePotion('mana');
       if (e.key === '3') castSkill(1);
@@ -1367,7 +1517,6 @@
       if (e.key.toLowerCase() === 'shift') player.blocking = false;
     });
 
-    // Joystick Virtual Touch
     let joyTouch = null;
     let joyDelta = { x: 0, y: 0 };
     const joyBase = document.getElementById('virtualJoystick');
@@ -1422,10 +1571,18 @@
     shieldBtn.addEventListener('touchend', () => { player.blocking = false; });
 
     // -------------------------------------------------------------
-    // COMBATE COM GEMAS, HIT-STOP & CHEFE
+    // COMBATE E INTERAÇÕES
     // -------------------------------------------------------------
     function doAttack() {
       if (player.attacking > 0 || player.blocking) return;
+
+      // Interação com NPC Ancião
+      npcs.forEach(npc => {
+        if (Math.hypot(npc.gx - player.gx, npc.gy - player.gy) < 1.8) {
+          openDialog(npc.name, 'Saudações, Campeão de Norrath! Minhas missões estão abertas para você no Diário [J]. Limpe as terras e torne-se uma lenda!');
+          return;
+        }
+      });
 
       if (player.comboTimer > 0) {
         player.comboStep = (player.comboStep % 3) + 1;
@@ -1448,7 +1605,6 @@
       const comboMultiplier = player.comboStep === 3 ? 1.9 : (player.comboStep === 2 ? 1.3 : 1.0);
       let baseDmg = 16 + player.equipment.mainhand.dmg + Math.floor(Math.random() * 8);
 
-      // Efeito de Gema Engastada na Arma
       let gemEffect = null;
       if (player.equipment.mainhand.socket) {
         const g = player.equipment.mainhand.socket;
@@ -1458,7 +1614,7 @@
 
       const totalDmg = Math.floor(baseDmg * comboMultiplier);
 
-      // 1. Interação com Props
+      // Props
       props.forEach(p => {
         const dist = Math.hypot(p.gx - player.gx, p.gy - player.gy);
         if (dist < 1.8) {
@@ -1473,20 +1629,22 @@
             p.opened = true;
             audio.playCoin();
             screenShake = 4;
-            spawnFlyingLoot(p.gx, p.gy, 'gold', 50);
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 55);
             if (p.hasKey) {
               player.hasBossKey = true;
-              showNotification('🗝️ Você encontrou a Chave Dourada do Chefe!');
+              QUESTS[1].current = 1;
+              QUESTS[1].completed = true;
+              showNotification('🗝️ Chave Dourada encontrada! Missão cumprida.');
             }
           }
         }
       });
 
-      // 2. Interação com Escadas / Portão
+      // Escadas / Portão
       if (stairs && Math.hypot(stairs.gx - player.gx, stairs.gy - player.gy) < 1.6) {
         generateDungeon(2);
         player.gx = 4; player.gy = 4;
-        showNotification('🏰 Você desceu para o Andar 2 da Masmorra!');
+        showNotification('🏰 Você desceu para as Catacumbas (Andar 2)!');
         return;
       }
 
@@ -1502,7 +1660,7 @@
         }
       }
 
-      // 3. Acerto em Monstros
+      // Monstros
       monsters.forEach(m => {
         if (!m.alive) return;
         const dist = Math.hypot(m.gx - player.gx, m.gy - player.gy);
@@ -1515,7 +1673,6 @@
           audio.playHitMonster();
           screenShake = isCrit ? 7 : 4;
 
-          // Efeitos Elementais da Gema
           if (gemEffect === 'fire') {
             spawnFloatingText(`🔥 +FOGO`, m.gx, m.gy - 0.4, '#ff4400');
             m.hp -= 8;
@@ -1543,16 +1700,30 @@
 
           if (m.hp <= 0) {
             m.alive = false;
+            // Progresso de Missões
+            if (!QUESTS[0].completed) {
+              QUESTS[0].current++;
+              if (QUESTS[0].current >= QUESTS[0].target) {
+                QUESTS[0].completed = true;
+                showNotification('📜 Missão "Purificação de Faydark" Completa!');
+              }
+            }
+
             if (m.dropsKey) {
               player.hasBossKey = true;
+              QUESTS[1].current = 1;
+              QUESTS[1].completed = true;
               showNotification('🗝️ Chave Dourada obtida!');
             }
             if (m.isBoss) {
+              QUESTS[2].current = 1;
+              QUESTS[2].completed = true;
               document.getElementById('bossBarContainer').style.display = 'none';
               showNotification('🏆 CHEFE DERROTADO! Você conquistou Norrath!');
             }
-            const xpGained = m.isBoss ? 240 : 45;
-            const goldGained = m.isBoss ? 120 : 18 + Math.floor(Math.random() * 14);
+
+            const xpGained = m.isBoss ? 260 : 45;
+            const goldGained = m.isBoss ? 130 : 18 + Math.floor(Math.random() * 14);
             giveXp(xpGained);
             spawnFlyingLoot(m.gx, m.gy, 'gold', goldGained);
             if (m.isBoss || Math.random() < 0.35) spawnFlyingLoot(m.gx, m.gy, 'gem');
@@ -1616,11 +1787,13 @@
       updateHud();
     }
 
-    // Portal para o Santuário com NPC Mercador
     function castTownPortal() {
       audio.playMagicSpell();
-      toggleShop();
-      showNotification('🏛️ Santuário de Norrath: Bem-vindo à tenda do Ferreiro!');
+      player.gx = 4; player.gy = 4;
+      player.hp = player.maxHp;
+      player.mana = player.maxMana;
+      showNotification('🏛️ Portal de Retorno: Descanso no Santuário de Norrath');
+      updateHud();
     }
 
     function giveXp(amount) {
@@ -1719,6 +1892,7 @@
       }
 
       render();
+      renderMinimap();
       requestAnimationFrame(gameLoop);
     }
 
@@ -1739,6 +1913,9 @@
       const accel = 26;
 
       if (inputX !== 0 || inputY !== 0) {
+        player.isMoving = true;
+        player.walkTimer = (player.walkTimer || 0) + dt * 10;
+
         const len = Math.hypot(inputX, inputY);
         inputX /= len;
         inputY /= len;
@@ -1760,12 +1937,15 @@
 
         if (Math.random() < 0.25) spawnDust(player.gx, player.gy);
       } else {
+        player.isMoving = false;
+        player.idleTimer = (player.idleTimer || 0) + dt * 2.5;
         player.vx -= player.vx * friction * dt;
         player.vy -= player.vy * friction * dt;
         if (Math.hypot(player.vx, player.vy) < 0.05) {
           player.vx = 0; player.vy = 0;
         }
       }
+      if (player.hitFlash > 0) player.hitFlash -= dt * 4;
 
       const nextGx = player.gx + player.vx * dt;
       const nextGy = player.gy + player.vy * dt;
@@ -1781,6 +1961,24 @@
       } else {
         player.vy = 0;
       }
+
+      // Atualização de Armadilhas (Spike Traps)
+      traps.forEach(tr => {
+        tr.timer += dt * 2.5;
+        tr.active = Math.sin(tr.timer) > 0.3;
+        if (tr.active && Math.hypot(tr.gx - player.gx, tr.gy - player.gy) < 0.9) {
+          tr.cooldown = (tr.cooldown || 0) - dt;
+          if (tr.cooldown <= 0) {
+            tr.cooldown = 1.0;
+            player.hp = Math.max(0, player.hp - 16);
+            screenShake = 5;
+            audio.playTrapSpike();
+            spawnBlood(player.gx, player.gy, 6);
+            spawnFloatingText('-16 (ARMADILHA)', player.gx, player.gy, '#ff3333');
+            updateHud();
+          }
+        }
+      });
 
       // Rastro da Espada
       if (player.attacking > 0) {
@@ -1840,6 +2038,7 @@
       // IA dos Monstros
       monsters.forEach(m => {
         if (!m.alive) return;
+        m.animTimer = (m.animTimer || 0) + dt * 5;
         if (m.frozen && m.frozen > 0) { m.frozen -= dt; return; }
 
         const dist = Math.hypot(player.gx - m.gx, player.gy - m.gy);
@@ -1864,6 +2063,7 @@
                 spawnFloatingText(`-${dmg}`, player.gx, player.gy, '#ff3333');
               }
               player.hp = Math.max(0, player.hp - dmg);
+              player.hitFlash = 0.25;
               if (player.hp <= 0) {
                 player.hp = Math.floor(player.maxHp * 0.6);
                 player.gx = 4; player.gy = 4;
@@ -1898,7 +2098,6 @@
       const ix = Math.floor(gx);
       const iy = Math.floor(gy);
       if (ix < 0 || iy < 0 || ix >= MAP_SIZE || iy >= MAP_SIZE) return false;
-      // Portão fechado bloqueia passagem
       if (bossGate && bossGate.locked && Math.hypot(bossGate.gx - gx, bossGate.gy - gy) < 1.1) return false;
       return dungeonMap[iy][ix] === 0;
     }
@@ -1915,14 +2114,15 @@
       }
       ctx.translate(camera.x, camera.y);
 
-      // Chão
+      // Chão do Bioma Atual
+      const floorTile = Textures.getFloor(currentBiomeKey);
       for (let y = 0; y < MAP_SIZE; y++) {
         for (let x = 0; x < MAP_SIZE; x++) {
           const iso = worldToIso(x, y);
           if (iso.x + camera.x < -100 || iso.x + camera.x > canvas.width + 100 ||
               iso.y + camera.y < -100 || iso.y + camera.y > canvas.height + 100) continue;
 
-          drawTile(iso.x, iso.y, dungeonMap[y][x]);
+          drawTile(iso.x, iso.y, dungeonMap[y][x], floorTile);
         }
       }
 
@@ -1934,6 +2134,14 @@
       monsters.forEach(m => {
         if (!m.alive) return;
         renderables.push({ ySort: m.gx + m.gy, draw: () => drawMonster(m) });
+      });
+
+      npcs.forEach(npc => {
+        renderables.push({ ySort: npc.gx + npc.gy, draw: () => drawNpc(npc) });
+      });
+
+      traps.forEach(tr => {
+        renderables.push({ ySort: tr.gx + tr.gy, draw: () => drawTrap(tr) });
       });
 
       props.forEach(p => {
@@ -1994,9 +2202,10 @@
 
       ctx.restore();
 
-      // MÁSCARA DE ILUMINAÇÃO DINÂMICA
+      // ILUMINAÇÃO DINÂMICA COM COR DO BIOMA
+      const currentBiome = BIOMES[currentBiomeKey];
       lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
-      lightCtx.fillStyle = 'rgba(6, 6, 12, 0.88)';
+      lightCtx.fillStyle = currentBiome.ambientColor;
       lightCtx.fillRect(0, 0, lightCanvas.width, lightCanvas.height);
 
       lightCtx.save();
@@ -2033,18 +2242,20 @@
       ctx.drawImage(lightCanvas, 0, 0);
     }
 
-    function drawTile(x, y, type) {
+    function drawTile(x, y, type, floorTile) {
       if (type === 0) {
-        ctx.drawImage(Textures.floor, x - 32, y);
+        ctx.drawImage(floorTile, x - 32, y);
       } else {
+        const b = BIOMES[currentBiomeKey];
         const wallH = 42;
+
         ctx.beginPath();
         ctx.moveTo(x - TILE_W / 2, y + TILE_H / 2);
         ctx.lineTo(x, y + TILE_H);
         ctx.lineTo(x, y + TILE_H - wallH);
         ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2 - wallH);
         ctx.closePath();
-        ctx.fillStyle = '#241c16'; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
+        ctx.fillStyle = b.wallColor; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
 
         ctx.beginPath();
         ctx.moveTo(x, y + TILE_H);
@@ -2052,105 +2263,815 @@
         ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2 - wallH);
         ctx.lineTo(x, y + TILE_H - wallH);
         ctx.closePath();
-        ctx.fillStyle = '#2f241d'; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
+        ctx.fillStyle = b.wallColor; ctx.fill(); ctx.strokeStyle = '#18120d'; ctx.stroke();
 
-        ctx.drawImage(Textures.wallTop, x - 32, y - wallH);
+        ctx.beginPath();
+        ctx.moveTo(x, y - wallH);
+        ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2 - wallH);
+        ctx.lineTo(x, y + TILE_H - wallH);
+        ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2 - wallH);
+        ctx.closePath();
+        ctx.fillStyle = b.wallTop; ctx.fill(); ctx.strokeStyle = '#2b231c'; ctx.stroke();
       }
     }
 
+    // -------------------------------------------------------------
+    // RENDERIZAÇÃO PROCEDURAL 2.5D (SEM EMOJIS, ANCORAGEM NO PISO)
+    // -------------------------------------------------------------
+
     function drawPlayer() {
       const iso = worldToIso(player.gx, player.gy);
+      const footX = iso.x;
+      const footY = iso.y + 16; // Ponto exato de contato com o chão isométrico
+
+      // 1. Sombra de Contato com o Piso
+      ctx.save();
       ctx.beginPath();
-      ctx.ellipse(iso.x, iso.y + TILE_H / 2, 17, 8, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+      ctx.ellipse(footX, footY, 16, 8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
       ctx.fill();
 
-      ctx.save();
-      ctx.translate(iso.x, iso.y);
+      // 2. Animação de Passos (Walk Cycle) & Respiração
+      const walkCycle = player.walkTimer || 0;
+      const idleCycle = player.idleTimer || 0;
+      const bob = player.isMoving ? Math.abs(Math.sin(walkCycle)) * 3.5 : Math.sin(idleCycle) * 1.5;
+      const legStride = player.isMoving ? Math.sin(walkCycle) * 6.5 : 0;
 
-      if (player.blocking) {
-        ctx.fillStyle = 'rgba(68, 136, 255, 0.4)';
-        ctx.beginPath();
-        ctx.arc(0, -18, 28, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#66aaff';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
+      // Direção Projetada na Tela Isométrica
+      const dx = Math.cos(player.facing);
+      const dy = Math.sin(player.facing);
+      const scrX = dx - dy;
+      const scrY = (dx + dy) * 0.5;
+      const isFacingRight = scrX >= 0;
+      const isFacingFront = scrY >= -0.15;
+
+      const hipY = footY - 12 - bob;
+      const chestY = footY - 22 - bob;
+      const headY = footY - 32 - bob;
+
+      if (player.hitFlash && player.hitFlash > 0) {
+        ctx.filter = 'brightness(2.2) contrast(1.4)';
       }
 
-      ctx.rotate(player.facing * 0.1);
-      ctx.font = '30px sans-serif';
+      // --- PERNAS E BOTAS ---
+      // Perna Esquerda
+      ctx.fillStyle = '#261b14';
+      ctx.fillRect(footX - 6, hipY, 4, 8);
+      ctx.fillStyle = '#4a3625';
+      ctx.fillRect(footX - 6 + (isFacingRight ? -legStride * 0.5 : legStride * 0.5), footY - 6, 5, 6);
+
+      // Perna Direita
+      ctx.fillStyle = '#1e140e';
+      ctx.fillRect(footX + 2, hipY, 4, 8);
+      ctx.fillStyle = '#3d2b1c';
+      ctx.fillRect(footX + 2 + (isFacingRight ? legStride * 0.5 : -legStride * 0.5), footY - 6, 5, 6);
+
+      // --- CAPA / COSTAS (Se Ranger ou Mago) ---
+      if (isFacingFront && (player.clsKey === 'ranger' || player.clsKey === 'wizard')) {
+        ctx.fillStyle = player.clsKey === 'ranger' ? '#1c3619' : '#1b1b4d';
+        ctx.beginPath();
+        ctx.moveTo(footX - 8, chestY);
+        ctx.lineTo(footX + 8, chestY);
+        ctx.lineTo(footX + 11, footY - 4);
+        ctx.lineTo(footX - 11, footY - 4);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // --- TORSO E ARMADURA DA CLASSE ---
+      if (player.clsKey === 'barbarian') {
+        // Bárbaro: Tronco musculoso com arnês de aço e bronze
+        ctx.fillStyle = '#b87d54';
+        ctx.fillRect(footX - 7, chestY, 14, 10);
+        ctx.strokeStyle = '#5a483a'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(footX - 7, chestY); ctx.lineTo(footX + 7, chestY + 10); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(footX + 7, chestY); ctx.lineTo(footX - 7, chestY + 10); ctx.stroke();
+        // Ombreiras com cravos
+        ctx.fillStyle = '#7a7a82';
+        ctx.beginPath(); ctx.arc(footX - 8, chestY + 2, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(footX + 8, chestY + 2, 4.5, 0, Math.PI * 2); ctx.fill();
+        // Cinto com fivela dourada
+        ctx.fillStyle = '#261b14'; ctx.fillRect(footX - 7, hipY - 2, 14, 4);
+        ctx.fillStyle = '#d4af37'; ctx.fillRect(footX - 2, hipY - 2, 4, 4);
+      } else if (player.clsKey === 'ranger') {
+        // Ranger: Túnica verde com protetor de couro e aljava
+        ctx.fillStyle = '#2e532b';
+        ctx.fillRect(footX - 6, chestY, 12, 10);
+        ctx.fillStyle = '#5c3d24';
+        ctx.fillRect(footX - 5, chestY + 1, 10, 7);
+        ctx.strokeStyle = '#3e2714'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(footX - 6, chestY); ctx.lineTo(footX + 5, hipY); ctx.stroke();
+        ctx.fillStyle = '#3e2714'; ctx.fillRect(footX - 6, hipY - 2, 12, 3);
+      } else if (player.clsKey === 'cleric') {
+        // Clériga: Placa de aço polido com cruz sagrada dourada
+        ctx.fillStyle = '#8a929a';
+        ctx.fillRect(footX - 7, chestY, 14, 11);
+        ctx.fillStyle = '#d4af37';
+        ctx.fillRect(footX - 5, chestY + 4, 10, 2.5);
+        ctx.fillRect(footX - 1.5, chestY + 1, 3, 8);
+        ctx.fillStyle = '#a6b0b8';
+        ctx.beginPath(); ctx.arc(footX - 8, chestY + 2, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(footX + 8, chestY + 2, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#40352c'; ctx.fillRect(footX - 7, hipY - 2, 14, 3);
+      } else if (player.clsKey === 'wizard') {
+        // Mago: Manto arcano azul e roxo com runas
+        ctx.fillStyle = '#212459';
+        ctx.beginPath();
+        ctx.moveTo(footX - 7, chestY);
+        ctx.lineTo(footX + 7, chestY);
+        ctx.lineTo(footX + 9, footY - 2);
+        ctx.lineTo(footX - 9, footY - 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(footX, chestY); ctx.lineTo(footX, footY - 2); ctx.stroke();
+      } else if (player.clsKey === 'shadowknight') {
+        // Cavaleiro das Sombras: Placa de obsidiana pontiaguda com brilho rubro
+        ctx.fillStyle = '#1c1b22';
+        ctx.fillRect(footX - 7, chestY, 14, 11);
+        ctx.strokeStyle = '#b81424'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(footX - 5, chestY + 2); ctx.lineTo(footX, chestY + 7); ctx.lineTo(footX + 5, chestY + 2); ctx.stroke();
+        ctx.fillStyle = '#2c2b38';
+        ctx.beginPath(); ctx.moveTo(footX - 11, chestY); ctx.lineTo(footX - 6, chestY - 4); ctx.lineTo(footX - 6, chestY + 5); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(footX + 11, chestY); ctx.lineTo(footX + 6, chestY - 4); ctx.lineTo(footX + 6, chestY + 5); ctx.fill();
+      }
+
+      // --- CABEÇA E ELMOS ---
+      ctx.beginPath();
+      ctx.arc(footX, headY, 6.5, 0, Math.PI * 2);
+      if (player.clsKey === 'barbarian') {
+        ctx.fillStyle = '#b87d54'; ctx.fill();
+        // Elmo com Chifres de Aço
+        ctx.fillStyle = '#55555c';
+        ctx.beginPath(); ctx.arc(footX, headY - 2, 6, Math.PI, 0); ctx.fill();
+        ctx.strokeStyle = '#c4b899'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(footX - 5, headY - 2); ctx.quadraticCurveTo(footX - 9, headY - 6, footX - 7, headY - 10); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(footX + 5, headY - 2); ctx.quadraticCurveTo(footX + 9, headY - 6, footX + 7, headY - 10); ctx.stroke();
+      } else if (player.clsKey === 'ranger') {
+        // Capuz Verde
+        ctx.fillStyle = '#1e381b';
+        ctx.beginPath(); ctx.arc(footX, headY - 1, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#c89269';
+        ctx.beginPath(); ctx.arc(footX, headY, 4, 0, Math.PI * 2); ctx.fill();
+      } else if (player.clsKey === 'wizard') {
+        // Chapéu Cônico de Feiticeiro
+        ctx.fillStyle = '#1b1d47';
+        ctx.beginPath(); ctx.moveTo(footX - 8, headY + 1); ctx.lineTo(footX, headY - 13); ctx.lineTo(footX + 8, headY + 1); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#d4af37'; ctx.fillRect(footX - 7, headY - 1, 14, 2);
+        ctx.fillStyle = '#c89269'; ctx.beginPath(); ctx.arc(footX, headY + 1, 4, 0, Math.PI * 2); ctx.fill();
+      } else if (player.clsKey === 'cleric') {
+        // Elmo de Cavaleiro Sagrado
+        ctx.fillStyle = '#8a929a'; ctx.fill();
+        ctx.fillStyle = '#d4af37'; ctx.fillRect(footX - 4, headY - 1, 8, 2);
+      } else if (player.clsKey === 'shadowknight') {
+        // Elmo com Olhos Demoníacos Vermelhos
+        ctx.fillStyle = '#16151c'; ctx.fill();
+        ctx.fillStyle = '#ff1e1e'; ctx.fillRect(footX - 3, headY, 2, 1.5); ctx.fillRect(footX + 1, headY, 2, 1.5);
+      }
+
+      // --- ESCUDO / BLOQUEIO (Mão Esquerda) ---
+      const shieldX = footX + (isFacingRight ? -9 : 9);
+      const shieldY = chestY + 2;
+      if (player.blocking) {
+        ctx.fillStyle = '#3a4a60';
+        ctx.strokeStyle = '#6bb0f2'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(footX, chestY + 2, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        // Barreira Aegis Sagrada
+        ctx.fillStyle = 'rgba(68, 136, 255, 0.25)';
+        ctx.strokeStyle = '#66aaff'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(footX, chestY, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      } else {
+        ctx.fillStyle = '#404552';
+        ctx.strokeStyle = '#6b7280'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.ellipse(shieldX, shieldY, 5, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      }
+
+      // --- ARMA (Mão Direita) ---
+      const wepHandX = footX + (isFacingRight ? 9 : -9);
+      const wepHandY = chestY + 3;
+      ctx.save();
+      ctx.translate(wepHandX, wepHandY);
+
+      let wepAngle = isFacingRight ? 0.3 : -0.3;
+      if (player.attacking > 0) {
+        const swingProgress = (14 - player.attacking) / 14;
+        wepAngle = isFacingRight ? (-1.5 + swingProgress * 3.0) : (1.5 - swingProgress * 3.0);
+      }
+      ctx.rotate(wepAngle);
+
+      if (player.clsKey === 'barbarian' || player.clsKey === 'cleric' || player.clsKey === 'shadowknight') {
+        ctx.fillStyle = '#8b5a2b'; ctx.fillRect(-1.5, 0, 3, 5);
+        ctx.fillStyle = '#d4af37'; ctx.fillRect(-5, 5, 10, 2.5);
+        ctx.fillStyle = player.clsKey === 'shadowknight' ? '#4a1525' : '#c8d1db';
+        ctx.fillRect(-2, 7, 4, 18);
+        ctx.beginPath(); ctx.moveTo(-2, 25); ctx.lineTo(0, 29); ctx.lineTo(2, 25); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 8, 1, 16);
+      } else if (player.clsKey === 'ranger') {
+        ctx.strokeStyle = '#6d4c2a'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(0, 10, 12, -Math.PI * 0.4, Math.PI * 0.4); ctx.stroke();
+        ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(4, 0); ctx.lineTo(4, 20); ctx.stroke();
+      } else if (player.clsKey === 'wizard') {
+        ctx.fillStyle = '#5c3d1e'; ctx.fillRect(-1.5, -4, 3, 26);
+        ctx.fillStyle = '#d4af37'; ctx.beginPath(); ctx.arc(0, 23, 3, 0, Math.PI * 2); ctx.fill();
+        const orbGlow = ctx.createRadialGradient(0, 24, 1, 0, 24, 7);
+        orbGlow.addColorStop(0, '#ffffff');
+        orbGlow.addColorStop(0.4, '#4dc9ff');
+        orbGlow.addColorStop(1, 'rgba(0, 100, 255, 0)');
+        ctx.fillStyle = orbGlow;
+        ctx.beginPath(); ctx.arc(0, 24, 7, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Efeito de Gema Engastada
+      const mainGem = player.equipment && player.equipment.mainhand ? player.equipment.mainhand.socket : null;
+      if (mainGem) {
+        ctx.fillStyle = mainGem.color || '#ff4444';
+        ctx.beginPath(); ctx.arc(0, 16 + Math.sin(walkCycle * 4) * 4, 3.5, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    function drawMonster(m) {
+      const iso = worldToIso(m.gx, m.gy);
+      const mFootX = iso.x;
+      const mFootY = iso.y + 16;
+      const t = m.animTimer || 0;
+
+      // 1. Sombra de Contato
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(mFootX, mFootY, m.isBoss ? 26 : 14, m.isBoss ? 13 : 7, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.fill();
+
+      if (m.frozen && m.frozen > 0) {
+        ctx.fillStyle = 'rgba(0, 180, 255, 0.35)';
+        ctx.beginPath(); ctx.arc(mFootX, mFootY - 14, 20, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // 2. Renderização Procedural pelo Tipo
+      const type = m.type || (m.isBoss ? 'warlord_boss' : 'orc');
+
+      if (type === 'wolf') {
+        // LOBO DE FAYDARK (Quadrupede)
+        const stride = Math.sin(t * 8) * 5;
+        ctx.fillStyle = '#2d2d30';
+        ctx.fillRect(mFootX - 10 + stride, mFootY - 7, 3, 7);
+        ctx.fillRect(mFootX - 4 - stride, mFootY - 7, 3, 7);
+        ctx.fillRect(mFootX + 3 + stride, mFootY - 7, 3, 7);
+        ctx.fillRect(mFootX + 8 - stride, mFootY - 7, 3, 7);
+        ctx.fillStyle = '#48484e';
+        ctx.beginPath(); ctx.ellipse(mFootX, mFootY - 10, 14, 7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#3a3a3e';
+        ctx.beginPath(); ctx.ellipse(mFootX - 11, mFootY - 13, 6, 5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#222'; ctx.fillRect(mFootX - 16, mFootY - 13, 5, 3);
+        ctx.fillStyle = '#fff'; ctx.fillRect(mFootX - 15, mFootY - 10, 2, 2);
+        ctx.fillStyle = '#ffaa00'; ctx.beginPath(); ctx.arc(mFootX - 11, mFootY - 15, 1.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#222';
+        ctx.beginPath(); ctx.moveTo(mFootX - 10, mFootY - 16); ctx.lineTo(mFootX - 7, mFootY - 21); ctx.lineTo(mFootX - 5, mFootY - 16); ctx.fill();
+        ctx.strokeStyle = '#48484e'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(mFootX + 12, mFootY - 10); ctx.quadraticCurveTo(mFootX + 18, mFootY - 14 + Math.sin(t * 6) * 3, mFootX + 16, mFootY - 5); ctx.stroke();
+
+      } else if (type === 'orc' || type === 'orc_boss') {
+        // ORC PATRULHEIRO OU CHEFE ORC
+        const scale = type === 'orc_boss' ? 1.4 : 1.0;
+        const bob = Math.sin(t * 7) * 2;
+        ctx.save();
+        ctx.translate(mFootX, mFootY);
+        ctx.scale(scale, scale);
+
+        ctx.fillStyle = '#2c221a';
+        ctx.fillRect(-6, -10, 4, 10);
+        ctx.fillRect(2, -10, 4, 10);
+        ctx.fillStyle = '#3d6826';
+        ctx.fillRect(-8, -21 - bob, 16, 12);
+        ctx.fillStyle = '#5c3a21';
+        ctx.fillRect(-7, -20 - bob, 14, 8);
+        ctx.fillStyle = '#999';
+        ctx.fillRect(-5, -18 - bob, 2, 2); ctx.fillRect(3, -18 - bob, 2, 2);
+        ctx.fillStyle = '#3d6826';
+        ctx.beginPath(); ctx.arc(0, -26 - bob, 6.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#5a5a60';
+        ctx.fillRect(-6, -30 - bob, 12, 4);
+        ctx.beginPath(); ctx.moveTo(-2, -30 - bob); ctx.lineTo(0, -35 - bob); ctx.lineTo(2, -30 - bob); ctx.fill();
+        ctx.fillStyle = '#ff1111';
+        ctx.fillRect(-4, -27 - bob, 2, 2); ctx.fillRect(2, -27 - bob, 2, 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(-4, -23 - bob, 2, 3); ctx.fillRect(2, -23 - bob, 2, 3);
+        ctx.fillStyle = '#4a2f1b'; ctx.fillRect(9, -24 - bob, 3, 16);
+        ctx.fillStyle = type === 'orc_boss' ? '#b83b1d' : '#777782';
+        ctx.fillRect(6, -28 - bob, 9, 7);
+
+        ctx.restore();
+
+      } else if (type === 'goblin') {
+        // GOBLIN XAMÃ
+        const bob = Math.sin(t * 8) * 2;
+        ctx.fillStyle = '#1e2d14';
+        ctx.fillRect(mFootX - 4, mFootY - 7, 3, 7);
+        ctx.fillRect(mFootX + 1, mFootY - 7, 3, 7);
+        ctx.fillStyle = '#4d7829';
+        ctx.fillRect(mFootX - 5, mFootY - 16 - bob, 10, 10);
+        ctx.fillStyle = '#4a284e';
+        ctx.fillRect(mFootX - 6, mFootY - 14 - bob, 12, 7);
+        ctx.fillStyle = '#4d7829';
+        ctx.beginPath(); ctx.arc(mFootX, mFootY - 20 - bob, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(mFootX - 4, mFootY - 20 - bob); ctx.lineTo(mFootX - 11, mFootY - 22 - bob); ctx.lineTo(mFootX - 4, mFootY - 17 - bob); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(mFootX + 4, mFootY - 20 - bob); ctx.lineTo(mFootX + 11, mFootY - 22 - bob); ctx.lineTo(mFootX + 4, mFootY - 17 - bob); ctx.fill();
+        ctx.fillStyle = '#ffff00';
+        ctx.fillRect(mFootX - 3, mFootY - 21 - bob, 2, 2); ctx.fillRect(mFootX + 1, mFootY - 21 - bob, 2, 2);
+        ctx.fillStyle = '#5c432d'; ctx.fillRect(mFootX + 6, mFootY - 24 - bob, 2.5, 20);
+        ctx.fillStyle = '#00ff44';
+        ctx.beginPath(); ctx.arc(mFootX + 7, mFootY - 26 - bob, 4.5, 0, Math.PI * 2); ctx.fill();
+
+      } else if (type === 'spider') {
+        // ARANHA VENENOSA (8 Pernas articuladas)
+        const crawl = Math.sin(t * 10);
+        ctx.strokeStyle = '#222224'; ctx.lineWidth = 1.8;
+        for (let i = -1; i <= 1; i += 0.65) {
+          ctx.beginPath();
+          ctx.moveTo(mFootX - 4, mFootY - 8);
+          ctx.lineTo(mFootX - 12 + i * 3, mFootY - 14 + crawl * 2);
+          ctx.lineTo(mFootX - 18 + i * 4, mFootY);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(mFootX + 4, mFootY - 8);
+          ctx.lineTo(mFootX + 12 + i * 3, mFootY - 14 - crawl * 2);
+          ctx.lineTo(mFootX + 18 + i * 4, mFootY);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#1c1c1f';
+        ctx.beginPath(); ctx.ellipse(mFootX + 4, mFootY - 9, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#22cc44';
+        ctx.fillRect(mFootX + 1, mFootY - 11, 6, 1.5); ctx.fillRect(mFootX + 2, mFootY - 8, 5, 1.5);
+        ctx.fillStyle = '#2c2b30';
+        ctx.beginPath(); ctx.ellipse(mFootX - 5, mFootY - 8, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff0033';
+        ctx.beginPath(); ctx.arc(mFootX - 7, mFootY - 9, 1.2, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(mFootX - 5, mFootY - 10, 1.2, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(mFootX - 7, mFootY - 7, 1.2, 0, Math.PI * 2); ctx.fill();
+
+      } else if (type === 'skeleton') {
+        // GUARDA DA MASMORRA (Esqueleto de Aço)
+        const bob = Math.sin(t * 7) * 2;
+        ctx.fillStyle = '#dcd5c5';
+        ctx.fillRect(mFootX - 5, mFootY - 10, 2.5, 10);
+        ctx.fillRect(mFootX + 2, mFootY - 10, 2.5, 10);
+        ctx.fillStyle = '#40454d';
+        ctx.fillRect(mFootX - 7, mFootY - 20 - bob, 14, 10);
+        ctx.fillStyle = '#e5decb';
+        ctx.fillRect(mFootX - 5, mFootY - 18 - bob, 10, 1.5);
+        ctx.fillRect(mFootX - 4, mFootY - 15 - bob, 8, 1.5);
+        ctx.fillStyle = '#eae3d2';
+        ctx.beginPath(); ctx.arc(mFootX, mFootY - 26 - bob, 5.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#00d4ff';
+        ctx.fillRect(mFootX - 3.5, mFootY - 27 - bob, 2, 2);
+        ctx.fillRect(mFootX + 1.5, mFootY - 27 - bob, 2, 2);
+        ctx.fillStyle = '#9e8c76'; ctx.fillRect(mFootX + 8, mFootY - 22 - bob, 2.5, 16);
+
+      } else if (type === 'demon') {
+        // DEMÔNIO ALADO (Paira no ar com asas batendo)
+        const wingFlap = Math.sin(t * 8) * 16;
+        const hoverY = Math.sin(t * 4) * 4 - 8;
+        const dBodyY = mFootY - 16 + hoverY;
+
+        ctx.fillStyle = '#4a1215';
+        ctx.beginPath();
+        ctx.moveTo(mFootX - 4, dBodyY);
+        ctx.quadraticCurveTo(mFootX - 22, dBodyY - 16 + wingFlap, mFootX - 26, dBodyY + 2 + wingFlap);
+        ctx.lineTo(mFootX - 16, dBodyY + 5);
+        ctx.closePath(); ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(mFootX + 4, dBodyY);
+        ctx.quadraticCurveTo(mFootX + 22, dBodyY - 16 + wingFlap, mFootX + 26, dBodyY + 2 + wingFlap);
+        ctx.lineTo(mFootX + 16, dBodyY + 5);
+        ctx.closePath(); ctx.fill();
+
+        ctx.fillStyle = '#7a1b1f';
+        ctx.fillRect(mFootX - 6, dBodyY - 5, 12, 12);
+        ctx.fillStyle = '#5c1417';
+        ctx.beginPath(); ctx.arc(mFootX, dBodyY - 9, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#220808'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(mFootX - 4, dBodyY - 12); ctx.lineTo(mFootX - 8, dBodyY - 18); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mFootX + 4, dBodyY - 12); ctx.lineTo(mFootX + 8, dBodyY - 18); ctx.stroke();
+        ctx.fillStyle = '#ffee00';
+        ctx.fillRect(mFootX - 3, dBodyY - 10, 2, 2); ctx.fillRect(mFootX + 1, dBodyY - 10, 2, 2);
+
+      } else if (type === 'warlord_boss') {
+        // LORDE WARLORD DE NORRATH (CHEFE SUPREMO - Escala 1.8x)
+        const bob = Math.sin(t * 4) * 2;
+        ctx.save();
+        ctx.translate(mFootX, mFootY);
+        ctx.scale(1.8, 1.8);
+
+        ctx.fillStyle = 'rgba(180, 20, 20, 0.25)';
+        ctx.beginPath(); ctx.ellipse(0, 0, 18, 9, 0, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = '#540d12';
+        ctx.beginPath(); ctx.moveTo(-9, -24 - bob); ctx.lineTo(9, -24 - bob); ctx.lineTo(13 + Math.sin(t * 3) * 3, 0); ctx.lineTo(-13 - Math.sin(t * 3) * 3, 0); ctx.fill();
+
+        ctx.fillStyle = '#141417';
+        ctx.fillRect(-7, -12, 5, 12);
+        ctx.fillRect(2, -12, 5, 12);
+
+        ctx.fillStyle = '#1d1d24';
+        ctx.fillRect(-9, -26 - bob, 18, 15);
+        ctx.fillStyle = '#ff2200';
+        ctx.fillRect(-2, -22 - bob, 4, 6);
+
+        ctx.fillStyle = '#2d2d38';
+        ctx.beginPath(); ctx.moveTo(-14, -28 - bob); ctx.lineTo(-8, -32 - bob); ctx.lineTo(-8, -20 - bob); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(14, -28 - bob); ctx.lineTo(8, -32 - bob); ctx.lineTo(8, -20 - bob); ctx.fill();
+
+        ctx.fillStyle = '#121217';
+        ctx.beginPath(); ctx.arc(0, -32 - bob, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#c42323'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(-5, -35 - bob); ctx.lineTo(-10, -42 - bob); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(5, -35 - bob); ctx.lineTo(10, -42 - bob); ctx.stroke();
+        ctx.fillStyle = '#ffea00';
+        ctx.fillRect(-4, -33 - bob, 2.5, 2.5); ctx.fillRect(1.5, -33 - bob, 2.5, 2.5);
+
+        ctx.fillStyle = '#222'; ctx.fillRect(11, -38 - bob, 3, 34);
+        ctx.fillStyle = '#ff4400'; ctx.fillRect(10, -36 - bob, 5, 24);
+        ctx.fillStyle = '#ffdd00'; ctx.fillRect(11, -34 - bob, 3, 20);
+
+        ctx.restore();
+      }
+
+      // 3. Barra de Vida Gótica
+      const barW = m.isBoss ? 56 : 36;
+      const barH = 5;
+      const pct = Math.max(0, m.hp / m.maxHp);
+      const barY = mFootY - (m.isBoss ? 72 : 44);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(mFootX - barW / 2, barY, barW, barH);
+      ctx.fillStyle = m.isBoss ? '#ffd700' : '#e53935';
+      ctx.fillRect(mFootX - barW / 2 + 1, barY + 1, (barW - 2) * pct, barH - 2);
+
+      ctx.restore();
+    }
+
+    function drawNpc(npc) {
+      const iso = worldToIso(npc.gx, npc.gy);
+      const footX = iso.x;
+      const footY = iso.y + 16;
+      const t = Date.now() * 0.003;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(footX, footY, 16, 8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.fill();
+
+      // Manto Azul Celeste do Ancião
+      ctx.fillStyle = '#1c2d54';
+      ctx.beginPath();
+      ctx.moveTo(footX - 7, footY - 24);
+      ctx.lineTo(footX + 7, footY - 24);
+      ctx.lineTo(footX + 9, footY - 2);
+      ctx.lineTo(footX - 9, footY - 2);
+      ctx.closePath(); ctx.fill();
+
+      // Cinto Dourado
+      ctx.fillStyle = '#d4af37';
+      ctx.fillRect(footX - 7, footY - 14, 14, 2.5);
+
+      // Longa Barba Branca do Ancião
+      ctx.fillStyle = '#e8ecf2';
+      ctx.beginPath();
+      ctx.moveTo(footX - 4, footY - 26);
+      ctx.lineTo(footX + 4, footY - 26);
+      ctx.lineTo(footX, footY - 16);
+      ctx.closePath(); ctx.fill();
+
+      // Cabeça & Capuz
+      ctx.fillStyle = '#1c2d54';
+      ctx.beginPath(); ctx.arc(footX, footY - 29, 6.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#cbb39e';
+      ctx.beginPath(); ctx.arc(footX, footY - 28, 4, 0, Math.PI * 2); ctx.fill();
+
+      // Cajado de Madeira com Cristal Âmbar
+      ctx.fillStyle = '#5c3d1e'; ctx.fillRect(footX + 8, footY - 34, 2.5, 34);
+      ctx.fillStyle = '#ffd700';
+      ctx.beginPath(); ctx.arc(footX + 9, footY - 35, 4, 0, Math.PI * 2); ctx.fill();
+
+      // Balão de Diálogo e Missão
+      const floatY = Math.sin(t * 3) * 3;
+      ctx.fillStyle = '#ffd700';
+      ctx.font = 'bold 11px "Cinzel", Georgia, serif';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(CLASSES[player.clsKey].icon, 0, -20);
+      ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+      ctx.fillText('💬 ' + npc.name, footX, footY - 44 + floatY);
+      ctx.fillStyle = '#ffea66';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText('[MISSÃO DISPONÍVEL]', footX, footY - 56 + floatY);
+      ctx.shadowBlur = 0;
+
       ctx.restore();
     }
 
     function drawProp(p) {
       const iso = worldToIso(p.gx, p.gy);
+      const footX = iso.x;
+      const footY = iso.y + 16;
+
+      ctx.save();
       ctx.beginPath();
-      ctx.ellipse(iso.x, iso.y + TILE_H / 2, 14, 7, 0, 0, Math.PI * 2);
+      ctx.ellipse(footX, footY, 14, 7, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.fill();
-      ctx.font = '26px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(p.icon, iso.x, iso.y - 16);
+
+      if (p.type === 'barrel') {
+        // BARRIL DE CARVALHO 3D
+        ctx.fillStyle = '#5a3d24';
+        ctx.beginPath();
+        ctx.ellipse(footX, footY - 10, 10, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#2b221a'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.ellipse(footX, footY - 15, 9, 3, 0, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(footX, footY - 5, 9, 3, 0, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = '#422c19';
+        ctx.beginPath(); ctx.ellipse(footX, footY - 18, 8, 3, 0, 0, Math.PI * 2); ctx.fill();
+
+      } else if (p.type === 'chest') {
+        // BAÚ DE TESOURO GÓTICO
+        if (p.opened) {
+          ctx.fillStyle = '#3e2714';
+          ctx.fillRect(footX - 11, footY - 12, 22, 12);
+          ctx.fillStyle = '#ffd700';
+          ctx.beginPath(); ctx.ellipse(footX, footY - 12, 8, 4, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#5c3a1e';
+          ctx.beginPath(); ctx.moveTo(footX - 11, footY - 12); ctx.lineTo(footX - 13, footY - 22); ctx.lineTo(footX + 13, footY - 22); ctx.lineTo(footX + 11, footY - 12); ctx.fill();
+        } else {
+          ctx.fillStyle = '#5c3a1e';
+          ctx.fillRect(footX - 11, footY - 14, 22, 14);
+          ctx.fillStyle = '#221914';
+          ctx.fillRect(footX - 11, footY - 14, 3, 14);
+          ctx.fillRect(footX + 8, footY - 14, 3, 14);
+          ctx.fillStyle = '#ffd700';
+          ctx.fillRect(footX - 2, footY - 8, 4, 5);
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawTrap(tr) {
+      const iso = worldToIso(tr.gx, tr.gy);
+      const footX = iso.x;
+      const footY = iso.y + 16;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(footX, footY - 8);
+      ctx.lineTo(footX + 16, footY);
+      ctx.lineTo(footX, footY + 8);
+      ctx.lineTo(footX - 16, footY);
+      ctx.closePath();
+      ctx.fillStyle = '#1c1b1f'; ctx.fill();
+      ctx.strokeStyle = '#423d38'; ctx.lineWidth = 1.5; ctx.stroke();
+
+      if (tr.active) {
+        const spikes = [
+          [-8, -2], [0, -4], [8, -2],
+          [-5, 2], [0, 0], [5, 2],
+          [-7, 6], [0, 4], [7, 6]
+        ];
+        spikes.forEach(([sx, sy]) => {
+          ctx.fillStyle = '#9ca8b5';
+          ctx.beginPath();
+          ctx.moveTo(footX + sx - 1.5, footY + sy);
+          ctx.lineTo(footX + sx, footY + sy - 14);
+          ctx.lineTo(footX + sx + 1.5, footY + sy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(footX + sx - 0.5, footY + sy - 14, 1, 4);
+        });
+      } else {
+        ctx.fillStyle = '#08080a';
+        for (let i = -6; i <= 6; i += 6) {
+          ctx.fillRect(footX + i - 1, footY - 1, 2, 2);
+        }
+      }
+      ctx.restore();
     }
 
     function drawStairs() {
       const iso = worldToIso(stairs.gx, stairs.gy);
-      ctx.font = '30px sans-serif';
+      const footX = iso.x;
+      const footY = iso.y + 16;
+
+      ctx.save();
+      ctx.fillStyle = '#151210';
+      ctx.beginPath();
+      ctx.moveTo(footX, footY - 10);
+      ctx.lineTo(footX + 18, footY);
+      ctx.lineTo(footX, footY + 10);
+      ctx.lineTo(footX - 18, footY);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#5a4838'; ctx.lineWidth = 2; ctx.stroke();
+
+      for (let i = 0; i < 4; i++) {
+        ctx.fillStyle = i % 2 === 0 ? '#382f26' : '#261f18';
+        ctx.fillRect(footX - 10 + i * 2, footY - 6 + i * 3, 20 - i * 4, 3);
+      }
+      ctx.fillStyle = '#ffd700';
+      ctx.font = 'bold 10px "Cinzel", Georgia';
       ctx.textAlign = 'center';
-      ctx.fillText('🪜', iso.x, iso.y - 10);
+      ctx.fillText('DESCER [2]', footX, footY - 14);
+      ctx.restore();
     }
 
     function drawBossGate() {
       const iso = worldToIso(bossGate.gx, bossGate.gy);
-      ctx.font = '32px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(bossGate.locked ? '🔒' : '🚪', iso.x, iso.y - 12);
+      const footX = iso.x;
+      const footY = iso.y + 16;
+
+      ctx.save();
+      const gateH = bossGate.locked ? 32 : 10;
+      ctx.fillStyle = '#18151b';
+      ctx.fillRect(footX - 16, footY - 34, 32, 6);
+
+      ctx.strokeStyle = '#4a4652'; ctx.lineWidth = 2.5;
+      for (let i = -12; i <= 12; i += 6) {
+        ctx.beginPath();
+        ctx.moveTo(footX + i, footY - 30);
+        ctx.lineTo(footX + i, footY - 30 + gateH);
+        ctx.stroke();
+      }
+
+      if (bossGate.locked) {
+        ctx.fillStyle = '#ffd700';
+        ctx.beginPath(); ctx.arc(footX, footY - 14, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#000'; ctx.fillRect(footX - 1, footY - 13, 2, 3);
+        ctx.fillStyle = '#ff4444';
+        ctx.font = 'bold 9px "Cinzel", Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('PORTÃO TRANCADO', footX, footY - 38);
+      } else {
+        ctx.fillStyle = '#22cc44';
+        ctx.font = 'bold 9px "Cinzel", Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('ABERTO', footX, footY - 38);
+      }
+      ctx.restore();
     }
 
     function drawFlyingLoot(fl) {
       const iso = worldToIso(fl.gx, fl.gy);
-      const icon = fl.type === 'gold' ? '💰' : (fl.type === 'potion' ? '🧪' : '💎');
+      const footX = iso.x;
+      const footY = iso.y + 16;
+      const itemY = footY - 10 - (fl.height || 0);
+
+      ctx.save();
       ctx.beginPath();
-      ctx.ellipse(iso.x, iso.y + TILE_H / 2, 10, 5, 0, 0, Math.PI * 2);
+      ctx.ellipse(footX, footY, 9, 4.5, 0, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.fill();
-      ctx.font = '20px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(icon, iso.x, iso.y - 12 - fl.height);
-    }
 
-    function drawMonster(m) {
-      const iso = worldToIso(m.gx, m.gy);
-      ctx.beginPath();
-      ctx.ellipse(iso.x, iso.y + TILE_H / 2, m.isBoss ? 24 : 14, m.isBoss ? 12 : 7, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-      ctx.fill();
-
-      ctx.font = m.isBoss ? '38px sans-serif' : '28px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(m.icon, iso.x, iso.y - (m.isBoss ? 28 : 18));
-
-      const barW = m.isBoss ? 52 : 34;
-      const barH = 5;
-      const pct = Math.max(0, m.hp / m.maxHp);
-      ctx.fillStyle = '#000';
-      ctx.fillRect(iso.x - barW / 2, iso.y - (m.isBoss ? 54 : 38), barW, barH);
-      ctx.fillStyle = m.isBoss ? '#ffd700' : '#e53935';
-      ctx.fillRect(iso.x - barW / 2 + 1, iso.y - (m.isBoss ? 53 : 37), (barW - 2) * pct, barH - 2);
+      if (fl.type === 'gold') {
+        ctx.fillStyle = '#d4af37';
+        ctx.beginPath(); ctx.arc(footX, itemY, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff480';
+        ctx.beginPath(); ctx.arc(footX - 1, itemY - 1, 2, 0, Math.PI * 2); ctx.fill();
+      } else if (fl.type === 'potion') {
+        ctx.fillStyle = '#e52222';
+        ctx.beginPath(); ctx.arc(footX, itemY + 2, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#c7b499';
+        ctx.fillRect(footX - 1.5, itemY - 5, 3, 3);
+      } else if (fl.type === 'gem') {
+        ctx.fillStyle = '#00ff66';
+        ctx.beginPath();
+        ctx.moveTo(footX, itemY - 6);
+        ctx.lineTo(footX + 5, itemY);
+        ctx.lineTo(footX, itemY + 6);
+        ctx.lineTo(footX - 5, itemY);
+        ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(footX - 1, itemY - 2, 2, 2);
+      }
+      ctx.restore();
     }
 
     function drawTorch(t) {
       const iso = worldToIso(t.gx, t.gy);
-      const flameShift = Math.sin(t.flame) * 2;
-      ctx.font = '18px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('🔥', iso.x + flameShift, iso.y - 24);
+      const footX = iso.x;
+      const footY = iso.y + 16;
+
+      ctx.save();
+      ctx.strokeStyle = '#2d241c'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(footX, footY - 8);
+      ctx.lineTo(footX, footY - 20);
+      ctx.stroke();
+
+      ctx.fillStyle = '#42372c';
+      ctx.fillRect(footX - 3, footY - 23, 6, 4);
+
+      const flameShift = Math.sin(t.flame) * 1.8;
+      const fY = footY - 26;
+
+      ctx.fillStyle = '#ff3300';
+      ctx.beginPath(); ctx.arc(footX + flameShift, fY, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff9900';
+      ctx.beginPath(); ctx.arc(footX + flameShift * 0.7, fY - 2, 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffee44';
+      ctx.beginPath(); ctx.arc(footX, fY - 3, 2, 0, Math.PI * 2); ctx.fill();
+
+      ctx.restore();
+    }
+
+        // RENDERIZAÇÃO DO MINIMAPA
+    // -------------------------------------------------------------
+    function renderMinimap() {
+      minimapCtx.clearRect(0, 0, 90, 90);
+      const scale = 90 / MAP_SIZE;
+
+      for (let y = 0; y < MAP_SIZE; y++) {
+        for (let x = 0; x < MAP_SIZE; x++) {
+          if (dungeonMap[y][x] === 1) {
+            minimapCtx.fillStyle = '#261c16';
+            minimapCtx.fillRect(x * scale, y * scale, scale, scale);
+          }
+        }
+      }
+
+      // Monstros no Minimapa
+      minimapCtx.fillStyle = '#ff2222';
+      monsters.forEach(m => {
+        if (m.alive) minimapCtx.fillRect(m.gx * scale - 1, m.gy * scale - 1, 3, 3);
+      });
+
+      // Jogador no Minimapa
+      minimapCtx.fillStyle = '#ffd700';
+      minimapCtx.beginPath();
+      minimapCtx.arc(player.gx * scale, player.gy * scale, 2.5, 0, Math.PI * 2);
+      minimapCtx.fill();
+    }
+
+    // -------------------------------------------------------------
+    // DIÁLOGOS COM NPCS
+    // -------------------------------------------------------------
+    function openDialog(speaker, text) {
+      document.getElementById('dialogSpeaker').textContent = speaker;
+      document.getElementById('dialogText').textContent = text;
+      document.getElementById('dialogModal').style.display = 'block';
+    }
+
+    document.getElementById('btnDialogClose').onclick = () => {
+      document.getElementById('dialogModal').style.display = 'none';
+    };
+    document.getElementById('btnDialogAccept').onclick = () => {
+      document.getElementById('dialogModal').style.display = 'none';
+      toggleQuests();
+    };
+
+    // -------------------------------------------------------------
+    // MODAL DE MISSÕES (QUESTS)
+    // -------------------------------------------------------------
+    function toggleQuests() {
+      const modal = document.getElementById('questsModal');
+      const isVisible = modal.style.display === 'flex';
+      modal.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible) renderQuests();
+    }
+
+    function renderQuests() {
+      const container = document.getElementById('questsList');
+      container.innerHTML = '';
+
+      QUESTS.forEach(q => {
+        const card = document.createElement('div');
+        card.className = 'quest-card';
+        card.innerHTML = `
+          <div class="quest-info">
+            <div class="quest-icon">${q.completed ? '✅' : '📜'}</div>
+            <div class="quest-desc">
+              <h4>${q.title} (${q.current}/${q.target})</h4>
+              <p>${q.desc} • Recompensa: +${q.rewardGold} Ouro, +${q.rewardXp} XP</p>
+            </div>
+          </div>
+          <button class="quest-claim-btn" ${!q.completed || q.claimed ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>
+            ${q.claimed ? 'RESGATADO' : (q.completed ? 'RECEBER' : 'EM ANDAMENTO')}
+          </button>
+        `;
+        const btn = card.querySelector('.quest-claim-btn');
+        if (q.completed && !q.claimed) {
+          btn.onclick = () => {
+            q.claimed = true;
+            player.gold += q.rewardGold;
+            giveXp(q.rewardXp);
+            audio.playCoin();
+            renderQuests();
+            updateHud();
+            showNotification(`🏆 Missão Concluída! +${q.rewardGold} Ouro e +${q.rewardXp} XP!`);
+          };
+        }
+        container.appendChild(card);
+      });
     }
 
     // -------------------------------------------------------------
@@ -2202,56 +3123,7 @@
     }
 
     // -------------------------------------------------------------
-    // MODAL DO MERCADOR / FERREIRO NO SANTUÁRIO
-    // -------------------------------------------------------------
-    const SHOP_ITEMS = [
-      { name: 'Poção Maior de Vida', cost: 25, type: 'potion_hp', icon: '🧪', desc: '+80 HP' },
-      { name: 'Poção Maior de Mana', cost: 25, type: 'potion_mana', icon: '⚗️', desc: '+70 Mana' },
-      { name: 'Gema Rubi de Fogo', cost: 60, type: 'gem', gemType: 'fire', bonusDmg: 9, icon: '💎', desc: '+9 Dano de Fogo' },
-      { name: 'Gema Safira de Gelo', cost: 60, type: 'gem', gemType: 'ice', bonusDmg: 8, icon: '💎', desc: '+8 Dano de Gelo e Lentidão' },
-      { name: 'Espada de Aço Valírio', cost: 140, type: 'mainhand', dmg: 26, icon: '🗡️', desc: 'Arma afiada (+26 Dano)' }
-    ];
-
-    function toggleShop() {
-      const modal = document.getElementById('shopModal');
-      const isVisible = modal.style.display === 'flex';
-      modal.style.display = isVisible ? 'none' : 'flex';
-      if (!isVisible) renderShop();
-    }
-
-    function renderShop() {
-      const grid = document.getElementById('shopItemsGrid');
-      grid.innerHTML = '';
-
-      SHOP_ITEMS.forEach(it => {
-        const card = document.createElement('div');
-        card.className = 'shop-card';
-        card.innerHTML = `
-          <div>
-            <b style="font-size:12px; color:var(--gold);">${it.icon} ${it.name}</b>
-            <p style="font-size:10px; color:#aaa;">${it.desc}</p>
-          </div>
-          <div style="font-size:12px; font-weight:bold; color:#ffd700;">💰 ${it.cost}</div>
-        `;
-        card.onclick = () => {
-          if (player.gold >= it.cost) {
-            player.gold -= it.cost;
-            audio.playCoin();
-            if (it.type === 'potion_hp') player.potionsHp++;
-            else if (it.type === 'potion_mana') player.potionsMana++;
-            else player.inventory.push({ ...it });
-            updateHud();
-            showNotification(`Comprado: ${it.name}!`);
-          } else {
-            showNotification('❌ Ouro insuficiente!');
-          }
-        };
-        grid.appendChild(card);
-      });
-    }
-
-    // -------------------------------------------------------------
-    // ATUALIZAÇÃO DO HUD E INVENTÁRIO COM GEMA ENGASTADA
+    // ATUALIZAÇÃO DO HUD E INVENTÁRIO
     // -------------------------------------------------------------
     function updateHud() {
       const hpPct = (player.hp / player.maxHp) * 100;
@@ -2263,7 +3135,7 @@
 
       const xpPct = (player.xp / player.maxXp) * 100;
       document.getElementById('xpBarFill').style.width = `${xpPct}%`;
-      document.getElementById('heroLevelXp').textContent = `Nível ${player.lvl} • ${player.xp} / ${player.maxXp} XP • Andar ${player.currentFloor}`;
+      document.getElementById('heroLevelXp').textContent = `Nível ${player.lvl} • ${player.xp} / ${player.maxXp} XP • ${BIOMES[currentBiomeKey].name}`;
       document.getElementById('goldVal').textContent = player.gold;
 
       const badge = document.getElementById('skillPtsBadge');
@@ -2328,7 +3200,6 @@
       if (!item) return;
 
       if (item.type === 'gem') {
-        // Engasta na arma equipada
         player.equipment.mainhand.socket = item;
         player.inventory.splice(idx, 1);
         audio.playCoin();
@@ -2352,7 +3223,8 @@
     document.getElementById('btnCloseInventory').onclick = toggleInventory;
     document.getElementById('btnOpenSkills').onclick = toggleSkills;
     document.getElementById('btnCloseSkills').onclick = toggleSkills;
-    document.getElementById('btnCloseShop').onclick = toggleShop;
+    document.getElementById('btnOpenQuests').onclick = toggleQuests;
+    document.getElementById('btnCloseQuests').onclick = toggleQuests;
     document.getElementById('slotPotionHp').onclick = () => usePotion('hp');
     document.getElementById('slotPotionMana').onclick = () => usePotion('mana');
     document.getElementById('slotSkill1').onclick = () => castSkill(1);
@@ -2395,7 +3267,7 @@
 
       generateDungeon(1);
       updateHud();
-      showNotification(`Bem-vindo ao Norrath V3! Derrote monstros e desça ao Andar 2.`);
+      showNotification(`Bem-vindo a Norrath V4! Fale com o Ancião [💬] para começar.`);
 
       requestAnimationFrame(gameLoop);
     };
