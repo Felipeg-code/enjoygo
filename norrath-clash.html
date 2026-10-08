@@ -726,103 +726,367 @@
       text-align: center;
     }
 
-    /* TELA DE SELEÇÃO DE CLASSE (INÍCIO) */
-    #classSelectScreen {
+    
+    /* MENU PRINCIPAL DE ABERTURA */
+    #mainMenuScreen {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, #261912 0%, #0c0806 80%, #000 100%);
-      z-index: 200;
+      background: #070608;
+      z-index: 300;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      overflow: hidden;
     }
 
-    .game-logo {
-      font-size: 32px;
-      color: var(--gold);
-      letter-spacing: 3px;
-      text-transform: uppercase;
+    #titleBgCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .main-menu-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      text-shadow: 0 0 15px rgba(245, 197, 66, 0.6), 2px 2px 4px #000;
-      margin-bottom: 4px;
+      max-width: 580px;
+      width: 100%;
     }
 
-    .game-sublogo {
+    .game-emblem {
+      font-size: 54px;
+      filter: drop-shadow(0 0 16px rgba(245, 197, 66, 0.65));
+      margin-bottom: 6px;
+      animation: emblemPulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes emblemPulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(245, 197, 66, 0.4)); }
+      100% { transform: scale(1.06); filter: drop-shadow(0 0 25px rgba(245, 197, 66, 0.85)); }
+    }
+
+    .main-menu-title {
+      font-size: 34px;
+      color: var(--gold);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 20px rgba(245, 197, 66, 0.5);
+      margin-bottom: 4px;
+      font-weight: 900;
+    }
+
+    .main-menu-subtitle {
       font-size: 13px;
       color: #ad9477;
-      letter-spacing: 4px;
-      margin-bottom: 24px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .main-menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .menu-btn {
+      padding: 14px 24px;
+      font-size: 14px;
+      font-family: var(--font-main);
+      font-weight: bold;
+      color: #f7e6c4;
+      background: linear-gradient(180deg, #2b1f17, #130d0a);
+      border: 2px solid #5a442e;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .menu-btn:hover, .menu-btn:active {
+      border-color: var(--gold);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 197, 66, 0.4);
+      background: linear-gradient(180deg, #443224, #1f140e);
+    }
+
+    .menu-btn.primary {
+      background: linear-gradient(180deg, #d4a024, #8c6a18);
+      color: #120a04;
+      border-color: #ffe680;
+      font-size: 15px;
+      box-shadow: 0 4px 20px rgba(212, 160, 36, 0.5);
+    }
+
+    .menu-btn.primary:hover, .menu-btn.primary:active {
+      background: linear-gradient(180deg, #ffe066, #b8861b);
+      transform: scale(1.03);
+    }
+
+    /* TELA DE SELEÇÃO COM PREVIEW 2.5D */
+    #classSelectScreen {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, #1e140d 0%, #0a0705 85%, #000 100%);
+      z-index: 250;
+      display: none;
+      flex-direction: column;
+      padding: 12px;
+      overflow-y: auto;
+    }
+
+    .select-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto 10px auto;
+      border-bottom: 2px solid #4a3824;
+      padding-bottom: 8px;
+    }
+
+    .select-header h2 {
+      font-size: 18px;
+      color: var(--gold);
+      letter-spacing: 2px;
       text-transform: uppercase;
     }
 
-    .class-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
+    .class-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      max-width: 900px;
+      margin: 0 auto 12px auto;
       width: 100%;
-      max-width: 720px;
-      margin-bottom: 24px;
+      padding-bottom: 4px;
     }
 
-    .class-card {
-      background: linear-gradient(180deg, #241b14, #120d09);
-      border: 2px solid #574129;
-      border-radius: 8px;
-      padding: 12px 8px;
+    .class-tab {
+      flex: 1;
+      min-width: 110px;
+      background: #1c1510;
+      border: 2px solid #4a3725;
+      border-radius: 6px;
+      padding: 8px 6px;
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s ease;
     }
 
-    .class-card:hover, .class-card.active {
+    .class-tab.active {
       border-color: var(--gold);
-      transform: translateY(-4px);
-      box-shadow: 0 6px 20px rgba(245, 197, 66, 0.35);
-      background: linear-gradient(180deg, #382a1e, #1c140e);
+      background: linear-gradient(180deg, #38281b, #18110c);
+      box-shadow: 0 0 12px rgba(245, 197, 66, 0.4);
+      transform: translateY(-2px);
     }
 
-    .class-card .icon {
-      font-size: 42px;
-      margin-bottom: 8px;
+    .class-tab .tab-icon {
+      font-size: 24px;
+      margin-bottom: 2px;
     }
 
-    .class-card .name {
-      font-size: 13px;
-      color: var(--gold);
+    .class-tab .tab-name {
+      font-size: 11px;
       font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .class-card .desc {
-      font-size: 10px;
-      color: #9c8e7e;
+      color: #e0d2be;
       text-align: center;
-      line-height: 1.2;
     }
 
-    .start-game-btn {
-      padding: 14px 44px;
-      font-size: 16px;
+    .class-tab.active .tab-name {
+      color: var(--gold);
+    }
+
+    .stage-container {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      align-items: start;
+    }
+
+    .preview-box {
+      background: radial-gradient(circle, #241912 0%, #100b08 90%);
+      border: 2px solid #4a3826;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.85);
+      position: relative;
+    }
+
+    #heroPreviewCanvas {
+      width: 320px;
+      height: 320px;
+      display: block;
+    }
+
+    .preview-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .p-btn {
+      padding: 6px 12px;
+      background: #241b14;
+      border: 1px solid #57412a;
+      color: #dfd2be;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-main);
+    }
+
+    .p-btn:hover, .p-btn:active {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .char-details {
+      background: rgba(18, 14, 11, 0.95);
+      border: 2px solid #4a3826;
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.85);
+    }
+
+    .char-header h3 {
+      font-size: 20px;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .char-header p {
+      font-size: 11px;
+      color: #9c8e7e;
+      line-height: 1.3;
+    }
+
+    .stats-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 30px;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #cbb89e;
+    }
+
+    .stat-bar-track {
+      background: #140f0c;
+      border: 1px solid #3d2c1c;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8c6a18, #f5c542);
+      border-radius: 3px;
+    }
+
+    .skills-preview-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .skill-preview-card {
+      background: #16100d;
+      border: 1px solid #3d2b1a;
+      border-radius: 6px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-preview-card .sp-icon {
+      font-size: 20px;
+    }
+
+    .skill-preview-card .sp-info b {
+      font-size: 11px;
+      color: var(--gold);
+      display: block;
+    }
+
+    .skill-preview-card .sp-info span {
+      font-size: 9px;
+      color: #9c8e7e;
+      display: block;
+    }
+
+    .btn-enter-world {
+      margin-top: 8px;
+      padding: 14px;
+      font-size: 15px;
       font-family: var(--font-main);
       font-weight: bold;
-      color: #1a0f05;
+      color: #120904;
       background: linear-gradient(180deg, #ffe066, #cfa029);
-      border: 3px solid #ffec99;
+      border: 2px solid #fff2a8;
       border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 20px rgba(245, 197, 66, 0.4);
       cursor: pointer;
       letter-spacing: 2px;
       text-transform: uppercase;
-      transition: all 0.15s;
+      text-align: center;
+      box-shadow: 0 4px 18px rgba(212, 160, 36, 0.6);
+      transition: all 0.15s ease;
     }
 
-    .start-game-btn:hover {
-      transform: scale(1.04);
-      box-shadow: 0 6px 25px rgba(245, 197, 66, 0.7);
+    .btn-enter-world:hover, .btn-enter-world:active {
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(245, 197, 66, 0.85);
+    }
+
+    @media (max-width: 720px) {
+      .stage-container {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      .preview-box {
+        width: 100%;
+        max-width: 340px;
+      }
+      .skills-preview-list {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 600px) {
@@ -1044,44 +1308,107 @@
 
   </div>
 
-  <!-- TELA INICIAL DE SELEÇÃO DE CLASSE -->
+    <!-- MENU PRINCIPAL DE ABERTURA CINEMATOGRÁFICA -->
+  <div id="mainMenuScreen">
+    <canvas id="titleBgCanvas"></canvas>
+    <div class="main-menu-content">
+      <div class="game-emblem">⚔️</div>
+      <h1 class="main-menu-title">Champions of Norrath</h1>
+      <div class="main-menu-subtitle">✦ Realms of EverQuest ✦</div>
+
+      <div class="main-menu-buttons">
+        <button class="menu-btn primary" id="btnMenuNewGame">⚔️ Nova Jornada (Escolher Herói)</button>
+        <button class="menu-btn" id="btnMenuContinue">📜 Continuar Aventura</button>
+        <button class="menu-btn" id="btnMenuAudio">🔊 Vozes PT-BR: Ativadas</button>
+      </div>
+
+      <p style="font-size: 10px; color: #736252; margin-top: 24px; letter-spacing: 1px;">
+        ENGINE 2.5D COM DUBLAGEM EM PORTUGUÊS • ZERO DESLIZAMENTO • AUTO-ATAQUE
+      </p>
+    </div>
+  </div>
+
+  <!-- TELA DE SELEÇÃO DE CLASSE COM PREVIEW 2.5D INTERATIVO -->
   <div id="classSelectScreen">
-    <h1 class="game-logo">Champions of Norrath</h1>
-    <div class="game-sublogo">2.5D Isometric Action RPG Engine V4</div>
+    <div class="select-header">
+      <button class="p-btn" id="btnBackToMenu">← Voltar</button>
+      <h2>Escolha seu Campeão</h2>
+      <div style="font-size: 11px; color: var(--gold);">Norrath V5</div>
+    </div>
 
-    <div class="class-cards">
-      <div class="class-card active" data-class="barbarian">
-        <div class="icon">🪓</div>
-        <div class="name">Bárbaro Guerreiro</div>
-        <div class="desc">Combate brutal corpo a corpo, alta força e ataques giratórios.</div>
+    <!-- ABAS DAS 5 CLASSES -->
+    <div class="class-tabs">
+      <div class="class-tab active" data-class="barbarian">
+        <span class="tab-icon">🪓</span>
+        <span class="tab-name">Bárbaro</span>
       </div>
-
-      <div class="class-card" data-class="ranger">
-        <div class="icon">🏹</div>
-        <div class="name">Elfa Ranger</div>
-        <div class="desc">Tiro com arco mortal, alta destreza e flechas congelantes.</div>
+      <div class="class-tab" data-class="ranger">
+        <span class="tab-icon">🏹</span>
+        <span class="tab-name">Ranger</span>
       </div>
-
-      <div class="class-card" data-class="cleric">
-        <div class="icon">🔨</div>
-        <div class="name">Clériga</div>
-        <div class="desc">Maças de guerra, auras sagradas de proteção e cura divina.</div>
+      <div class="class-tab" data-class="cleric">
+        <span class="tab-icon">🔨</span>
+        <span class="tab-name">Clériga</span>
       </div>
-
-      <div class="class-card" data-class="wizard">
-        <div class="icon">🔮</div>
-        <div class="name">Mago Erudita</div>
-        <div class="desc">Poder destrutivo elemental: Fogo, Gelo e Raios de choque.</div>
+      <div class="class-tab" data-class="wizard">
+        <span class="tab-icon">🔮</span>
+        <span class="tab-name">Mago</span>
       </div>
-
-      <div class="class-card" data-class="shadowknight">
-        <div class="icon">💀</div>
-        <div class="name">Cavaleiro das Sombras</div>
-        <div class="desc">Necromancia, roubo de vida (Life Tap) e invocação de esqueletos.</div>
+      <div class="class-tab" data-class="shadowknight">
+        <span class="tab-icon">💀</span>
+        <span class="tab-name">Cav. Sombras</span>
       </div>
     </div>
 
-    <button class="start-game-btn" id="btnStartGame">ENTRAR NO MUNDO</button>
+    <!-- PALCO DO PREVIEW 2.5D & FICHA -->
+    <div class="stage-container">
+      <div class="preview-box">
+        <canvas id="heroPreviewCanvas" width="320" height="320"></canvas>
+        <div class="preview-controls">
+          <button class="p-btn" id="btnRotateLeft">◀ Girar</button>
+          <button class="p-btn" id="btnPreviewAttack">⚔️ Testar Golpe</button>
+          <button class="p-btn" id="btnPreviewShield">🛡️ Postura</button>
+          <button class="p-btn" id="btnRotateRight">Girar ▶</button>
+        </div>
+      </div>
+
+      <div class="char-details">
+        <div class="char-header">
+          <h3 id="previewClassName">Bárbaro Guerreiro</h3>
+          <p id="previewClassDesc">Combate brutal corpo a corpo, força massiva e ataques com espada de duas mãos.</p>
+        </div>
+
+        <div class="stats-bars">
+          <div class="stat-row">
+            <span>FORÇA (STR)</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" id="barStr" style="width: 88%;"></div></div>
+            <b id="valStr">22</b>
+          </div>
+          <div class="stat-row">
+            <span>DESTREZA (DEX)</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" id="barDex" style="width: 48%;"></div></div>
+            <b id="valDex">12</b>
+          </div>
+          <div class="stat-row">
+            <span>INTELIGÊNCIA</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" id="barInt" style="width: 32%;"></div></div>
+            <b id="valInt">8</b>
+          </div>
+          <div class="stat-row">
+            <span>VITALIDADE</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" id="barVit" style="width: 78%;"></div></div>
+            <b id="valVit">18</b>
+          </div>
+        </div>
+
+        <div>
+          <b style="font-size: 11px; color: var(--gold); display: block; margin-bottom: 6px;">HABILIDADES INICIAIS</b>
+          <div class="skills-preview-list" id="previewSkillsList"></div>
+        </div>
+
+        <button class="btn-enter-world" id="btnStartGame">⚔️ Entrar nas Masmorras</button>
+      </div>
+    </div>
   </div>
 
   <!-- SINTETIZADOR DE ÁUDIO WEB AUDIO API RETRÔ -->
@@ -1185,6 +1512,75 @@
       }
     }
     const audio = new SoundEngine();
+
+    // -------------------------------------------------------------
+    // MOTOR DE DUBLAGEM EM PORTUGUÊS (PT-BR) & BALÕES DE FALA
+    // -------------------------------------------------------------
+    class VoiceEngine {
+      constructor() {
+        this.synth = window.speechSynthesis || null;
+        this.enabled = true;
+        this.voices = [];
+        this.ptVoice = null;
+        this.cooldowns = {};
+        this.init();
+      }
+      init() {
+        if (!this.synth) return;
+        const load = () => {
+          this.voices = this.synth.getVoices();
+          this.ptVoice = this.voices.find(v => v.lang && (v.lang.includes('pt') || v.lang.includes('BR'))) || null;
+        };
+        load();
+        if (this.synth.onvoiceschanged !== undefined) {
+          this.synth.onvoiceschanged = load;
+        }
+      }
+      speak(text, profile = 'elder', entityPos = null) {
+        if (entityPos) {
+          spawnDialogueBalloon(text, entityPos.gx, entityPos.gy, profile);
+        }
+        if (!this.enabled || !this.synth) return;
+
+        const now = Date.now();
+        if (this.cooldowns[profile] && now - this.cooldowns[profile] < 3000) return;
+        this.cooldowns[profile] = now;
+
+        try {
+          // Cancela fala anterior se sobreposta
+          this.synth.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'pt-BR';
+          if (this.ptVoice) utter.voice = this.ptVoice;
+
+          if (profile === 'elder') {
+            utter.pitch = 0.75; utter.rate = 0.88; utter.volume = 1.0;
+          } else if (profile === 'barbarian') {
+            utter.pitch = 0.65; utter.rate = 1.05; utter.volume = 1.0;
+          } else if (profile === 'ranger') {
+            utter.pitch = 1.25; utter.rate = 1.1; utter.volume = 1.0;
+          } else if (profile === 'cleric') {
+            utter.pitch = 1.1; utter.rate = 0.95; utter.volume = 1.0;
+          } else if (profile === 'wizard') {
+            utter.pitch = 0.95; utter.rate = 0.95; utter.volume = 1.0;
+          } else if (profile === 'shadowknight') {
+            utter.pitch = 0.48; utter.rate = 0.88; utter.volume = 1.0;
+          } else if (profile === 'orc') {
+            utter.pitch = 0.45; utter.rate = 1.2; utter.volume = 0.9;
+          } else if (profile === 'goblin') {
+            utter.pitch = 1.6; utter.rate = 1.35; utter.volume = 0.9;
+          } else if (profile === 'boss') {
+            utter.pitch = 0.35; utter.rate = 0.78; utter.volume = 1.0;
+          }
+
+          this.synth.speak(utter);
+        } catch (e) {
+          console.warn('Speech error:', e);
+        }
+      }
+    }
+    const voices = new VoiceEngine();
+
   </script>
 
   <!-- MOTOR ISOMÉTRICO 2.5D V4 (BIOMAS, MISSÕES, ARMADILHAS & MINIMAPA) -->
@@ -1401,6 +1797,7 @@
     let particles = [];
     let floatingTexts = [];
     let flyingLoot = [];
+    let dialogueBalloons = [];
     let stairs = null;
     let bossGate = null;
     let activeBoss = null;
@@ -1408,7 +1805,6 @@
     function generateDungeon(floor = 1) {
       player.currentFloor = floor;
 
-      // Seleção de Bioma baseada no Andar
       if (floor === 1) currentBiomeKey = 'faydark';
       else if (floor === 2) currentBiomeKey = 'catacombs';
       else currentBiomeKey = 'lavastorm';
@@ -1425,70 +1821,111 @@
       monsters = [];
       particles = [];
       floatingTexts = [];
+      dialogueBalloons = [];
       flyingLoot = [];
 
+      // 1. Inicializa todo o mapa como paredes sólidas (1)
       for (let y = 0; y < MAP_SIZE; y++) {
         dungeonMap[y] = [];
         for (let x = 0; x < MAP_SIZE; x++) {
-          if (x === 0 || y === 0 || x === MAP_SIZE - 1 || y === MAP_SIZE - 1) {
-            dungeonMap[y][x] = 1;
-          } else if ((x % 7 === 0 && y % 7 === 0) || (x === 12 && y > 6 && y < 16)) {
-            dungeonMap[y][x] = 1;
-          } else {
-            dungeonMap[y][x] = 0;
+          dungeonMap[y][x] = 1;
+        }
+      }
+
+      // Função auxiliar para esculpir salas e corredores livres (0)
+      function carve(x1, y1, w, h) {
+        for (let y = y1; y < y1 + h; y++) {
+          for (let x = x1; x < x1 + w; x++) {
+            if (x > 0 && x < MAP_SIZE - 1 && y > 0 && y < MAP_SIZE - 1) {
+              dungeonMap[y][x] = 0;
+            }
           }
         }
       }
 
-      // Tochas nas paredes
+      // -----------------------------------------------------------
+      // ESTRUTURA LINEAR CLÁSSICA DE ARPG (NORRATH):
+      // SALA 1 (Santuário Inicial): gx: 2..8, gy: 2..8
+      carve(2, 2, 7, 7);
+
+      // CORREDOR 1 (Passagem dos Primeiros Desafios): gx: 8..18, gy: 4..6
+      carve(8, 4, 11, 3);
+
+      // SALA 2 (Pátio das Armadilhas & Orcs): gx: 18..27, gy: 3..11
+      carve(18, 3, 10, 9);
+
+      // CORREDOR 2 (Passagem Sul): gx: 21..24, gy: 11..21
+      carve(21, 11, 4, 11);
+
+      // SALA 3 (Antecâmara do Guardião da Chave): gx: 12..25, gy: 20..27
+      carve(12, 20, 14, 8);
+
+      // CORREDOR 3 (Ponte das Profundezas): gx: 6..13, gy: 23..25
+      carve(6, 23, 7, 3);
+
+      // SALA 4 (Arena do Chefe & Saída): gx: 2..8, gy: 20..29
+      carve(2, 20, 7, 10);
+      // -----------------------------------------------------------
+
+      // Tochas ritmadas nas paredes guiando o caminho
       torches = [
-        { gx: 4, gy: 1, flame: 0 },
-        { gx: 12, gy: 1, flame: 1.5 },
-        { gx: 18, gy: 14, flame: 3 },
-        { gx: 8, gy: 22, flame: 4.2 },
-        { gx: 22, gy: 8, flame: 2.1 },
-        { gx: 26, gy: 24, flame: 0.8 }
+        { gx: 2, gy: 3, flame: 0 },
+        { gx: 8, gy: 3, flame: 1.2 },
+        { gx: 14, gy: 3, flame: 2.1 },
+        { gx: 19, gy: 2, flame: 3.0 },
+        { gx: 27, gy: 6, flame: 0.5 },
+        { gx: 20, gy: 14, flame: 1.8 },
+        { gx: 20, gy: 20, flame: 2.7 },
+        { gx: 14, gy: 19, flame: 0.9 },
+        { gx: 8, gy: 22, flame: 1.5 },
+        { gx: 2, gy: 21, flame: 3.2 }
       ];
 
-      // Armadilhas de espinho no piso (Traps)
+      // Armadilhas no meio do Pátio (Sala 2) e na passagem
       traps = [
-        { gx: 10, gy: 5, active: false, timer: 0 },
-        { gx: 16, gy: 10, active: false, timer: 1.2 },
-        { gx: 22, gy: 18, active: false, timer: 2.1 }
+        { gx: 22, gy: 6, active: false, timer: 0 },
+        { gx: 24, gy: 8, active: false, timer: 1.4 },
+        { gx: 15, gy: 24, active: false, timer: 2.2 }
       ];
 
-      // NPC Ancião no início do Andar 1
+      // NPC Ancião no Santuário Inicial (Sala 1)
       if (floor === 1) {
-        npcs.push({ gx: 4, gy: 6, name: 'Ancião de Norrath', icon: '🧙‍♂️' });
+        npcs.push({ gx: 4, gy: 5, name: 'Ancião de Norrath', icon: '🧙‍♂️', type: 'elder', hasSpoken: false });
       }
 
       props = [
         { type: 'barrel', gx: 6, gy: 3, hp: 1, icon: '🛢️', alive: true },
-        { type: 'barrel', gx: 7, gy: 3, hp: 1, icon: '🛢️', alive: true },
-        { type: 'barrel', gx: 14, gy: 8, hp: 1, icon: '🛢️', alive: true },
-        { type: 'chest', gx: 16, gy: 4, opened: false, icon: '📦', hasKey: (floor === 2 && !player.hasBossKey) },
-        { type: 'barrel', gx: 10, gy: 14, hp: 1, icon: '🛢️', alive: true }
+        { type: 'barrel', gx: 12, gy: 4, hp: 1, icon: '🛢️', alive: true },
+        { type: 'chest', gx: 25, gy: 4, opened: false, icon: '📦', hasKey: false },
+        { type: 'barrel', gx: 22, gy: 15, hp: 1, icon: '🛢️', alive: true },
+        { type: 'chest', gx: 13, gy: 25, opened: false, icon: '📦', hasKey: (floor === 2 && !player.hasBossKey) },
+        { type: 'barrel', gx: 7, gy: 23, hp: 1, icon: '🛢️', alive: true }
       ];
 
       if (floor === 1) {
-        stairs = { gx: 28, gy: 28, icon: '🪜', desc: 'Descer para Andar 2' };
+        stairs = { gx: 4, gy: 26, icon: '🪜', desc: 'Descer para Andar 2' };
         bossGate = null;
 
         monsters = [
-          { id: 1, name: 'Lobo de Faydark', gx: 9, gy: 7, hp: 60, maxHp: 60, dmg: 12, icon: '🐺', type: 'wolf', alive: true, animTimer: Math.random() * 5 },
-          { id: 2, name: 'Orc Patrulheiro', gx: 15, gy: 10, hp: 65, maxHp: 65, dmg: 14, icon: '👹', type: 'orc', alive: true, animTimer: Math.random() * 5 },
-          { id: 3, name: 'Goblin Xamã', gx: 19, gy: 16, hp: 60, maxHp: 60, dmg: 15, icon: '👺', type: 'goblin', alive: true, animTimer: Math.random() * 5 },
-          { id: 4, name: 'Aranha Venenosa', gx: 11, gy: 19, hp: 55, maxHp: 55, dmg: 12, icon: '🕷️', type: 'spider', alive: true, animTimer: Math.random() * 5 },
-          { id: 5, name: 'Líder dos Orcs', gx: 24, gy: 24, hp: 140, maxHp: 140, dmg: 20, icon: '👹', type: 'orc_boss', isBoss: false, alive: true, animTimer: Math.random() * 5 }
+          // Corredor 1
+          { id: 1, name: 'Lobo de Faydark', gx: 11, gy: 5, hp: 60, maxHp: 60, dmg: 12, icon: '🐺', type: 'wolf', alive: true, animTimer: 0, hasSpoken: false },
+          { id: 2, name: 'Orc Patrulheiro', gx: 16, gy: 5, hp: 65, maxHp: 65, dmg: 14, icon: '👹', type: 'orc', alive: true, animTimer: 1, hasSpoken: false },
+          // Sala 2
+          { id: 3, name: 'Aranha Venenosa', gx: 21, gy: 8, hp: 55, maxHp: 55, dmg: 12, icon: '🕷️', type: 'spider', alive: true, animTimer: 2, hasSpoken: false },
+          // Corredor 2
+          { id: 4, name: 'Goblin Xamã', gx: 22, gy: 17, hp: 60, maxHp: 60, dmg: 15, icon: '👺', type: 'goblin', alive: true, animTimer: 3, hasSpoken: false },
+          // Sala 3 & 4
+          { id: 5, name: 'Líder dos Orcs', gx: 18, gy: 23, hp: 140, maxHp: 140, dmg: 20, icon: '👹', type: 'orc_boss', isBoss: false, alive: true, animTimer: 0, hasSpoken: false },
+          { id: 6, name: 'Lobo Alfa de Norrath', gx: 5, gy: 24, hp: 80, maxHp: 80, dmg: 15, icon: '🐺', type: 'wolf', alive: true, animTimer: 2, hasSpoken: false }
         ];
       } else {
         stairs = null;
-        bossGate = { gx: 20, gy: 20, locked: !player.hasBossKey, icon: '🚪' };
+        bossGate = { gx: 5, gy: 23, locked: !player.hasBossKey, icon: '🚪' };
 
         monsters = [
-          { id: 1, name: 'Guarda da Masmorra', gx: 10, gy: 10, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, dropsKey: !player.hasBossKey, animTimer: Math.random() * 5 },
-          { id: 2, name: 'Demônio Alado', gx: 16, gy: 12, hp: 90, maxHp: 90, dmg: 22, icon: '🦇', type: 'demon', alive: true, animTimer: Math.random() * 5 },
-          { id: 3, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 26, gy: 26, hp: 380, maxHp: 380, dmg: 38, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0 }
+          { id: 1, name: 'Guarda Esqueleto da Masmorra', gx: 14, gy: 5, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, dropsKey: !player.hasBossKey, animTimer: 0, hasSpoken: false },
+          { id: 2, name: 'Demônio Alado das Sombras', gx: 22, gy: 15, hp: 90, maxHp: 90, dmg: 22, icon: '🦇', type: 'demon', alive: true, animTimer: 1, hasSpoken: false },
+          { id: 3, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 5, gy: 26, hp: 380, maxHp: 380, dmg: 38, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0, hasSpoken: false }
         ];
       }
     }
@@ -1872,6 +2309,15 @@
       });
     }
 
+    
+    function spawnDialogueBalloon(text, gx, gy, profile = 'elder') {
+      dialogueBalloons.push({
+        text, gx, gy, profile,
+        life: 2.8,
+        offsetY: 0
+      });
+    }
+
     function spawnFloatingText(text, gx, gy, color = '#fff') {
       floatingTexts.push({ text, gx, gy, offsetY: 0, life: 1.0, color });
     }
@@ -1912,40 +2358,59 @@
       const friction = 14;
       const accel = 26;
 
+      // MOVIMENTAÇÃO INSTANTÂNEA E DIRETA (ZERO EFEITO DE GELO / ZERO DESLIZAMENTO)
       if (inputX !== 0 || inputY !== 0) {
         player.isMoving = true;
-        player.walkTimer = (player.walkTimer || 0) + dt * 10;
+        player.walkTimer = (player.walkTimer || 0) + dt * 11;
 
         const len = Math.hypot(inputX, inputY);
         inputX /= len;
         inputY /= len;
 
-        player.vx += inputX * accel * dt;
-        player.vy += inputY * accel * dt;
-
-        const currentSpeed = Math.hypot(player.vx, player.vy);
-        if (currentSpeed > player.speed) {
-          player.vx = (player.vx / currentSpeed) * player.speed;
-          player.vy = (player.vy / currentSpeed) * player.speed;
-        }
+        // VELOCIDADE DIRETA SEM INÉRCIA LENTA
+        player.vx = inputX * player.speed;
+        player.vy = inputY * player.speed;
 
         player.targetFacing = Math.atan2(inputY, inputX);
-        let angleDiff = player.targetFacing - player.facing;
-        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-        player.facing += angleDiff * 14 * dt;
+        player.facing = player.targetFacing; // Rotação imediata para a direção do movimento
 
-        if (Math.random() < 0.25) spawnDust(player.gx, player.gy);
+        if (Math.random() < 0.2) spawnDust(player.gx, player.gy);
       } else {
+        // PARADA INSTANTÂNEA SECA: Soltou o joystick, para no mesmo instante!
         player.isMoving = false;
+        player.vx = 0;
+        player.vy = 0;
         player.idleTimer = (player.idleTimer || 0) + dt * 2.5;
-        player.vx -= player.vx * friction * dt;
-        player.vy -= player.vy * friction * dt;
-        if (Math.hypot(player.vx, player.vy) < 0.05) {
-          player.vx = 0; player.vy = 0;
-        }
       }
       if (player.hitFlash > 0) player.hitFlash -= dt * 4;
+
+      // AUTO-ATAQUE INTELIGENTE (MENOS BOTÕES, MAIS FLUIDEZ)
+      player.autoAttackCooldown = (player.autoAttackCooldown || 0) - dt;
+      if (player.autoAttackCooldown <= 0 && player.attacking <= 0) {
+        let nearestM = null;
+        let minDist = 999;
+        monsters.forEach(m => {
+          if (!m.alive) return;
+          const dist = Math.hypot(m.gx - player.gx, m.gy - player.gy);
+          if (dist < minDist) {
+            minDist = dist;
+            nearestM = m;
+          }
+        });
+
+        const attackReach = player.clsKey === 'ranger' ? 5.0 : 1.75;
+        if (nearestM && minDist <= attackReach) {
+          // Gira em direção ao inimigo e ataca automaticamente!
+          player.facing = Math.atan2(nearestM.gy - player.gy, nearestM.gx - player.gx);
+          doAttack();
+          player.autoAttackCooldown = 0.42;
+
+          // Fala do herói em combate aleatória
+          if (Math.random() < 0.18) {
+            triggerHeroVoice(player.clsKey);
+          }
+        }
+      }
 
       const nextGx = player.gx + player.vx * dt;
       const nextGy = player.gy + player.vy * dt;
@@ -2035,13 +2500,36 @@
         }
       }
 
-      // IA dos Monstros
+      // FALAS DO ANCIÃO AO SE APROXIMAR
+      npcs.forEach(npc => {
+        const d = Math.hypot(npc.gx - player.gx, npc.gy - player.gy);
+        if (d < 2.0 && !npc.hasSpoken) {
+          npc.hasSpoken = true;
+          voices.speak("Saudações, Campeão de Norrath! Minhas bênçãos e missões aguardam você.", 'elder', { gx: npc.gx, gy: npc.gy });
+        }
+      });
+
+      // IA DOS MONSTROS E FALAS DUBLADAS AO AVISTAR O JOGADOR
       monsters.forEach(m => {
         if (!m.alive) return;
         m.animTimer = (m.animTimer || 0) + dt * 5;
         if (m.frozen && m.frozen > 0) { m.frozen -= dt; return; }
 
         const dist = Math.hypot(player.gx - m.gx, player.gy - m.gy);
+
+        // Fala dublada do monstro ao avistar pela primeira vez
+        if (dist < 6.5 && !m.hasSpoken) {
+          m.hasSpoken = true;
+          if (m.type === 'orc' || m.type === 'orc_boss') {
+            const orcPhrases = ["Matar o intruso!", "Mais carne fresca!", "Pela horda de Norrath!", "Esmagar o invasor!"];
+            voices.speak(orcPhrases[Math.floor(Math.random() * orcPhrases.length)], 'orc', { gx: m.gx, gy: m.gy });
+          } else if (m.type === 'goblin') {
+            const gobPhrases = ["Hehehe! Veneno nele!", "Invasor na masmorra!", "Queime, invasor!"];
+            voices.speak(gobPhrases[Math.floor(Math.random() * gobPhrases.length)], 'goblin', { gx: m.gx, gy: m.gy });
+          } else if (m.isBoss) {
+            voices.speak("Você ousa desafiar o Lorde Warlord em seu trono?! Você sangrará!", 'boss', { gx: m.gx, gy: m.gy });
+          }
+        }
         if (dist < 7.5) {
           if (dist > 1.2) {
             const angle = Math.atan2(player.gy - m.gy, player.gx - m.gx);
@@ -2239,7 +2727,50 @@
       });
 
       lightCtx.restore();
-      ctx.drawImage(lightCanvas, 0, 0);
+
+      // Atualização e Renderização de Balões de Fala
+      for (let i = dialogueBalloons.length - 1; i >= 0; i--) {
+        const b = dialogueBalloons[i];
+        b.life -= dt;
+        b.offsetY += dt * 6;
+        if (b.life <= 0) {
+          dialogueBalloons.splice(i, 1);
+          continue;
+        }
+
+        const iso = worldToIso(b.gx, b.gy);
+        const scrX = iso.x;
+        const scrY = iso.y - 42 - b.offsetY;
+
+        ctx.save();
+        ctx.font = 'bold 11px "Cinzel", Georgia, serif';
+        const txtMetrics = ctx.measureText(b.text);
+        const padX = 10;
+        const bW = txtMetrics.width + padX * 2;
+        const bH = 22;
+
+        ctx.fillStyle = (b.profile === 'boss' || b.profile === 'orc') ? 'rgba(38, 12, 12, 0.94)' : 'rgba(14, 18, 28, 0.94)';
+        ctx.strokeStyle = b.profile === 'boss' ? '#ff3b3b' : '#ffd700';
+        ctx.lineWidth = 1.5;
+
+        // Caixa arredondada
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(scrX - bW / 2, scrY - bH / 2, bW, bH, 5);
+        } else {
+          ctx.rect(scrX - bW / 2, scrY - bH / 2, bW, bH);
+        }
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = b.profile === 'boss' ? '#ff9999' : '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(b.text, scrX, scrY);
+        ctx.restore();
+      }
+
+            ctx.drawImage(lightCanvas, 0, 0);
     }
 
     function drawTile(x, y, type, floorTile) {
@@ -3231,26 +3762,482 @@
     document.getElementById('slotSkill2').onclick = () => castSkill(2);
     document.getElementById('slotTownPortal').onclick = castTownPortal;
 
-    // -------------------------------------------------------------
-    // SELEÇÃO DE CLASSE & INÍCIO
-    // -------------------------------------------------------------
-    const classCards = document.querySelectorAll('.class-card');
-    let selectedClass = 'barbarian';
 
-    classCards.forEach(card => {
-      card.onclick = () => {
-        classCards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        selectedClass = card.dataset.class;
+    // -------------------------------------------------------------
+    // FALAS DUBLADAS DOS HERÓIS EM COMBATE
+    // -------------------------------------------------------------
+    function triggerHeroVoice(clsKey) {
+      const heroPhrases = {
+        barbarian: ["Sinta a minha fúria!", "Pelo aço e pela honra!", "Esmague!", "Por Norrath!"],
+        ranger: ["Na mira certa!", "Vento gélido!", "Flecha certeira!", "Nenhum passo a mais!"],
+        cleric: ["Luz divina!", "Pela fé sagrada!", "Seja purificado!", "Luz de cura!"],
+        wizard: ["Arda nas chamas!", "Fúria do trovão!", "Poder arcano!", "Cinzas e pó!"],
+        shadowknight: ["Sua alma é minha!", "Sangue pela escuridão!", "Sombra eterna!", "Curve-se!"]
+      };
+      const list = heroPhrases[clsKey] || heroPhrases.barbarian;
+      const phrase = list[Math.floor(Math.random() * list.length)];
+      voices.speak(phrase, clsKey, { gx: player.gx, gy: player.gy });
+    }
+
+    // -------------------------------------------------------------
+    // MENU PRINCIPAL DE ABERTURA: BRASAS E NÉVOA NO CANVAS
+    // -------------------------------------------------------------
+    const titleBgCanvas = document.getElementById('titleBgCanvas');
+    const titleBgCtx = titleBgCanvas ? titleBgCanvas.getContext('2d') : null;
+    let menuParticles = [];
+
+    function resizeTitleCanvas() {
+      if (!titleBgCanvas) return;
+      titleBgCanvas.width = window.innerWidth;
+      titleBgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeTitleCanvas);
+    resizeTitleCanvas();
+
+    function initTitleParticles() {
+      menuParticles = [];
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      for (let i = 0; i < 60; i++) {
+        menuParticles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: -0.6 - Math.random() * 1.5,
+          size: 1.5 + Math.random() * 3,
+          color: Math.random() < 0.6 ? '#ffaa33' : '#ff4411',
+          alpha: Math.random() * 0.8 + 0.2
+        });
+      }
+    }
+    initTitleParticles();
+
+    function updateAndRenderTitleParticles() {
+      if (!titleBgCtx) return;
+      titleBgCtx.clearRect(0, 0, titleBgCanvas.width, titleBgCanvas.height);
+
+      // Fundo em gradiente suave
+      const grad = titleBgCtx.createRadialGradient(titleBgCanvas.width / 2, titleBgCanvas.height / 2, 80, titleBgCanvas.width / 2, titleBgCanvas.height / 2, titleBgCanvas.width / 1.2);
+      grad.addColorStop(0, 'rgba(42, 22, 12, 0.8)');
+      grad.addColorStop(1, 'rgba(6, 4, 3, 0.98)');
+      titleBgCtx.fillStyle = grad;
+      titleBgCtx.fillRect(0, 0, titleBgCanvas.width, titleBgCanvas.height);
+
+      // Brasas subindo
+      menuParticles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.002;
+        if (p.y < -10 || p.alpha <= 0) {
+          p.y = titleBgCanvas.height + 10;
+          p.x = Math.random() * titleBgCanvas.width;
+          p.alpha = Math.random() * 0.8 + 0.2;
+        }
+
+        titleBgCtx.save();
+        titleBgCtx.globalAlpha = Math.max(0, p.alpha);
+        titleBgCtx.fillStyle = p.color;
+        titleBgCtx.beginPath();
+        titleBgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        titleBgCtx.fill();
+        titleBgCtx.restore();
+      });
+
+      if (document.getElementById('mainMenuScreen').style.display !== 'none') {
+        requestAnimationFrame(updateAndRenderTitleParticles);
+      }
+    }
+    requestAnimationFrame(updateAndRenderTitleParticles);
+
+    // -------------------------------------------------------------
+    // PREVIEW DO HERÓI NO PALCO 2.5D
+    // -------------------------------------------------------------
+    const heroPreviewCanvas = document.getElementById('heroPreviewCanvas');
+    const hpCtx = heroPreviewCanvas ? heroPreviewCanvas.getContext('2d') : null;
+    let previewAngle = 0;
+    let previewAttackTimer = 0;
+    let previewBlocking = false;
+
+    function renderHeroPreview() {
+      if (!hpCtx) return;
+      hpCtx.clearRect(0, 0, heroPreviewCanvas.width, heroPreviewCanvas.height);
+
+      const cx = heroPreviewCanvas.width / 2;
+      const cy = heroPreviewCanvas.height / 2 + 55;
+
+      hpCtx.save();
+      hpCtx.translate(cx, cy);
+
+      // Pedestal de Pedra Rúnica 3D
+      hpCtx.fillStyle = '#140f0c';
+      hpCtx.beginPath();
+      hpCtx.ellipse(0, 26, 92, 42, 0, 0, Math.PI * 2);
+      hpCtx.fill();
+      hpCtx.strokeStyle = '#382a1d'; hpCtx.lineWidth = 2; hpCtx.stroke();
+
+      hpCtx.fillStyle = '#221912';
+      hpCtx.beginPath();
+      hpCtx.moveTo(-88, 0); hpCtx.lineTo(88, 0); hpCtx.lineTo(92, 26); hpCtx.lineTo(-92, 26);
+      hpCtx.closePath(); hpCtx.fill();
+
+      hpCtx.fillStyle = '#3a2b1f';
+      hpCtx.beginPath();
+      hpCtx.ellipse(0, 0, 88, 40, 0, 0, Math.PI * 2);
+      hpCtx.fill();
+      hpCtx.strokeStyle = '#57412e'; hpCtx.lineWidth = 2.5; hpCtx.stroke();
+
+      // Círculo rúnico com brilho dourado
+      hpCtx.strokeStyle = 'rgba(245, 197, 66, 0.45)'; hpCtx.lineWidth = 1.5;
+      hpCtx.beginPath();
+      hpCtx.ellipse(0, 0, 68, 30, 0, 0, Math.PI * 2);
+      hpCtx.stroke();
+
+      // Tochas laterais
+      const fShift = Math.sin(Date.now() * 0.009) * 3;
+      // Tocha esquerda
+      hpCtx.fillStyle = '#1c1510'; hpCtx.fillRect(-105, -34, 6, 44);
+      hpCtx.fillStyle = '#ff4400'; hpCtx.beginPath(); hpCtx.arc(-102 + fShift, -38, 9, 0, Math.PI * 2); hpCtx.fill();
+      hpCtx.fillStyle = '#ffcc00'; hpCtx.beginPath(); hpCtx.arc(-102, -41, 5, 0, Math.PI * 2); hpCtx.fill();
+
+      // Tocha direita
+      hpCtx.fillStyle = '#1c1510'; hpCtx.fillRect(99, -34, 6, 44);
+      hpCtx.fillStyle = '#ff4400'; hpCtx.beginPath(); hpCtx.arc(102 - fShift, -38, 9, 0, Math.PI * 2); hpCtx.fill();
+      hpCtx.fillStyle = '#ffcc00'; hpCtx.beginPath(); hpCtx.arc(102, -41, 5, 0, Math.PI * 2); hpCtx.fill();
+
+      // Renderização do Herói em Destaque (Escala 3.6x!)
+      hpCtx.scale(3.6, 3.6);
+
+      // Objeto herói simulado para preview
+      const previewHero = {
+        gx: 0, gy: 0,
+        facing: previewAngle,
+        clsKey: selectedClass,
+        isMoving: false,
+        walkTimer: 0,
+        idleTimer: Date.now() * 0.0025,
+        attacking: previewAttackTimer,
+        blocking: previewBlocking,
+        equipment: {
+          mainhand: { name: CLASSES[selectedClass].weapon, dmg: 20, socket: { gemType: 'fire', color: '#ff3333' } }
+        }
+      };
+
+      // Desenha o personagem
+      drawCharacterOnContext(hpCtx, previewHero, 0, -4);
+
+      hpCtx.restore();
+
+      if (previewAttackTimer > 0) previewAttackTimer--;
+
+      if (document.getElementById('classSelectScreen').style.display !== 'none') {
+        requestAnimationFrame(renderHeroPreview);
+      }
+    }
+
+    // Função de desenho de personagem reutilizável
+    function drawCharacterOnContext(tCtx, charData, footX, footY) {
+      // 1. Sombra de Contato
+      tCtx.save();
+      tCtx.beginPath();
+      tCtx.ellipse(footX, footY, 16, 8, 0, 0, Math.PI * 2);
+      tCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      tCtx.fill();
+
+      // 2. Animação
+      const walkCycle = charData.walkTimer || 0;
+      const idleCycle = charData.idleTimer || 0;
+      const bob = charData.isMoving ? Math.abs(Math.sin(walkCycle)) * 3.5 : Math.sin(idleCycle) * 1.5;
+      const legStride = charData.isMoving ? Math.sin(walkCycle) * 6.5 : 0;
+
+      const dx = Math.cos(charData.facing);
+      const dy = Math.sin(charData.facing);
+      const scrX = dx - dy;
+      const scrY = (dx + dy) * 0.5;
+      const isFacingRight = scrX >= 0;
+      const isFacingFront = scrY >= -0.15;
+
+      const hipY = footY - 12 - bob;
+      const chestY = footY - 22 - bob;
+      const headY = footY - 32 - bob;
+
+      // Pernas
+      tCtx.fillStyle = '#261b14';
+      tCtx.fillRect(footX - 6, hipY, 4, 8);
+      tCtx.fillStyle = '#4a3625';
+      tCtx.fillRect(footX - 6 + (isFacingRight ? -legStride * 0.5 : legStride * 0.5), footY - 6, 5, 6);
+
+      tCtx.fillStyle = '#1e140e';
+      tCtx.fillRect(footX + 2, hipY, 4, 8);
+      tCtx.fillStyle = '#3d2b1c';
+      tCtx.fillRect(footX + 2 + (isFacingRight ? legStride * 0.5 : -legStride * 0.5), footY - 6, 5, 6);
+
+      // Capa (Se Ranger ou Mago)
+      if (isFacingFront && (charData.clsKey === 'ranger' || charData.clsKey === 'wizard')) {
+        tCtx.fillStyle = charData.clsKey === 'ranger' ? '#1c3619' : '#1b1b4d';
+        tCtx.beginPath();
+        tCtx.moveTo(footX - 8, chestY);
+        tCtx.lineTo(footX + 8, chestY);
+        tCtx.lineTo(footX + 11, footY - 4);
+        tCtx.lineTo(footX - 11, footY - 4);
+        tCtx.closePath();
+        tCtx.fill();
+      }
+
+      // Torso & Armadura
+      if (charData.clsKey === 'barbarian') {
+        tCtx.fillStyle = '#b87d54';
+        tCtx.fillRect(footX - 7, chestY, 14, 10);
+        tCtx.strokeStyle = '#5a483a'; tCtx.lineWidth = 2;
+        tCtx.beginPath(); tCtx.moveTo(footX - 7, chestY); tCtx.lineTo(footX + 7, chestY + 10); tCtx.stroke();
+        tCtx.beginPath(); tCtx.moveTo(footX + 7, chestY); tCtx.lineTo(footX - 7, chestY + 10); tCtx.stroke();
+        tCtx.fillStyle = '#7a7a82';
+        tCtx.beginPath(); tCtx.arc(footX - 8, chestY + 2, 4.5, 0, Math.PI * 2); tCtx.fill();
+        tCtx.beginPath(); tCtx.arc(footX + 8, chestY + 2, 4.5, 0, Math.PI * 2); tCtx.fill();
+        tCtx.fillStyle = '#261b14'; tCtx.fillRect(footX - 7, hipY - 2, 14, 4);
+        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 2, hipY - 2, 4, 4);
+      } else if (charData.clsKey === 'ranger') {
+        tCtx.fillStyle = '#2e532b';
+        tCtx.fillRect(footX - 6, chestY, 12, 10);
+        tCtx.fillStyle = '#5c3d24';
+        tCtx.fillRect(footX - 5, chestY + 1, 10, 7);
+        tCtx.strokeStyle = '#3e2714'; tCtx.lineWidth = 2;
+        tCtx.beginPath(); tCtx.moveTo(footX - 6, chestY); tCtx.lineTo(footX + 5, hipY); tCtx.stroke();
+        tCtx.fillStyle = '#3e2714'; tCtx.fillRect(footX - 6, hipY - 2, 12, 3);
+      } else if (charData.clsKey === 'cleric') {
+        tCtx.fillStyle = '#8a929a';
+        tCtx.fillRect(footX - 7, chestY, 14, 11);
+        tCtx.fillStyle = '#d4af37';
+        tCtx.fillRect(footX - 5, chestY + 4, 10, 2.5);
+        tCtx.fillRect(footX - 1.5, chestY + 1, 3, 8);
+        tCtx.fillStyle = '#a6b0b8';
+        tCtx.beginPath(); tCtx.arc(footX - 8, chestY + 2, 4, 0, Math.PI * 2); tCtx.fill();
+        tCtx.beginPath(); tCtx.arc(footX + 8, chestY + 2, 4, 0, Math.PI * 2); tCtx.fill();
+        tCtx.fillStyle = '#40352c'; tCtx.fillRect(footX - 7, hipY - 2, 14, 3);
+      } else if (charData.clsKey === 'wizard') {
+        tCtx.fillStyle = '#212459';
+        tCtx.beginPath();
+        tCtx.moveTo(footX - 7, chestY);
+        tCtx.lineTo(footX + 7, chestY);
+        tCtx.lineTo(footX + 9, footY - 2);
+        tCtx.lineTo(footX - 9, footY - 2);
+        tCtx.closePath();
+        tCtx.fill();
+        tCtx.strokeStyle = '#d4af37'; tCtx.lineWidth = 1;
+        tCtx.beginPath(); tCtx.moveTo(footX, chestY); tCtx.lineTo(footX, footY - 2); tCtx.stroke();
+      } else if (charData.clsKey === 'shadowknight') {
+        tCtx.fillStyle = '#1c1b22';
+        tCtx.fillRect(footX - 7, chestY, 14, 11);
+        tCtx.strokeStyle = '#b81424'; tCtx.lineWidth = 1.5;
+        tCtx.beginPath(); tCtx.moveTo(footX - 5, chestY + 2); tCtx.lineTo(footX, chestY + 7); tCtx.lineTo(footX + 5, chestY + 2); tCtx.stroke();
+        tCtx.fillStyle = '#2c2b38';
+        tCtx.beginPath(); tCtx.moveTo(footX - 11, chestY); tCtx.lineTo(footX - 6, chestY - 4); tCtx.lineTo(footX - 6, chestY + 5); tCtx.fill();
+        tCtx.beginPath(); tCtx.moveTo(footX + 11, chestY); tCtx.lineTo(footX + 6, chestY - 4); tCtx.lineTo(footX + 6, chestY + 5); tCtx.fill();
+      }
+
+      // Cabeça & Elmo
+      tCtx.beginPath();
+      tCtx.arc(footX, headY, 6.5, 0, Math.PI * 2);
+      if (charData.clsKey === 'barbarian') {
+        tCtx.fillStyle = '#b87d54'; tCtx.fill();
+        tCtx.fillStyle = '#55555c';
+        tCtx.beginPath(); tCtx.arc(footX, headY - 2, 6, Math.PI, 0); tCtx.fill();
+        tCtx.strokeStyle = '#c4b899'; tCtx.lineWidth = 2;
+        tCtx.beginPath(); tCtx.moveTo(footX - 5, headY - 2); tCtx.quadraticCurveTo(footX - 9, headY - 6, footX - 7, headY - 10); tCtx.stroke();
+        tCtx.beginPath(); tCtx.moveTo(footX + 5, headY - 2); tCtx.quadraticCurveTo(footX + 9, headY - 6, footX + 7, headY - 10); tCtx.stroke();
+      } else if (charData.clsKey === 'ranger') {
+        tCtx.fillStyle = '#1e381b';
+        tCtx.beginPath(); tCtx.arc(footX, headY - 1, 7, 0, Math.PI * 2); tCtx.fill();
+        tCtx.fillStyle = '#c89269';
+        tCtx.beginPath(); tCtx.arc(footX, headY, 4, 0, Math.PI * 2); tCtx.fill();
+      } else if (charData.clsKey === 'wizard') {
+        tCtx.fillStyle = '#1b1d47';
+        tCtx.beginPath(); tCtx.moveTo(footX - 8, headY + 1); tCtx.lineTo(footX, headY - 13); tCtx.lineTo(footX + 8, headY + 1); tCtx.closePath(); tCtx.fill();
+        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 7, headY - 1, 14, 2);
+        tCtx.fillStyle = '#c89269'; tCtx.beginPath(); tCtx.arc(footX, headY + 1, 4, 0, Math.PI * 2); tCtx.fill();
+      } else if (charData.clsKey === 'cleric') {
+        tCtx.fillStyle = '#8a929a'; tCtx.fill();
+        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(footX - 4, headY - 1, 8, 2);
+      } else if (charData.clsKey === 'shadowknight') {
+        tCtx.fillStyle = '#16151c'; tCtx.fill();
+        tCtx.fillStyle = '#ff1e1e'; tCtx.fillRect(footX - 3, headY, 2, 1.5); tCtx.fillRect(footX + 1, headY, 2, 1.5);
+      }
+
+      // Escudo
+      const shieldX = footX + (isFacingRight ? -9 : 9);
+      const shieldY = chestY + 2;
+      if (charData.blocking) {
+        tCtx.fillStyle = '#3a4a60';
+        tCtx.strokeStyle = '#6bb0f2'; tCtx.lineWidth = 2;
+        tCtx.beginPath(); tCtx.arc(footX, chestY + 2, 9, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
+        tCtx.fillStyle = 'rgba(68, 136, 255, 0.25)';
+        tCtx.strokeStyle = '#66aaff'; tCtx.lineWidth = 2.5;
+        tCtx.beginPath(); tCtx.arc(footX, chestY, 24, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
+      } else {
+        tCtx.fillStyle = '#404552';
+        tCtx.strokeStyle = '#6b7280'; tCtx.lineWidth = 1.5;
+        tCtx.beginPath(); tCtx.ellipse(shieldX, shieldY, 5, 8, 0, 0, Math.PI * 2); tCtx.fill(); tCtx.stroke();
+      }
+
+      // Arma
+      const wepHandX = footX + (isFacingRight ? 9 : -9);
+      const wepHandY = chestY + 3;
+      tCtx.save();
+      tCtx.translate(wepHandX, wepHandY);
+
+      let wepAngle = isFacingRight ? 0.3 : -0.3;
+      if (charData.attacking > 0) {
+        const swingProgress = (14 - charData.attacking) / 14;
+        wepAngle = isFacingRight ? (-1.5 + swingProgress * 3.0) : (1.5 - swingProgress * 3.0);
+      }
+      tCtx.rotate(wepAngle);
+
+      if (charData.clsKey === 'barbarian' || charData.clsKey === 'cleric' || charData.clsKey === 'shadowknight') {
+        tCtx.fillStyle = '#8b5a2b'; tCtx.fillRect(-1.5, 0, 3, 5);
+        tCtx.fillStyle = '#d4af37'; tCtx.fillRect(-5, 5, 10, 2.5);
+        tCtx.fillStyle = charData.clsKey === 'shadowknight' ? '#4a1525' : '#c8d1db';
+        tCtx.fillRect(-2, 7, 4, 18);
+        tCtx.beginPath(); tCtx.moveTo(-2, 25); tCtx.lineTo(0, 29); tCtx.lineTo(2, 25); tCtx.fill();
+        tCtx.fillStyle = '#ffffff'; tCtx.fillRect(0, 8, 1, 16);
+      } else if (charData.clsKey === 'ranger') {
+        tCtx.strokeStyle = '#6d4c2a'; tCtx.lineWidth = 2.5;
+        tCtx.beginPath(); tCtx.arc(0, 10, 12, -Math.PI * 0.4, Math.PI * 0.4); tCtx.stroke();
+        tCtx.strokeStyle = '#e0e0e0'; tCtx.lineWidth = 1;
+        tCtx.beginPath(); tCtx.moveTo(4, 0); tCtx.lineTo(4, 20); tCtx.stroke();
+      } else if (charData.clsKey === 'wizard') {
+        tCtx.fillStyle = '#5c3d1e'; tCtx.fillRect(-1.5, -4, 3, 26);
+        tCtx.fillStyle = '#d4af37'; tCtx.beginPath(); tCtx.arc(0, 23, 3, 0, Math.PI * 2); tCtx.fill();
+        const orbGlow = tCtx.createRadialGradient(0, 24, 1, 0, 24, 7);
+        orbGlow.addColorStop(0, '#ffffff');
+        orbGlow.addColorStop(0.4, '#4dc9ff');
+        orbGlow.addColorStop(1, 'rgba(0, 100, 255, 0)');
+        tCtx.fillStyle = orbGlow;
+        tCtx.beginPath(); tCtx.arc(0, 24, 7, 0, Math.PI * 2); tCtx.fill();
+      }
+
+      tCtx.restore();
+      tCtx.restore();
+    }
+
+    // Atualiza a ficha de detalhes e habilidades na seleção
+    function updateClassPreviewInfo(clsKey) {
+      const cls = CLASSES[clsKey];
+      document.getElementById('previewClassName').textContent = cls.name;
+
+      const descMap = {
+        barbarian: 'Combate brutal corpo a corpo, força massiva e ataques com espada de duas mãos.',
+        ranger: 'Tiro com arco mortal, alta destreza e flechas perfurantes à distância.',
+        cleric: 'Maças de guerra pesadas, magias sagradas de cura divina e auras protetoras.',
+        wizard: 'Destruição mágica em área: Bolas de Fogo incandescentes e Raios eletrizantes.',
+        shadowknight: 'Lâminas demoníacas, drenagem de vida (Life Tap) e pactos nefastos.'
+      };
+      document.getElementById('previewClassDesc').textContent = descMap[clsKey] || '';
+
+      document.getElementById('valStr').textContent = cls.str;
+      document.getElementById('barStr').style.width = `${Math.min(100, cls.str * 4)}%`;
+
+      document.getElementById('valDex').textContent = cls.dex;
+      document.getElementById('barDex').style.width = `${Math.min(100, cls.dex * 4)}%`;
+
+      document.getElementById('valInt').textContent = cls.int;
+      document.getElementById('barInt').style.width = `${Math.min(100, cls.int * 4)}%`;
+
+      const vit = Math.floor(cls.hp / 8);
+      document.getElementById('valVit').textContent = vit;
+      document.getElementById('barVit').style.width = `${Math.min(100, vit * 4.5)}%`;
+
+      // Habilidades
+      const sContainer = document.getElementById('previewSkillsList');
+      sContainer.innerHTML = '';
+      cls.skills.forEach(sk => {
+        const div = document.createElement('div');
+        div.className = 'skill-preview-card';
+        div.innerHTML = `
+          <div class="sp-icon">${sk.icon}</div>
+          <div class="sp-info">
+            <b>${sk.name}</b>
+            <span>${sk.desc.slice(0, 36)}...</span>
+          </div>
+        `;
+        sContainer.appendChild(div);
+      });
+
+      // Fala dublada de apresentação da classe!
+      const greetings = {
+        barbarian: "Pelo sangue e honra de Norrath! Minha espada aniquilará a horda!",
+        ranger: "O olho de águia nunca erra o alvo. Nenhuma presa escapa.",
+        cleric: "A luz divina protegerá esta masmorra e banirá as trevas.",
+        wizard: "Os mistérios arcanos dobrarão a realidade perante meu cajado.",
+        shadowknight: "As trevas me obedecem... a morte é apenas o começo da dor."
+      };
+      voices.speak(greetings[clsKey] || greetings.barbarian, clsKey);
+    }
+
+    // CONTROLES DE EVENTOS DA ABERTURA E SELEÇÃO
+    document.getElementById('btnMenuNewGame').onclick = () => {
+      audio.init();
+      audio.playMagicSpell();
+      document.getElementById('mainMenuScreen').style.display = 'none';
+      document.getElementById('classSelectScreen').style.display = 'flex';
+      updateClassPreviewInfo(selectedClass);
+      requestAnimationFrame(renderHeroPreview);
+    };
+
+    document.getElementById('btnMenuContinue').onclick = () => {
+      audio.init();
+      audio.playMagicSpell();
+      document.getElementById('mainMenuScreen').style.display = 'none';
+      startGameWithClass(selectedClass);
+    };
+
+    document.getElementById('btnMenuAudio').onclick = () => {
+      voices.enabled = !voices.enabled;
+      document.getElementById('btnMenuAudio').textContent = voices.enabled ? '🔊 Vozes PT-BR: Ativadas' : '🔈 Vozes PT-BR: Mudo';
+      if (voices.enabled) {
+        voices.speak("Vozes dubladas em português ativadas com sucesso!", 'elder');
+      }
+    };
+
+    document.getElementById('btnBackToMenu').onclick = () => {
+      document.getElementById('classSelectScreen').style.display = 'none';
+      document.getElementById('mainMenuScreen').style.display = 'flex';
+      requestAnimationFrame(updateAndRenderTitleParticles);
+    };
+
+    // Abas de seleção de classe
+    document.querySelectorAll('.class-tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        selectedClass = tab.dataset.class;
+        updateClassPreviewInfo(selectedClass);
       };
     });
 
-    document.getElementById('btnStartGame').onclick = () => {
+    // Controles do Preview
+    document.getElementById('btnRotateLeft').onclick = () => {
+      previewAngle -= 0.6;
+    };
+    document.getElementById('btnRotateRight').onclick = () => {
+      previewAngle += 0.6;
+    };
+    document.getElementById('btnPreviewAttack').onclick = () => {
+      audio.init();
+      audio.playSwordSwing(1);
+      previewAttackTimer = 14;
+      triggerHeroVoice(selectedClass);
+    };
+    document.getElementById('btnPreviewShield').onclick = () => {
+      audio.init();
+      audio.playShieldBlock();
+      previewBlocking = !previewBlocking;
+    };
+
+    function startGameWithClass(clsKey) {
       audio.init();
       audio.playMagicSpell();
 
-      const cls = CLASSES[selectedClass];
-      player.clsKey = selectedClass;
+      const cls = CLASSES[clsKey];
+      player.clsKey = clsKey;
       player.hp = cls.hp;
       player.maxHp = cls.hp;
       player.mana = cls.mana;
@@ -3264,13 +4251,22 @@
       document.getElementById('skill2Icon').textContent = cls.skills[1].icon;
 
       document.getElementById('classSelectScreen').style.display = 'none';
+      document.getElementById('mainMenuScreen').style.display = 'none';
 
       generateDungeon(1);
       updateHud();
-      showNotification(`Bem-vindo a Norrath V4! Fale com o Ancião [💬] para começar.`);
+      showNotification(`Bem-vindo a Norrath V5! Siga o caminho linear e converse com o Ancião [💬].`);
+
+      // Voz de entrada do herói
+      voices.speak("Estou pronto para a batalha nas profundezas!", clsKey);
 
       requestAnimationFrame(gameLoop);
+    }
+
+    document.getElementById('btnStartGame').onclick = () => {
+      startGameWithClass(selectedClass);
     };
+
   </script>
 </body>
 </html>
