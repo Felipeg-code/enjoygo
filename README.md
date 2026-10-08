@@ -1,128 +1,66 @@
-# 🎮 enjoygo - RPG Vertical estilo Clash of Clans
+# ⚔️ Champions of Norrath - 2.5D Isometric Action RPG
 
-RPG mobile vertical com joystick fluido + auto-walk (clica na missão e vai sozinho!)
+Esqueleto e motor completo de RPG Hack & Slash 2.5D Isométrico inspirado no clássico **Champions of Norrath** (Snowblind Studios / PS2).
 
-![enjoygo](https://img.shields.io/badge/Expo-57-000020?style=for-the-badge&logo=expo)
-![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-blue?style=for-the-badge)
-
-## 🚀 Jogar Agora (sem Expo Go)
-
-**Versão Web - Funciona no celular sem instalar nada:**
-
-Depois de fazer deploy no GitHub Pages, seu link será:
-`https://SEU_USUARIO.github.io/enjoygo/`
-
-Ou rode local:
-```bash
-npm install
-npm run web
-```
-
-## 📱 Rodar no Expo Go (local, sem ngrok)
-
-O erro `err_ngrok_3200` acontece porque o tunnel gratuito do Expo tem limite. Use modo LAN:
-
-```bash
-npm install
-npx expo start --lan
-# ou
-npx expo start --offline
-```
-
-**Importante:** Celular e PC precisam estar no mesmo Wi-Fi!
-
-Se ainda quiser tunnel:
-```bash
-npm install -g @expo/ngrok
-npx expo start --tunnel
-# Crie conta grátis no ngrok.com e configure authtoken se pedir
-```
-
-## 🎮 Como Jogar
-
-- **Joystick** inferior esquerdo → mover personagem
-- **Toque nas missões** (painel direito) → auto-walk até o objetivo
-- **Toque no mapa** → vai até o ponto clicado
-- **Botão ⚔️** → atacar/interagir
-- Complete missões para ganhar ouro e XP!
-
-## ✨ Features
-
-- ✅ Formato vertical (portrait)
-- ✅ Joystick 60fps fluido com PanResponder
-- ✅ Auto-walk inteligente (anti-enjoo)
-- ✅ Gráficos estilo Clash of Clans (sprites gerados)
-- ✅ Sistema de quests com distância e recompensas
-- ✅ Mundo 2400x2400 com câmera suave
-- ✅ UI completa com ouro, level, XP
-- ✅ Funciona em Android, iOS e Web
-
-## 📁 Estrutura
-
-```
-enjoygo/
-├── App.js              # Jogo completo
-├── assets/
-│   ├── player.png      # Herói chibi
-│   ├── house.png       # Casa medieval
-│   ├── tree.png        # Árvore
-│   └── ...
-├── app.json            # Config Expo
-└── package.json
-```
-
-## 🌐 Deploy GitHub Pages (Recomendado)
-
-Este repo já vem com GitHub Actions para deploy automático!
-
-1. Crie repo no GitHub com nome `enjoygo`
-2. Push o código:
-```bash
-git init
-git add .
-git commit -m "feat: initial enjoygo rpg"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/enjoygo.git
-git push -u origin main
-```
-3. No GitHub: Settings → Pages → Source: GitHub Actions
-4. A cada push na main, o jogo vai pra `https://SEU_USUARIO.github.io/enjoygo/`
-
-## 🔧 Build APK
-
-```bash
-# Com EAS (mais fácil)
-npm install -g eas-cli
-eas login
-eas build --platform android --profile preview
-
-# Ou local
-npx expo prebuild
-cd android && ./gradlew assembleRelease
-```
-
-## 🐛 Solução err_ngrok_3200
-
-Esse erro é do ngrok gratuito. Soluções:
-
-1. **Use LAN** (mesmo Wi-Fi): `npx expo start --lan`
-2. **Use Web**: `npm run web` - funciona 100%
-3. **Configure ngrok**: Crie conta em https://dashboard.ngrok.com/get-started/your-authtoken
-   ```bash
-   npx expo install @expo/ngrok
-   ngrok config add-authtoken SEU_TOKEN
-   npx expo start --tunnel
-   ```
-4. **Deploy no GitHub Pages** e jogue pelo link (recomendado!)
-
-## 🚧 Roadmap
-
-- [ ] Multiplayer com Socket.io
-- [ ] A* Pathfinding para desviar de obstáculos
-- [ ] Inventário e loja
-- [ ] Sistema de combate
-- [ ] Mapa isométrico real
+![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Android%20%7C%20iOS-gold?style=for-the-badge)
+![Engine](https://img.shields.io/badge/Engine-Isometric%202.5D%20Canvas-red?style=for-the-badge)
 
 ---
 
-Feito com ❤️ - Toque na missão e deixa o personagem ir sozinho!
+## 🎮 Jogue Agora Direto no Navegador
+
+👉 **[https://felipeg-code.github.io/enjoygo/](https://felipeg-code.github.io/enjoygo/)**
+
+---
+
+## ⚔️ Características do Esqueleto (Champions of Norrath)
+
+- 🏰 **Perspectiva Isométrica 2.5D:** Projeção angular clássica de masmorra com profundidade, paredes com elevação e ordenação por profundidade (*Y-sorting*).
+- 🔴🔵 **Globos Góticos de Vida e Mana:** Globos com líquido animado em tempo real no canto inferior esquerdo e direito.
+- 🗡️ **5 Classes Autênticas:**
+  - **Bárbaro Guerreiro:** Alto dano físico, armas pesadas e ataques de impacto.
+  - **Elfa Ranger:** Arqueira de longa distância com flechas múltiplas e gelo.
+  - **Clériga:** Maças sagradas, auras protetoras e cura divina.
+  - **Mago Erudita:** Bolas de fogo destrutivas e tempestades de raios.
+  - **Cavaleiro das Sombras:** Necromancia, dreno de vida (*Life Tap*) e doenças.
+- 🛡️ **Combate Hack & Slash:**
+  - Golpe com espada e arco com cálculo de dano crítico.
+  - **Bloqueio ativo com escudo:** Reduz o dano em 80% com som metálico de ricochete.
+  - Tremores de tela (*screen shake*), sangue e números de dano flutuantes.
+- 🎒 **Inventário Paperdoll:**
+  - Slots individuais para Elmo, Peitoral, Luvas, Botas, Arma, Escudo, Anel e Amuleto.
+  - Cinto de atalhos rápidos de poções e magias.
+- 🌀 **Pergaminho de Retorno (Town Portal):** Retorne ao santuário a qualquer momento para se curar.
+- 🔊 **Áudio Sintetizado 100% Nativo:** Efeitos sonoros retrô de espada, magia, bloqueio e moedas via Web Audio API (sem precisar de arquivos externos pesados).
+- 📱 **Multiplataforma:** Suporte a controles touch (Joystick virtual + botões na tela) e PC (WASD + Espaço + Teclas 1 a 4).
+
+---
+
+## 🕹️ Controles
+
+| Ação | PC (Teclado) | Celular (Touch) |
+| :--- | :--- | :--- |
+| **Mover** | `W`, `A`, `S`, `D` ou Setas | Joystick Virtual Esquerdo |
+| **Atacar** | Barra de Espaço (`Space`) | Botão ⚔️ ATACAR |
+| **Bloquear Escudo** | `Shift` | Botão 🛡️ BLOQUEAR |
+| **Poção de Vida** | `1` | Slot 1 no cinto |
+| **Poção de Mana** | `2` | Slot 2 no cinto |
+| **Magia 1** | `3` | Slot 3 no cinto |
+| **Magia 2** | `4` | Slot 4 no cinto |
+| **Portal da Cidade** | `T` | Slot 🌀 no cinto |
+| **Abrir Inventário** | `I` | Botão 🎒 no topo |
+
+---
+
+## 📁 Estrutura do Código
+
+```
+├── champions-of-norrath.html  # Motor isométrico principal completo
+├── index.html                 # Página inicial para GitHub Pages
+├── App.js                     # Container React Native / Expo WebView
+├── .github/workflows/
+│   ├── deploy.yml             # Deploy automático no GitHub Pages
+│   ├── build-apk.yml          # Build do APK nativo
+│   └── build-apk-webview.yml  # Build do APK WebView 100% offline
+└── package.json
+```

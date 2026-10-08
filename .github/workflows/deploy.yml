@@ -39,8 +39,7 @@ jobs:
       - name: Copy HTML games to dist
         run: |
           cp -v *.html dist/ || true
-          cp -v enjoygo-*.html dist/ || true
-          cp -v norrath-*.html dist/ || true
+          cp -v champions-of-norrath.html dist/index.html
           ls -lh dist/*.html | head -n 20
 
       - name: Upload artifact

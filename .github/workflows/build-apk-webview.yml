@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-webview-apk:
     runs-on: ubuntu-latest
@@ -20,10 +23,13 @@ jobs:
           mkdir -p webview-apk/app/src/main/assets
           mkdir -p webview-apk/app/src/main/res/values
           
-          # Use APK-specific HTML with safe localStorage for WebView
-          if [ -f "norrath-clash-apk.html" ]; then
+          # Prioritiza Champions of Norrath HTML
+          if [ -f "champions-of-norrath.html" ]; then
+            cp champions-of-norrath.html webview-apk/app/src/main/assets/norrath-clash.html
+            echo "Usando champions-of-norrath.html (Champions of Norrath Engine)"
+          elif [ -f "norrath-clash-apk.html" ]; then
             cp norrath-clash-apk.html webview-apk/app/src/main/assets/norrath-clash.html
-            echo "Usando norrath-clash-apk.html (patched for WebView)"
+            echo "Usando norrath-clash-apk.html"
           else
             cp norrath-clash.html webview-apk/app/src/main/assets/ 2>/dev/null || true
             echo "Usando norrath-clash.html normal"
