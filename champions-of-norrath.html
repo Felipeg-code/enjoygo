@@ -1516,6 +1516,89 @@
     // -------------------------------------------------------------
     // MOTOR DE DUBLAGEM EM PORTUGUÊS (PT-BR) & BALÕES DE FALA
     // -------------------------------------------------------------
+    
+    // -------------------------------------------------------------
+    // SISTEMA DE SAVE GAME PERMANENTE (LOCALSTORAGE)
+    // -------------------------------------------------------------
+    const SAVE_KEY = 'norrath_champions_save_v4';
+
+    function saveGame(showNotif = true) {
+      try {
+        const saveData = {
+          player: {
+            gx: player.gx, gy: player.gy,
+            clsKey: player.clsKey,
+            hp: player.hp, maxHp: player.maxHp,
+            mana: player.mana, maxMana: player.maxMana,
+            lvl: player.lvl, xp: player.xp, maxXp: player.maxXp,
+            gold: player.gold,
+            skillPts: player.skillPts,
+            currentFloor: player.currentFloor,
+            hasBossKey: player.hasBossKey,
+            potionsHp: player.potionsHp,
+            potionsMana: player.potionsMana,
+            equipment: player.equipment,
+            inventory: player.inventory
+          },
+          currentFloor: player.currentFloor,
+          currentBiomeKey: currentBiomeKey,
+          savedAt: new Date().toLocaleTimeString()
+        };
+        localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+        if (showNotif) {
+          showNotification('💾 Jogo Salvo com Sucesso!');
+        }
+      } catch (e) {
+        console.warn('Erro ao salvar no localStorage:', e);
+      }
+    }
+
+    function hasSaveGame() {
+      try {
+        return !!localStorage.getItem(SAVE_KEY);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function getSaveSummary() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function loadGame() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        if (!data || !data.player) return false;
+
+        // Restaura atributos e inventário
+        Object.assign(player, data.player);
+        player.vx = 0; player.vy = 0;
+        player.isMoving = false;
+        selectedClass = player.clsKey;
+
+        // Inicia na masmorra salva
+        generateDungeon(data.currentFloor || 1);
+        player.gx = data.player.gx || 4;
+        player.gy = data.player.gy || 4;
+
+        updateHud();
+        showNotification(`⚔️ Aventura Carregada! Nível ${player.lvl} • Andar ${player.currentFloor}`);
+        voices.speak("Bem-vindo de volta, campeão! Suas armas ainda estão afiadas.", 'elder');
+        return true;
+      } catch (e) {
+        console.error('Erro ao carregar save:', e);
+        return false;
+      }
+    }
+
     class VoiceEngine {
       constructor() {
         this.synth = window.speechSynthesis || null;
@@ -1798,6 +1881,7 @@
     let floatingTexts = [];
     let flyingLoot = [];
     let dialogueBalloons = [];
+    let telegraphedAttacks = []; // Ondas de choque telegrafadas com círculo vermelho no piso
     let stairs = null;
     let bossGate = null;
     let activeBoss = null;
@@ -1903,7 +1987,7 @@
       ];
 
       if (floor === 1) {
-        stairs = { gx: 4, gy: 26, icon: '🪜', desc: 'Descer para Andar 2' };
+        stairs = { gx: 4, gy: 26, icon: '🪜', desc: 'Descer para Andar 2 (Catacumbas)' };
         bossGate = null;
 
         monsters = [
@@ -2077,11 +2161,20 @@
         }
       });
 
-      // Escadas / Portão
+      // Escadas / Portão com Transição e Auto-Save
       if (stairs && Math.hypot(stairs.gx - player.gx, stairs.gy - player.gy) < 1.6) {
-        generateDungeon(2);
+        const nextFloor = player.currentFloor + 1;
+        generateDungeon(nextFloor);
         player.gx = 4; player.gy = 4;
-        showNotification('🏰 Você desceu para as Catacumbas (Andar 2)!');
+        saveGame(false);
+
+        const floorNames = {
+          2: 'Catacumbas Esquecidas',
+          3: 'Cavernas de Lavastorm'
+        };
+        const fname = floorNames[nextFloor] || `Andar ${nextFloor}`;
+        showNotification(`🏰 Descendo para as ${fname}!`);
+        voices.speak(`Você adentrou as profundezas de ${fname}. Prepare suas armas!`, 'elder');
         return;
       }
 
@@ -2157,6 +2250,8 @@
               QUESTS[2].completed = true;
               document.getElementById('bossBarContainer').style.display = 'none';
               showNotification('🏆 CHEFE DERROTADO! Você conquistou Norrath!');
+              voices.speak('O mal foi derrotado! Você é a verdadeira lenda de Norrath!', 'elder');
+              saveGame(false);
             }
 
             const xpGained = m.isBoss ? 260 : 45;
@@ -2530,6 +2625,36 @@
             voices.speak("Você ousa desafiar o Lorde Warlord em seu trono?! Você sangrará!", 'boss', { gx: m.gx, gy: m.gy });
           }
         }
+
+        // FASE 2 DO CHEFE: ENRAGE (FÚRIA) COM VIDA BAIXA
+        if (m.isBoss && m.hp <= m.maxHp * 0.5 && !m.enraged) {
+          m.enraged = true;
+          m.dmg = Math.floor(m.dmg * 1.35);
+          screenShake = 12;
+          audio.playMagicSpell();
+          spawnFloatingText("FÚRIA DO WARLORD!", m.gx, m.gy, "#ff1111");
+          voices.speak("MALDITO! TESTEMUNHE O PODER DO LORD WARLORD!", 'boss', { gx: m.gx, gy: m.gy });
+        }
+
+        // ATAQUE ESPECIAL TELEGRAFADO DO CHEFE (ONDA DE CHOQUE COM CÍRCULO VERMELHO)
+        if (m.isBoss) {
+          m.specialAttackTimer = (m.specialAttackTimer || 0) + dt;
+          if (m.specialAttackTimer >= 4.2) {
+            m.specialAttackTimer = 0;
+            // Gera círculo de perigo no piso
+            telegraphedAttacks.push({
+              gx: player.gx,
+              gy: player.gy,
+              radius: 2.2,
+              timer: 1.25,
+              maxTimer: 1.25,
+              dmg: 42
+            });
+            audio.playMagicSpell();
+            spawnFloatingText("CUIDADO: IMPACTO!", m.gx, m.gy, "#ffd700");
+            voices.speak("Sinta o chão tremer!", 'boss', { gx: m.gx, gy: m.gy });
+          }
+        }
         if (dist < 7.5) {
           if (dist > 1.2) {
             const angle = Math.atan2(player.gy - m.gy, player.gx - m.gx);
@@ -2562,6 +2687,46 @@
           }
         }
       });
+
+
+      // Atualização dos Ataques Telegrafados do Chefe
+      for (let i = telegraphedAttacks.length - 1; i >= 0; i--) {
+        const ta = telegraphedAttacks[i];
+        ta.timer -= dt;
+        if (ta.timer <= 0) {
+          // ONDA DE CHOQUE EXPLODE NO CHÃO!
+          screenShake = 9;
+          audio.playBreakWood();
+          // Spawna partículas de fogo e terra
+          for (let k = 0; k < 12; k++) {
+            particles.push({
+              gx: ta.gx, gy: ta.gy,
+              vx: (Math.random() - 0.5) * 5,
+              vy: (Math.random() - 0.5) * 5,
+              life: 0.75,
+              color: Math.random() < 0.6 ? '#ff3300' : '#ff9900'
+            });
+          }
+
+          // Dano ao jogador se estiver dentro do círculo de impacto
+          const pDist = Math.hypot(player.gx - ta.gx, player.gy - ta.gy);
+          if (pDist <= ta.radius) {
+            let dmg = ta.dmg;
+            if (player.blocking) {
+              dmg = Math.floor(dmg * 0.2);
+              audio.playShieldBlock();
+              spawnFloatingText("ONDA BLOQUEADA!", player.gx, player.gy, "#55aaff");
+            } else {
+              spawnBlood(player.gx, player.gy, 12);
+              spawnFloatingText(`-${dmg} IMPACTO!`, player.gx, player.gy, "#ff2222");
+            }
+            player.hp = Math.max(0, player.hp - dmg);
+            player.hitFlash = 0.3;
+            updateHud();
+          }
+          telegraphedAttacks.splice(i, 1);
+        }
+      }
 
       // Partículas e Textos
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -2613,6 +2778,33 @@
           drawTile(iso.x, iso.y, dungeonMap[y][x], floorTile);
         }
       }
+
+
+      // Círculos de Perigo Telegrafados no Piso Isométrico (Avisos de Ataque do Chefe)
+      telegraphedAttacks.forEach(ta => {
+        const iso = worldToIso(ta.gx, ta.gy);
+        const footX = iso.x;
+        const footY = iso.y + 16;
+        const pct = Math.max(0, ta.timer / ta.maxTimer);
+
+        ctx.save();
+        // Círculo Vermelho de Alerta
+        ctx.beginPath();
+        ctx.ellipse(footX, footY, ta.radius * 30, ta.radius * 15, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 30, 30, ${0.25 + (1 - pct) * 0.35})`;
+        ctx.fill();
+        ctx.strokeStyle = '#ff2222';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Círculo Amarelo Interno Encolhendo (Contagem Regressiva Visual de Impacto!)
+        ctx.beginPath();
+        ctx.ellipse(footX, footY, ta.radius * 30 * pct, ta.radius * 15 * pct, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ffee33';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      });
 
       // Ordenação Y-Sorting
       const renderables = [];
@@ -3735,6 +3927,7 @@
         player.inventory.splice(idx, 1);
         audio.playCoin();
         showNotification(`💎 ${item.name} engastada com sucesso na Arma!`);
+        saveGame(false);
       } else if (item.type === 'potion_hp') {
         player.potionsHp++;
         player.inventory.splice(idx, 1);
@@ -4094,10 +4287,30 @@
       if (charData.clsKey === 'barbarian' || charData.clsKey === 'cleric' || charData.clsKey === 'shadowknight') {
         tCtx.fillStyle = '#8b5a2b'; tCtx.fillRect(-1.5, 0, 3, 5);
         tCtx.fillStyle = '#d4af37'; tCtx.fillRect(-5, 5, 10, 2.5);
-        tCtx.fillStyle = charData.clsKey === 'shadowknight' ? '#4a1525' : '#c8d1db';
+
+        // Cor da lâmina baseada em gemas engastadas
+        const gem = charData.equipment && charData.equipment.mainhand ? charData.equipment.mainhand.socket : null;
+        if (gem && gem.gemType === 'fire') {
+          tCtx.fillStyle = '#ff4411'; // Lâmina incandescente de fogo
+        } else if (gem && gem.gemType === 'ice') {
+          tCtx.fillStyle = '#55ccff'; // Lâmina de gelo cristalino
+        } else if (gem && gem.gemType === 'poison') {
+          tCtx.fillStyle = '#33dd44'; // Lâmina verde envenenada
+        } else {
+          tCtx.fillStyle = charData.clsKey === 'shadowknight' ? '#4a1525' : '#c8d1db';
+        }
+
         tCtx.fillRect(-2, 7, 4, 18);
         tCtx.beginPath(); tCtx.moveTo(-2, 25); tCtx.lineTo(0, 29); tCtx.lineTo(2, 25); tCtx.fill();
         tCtx.fillStyle = '#ffffff'; tCtx.fillRect(0, 8, 1, 16);
+
+        // Partículas e Brilho Elemental Vivo na Lâmina
+        if (gem) {
+          const auraShift = Math.sin(Date.now() * 0.01) * 2;
+          tCtx.fillStyle = gem.color || '#ff4444';
+          tCtx.beginPath(); tCtx.arc(auraShift, 18, 4, 0, Math.PI * 2); tCtx.fill();
+          tCtx.beginPath(); tCtx.arc(-auraShift, 24, 3, 0, Math.PI * 2); tCtx.fill();
+        }
       } else if (charData.clsKey === 'ranger') {
         tCtx.strokeStyle = '#6d4c2a'; tCtx.lineWidth = 2.5;
         tCtx.beginPath(); tCtx.arc(0, 10, 12, -Math.PI * 0.4, Math.PI * 0.4); tCtx.stroke();
@@ -4182,11 +4395,36 @@
       requestAnimationFrame(renderHeroPreview);
     };
 
+        // Verifica save ao abrir o menu
+    function refreshContinueButton() {
+      const summary = getSaveSummary();
+      const contBtn = document.getElementById('btnMenuContinue');
+      if (summary && summary.player) {
+        const clsName = CLASSES[summary.player.clsKey] ? CLASSES[summary.player.clsKey].name : 'Herói';
+        contBtn.innerHTML = `📜 Continuar (${clsName} - Nv. ${summary.player.lvl})`;
+        contBtn.style.opacity = '1';
+        contBtn.style.borderColor = 'var(--gold)';
+      } else {
+        contBtn.innerHTML = '📜 Continuar Aventura';
+        contBtn.style.opacity = '0.65';
+      }
+    }
+    refreshContinueButton();
+
     document.getElementById('btnMenuContinue').onclick = () => {
       audio.init();
       audio.playMagicSpell();
-      document.getElementById('mainMenuScreen').style.display = 'none';
-      startGameWithClass(selectedClass);
+      if (hasSaveGame()) {
+        document.getElementById('mainMenuScreen').style.display = 'none';
+        loadGame();
+        requestAnimationFrame(gameLoop);
+      } else {
+        showNotification('Nenhum jogo salvo encontrado. Escolha seu herói!');
+        document.getElementById('mainMenuScreen').style.display = 'none';
+        document.getElementById('classSelectScreen').style.display = 'flex';
+        updateClassPreviewInfo(selectedClass);
+        requestAnimationFrame(renderHeroPreview);
+      }
     };
 
     document.getElementById('btnMenuAudio').onclick = () => {
