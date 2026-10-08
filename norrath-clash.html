@@ -1272,7 +1272,26 @@
         </div>
       </div>
 
-      <h3 style="font-size: 12px; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px;">MOCHILA (TOQUE NA GEMA PARA ENGASTAR NA ARMA)</h3>
+      <!-- CARD COMPARATIVO DE EQUIPAMENTO (CHAMPIONS OF NORRATH) -->
+      <div id="itemInspectCard" style="display:none; background: linear-gradient(180deg, #221a14 0%, #110e0b 100%); border: 1.5px solid var(--gold); border-radius: 8px; padding: 10px 14px; margin: 8px 0 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.85);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span id="inspectIcon" style="font-size:24px;">🗡️</span>
+            <div>
+              <b id="inspectName" style="color:var(--gold); font-size:12px; font-family:'Cinzel', serif;">Espada de Norrath</b>
+              <p id="inspectType" style="color:#a3917d; font-size:10px; margin:0;">Arma Principal (Rara)</p>
+            </div>
+          </div>
+          <button id="btnInspectClose" style="background:transparent; border:none; color:#888; font-size:16px; cursor:pointer;">✕</button>
+        </div>
+        <div id="inspectStats" style="margin:8px 0; font-size:11px; color:#ddd; background:rgba(0,0,0,0.45); padding:6px 10px; border-radius:4px; line-height:1.4;">
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button class="dialog-btn" id="btnInspectAction" style="font-size:11px; padding:6px 16px; border-color:var(--gold); background:rgba(212,175,55,0.2);">⚔️ EQUIPAR ITEM</button>
+        </div>
+      </div>
+
+      <h3 style="font-size: 12px; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px;">MOCHILA (TOQUE NO ITEM PARA COMPARAR / EQUIPAR)</h3>
       <div class="inventory-grid" id="invGrid"></div>
     </div>
 
@@ -2108,13 +2127,8 @@
           fctx.beginPath(); fctx.arc(47, 24, 1.2, 0, Math.PI * 2); fctx.fill();
         }
 
-        // Borda do ladrilho isométrico
+        // Borda orgânica sem emendas (Champions of Norrath)
         fctx.restore();
-        fctx.strokeStyle = '#18120d'; fctx.lineWidth = 1.2;
-        fctx.beginPath();
-        fctx.moveTo(32, 0); fctx.lineTo(64, 16); fctx.lineTo(32, 32); fctx.lineTo(0, 16);
-        fctx.closePath();
-        fctx.stroke();
 
         this.canvasMap[cacheKey] = fc;
         return fc;
@@ -2397,6 +2411,7 @@
         bossGate = null;
 
         props = [
+          { type: 'shrine', gx: 9, gy: 4, shrineType: 'health', used: false, icon: '🏛️', alive: true },
           { type: 'barrel', gx: 6, gy: 3, hp: 1, icon: '🛢️', alive: true },
           { type: 'crate', gx: 12, gy: 4, hp: 1, icon: '📦', alive: true },
           { type: 'urn', gx: 20, gy: 5, hp: 1, icon: '🏺', alive: true },
@@ -2423,6 +2438,7 @@
         bossGate = null;
 
         props = [
+          { type: 'shrine', gx: 18, gy: 6, shrineType: 'fury', used: false, icon: '🏛️', alive: true },
           { type: 'barrel', gx: 5, gy: 4, hp: 1, icon: '🛢️', alive: true },
           { type: 'crate', gx: 14, gy: 5, hp: 1, icon: '📦', alive: true },
           { type: 'urn', gx: 21, gy: 6, hp: 1, icon: '🏺', alive: true },
@@ -2448,6 +2464,7 @@
         bossGate = { gx: 5, gy: 23, locked: !player.hasBossKey, icon: '🚪' };
 
         props = [
+          { type: 'shrine', gx: 8, gy: 24, shrineType: 'protection', used: false, icon: '🏛️', alive: true },
           { type: 'urn', gx: 6, gy: 3, hp: 1, icon: '🏺', alive: true },
           { type: 'sarcophagus', gx: 14, gy: 5, hp: 2, icon: '⚰️', alive: true },
           { type: 'chest', gx: 25, gy: 4, opened: false, icon: '📦', hasKey: !player.hasBossKey },
@@ -2683,6 +2700,38 @@
               spawnDestructionDebris(p.gx, p.gy, 'stone');
               spawnFloatingText('RACHOU!', p.gx, p.gy, '#ffd700');
             }
+          } else if (p.type === 'shrine' && !p.used) {
+            p.used = true;
+            audio.playLevelUp();
+            screenShake = 6;
+            for (let k = 0; k < 22; k++) {
+              particles.push({
+                gx: p.gx, gy: p.gy,
+                vx: (Math.random() - 0.5) * 4,
+                vy: -Math.random() * 4 - 2,
+                life: 1.2,
+                color: p.shrineType === 'fury' ? '#ff4422' : (p.shrineType === 'protection' ? '#00ccff' : '#44ff88')
+              });
+            }
+            if (p.shrineType === 'health') {
+              player.hp = player.maxHp;
+              player.mp = player.maxMp;
+              spawnFloatingText('✨ CURA TOTAL!', player.gx, player.gy - 0.6, '#44ff88');
+              showNotification('✨ Altar Sagrado: Toda sua Vida e Mana foram restauradas!');
+              voices.speak('A luz sagrada purifica suas feridas!', 'elder');
+            } else if (p.shrineType === 'fury') {
+              player.buffFuryTimer = 45;
+              spawnFloatingText('🔥 +50% DANO DE FÚRIA!', player.gx, player.gy - 0.6, '#ff4422');
+              showNotification('🔥 Altar da Fúria: +50% Dano de Ataque por 45s!');
+              voices.speak('Que a fúria dos deuses guie sua lâmina!', 'boss');
+            } else if (p.shrineType === 'protection') {
+              player.buffShieldTimer = 45;
+              spawnFloatingText('🛡️ +25 DEFESA SAGRADA!', player.gx, player.gy - 0.6, '#00ccff');
+              showNotification('🛡️ Altar de Proteção: +25 de Defesa Sagrada por 45s!');
+              voices.speak('Nenhum golpe profano romperá sua defesa!', 'elder');
+            }
+            updateHud();
+
           } else if (p.type === 'chest' && !p.opened) {
             p.opened = true;
 
@@ -3354,6 +3403,28 @@
 
       if (player.comboTimer > 0) player.comboTimer -= dt;
 
+      // ATUALIZAÇÃO DOS BUFFS DE ALTARES (EMBASS ENGINE ETAPA 10)
+      if (player.buffFuryTimer && player.buffFuryTimer > 0) {
+        player.buffFuryTimer -= dt;
+        if (Math.random() < 0.25) {
+          particles.push({
+            gx: player.gx + (Math.random() - 0.5) * 0.4,
+            gy: player.gy + (Math.random() - 0.5) * 0.4,
+            vx: 0, vy: -1.6, life: 0.4, color: '#ff3300'
+          });
+        }
+      }
+      if (player.buffShieldTimer && player.buffShieldTimer > 0) {
+        player.buffShieldTimer -= dt;
+        if (Math.random() < 0.25) {
+          particles.push({
+            gx: player.gx + (Math.random() - 0.5) * 0.4,
+            gy: player.gy + (Math.random() - 0.5) * 0.4,
+            vx: 0, vy: -1.6, life: 0.4, color: '#00ccff'
+          });
+        }
+      }
+
       // Câmera Suave com Antecipação
       const playerIso = worldToIso(player.gx, player.gy);
       const targetCamX = canvas.width / 2 - playerIso.x - player.vx * 12;
@@ -3806,16 +3877,36 @@
       }
       ctx.translate(camera.x, camera.y);
 
-      // Chão do Bioma Atual com Variantes Foto-Realistas da EMBASS Engine
+      // -------------------------------------------------------------
+      // EMBASS ENGINE 2.0: PISO CONTÍNUO (CHAMPIONS OF NORRATH)
+      // -------------------------------------------------------------
       for (let y = 0; y < MAP_SIZE; y++) {
         for (let x = 0; x < MAP_SIZE; x++) {
+          if (dungeonMap[y][x] !== 0) continue; // Paredes NÃO desenham piso!
+
           const iso = worldToIso(x, y);
-          if (iso.x + camera.x < -100 || iso.x + camera.x > canvas.width + 100 ||
-              iso.y + camera.y < -100 || iso.y + camera.y > canvas.height + 100) continue;
+          if (iso.x + camera.x < -120 || iso.x + camera.x > canvas.width + 120 ||
+              iso.y + camera.y < -120 || iso.y + camera.y > canvas.height + 120) continue;
 
           const variant = (x * 7 + y * 13) % 4;
           const floorTile = Textures.getFloor(currentBiomeKey, variant);
-          drawTile(iso.x, iso.y, dungeonMap[y][x], floorTile);
+          ctx.drawImage(floorTile, iso.x - 32, iso.y);
+
+          // Sombra de Oclusão Ambiental contra as paredes
+          const hasWallNW = (y > 0 && dungeonMap[y - 1][x] > 0);
+          const hasWallNE = (x > 0 && dungeonMap[y][x - 1] > 0);
+          if (hasWallNW || hasWallNE) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(iso.x, iso.y);
+            ctx.lineTo(iso.x + 32, iso.y + 16);
+            ctx.lineTo(iso.x, iso.y + 32);
+            ctx.lineTo(iso.x - 32, iso.y + 16);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
+            ctx.fill();
+            ctx.restore();
+          }
         }
       }
 
@@ -3996,8 +4087,27 @@
         ctx.restore();
       });
 
-      // Ordenação Y-Sorting
+      // Ordenação Y-Sorting com Fachadas Góticas Contínuas (EMBASS Engine 2.0)
       const renderables = [];
+
+      for (let y = 0; y < MAP_SIZE; y++) {
+        for (let x = 0; x < MAP_SIZE; x++) {
+          const wType = dungeonMap[y][x];
+          if (wType === 0) continue;
+
+          const facingSW = (y + 1 < MAP_SIZE && dungeonMap[y + 1][x] === 0);
+          const facingSE = (x + 1 < MAP_SIZE && dungeonMap[y][x + 1] === 0);
+          const isCorner = (x + 1 < MAP_SIZE && y + 1 < MAP_SIZE && dungeonMap[y + 1][x + 1] === 0);
+
+          if (facingSW || facingSE || isCorner) {
+            const isForeground = (y > 0 && dungeonMap[y - 1][x] === 0) || (x > 0 && dungeonMap[y][x - 1] === 0);
+            renderables.push({
+              ySort: x + y + (isForeground ? 0.35 : 0.05),
+              draw: () => drawGothicWall(x, y, wType, facingSW, facingSE, isCorner, isForeground)
+            });
+          }
+        }
+      }
 
       
       allies.forEach(al => {
@@ -4554,6 +4664,153 @@
       ctx.restore();
     }
 
+
+    function drawGothicWall(gx, gy, wallType, facingSW, facingSE, isCorner, isForeground = false) {
+      const iso = worldToIso(gx, gy);
+      const b = BIOMES[currentBiomeKey] || BIOMES.faydark;
+      // Muralhas ao fundo são altas (58px), enquanto parapeitos frontais são baixos (16px) para nunca tapar a visão do herói (Champions of Norrath)
+      const wallH = isForeground ? 16 : 58;
+      const leftX = iso.x - 32;
+      const rightX = iso.x + 32;
+      const midX = iso.x;
+      const baseY = iso.y + 16;
+
+      ctx.save();
+
+      // 1. FACE SUL-OESTE (Se voltada para o chão ao Sul-Oeste)
+      if (facingSW) {
+        const swGrad = ctx.createLinearGradient(leftX, 0, midX, 0);
+        swGrad.addColorStop(0, b.wallColor || '#1c1713');
+        swGrad.addColorStop(1, '#120e0b');
+        ctx.fillStyle = swGrad;
+        ctx.beginPath();
+        ctx.moveTo(leftX, baseY);
+        ctx.lineTo(midX, baseY + 16);
+        ctx.lineTo(midX, baseY + 16 - wallH);
+        ctx.lineTo(leftX, baseY - wallH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Fiadas horizontais de cantaria
+        ctx.strokeStyle = '#080604'; ctx.lineWidth = 1.4;
+        for (let h = 14; h < wallH; h += 14) {
+          ctx.beginPath();
+          ctx.moveTo(leftX, baseY - h);
+          ctx.lineTo(midX, baseY + 16 - h);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.moveTo(leftX + 16, baseY + 8 - 14); ctx.lineTo(leftX + 16, baseY + 8);
+        ctx.moveTo(leftX + 16, baseY + 8 - 42); ctx.lineTo(leftX + 16, baseY + 8 - 28);
+        ctx.stroke();
+
+        // Rodapé chanfrado escuro de contato
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.beginPath();
+        ctx.moveTo(leftX, baseY); ctx.lineTo(midX, baseY + 16);
+        ctx.lineTo(midX, baseY + 11); ctx.lineTo(leftX, baseY - 5);
+        ctx.fill();
+
+        // Cornija gótica no topo
+        ctx.fillStyle = '#2c221a';
+        ctx.beginPath();
+        ctx.moveTo(leftX - 2, baseY - wallH); ctx.lineTo(midX + 2, baseY + 16 - wallH);
+        ctx.lineTo(midX + 2, baseY + 11 - wallH); ctx.lineTo(leftX - 2, baseY - 5 - wallH);
+        ctx.fill();
+        ctx.strokeStyle = '#080604'; ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      // 2. FACE SUL-LESTE (Se voltada para o chão ao Sul-Leste)
+      if (facingSE) {
+        const seGrad = ctx.createLinearGradient(midX, 0, rightX, 0);
+        seGrad.addColorStop(0, b.wallColor || '#292019');
+        seGrad.addColorStop(1, '#3c3026');
+        ctx.fillStyle = seGrad;
+        ctx.beginPath();
+        ctx.moveTo(midX, baseY + 16);
+        ctx.lineTo(rightX, baseY);
+        ctx.lineTo(rightX, baseY - wallH);
+        ctx.lineTo(midX, baseY + 16 - wallH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Fiadas horizontais
+        ctx.strokeStyle = '#100c08'; ctx.lineWidth = 1.4;
+        for (let h = 14; h < wallH; h += 14) {
+          ctx.beginPath();
+          ctx.moveTo(midX, baseY + 16 - h);
+          ctx.lineTo(rightX, baseY - h);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.moveTo(midX + 16, baseY + 8 - 28); ctx.lineTo(midX + 16, baseY + 8 - 14);
+        ctx.stroke();
+
+        // Rodapé chanfrado
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        ctx.moveTo(midX, baseY + 16); ctx.lineTo(rightX, baseY);
+        ctx.lineTo(rightX, baseY - 5); ctx.lineTo(midX, baseY + 11);
+        ctx.fill();
+
+        // Cornija no topo
+        ctx.fillStyle = '#3f3227';
+        ctx.beginPath();
+        ctx.moveTo(midX - 2, baseY + 16 - wallH); ctx.lineTo(rightX + 2, baseY - wallH);
+        ctx.lineTo(rightX + 2, baseY - 5 - wallH); ctx.lineTo(midX - 2, baseY + 11 - wallH);
+        ctx.fill();
+        ctx.strokeStyle = '#100c08'; ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      // 3. PILAR CILÍNDRICO GÓTICO 3D (EM QUINAS E CANTOS)
+      if (isCorner || (facingSW && facingSE)) {
+        const pillarX = midX;
+        const pillarY = baseY + 16;
+        const pilR = 7;
+        const pilH = wallH + 6;
+
+        ctx.fillStyle = '#18120d';
+        ctx.beginPath();
+        ctx.ellipse(pillarX, pillarY, pilR + 3, (pilR + 3) * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        const pilGrad = ctx.createLinearGradient(pillarX - pilR, 0, pillarX + pilR, 0);
+        pilGrad.addColorStop(0, '#18120e');
+        pilGrad.addColorStop(0.35, '#48392d');
+        pilGrad.addColorStop(0.7, '#635041');
+        pilGrad.addColorStop(1, '#221912');
+        ctx.fillStyle = pilGrad;
+        ctx.fillRect(pillarX - pilR, pillarY - pilH, pilR * 2, pilH);
+
+        ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(pillarX - 3, pillarY); ctx.lineTo(pillarX - 3, pillarY - pilH);
+        ctx.moveTo(pillarX + 3, pillarY); ctx.lineTo(pillarX + 3, pillarY - pilH);
+        ctx.stroke();
+
+        ctx.fillStyle = '#34271c';
+        ctx.beginPath();
+        ctx.ellipse(pillarX, pillarY - pilH, pilR + 2.5, (pilR + 2.5) * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#caa558';
+        ctx.fillRect(pillarX - pilR - 1, pillarY - pilH + 3, (pilR + 1) * 2, 2.5);
+      }
+
+      // 4. PAREDE SECRETA RACHADA COM RUNA OCULTA (TILE 2)
+      if (wallType === 2) {
+        ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(midX - 12, baseY - wallH * 0.4);
+        ctx.lineTo(midX, baseY - wallH * 0.55);
+        ctx.lineTo(midX + 10, baseY - wallH * 0.35);
+        ctx.stroke();
+        ctx.fillStyle = '#ffea66';
+        ctx.beginPath(); ctx.arc(midX, baseY - wallH * 0.55, 3.5, 0, Math.PI * 2); ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
     function drawMonster(m) {
       const iso = worldToIso(m.gx, m.gy);
       const mFootX = iso.x;
@@ -5012,6 +5269,54 @@
         ctx.fillStyle = '#ffd700';
         ctx.fillRect(footX - 1.5, footY - sh/2 - 3, 1, 1);
         ctx.fillRect(footX + 0.5, footY - sh/2 - 3, 1, 1);
+
+      } else if (p.type === 'shrine') {
+        // ALTAR MÍSTICO ANCESTRAL DE NORRATH (3D ESTILO CHAMPIONS OF NORRATH)
+        const shrineColor = p.shrineType === 'fury' ? '#ff3311' : (p.shrineType === 'protection' ? '#11aaff' : '#22ff66');
+        const runeColor = p.used ? '#555555' : shrineColor;
+
+        // Base de cantaria entalhada em 3 degraus
+        ctx.fillStyle = '#1c1815';
+        ctx.fillRect(footX - 18, footY - 6, 36, 6);
+        ctx.fillStyle = '#2d2621';
+        ctx.fillRect(footX - 14, footY - 14, 28, 8);
+        ctx.fillStyle = '#3e342c';
+        ctx.fillRect(footX - 16, footY - 18, 32, 5);
+
+        // Runas antigas na pedra
+        ctx.strokeStyle = runeColor; ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(footX - 8, footY - 8); ctx.lineTo(footX, footY - 12); ctx.lineTo(footX + 8, footY - 8);
+        ctx.stroke();
+
+        // Cristal ou Chama Mística Flutuante
+        const floatY = footY - 26 + Math.sin(Date.now() / 320) * 3;
+        if (!p.used) {
+          ctx.save();
+          ctx.shadowColor = shrineColor;
+          ctx.shadowBlur = 14;
+          ctx.fillStyle = shrineColor;
+          ctx.beginPath();
+          ctx.moveTo(footX, floatY - 9);
+          ctx.lineTo(footX + 7, floatY);
+          ctx.lineTo(footX, floatY + 9);
+          ctx.lineTo(footX - 7, floatY);
+          ctx.closePath();
+          ctx.fill();
+
+          // Anel de luz giratório
+          ctx.strokeStyle = shrineColor;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.ellipse(footX, floatY, 13, 5, Date.now() / 450, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        } else {
+          ctx.fillStyle = '#555';
+          ctx.beginPath();
+          ctx.arc(footX, floatY + 4, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
       } else if (p.type === 'chest') {
         // BAÚ DE TESOURO GÓTICO
@@ -5528,16 +5833,22 @@
       if (!isVisible) renderInventory();
     }
 
+    let selectedInspectIndex = -1;
+
     function renderInventory() {
       const grid = document.getElementById('invGrid');
       grid.innerHTML = '';
 
       player.inventory.forEach((item, idx) => {
         const d = document.createElement('div');
-        d.className = 'inv-item';
+        d.className = 'inv-item' + (selectedInspectIndex === idx ? ' selected-inv-item' : '');
+        if (selectedInspectIndex === idx) {
+          d.style.borderColor = '#ffd700';
+          d.style.background = 'rgba(212, 175, 55, 0.25)';
+        }
         d.innerHTML = item.icon;
-        d.title = `${item.name} (${item.type === 'gem' ? 'Gema: Toque para engastar na Arma' : (item.dmg ? '+' + item.dmg + ' Dano' : '')})`;
-        d.onclick = () => equipOrSocket(idx);
+        d.title = `${item.name}`;
+        d.onclick = () => showItemInspect(idx);
         grid.appendChild(d);
       });
 
@@ -5564,6 +5875,79 @@
       const totDef = eq.helm.def + eq.chest.def + eq.gloves.def + eq.boots.def + eq.offhand.def;
       document.getElementById('charTotalDmg').textContent = `Dano: ${totDmg}`;
       document.getElementById('charTotalDef').textContent = `Defesa: ${totDef}`;
+    }
+
+    function showItemInspect(idx) {
+      const item = player.inventory[idx];
+      if (!item) return;
+
+      // Se clicar no mesmo item já inspecionado, equipa direto (atalho ágil)
+      if (selectedInspectIndex === idx) {
+        equipOrSocket(idx);
+        selectedInspectIndex = -1;
+        const card = document.getElementById('itemInspectCard');
+        if (card) card.style.display = 'none';
+        return;
+      }
+
+      selectedInspectIndex = idx;
+      const card = document.getElementById('itemInspectCard');
+      card.style.display = 'block';
+
+      document.getElementById('inspectIcon').innerHTML = item.icon;
+      document.getElementById('inspectName').textContent = item.name;
+
+      const statsEl = document.getElementById('inspectStats');
+      const actionBtn = document.getElementById('btnInspectAction');
+
+      if (item.type === 'gem') {
+        document.getElementById('inspectType').textContent = 'Gema Arcana de Norrath';
+        statsEl.innerHTML = `<span style="color:${item.color || '#ffcc00'}; font-weight:bold;">💎 Engasta na Arma concedendo +${item.bonusDmg} Dano Elemental!</span>`;
+        actionBtn.textContent = '💎 ENGASTAR NA ARMA';
+      } else if (item.type === 'potion_hp') {
+        document.getElementById('inspectType').textContent = 'Consumível Alquímico';
+        statsEl.innerHTML = '<span style="color:#44ff88;">🧪 Restaura 70 Pontos de Vida no cinto rápido.</span>';
+        actionBtn.textContent = '🧪 GUARDAR NO CINTO';
+      } else if (item.type && player.equipment[item.type]) {
+        const cur = player.equipment[item.type];
+        document.getElementById('inspectType').textContent = `Slot: ${item.type.toUpperCase()}`;
+
+        let compHtml = '';
+        if (item.dmg !== undefined) {
+          const curDmg = cur.dmg || 0;
+          const diff = item.dmg - curDmg;
+          const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
+          const diffColor = diff > 0 ? '#44ff88' : (diff === 0 ? '#aaa' : '#ff4444');
+          compHtml += `<div>⚔️ Dano: <b>${item.dmg}</b> (Atual: ${curDmg}) <span style="color:${diffColor}; font-weight:bold;">[${diffSign} ${diff > 0 ? '🟢 MELHORIA' : (diff < 0 ? '🔴 PIOR' : '🟡 IGUAL')}]</span></div>`;
+        }
+        if (item.def !== undefined) {
+          const curDef = cur.def || 0;
+          const diff = item.def - curDef;
+          const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
+          const diffColor = diff > 0 ? '#44ff88' : (diff === 0 ? '#aaa' : '#ff4444');
+          compHtml += `<div>🛡️ Defesa: <b>${item.def}</b> (Atual: ${curDef}) <span style="color:${diffColor}; font-weight:bold;">[${diffSign} ${diff > 0 ? '🟢 MELHORIA' : (diff < 0 ? '🔴 PIOR' : '🟡 IGUAL')}]</span></div>`;
+        }
+        statsEl.innerHTML = compHtml || '<span>Item de batalha de Norrath.</span>';
+        actionBtn.textContent = '⚔️ EQUIPAR ITEM';
+      } else {
+        document.getElementById('inspectType').textContent = 'Item Diverso';
+        statsEl.innerHTML = '<span>Item coletado na masmorra.</span>';
+        actionBtn.textContent = 'USAR ITEM';
+      }
+
+      actionBtn.onclick = () => {
+        equipOrSocket(idx);
+        card.style.display = 'none';
+        selectedInspectIndex = -1;
+      };
+
+      document.getElementById('btnInspectClose').onclick = () => {
+        card.style.display = 'none';
+        selectedInspectIndex = -1;
+        renderInventory();
+      };
+
+      renderInventory();
     }
 
     function equipOrSocket(idx) {
