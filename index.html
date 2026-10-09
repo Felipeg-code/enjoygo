@@ -1136,6 +1136,10 @@
     <div id="minimapContainer" class="interactive">
       <canvas id="minimapCanvas" width="90" height="90"></canvas>
       <div id="minimapLabel">MAPA</div>
+      <div style="display:flex; justify-content:center; gap:4px; margin-top:3px;">
+        <button id="btnZoomOut" title="Afastar Câmera" style="background:rgba(0,0,0,0.65); border:1px solid var(--gold-dark); color:var(--gold); border-radius:3px; font-size:11px; width:22px; height:18px; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center;">-</button>
+        <button id="btnZoomIn" title="Aproximar Câmera" style="background:rgba(0,0,0,0.65); border:1px solid var(--gold-dark); color:var(--gold); border-radius:3px; font-size:11px; width:22px; height:18px; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center;">+</button>
+      </div>
     </div>
 
     <!-- BARRA DO CHEFE -->
@@ -2901,6 +2905,8 @@
       if (e.key.toLowerCase() === 'e') interactUniversal();
       if (e.key.toLowerCase() === 't') castTownPortal();
       if (e.key === ' ') doAttack();
+      if (e.key === '=' || e.key === '+' || e.key === ']') targetCamZoom = Math.min(1.70, targetCamZoom + 0.1);
+      if (e.key === '-' || e.key === '_' || e.key === '[') targetCamZoom = Math.max(1.05, targetCamZoom - 0.1);
       if (e.key.toLowerCase() === 'shift') player.blocking = true;
     });
 
@@ -2909,11 +2915,31 @@
       if (e.key.toLowerCase() === 'shift') player.blocking = false;
     });
 
+    window.addEventListener('wheel', e => {
+      targetCamZoom = Math.max(1.05, Math.min(1.70, targetCamZoom - Math.sign(e.deltaY) * 0.08));
+    }, { passive: true });
+
+    let camZoom = 1.34;
+    let targetCamZoom = 1.34;
     let joyTouchId = null;
     let joyTouch = null;
     let joyDelta = { x: 0, y: 0 };
+        // Controles de Zoom da Câmera (Snowblind PS2 Engine)
+    const btnZIn = document.getElementById('btnZoomIn');
+    const btnZOut = document.getElementById('btnZoomOut');
+    if (btnZIn) {
+      const zoomInAction = e => { e.preventDefault(); e.stopPropagation(); targetCamZoom = Math.min(1.70, targetCamZoom + 0.12); };
+      btnZIn.addEventListener('click', zoomInAction);
+      btnZIn.addEventListener('touchstart', zoomInAction, { passive: false });
+    }
+    if (btnZOut) {
+      const zoomOutAction = e => { e.preventDefault(); e.stopPropagation(); targetCamZoom = Math.max(1.05, targetCamZoom - 0.12); };
+      btnZOut.addEventListener('click', zoomOutAction);
+      btnZOut.addEventListener('touchstart', zoomOutAction, { passive: false });
+    }
     const joyBase = document.getElementById('virtualJoystick');
     const joyStick = document.getElementById('joystickStick');
+    let isShieldTouching = false;
 
     joyBase.addEventListener('touchstart', e => {
       e.preventDefault();
@@ -2927,25 +2953,66 @@
       }
     }, { passive: false });
 
+    window.addEventListener('touchstart', e => {
+      audio.init();
+      // Permite iniciar movimento tocando em qualquer área do quadrante esquerdo inferior
+      if (joyTouchId === null && e.changedTouches) {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          if (t.clientX < window.innerWidth * 0.45 && t.clientY > window.innerHeight * 0.35) {
+            joyTouchId = t.identifier;
+            const rect = joyBase.getBoundingClientRect();
+            joyTouch = { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 };
+            handleJoyMove(t.clientX, t.clientY);
+            break;
+          }
+        }
+      }
+    }, { passive: true });
+
     window.addEventListener('touchmove', e => {
       if (joyTouchId === null || !joyTouch) return;
-      for (let i = 0; i < e.touches.length; i++) {
-        if (e.touches[i].identifier === joyTouchId) {
-          handleJoyMove(e.touches[i].clientX, e.touches[i].clientY);
-          break;
+      let active = false;
+      if (e.touches) {
+        for (let i = 0; i < e.touches.length; i++) {
+          if (e.touches[i].identifier === joyTouchId) {
+            handleJoyMove(e.touches[i].clientX, e.touches[i].clientY);
+            active = true;
+            break;
+          }
         }
+      }
+      if (!active && joyTouchId !== null) {
+        joyTouchId = null;
+        joyTouch = null;
+        joyDelta = { x: 0, y: 0 };
+        joyStick.style.transform = 'translate(0px, 0px)';
       }
     }, { passive: false });
 
     const handleTouchEndOrCancel = e => {
-      if (joyTouchId === null) return;
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        if (e.changedTouches[i].identifier === joyTouchId) {
+      if (!e.touches || e.touches.length === 0) {
+        joyTouchId = null;
+        joyTouch = null;
+        joyDelta = { x: 0, y: 0 };
+        joyStick.style.transform = 'translate(0px, 0px)';
+        isShieldTouching = false;
+        player.blocking = false;
+        return;
+      }
+      if (joyTouchId !== null) {
+        let stillTouching = false;
+        for (let i = 0; i < e.touches.length; i++) {
+          if (e.touches[i].identifier === joyTouchId) {
+            stillTouching = true;
+            break;
+          }
+        }
+        if (!stillTouching) {
           joyTouchId = null;
           joyTouch = null;
           joyDelta = { x: 0, y: 0 };
           joyStick.style.transform = 'translate(0px, 0px)';
-          break;
         }
       }
     };
@@ -2959,6 +3026,13 @@
       const dy = y - joyTouch.cy;
       const dist = Math.hypot(dx, dy);
       const maxR = 40;
+      // Zona morta suave (3px) para evitar jittering
+      if (dist < 3) {
+        joyDelta.x = 0;
+        joyDelta.y = 0;
+        joyStick.style.transform = 'translate(0px, 0px)';
+        return;
+      }
       const clamped = Math.min(dist, maxR);
       const angle = Math.atan2(dy, dx);
       joyDelta.x = (Math.cos(angle) * clamped) / maxR;
@@ -2966,26 +3040,39 @@
       joyStick.style.transform = `translate(${joyDelta.x * maxR}px, ${joyDelta.y * maxR}px)`;
     }
 
-    document.getElementById('btnAttack').addEventListener('touchstart', e => {
-      e.preventDefault();
+    const btnAtk = document.getElementById('btnAttack');
+    const onAttackTrigger = e => {
+      if (e) e.preventDefault();
       audio.init();
+      if (!isShieldTouching && !keys['shift']) player.blocking = false;
       doAttack();
-    });
+    };
+    btnAtk.addEventListener('touchstart', onAttackTrigger, { passive: false });
+    btnAtk.addEventListener('pointerdown', onAttackTrigger);
+    btnAtk.addEventListener('click', onAttackTrigger);
 
     const shieldBtn = document.getElementById('btnShield');
     shieldBtn.addEventListener('touchstart', e => {
       e.preventDefault();
       audio.init();
+      isShieldTouching = true;
       player.blocking = true;
       audio.playShieldBlock();
+    }, { passive: false });
+    shieldBtn.addEventListener('touchend', () => { 
+      isShieldTouching = false; 
+      player.blocking = false; 
     });
-    shieldBtn.addEventListener('touchend', () => { player.blocking = false; });
-    shieldBtn.addEventListener('touchcancel', () => { player.blocking = false; });
+    shieldBtn.addEventListener('touchcancel', () => { 
+      isShieldTouching = false; 
+      player.blocking = false; 
+    });
 
     // -------------------------------------------------------------
     // COMBATE E INTERAÇÕES
     // -------------------------------------------------------------
     function doAttack() {
+      if (!isShieldTouching && !keys['shift']) player.blocking = false;
       if (player.attacking > 0 || player.blocking) return;
 
       // Interação com NPCs (Ancião ou Mercador de Norrath)
@@ -4055,6 +4142,7 @@
         audio.playArcaneCast();
       } else if (type === 'ice_arrow') {
         lightColor = 'rgba(60, 200, 255, 0.8)';
+        lightRadius = 115;
         audio.playMagicSpell();
       } else {
         audio.playMagicSpell();
@@ -4094,26 +4182,88 @@
     }
 
     // -------------------------------------------------------------
+    // -------------------------------------------------------------
+    // SISTEMA SEGURO DE RESPAWN E DANO (CHAMPIONS OF NORRATH PS2)
+    // -------------------------------------------------------------
+    function checkPlayerDeath(reason = '') {
+      if (player.hp > 0) return;
+      respawnPlayer(reason);
+    }
+
+    function respawnPlayer(reason = '') {
+      player.hp = Math.floor(player.maxHp * 0.75);
+      player.attacking = 0;
+      player.blocking = false;
+      player.vx = 0;
+      player.vy = 0;
+      let sx = 4, sy = 4;
+      if (!canWalk(sx, sy)) {
+        for (let r = 1; r < 8; r++) {
+          let found = false;
+          for (let dx = -r; dx <= r; dx++) {
+            for (let dy = -r; dy <= r; dy++) {
+              if (canWalk(4 + dx, 4 + dy)) {
+                sx = 4 + dx; sy = 4 + dy;
+                found = true; break;
+              }
+            }
+            if (found) break;
+          }
+          if (found) break;
+        }
+      }
+      player.gx = sx;
+      player.gy = sy;
+      screenShake = 10;
+      audio.playThunder();
+      showNotification(`💀 Você caiu em combate${reason ? ' (' + reason + ')' : ''}! Ressuscitado no Santuário Sagrado.`);
+      updateHud();
+    }
+
     // LOOP PRINCIPAL DO JOGO
     // -------------------------------------------------------------
     let lastTime = performance.now();
 
     function gameLoop(now) {
-      const dt = Math.min((now - lastTime) / 1000, 0.05);
-      lastTime = now;
+      try {
+        const dt = Math.max(0.001, Math.min((now - lastTime) / 1000, 0.05));
+        lastTime = now;
 
-      if (hitStopTimer > 0) {
-        hitStopTimer -= dt;
-      } else {
-        update(dt);
+        if (hitStopTimer > 0) {
+          hitStopTimer -= dt;
+        } else {
+          update(dt);
+        }
+
+        render();
+        renderMinimap();
+      } catch (err) {
+        console.error("GameLoop frame tick recovered:", err);
       }
-
-      render();
-      renderMinimap();
       requestAnimationFrame(gameLoop);
     }
 
     function update(dt) {
+      // Interpolação de Câmera Zoom ARPG PS2
+      camZoom += (targetCamZoom - camZoom) * (1 - Math.exp(-6 * dt));
+
+      // Auto-recuperação e destravar controles (Resiliência Total)
+      if (!isShieldTouching && !keys['shift']) {
+        player.blocking = false;
+      }
+      if (player.attacking > 0) {
+        player.attackTimer = (player.attackTimer || 0) + dt;
+        if (player.attackTimer > 0.38) {
+          player.attacking = 0;
+          player.attackTimer = 0;
+        }
+      } else {
+        player.attackTimer = 0;
+      }
+      if (player.hp <= 0) {
+        checkPlayerDeath('Exaustão');
+      }
+
       let inputX = 0, inputY = 0;
 
       if (keys['w'] || keys['arrowup']) { inputX -= 1; inputY -= 1; }
@@ -4157,6 +4307,23 @@
         player.facing = player.targetFacing; // Rotação imediata para a direção do movimento
 
         if (Math.random() < 0.2) spawnDust(player.gx, player.gy);
+
+        // Snowblind Studios: Passos na água geram ondas concêntricas e respingo
+        if ((Math.floor(player.gx) * 7 + Math.floor(player.gy) * 13) % 4 === 2) {
+          player.waterStepTimer = (player.waterStepTimer || 0) + dt;
+          if (player.waterStepTimer >= 0.26) {
+            player.waterStepTimer = 0;
+            waterRipples.push({
+              gx: player.gx,
+              gy: player.gy,
+              r: 3,
+              maxR: 16,
+              alpha: 0.85,
+              speed: 20
+            });
+            audio.playWaterSplash();
+          }
+        }
       } else {
         // PARADA INSTANTÂNEA SECA: Soltou o joystick, para no mesmo instante!
         player.isMoving = false;
@@ -4224,6 +4391,7 @@
             spawnBlood(player.gx, player.gy, 6);
             spawnFloatingText('-16 (ARMADILHA)', player.gx, player.gy, '#ff3333');
             updateHud();
+            checkPlayerDeath('Armadilha de Espinhos');
           }
         }
       });
@@ -4319,19 +4487,11 @@
       camera.y += (targetCamY - camera.y) * (1 - Math.exp(-8 * dt));
 
       
-      projectiles.forEach(pj => {
-        const pIso = worldToIso(pj.gx, pj.gy);
-        const pScreenX = pIso.x + camera.x;
-        const pScreenY = pIso.y + camera.y - 12;
-        const pGrad = lightCtx.createRadialGradient(pScreenX, pScreenY, 8, pScreenX, pScreenY, pj.lightRadius);
-        pGrad.addColorStop(0, 'rgba(0,0,0,1)');
-        pGrad.addColorStop(0.7, 'rgba(0,0,0,0.85)');
-        pGrad.addColorStop(1, 'rgba(0,0,0,0)');
-        lightCtx.fillStyle = pGrad;
-        lightCtx.beginPath();
-        lightCtx.arc(pScreenX, pScreenY, pj.lightRadius, 0, Math.PI * 2);
-        lightCtx.fill();
-      });
+      // Limites de Segurança de Memória e Partículas (EMBASS Engine Polish)
+      if (particles.length > 160) particles.splice(0, particles.length - 160);
+      if (bloodStains.length > 35) bloodStains.splice(0, bloodStains.length - 35);
+      if (waterRipples.length > 25) waterRipples.splice(0, waterRipples.length - 25);
+      if (floatingTexts.length > 20) floatingTexts.splice(0, floatingTexts.length - 20);
 
       // VELOCIDADE DE CHAMAS E INTERAÇÃO COM FOGUEIRAS (ETAPA 13)
       let nearestTForUse = null;
@@ -4570,6 +4730,7 @@
                 player.hp = Math.max(0, player.hp - bDmg);
                 spawnFloatingText(`-${bDmg} 🔥`, player.gx, player.gy - 0.5, "#ff3300");
                 updateHud();
+                checkPlayerDeath('Chamas do Dragão');
               }
             }
           }
@@ -4592,6 +4753,7 @@
             }
             player.hp = Math.max(0, player.hp - buffetDmg);
             updateHud();
+            checkPlayerDeath('Batida de Asas de Veeshan');
           }
 
           // 3. Chuva de Meteoros (Fase Enrage)
@@ -4656,11 +4818,7 @@
               }
               player.hp = Math.max(0, player.hp - dmg);
               player.hitFlash = 0.25;
-              if (player.hp <= 0) {
-                player.hp = Math.floor(player.maxHp * 0.6);
-                player.gx = 4; player.gy = 4;
-                showNotification('💀 Você caiu em combate! Ressuscitado no Santuário.');
-              }
+              checkPlayerDeath('Golpe Mortal');
               updateHud();
             }
           }
@@ -4702,6 +4860,7 @@
             player.hp = Math.max(0, player.hp - dmg);
             player.hitFlash = 0.3;
             updateHud();
+            checkPlayerDeath('Impacto Sísmico');
           }
           telegraphedAttacks.splice(i, 1);
         }
@@ -5089,7 +5248,7 @@
     function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const CAM_ZOOM = 1.35; // EMBASS ENGINE 3.0: ZOOM CINEMÁTICO ARPG CHAMPIONS OF NORRATH
+      const CAM_ZOOM = camZoom; // Câmera com Zoom Dinâmico Estilo Snowblind Studios (PS2)
       ctx.save();
       if (screenShake > 0.5) {
         ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
@@ -5133,10 +5292,63 @@
       }
 
       // -------------------------------------------------------------
+      // -------------------------------------------------------------
+      // SNOWBLIND STUDIOS PROCEDURAL WATER ENGINE (CHAMPIONS OF NORRATH PS2)
+      // Água com ondulação dinâmica, caustics senoidais e reflexo especular cintilante
+      // -------------------------------------------------------------
+      const waterTime = performance.now() * 0.0024;
+      for (let y = 0; y < MAP_SIZE; y++) {
+        for (let x = 0; x < MAP_SIZE; x++) {
+          if (dungeonMap[y][x] !== 0) continue;
+          const variant = (x * 7 + y * 13) % 4;
+          if (variant !== 2) continue;
+
+          const iso = worldToIso(x, y);
+          if (iso.x + camera.x < -100 || iso.x + camera.x > canvas.width + 100 ||
+              iso.y + camera.y < -100 || iso.y + camera.y > canvas.height + 100) continue;
+
+          const cx = iso.x;
+          const cy = iso.y + 16;
+          const phase = x * 1.8 + y * 2.4;
+          const wave1 = Math.sin(waterTime * 1.4 + phase);
+          const wave2 = Math.cos(waterTime * 0.9 + phase * 1.3);
+
+          ctx.save();
+          // Gradiente de profundidade azul abissal para turquesa
+          const waterGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, 14);
+          waterGrad.addColorStop(0, 'rgba(12, 36, 54, 0.82)');
+          waterGrad.addColorStop(0.6, 'rgba(18, 52, 74, 0.68)');
+          waterGrad.addColorStop(1, 'rgba(8, 20, 30, 0.35)');
+          ctx.fillStyle = waterGrad;
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, 13.5 + wave1 * 0.6, 6.8 + wave2 * 0.4, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Ondulações e caustics senoidais
+          ctx.strokeStyle = `rgba(140, 220, 255, ${0.35 + wave1 * 0.18})`;
+          ctx.lineWidth = 1.1;
+          ctx.beginPath();
+          ctx.ellipse(cx + wave2 * 1.2, cy + wave1 * 0.6, 8.5 + wave2 * 1.5, 4.2 + wave1 * 0.8, wave1 * 0.1, 0, Math.PI * 1.8);
+          ctx.stroke();
+
+          // Brilho especular cintilante (Specular Glint)
+          const glintAlpha = Math.max(0, Math.sin(waterTime * 2.5 + phase * 2));
+          if (glintAlpha > 0.35) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${glintAlpha * 0.8})`;
+            ctx.beginPath();
+            ctx.arc(cx - 2 + wave1 * 2, cy - 1.5 + wave2 * 0.8, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+      }
+
       // EMBASS ENGINE ETAPA 9: POÇAS DE SANGUE PERMANENTES (BLOOD DECAL)
       // -------------------------------------------------------------
       bloodStains.forEach(bs => {
         const iso = worldToIso(bs.gx, bs.gy);
+        if (iso.x + camera.x < -80 || iso.x + camera.x > canvas.width + 80 ||
+            iso.y + camera.y < -80 || iso.y + camera.y > canvas.height + 80) return;
         ctx.save();
         ctx.fillStyle = bs.color;
         ctx.beginPath();
@@ -5524,6 +5736,25 @@
         lightCtx.arc(tScreenX, tScreenY, flickerRadius, 0, Math.PI * 2);
         lightCtx.fill();
       });
+
+      // Iluminação Dinâmica de Projéteis Mágicos (Fogo, Gelo, Arcano)
+      projectiles.forEach(pj => {
+        const pIso = worldToIso(pj.gx, pj.gy);
+        const pScreenX = pIso.x + camera.x;
+        const pScreenY = pIso.y + camera.y - 12;
+        const pRadius = Math.max(16, pj.lightRadius || 90);
+        try {
+          const pGrad = lightCtx.createRadialGradient(pScreenX, pScreenY, 4, pScreenX, pScreenY, pRadius);
+          pGrad.addColorStop(0, 'rgba(0,0,0,1)');
+          pGrad.addColorStop(0.65, 'rgba(0,0,0,0.85)');
+          pGrad.addColorStop(1, 'rgba(0,0,0,0)');
+          lightCtx.fillStyle = pGrad;
+          lightCtx.beginPath();
+          lightCtx.arc(pScreenX, pScreenY, pRadius, 0, Math.PI * 2);
+          lightCtx.fill();
+        } catch(e) {}
+      });
+
 
       lightCtx.restore();
 
