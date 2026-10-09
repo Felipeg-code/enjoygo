@@ -988,71 +988,145 @@
       color: #fff;
     }
 
-    /* REFINAMENTO DO HUD IN-GAME PARA DISPOSITIVOS MÓVEIS (SEM SOBREPOSIÇÃO) */
-    @media (max-width: 600px) {
+    /* ========================================================
+       REFINAMENTO NATIVO MOBILE (DISPOSITIVOS MÓVEIS & TOUCH)
+       Elimina amontoamento no topo, oculta globos invasivos de PC
+       e garante 100% de precisão nos toques e cliques na tela.
+       ======================================================== */
+    @media (max-width: 820px) {
+      /* OCULTA GLOBOS GIGANTES DE PC (Que bloqueavam o analógico e botões) */
+      .globe-container {
+        display: none !important;
+      }
+
+      /* OCULTA CINTO DE TECLADO NUMÉRICO DE PC */
+      #bottomBelt {
+        display: none !important;
+      }
+
+      /* BARRA SUPERIOR SLIM E ELEGANTE (SEM AMONTOAR) */
       #topBar {
         top: 6px; left: 6px; right: 6px;
-        padding: 3px 6px;
-        height: 38px;
+        padding: 4px 8px;
+        height: 44px;
         max-width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background: rgba(14, 11, 9, 0.96);
+        border: 1.5px solid var(--gold-dark);
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.9);
+        z-index: 50;
       }
-      .hero-stat-badge { gap: 5px; }
-      .hero-avatar { width: 28px; height: 28px; font-size: 14px; }
-      .hero-info-text h3 { font-size: 11px; }
-      .hero-info-text p { font-size: 8.5px; }
-      .hud-btn { padding: 3px 6px; font-size: 9px; }
+      .hero-stat-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .hero-avatar {
+        width: 32px; height: 32px;
+        font-size: 16px;
+        border-radius: 6px;
+      }
+      .hero-info-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .hero-info-text h3 {
+        font-size: 11px;
+        line-height: 1.1;
+      }
+      .hero-info-text p {
+        display: none; /* Oculta textos longos de XP no topo do celular */
+      }
 
+      /* BARRAS SLIM DE HP E MANA NO TOPO */
+      .mobile-stat-bars {
+        display: flex !important;
+        flex-direction: column;
+        gap: 2px;
+        width: 100px;
+      }
+      .m-bar {
+        position: relative;
+        height: 7px;
+        background: rgba(0,0,0,0.7);
+        border-radius: 3px;
+        border: 1px solid rgba(255,255,255,0.18);
+        overflow: hidden;
+      }
+      .m-bar-fill.hp {
+        height: 100%;
+        background: linear-gradient(90deg, #dc2626, #ef4444);
+        transition: width 0.15s ease;
+      }
+      .m-bar-fill.mana {
+        height: 100%;
+        background: linear-gradient(90deg, #2563eb, #3b82f6);
+        transition: width 0.15s ease;
+      }
+
+      /* BOTÕES COMPACTOS TOUCH NO TOPO */
+      .top-nav-cluster {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .touch-nav-btn {
+        width: 36px; height: 36px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background: linear-gradient(180deg, #2a1c12, #140d08);
+        border: 1.5px solid var(--gold-dark);
+        border-radius: 6px;
+        color: var(--gold);
+      }
+      .touch-nav-btn .nav-text {
+        display: none !important;
+      }
+
+      /* MINIMAPA COMPACTO */
       #minimapContainer {
-        top: 48px; right: 8px;
-        width: 66px; height: 66px;
+        top: 54px; right: 8px;
+        width: 58px; height: 58px;
+        opacity: 0.85;
       }
+      #minimapCanvas {
+        width: 58px; height: 58px;
+      }
+      #minimapLabel { display: none; }
+      #minimapContainer div[style*="display:flex"] { display: none !important; }
 
-      .globe-container {
-        bottom: 8px;
-        width: 72px; height: 72px;
-        border-width: 3px;
-      }
-      #hpGlobe { left: 8px; }
-      #manaGlobe { right: 8px; }
-      .globe-text {
+      /* CONTROLES MOBILE INFERIORES: Z-INDEX 100 E LIVRES DE QUALQUER BLOQUEIO */
+      #mobileControls {
         position: absolute;
-        width: 100%;
-        left: 0;
-        right: 0;
-        text-align: center;
-        font-size: 10.5px;
-        bottom: auto;
+        inset: 0;
+        pointer-events: none;
+        z-index: 100 !important;
       }
-
-      #bottomBelt {
-        bottom: 8px;
-        padding: 3px 6px;
-        gap: 4px;
-      }
-      .belt-slot {
-        width: 33px; height: 33px;
-      }
-      .belt-slot .icon { font-size: 15px; }
-      .belt-slot .key-hint { font-size: 7px; }
-
       #virtualJoystick {
-        bottom: 90px; left: 14px;
-        width: 100px; height: 100px;
+        bottom: 22px; left: 16px;
+        width: 110px; height: 110px;
+        pointer-events: auto !important;
+        z-index: 101 !important;
       }
-      #joystickStick { width: 40px; height: 40px; }
-
-      #mobileActionButtons {
-        bottom: 88px; right: 14px;
-        gap: 10px;
+      #joystickStick {
+        width: 44px; height: 44px;
       }
-      .m-btn.btn-attack {
-        width: 60px; height: 60px; font-size: 22px;
+      #mobileActionCluster {
+        bottom: 12px; right: 12px;
+        width: 230px; height: 210px;
+        pointer-events: none;
+        z-index: 101 !important;
       }
-      .m-btn.btn-shield {
-        width: 46px; height: 46px; font-size: 18px;
+      .mobile-touch-btn {
+        pointer-events: auto !important;
+        z-index: 102 !important;
       }
     }
   
@@ -1111,30 +1185,39 @@
   <!-- CAMADA DO HUD -->
   <div id="hud">
 
-    <!-- BARRA SUPERIOR -->
+    <!-- BARRA SUPERIOR SLIM E ELEGANTE (MOBILE READY) -->
     <div id="topBar" class="interactive">
       <div class="hero-stat-badge">
         <div class="hero-avatar" id="heroAvatar">⚔️</div>
         <div class="hero-info-text">
-          <h3 id="heroClassName">BÁRBARO</h3>
-          <p id="heroLevelXp">Nível 1 • 0 / 100 XP • <span id="biomeText">Faydark Forest</span></p>
+          <div style="display:flex; align-items:center; gap:5px;">
+            <h3 id="heroClassName" style="margin:0; font-size:11px; color:var(--gold);">BÁRBARO</h3>
+            <span style="font-size:10px; color:#ffd700; font-weight:bold;">💰<span id="goldVal">150</span></span>
+          </div>
+          <p id="heroLevelXp" style="margin:0; font-size:8.5px; color:#a1a1aa;">Nível 1 • <span id="biomeText">Faydark</span></p>
+          <!-- Barras de HP e Mana compactas (Substituem os globos gigantes no celular) -->
+          <div class="mobile-stat-bars" style="display:none;">
+            <div class="m-bar m-hp-bar" title="Vida (HP)">
+              <div id="mHpFill" class="m-bar-fill hp" style="width:100%;"></div>
+            </div>
+            <div class="m-bar m-mana-bar" title="Mana">
+              <div id="mManaFill" class="m-bar-fill mana" style="width:100%;"></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <div style="font-size: 13px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 4px;">
-          <span>💰</span> <span id="goldVal">150</span>
-        </div>
-        <button id="btnOpenQuests" class="touch-nav-btn interactive" title="Missões">
-          📜 <span class="nav-text">MISSÕES</span>
+      <div class="top-nav-cluster" style="display: flex; gap: 6px; align-items: center;">
+        <button id="btnOpenInventory" class="touch-nav-btn interactive" title="Inventário">
+          🎒 <span class="nav-text">ITENS</span>
         </button>
         <button id="btnOpenSkills" class="touch-nav-btn interactive" title="Árvore de Talentos">
           ⚡ <span class="nav-text">TALENTOS</span> <span id="skillPtsBadge" style="display:none; color:#ff4444; font-weight:bold;">(1)</span>
         </button>
+        <button id="btnOpenQuests" class="touch-nav-btn interactive" title="Missões">
+          📜 <span class="nav-text">MISSÕES</span>
+        </button>
         <button id="btnOpenBestiary" class="touch-nav-btn interactive" title="Bestiário">
           📖 <span class="nav-text">BESTIÁRIO</span>
-        </button>
-        <button id="btnOpenInventory" class="touch-nav-btn interactive" title="Inventário">
-          🎒 <span class="nav-text">ITENS</span>
         </button>
         <button id="btnToggleMusic" class="touch-nav-btn interactive" title="Música BGM">
           🎵
@@ -2828,14 +2911,37 @@
         ];
 
         monsters = [
-          { id: 1, name: 'Lobo de Faydark', gx: 11, gy: 5, hp: 60, maxHp: 60, dmg: 12, icon: '🐺', type: 'wolf', alive: true, animTimer: 0, hasSpoken: false },
-          // Campeão Elite 1: Orc Patrulheiro [Encantado por Fogo]
-          { id: 2, name: 'Orc Campeão', gx: 16, gy: 5, hp: 130, maxHp: 130, dmg: 18, icon: '👹', type: 'orc', isElite: true, affix: 'fire', alive: true, animTimer: 1, hasSpoken: false },
-          { id: 3, name: 'Aranha Venenosa', gx: 21, gy: 8, hp: 55, maxHp: 55, dmg: 12, icon: '🕷️', type: 'spider', alive: true, animTimer: 2, hasSpoken: false },
-          { id: 4, name: 'Goblin Xamã', gx: 22, gy: 17, hp: 60, maxHp: 60, dmg: 15, icon: '👺', type: 'goblin', alive: true, animTimer: 3, hasSpoken: false },
-          // Campeão Elite 2: Líder dos Orcs [Muralha de Pedra]
-          { id: 5, name: 'Líder dos Orcs', gx: 18, gy: 23, hp: 220, maxHp: 220, dmg: 24, icon: '👹', type: 'orc_boss', isElite: true, affix: 'stone', alive: true, animTimer: 0, hasSpoken: false },
-          { id: 6, name: 'Lobo Alfa de Norrath', gx: 5, gy: 24, hp: 80, maxHp: 80, dmg: 15, icon: '🐺', type: 'wolf', alive: true, animTimer: 2, hasSpoken: false }
+          // Corredor 1: Matilha de Lobos e Batedores Goblins
+          { id: 1, name: 'Lobo de Faydark', gx: 10, gy: 5, hp: 60, maxHp: 60, dmg: 12, icon: '🐺', type: 'wolf', alive: true, animTimer: 0 },
+          { id: 2, name: 'Lobo de Faydark', gx: 12, gy: 4, hp: 60, maxHp: 60, dmg: 12, icon: '🐺', type: 'wolf', alive: true, animTimer: 1 },
+          { id: 3, name: 'Lobo Alfa dos Bosques', gx: 14, gy: 5, hp: 85, maxHp: 85, dmg: 15, icon: '🐺', type: 'wolf', alive: true, animTimer: 2 },
+          { id: 4, name: 'Goblin Batedor', gx: 16, gy: 5, hp: 50, maxHp: 50, dmg: 10, icon: '👺', type: 'goblin', alive: true, animTimer: 0 },
+          { id: 5, name: 'Goblin Lanceiro', gx: 17, gy: 6, hp: 55, maxHp: 55, dmg: 12, icon: '👺', type: 'goblin', alive: true, animTimer: 1 },
+
+          // Sala 2: O Pátio dos Orcs (Esquadrão de Batalha com Elite)
+          { id: 6, name: 'Orc Campeão de Faydark', gx: 20, gy: 5, hp: 140, maxHp: 140, dmg: 18, icon: '👹', type: 'orc', isElite: true, affix: 'fire', alive: true, animTimer: 0 },
+          { id: 7, name: 'Orc Guerreiro', gx: 22, gy: 4, hp: 75, maxHp: 75, dmg: 14, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+          { id: 8, name: 'Orc Guerreiro', gx: 24, gy: 6, hp: 75, maxHp: 75, dmg: 14, icon: '👹', type: 'orc', alive: true, animTimer: 2 },
+          { id: 9, name: 'Orc Berserker', gx: 25, gy: 8, hp: 90, maxHp: 90, dmg: 17, icon: '👹', type: 'orc', alive: true, animTimer: 0 },
+          { id: 10, name: 'Aranha Venenosa', gx: 19, gy: 8, hp: 55, maxHp: 55, dmg: 12, icon: '🕷️', type: 'spider', alive: true, animTimer: 1 },
+          { id: 11, name: 'Aranha Venenosa', gx: 26, gy: 9, hp: 55, maxHp: 55, dmg: 12, icon: '🕷️', type: 'spider', alive: true, animTimer: 2 },
+          { id: 12, name: 'Goblin Xamã', gx: 21, gy: 10, hp: 65, maxHp: 65, dmg: 15, icon: '👺', type: 'goblin', alive: true, animTimer: 0 },
+          { id: 13, name: 'Goblin Arqueiro', gx: 23, gy: 9, hp: 50, maxHp: 50, dmg: 13, icon: '👺', type: 'goblin', alive: true, animTimer: 1 },
+
+          // Corredor Sul: Emboscada das Sombras
+          { id: 14, name: 'Goblin Emboscador', gx: 22, gy: 13, hp: 55, maxHp: 55, dmg: 14, icon: '👺', type: 'goblin', alive: true, animTimer: 0 },
+          { id: 15, name: 'Orc Patrulheiro', gx: 23, gy: 16, hp: 80, maxHp: 80, dmg: 15, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+          { id: 16, name: 'Goblin Lanceiro', gx: 22, gy: 19, hp: 60, maxHp: 60, dmg: 13, icon: '👺', type: 'goblin', alive: true, animTimer: 2 },
+
+          // Sala 3: Antecâmara do Guardião (Comitiva do Líder)
+          { id: 17, name: 'Líder dos Orcs de Norrath', gx: 18, gy: 23, hp: 240, maxHp: 240, dmg: 26, icon: '👹', type: 'orc_boss', isElite: true, affix: 'stone', alive: true, animTimer: 0 },
+          { id: 18, name: 'Orc da Guarda Negra', gx: 15, gy: 22, hp: 85, maxHp: 85, dmg: 16, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+          { id: 19, name: 'Orc Berserker', gx: 20, gy: 24, hp: 95, maxHp: 95, dmg: 18, icon: '👹', type: 'orc', alive: true, animTimer: 2 },
+          { id: 20, name: 'Aranha Rainha da Cripta', gx: 22, gy: 25, hp: 80, maxHp: 80, dmg: 16, icon: '🕷️', type: 'spider', alive: true, animTimer: 0 },
+          { id: 21, name: 'Lobo Feroz', gx: 14, gy: 25, hp: 70, maxHp: 70, dmg: 14, icon: '🐺', type: 'wolf', alive: true, animTimer: 1 },
+
+          // Sala 4: Guardiões da Saída para as Catacumbas
+          { id: 22, name: 'Orc Guardião das Escadarias', gx: 4, gy: 24, hp: 100, maxHp: 100, dmg: 18, icon: '👹', type: 'orc', alive: true, animTimer: 0 }
         ];
 
       } else if (floor === 2) {
@@ -2855,13 +2961,37 @@
         ];
 
         monsters = [
-          { id: 101, name: 'Esqueleto Soldado', gx: 10, gy: 5, hp: 85, maxHp: 85, dmg: 16, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 0, hasSpoken: false },
-          // Campeão Elite: Guarda Esqueleto [Aura Gélida]
-          { id: 102, name: 'Guarda da Masmorra', gx: 16, gy: 5, hp: 175, maxHp: 175, dmg: 22, icon: '🛡️', type: 'skeleton', isElite: true, affix: 'frost', alive: true, animTimer: 1, hasSpoken: false },
-          { id: 103, name: 'Aranha Rainha do Abismo', gx: 22, gy: 7, hp: 95, maxHp: 95, dmg: 18, icon: '🕷️', type: 'spider', alive: true, animTimer: 2, hasSpoken: false },
-          // Campeão Elite: Demônio Alado [Teleporte Astral & Vampírico]
-          { id: 104, name: 'Demônio das Profundezas', gx: 22, gy: 16, hp: 160, maxHp: 160, dmg: 24, icon: '🦇', type: 'demon', isElite: true, affix: 'teleport', alive: true, animTimer: 0, hasSpoken: false },
-          { id: 105, name: 'Guarda Esqueleto Lanceiro', gx: 15, gy: 23, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1, hasSpoken: false }
+          // Corredor 1: Esquadrão Esquelético
+          { id: 101, name: 'Esqueleto Soldado', gx: 10, gy: 5, hp: 85, maxHp: 85, dmg: 16, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 0 },
+          { id: 102, name: 'Esqueleto Soldado', gx: 12, gy: 4, hp: 85, maxHp: 85, dmg: 16, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1 },
+          { id: 103, name: 'Esqueleto Arqueiro', gx: 14, gy: 5, hp: 75, maxHp: 75, dmg: 17, icon: '🏹', type: 'skeleton', alive: true, animTimer: 2 },
+          { id: 104, name: 'Guarda da Masmorra (Elite Gélido)', gx: 16, gy: 6, hp: 180, maxHp: 180, dmg: 22, icon: '🛡️', type: 'skeleton', isElite: true, affix: 'frost', alive: true, animTimer: 0 },
+
+          // Sala 2: O Mausoléu dos Mortos
+          { id: 105, name: 'Esqueleto Campeão', gx: 20, gy: 5, hp: 110, maxHp: 110, dmg: 19, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 0 },
+          { id: 106, name: 'Esqueleto Lanceiro', gx: 22, gy: 4, hp: 90, maxHp: 90, dmg: 17, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1 },
+          { id: 107, name: 'Esqueleto Lanceiro', gx: 24, gy: 6, hp: 90, maxHp: 90, dmg: 17, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 2 },
+          { id: 108, name: 'Aranha Rainha do Abismo', gx: 25, gy: 8, hp: 95, maxHp: 95, dmg: 18, icon: '🕷️', type: 'spider', alive: true, animTimer: 0 },
+          { id: 109, name: 'Aranha das Catacumbas', gx: 19, gy: 8, hp: 70, maxHp: 70, dmg: 15, icon: '🕷️', type: 'spider', alive: true, animTimer: 1 },
+          { id: 110, name: 'Aranha das Catacumbas', gx: 26, gy: 9, hp: 70, maxHp: 70, dmg: 15, icon: '🕷️', type: 'spider', alive: true, animTimer: 2 },
+          { id: 111, name: 'Esqueleto Mago Necromante', gx: 21, gy: 10, hp: 80, maxHp: 80, dmg: 20, icon: '🔮', type: 'skeleton', alive: true, animTimer: 0 },
+          { id: 112, name: 'Esqueleto Arqueiro', gx: 23, gy: 9, hp: 75, maxHp: 75, dmg: 17, icon: '🏹', type: 'skeleton', alive: true, animTimer: 1 },
+
+          // Corredor Sul: Covil dos Demônios Alados
+          { id: 113, name: 'Demônio Voraz', gx: 22, gy: 13, hp: 110, maxHp: 110, dmg: 20, icon: '🦇', type: 'demon', alive: true, animTimer: 0 },
+          { id: 114, name: 'Demônio das Profundezas (Elite)', gx: 23, gy: 16, hp: 175, maxHp: 175, dmg: 25, icon: '🦇', type: 'demon', isElite: true, affix: 'teleport', alive: true, animTimer: 1 },
+          { id: 115, name: 'Demônio Voraz', gx: 22, gy: 19, hp: 110, maxHp: 110, dmg: 20, icon: '🦇', type: 'demon', alive: true, animTimer: 2 },
+
+          // Sala 3: As Catacumbas Reais
+          { id: 116, name: 'Carniçal Ancestral', gx: 18, gy: 23, hp: 130, maxHp: 130, dmg: 22, icon: '🧟', type: 'skeleton', isElite: true, affix: 'vampiric', alive: true, animTimer: 0 },
+          { id: 117, name: 'Guarda Esqueleto Real', gx: 15, gy: 22, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1 },
+          { id: 118, name: 'Guarda Esqueleto Real', gx: 20, gy: 24, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 2 },
+          { id: 119, name: 'Demônio Alado', gx: 22, gy: 25, hp: 115, maxHp: 115, dmg: 21, icon: '🦇', type: 'demon', alive: true, animTimer: 0 },
+          { id: 120, name: 'Esqueleto Lanceiro', gx: 14, gy: 25, hp: 90, maxHp: 90, dmg: 17, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1 },
+
+          // Sala 4: O Portal Sombrio
+          { id: 121, name: 'Guarda da Passagem Vulcânica', gx: 4, gy: 24, hp: 120, maxHp: 120, dmg: 21, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 0 },
+          { id: 122, name: 'Demônio Protetor', gx: 6, gy: 25, hp: 125, maxHp: 125, dmg: 22, icon: '🦇', type: 'demon', alive: true, animTimer: 1 }
         ];
 
       } else if (floor === 3) {
@@ -2879,11 +3009,38 @@
         ];
 
         monsters = [
-          { id: 201, name: 'Guarda Esqueleto Vulcânico', gx: 13, gy: 5, hp: 110, maxHp: 110, dmg: 20, icon: '🛡️', type: 'skeleton', dropsKey: !player.hasBossKey, alive: true, animTimer: 0, hasSpoken: false },
-          // Campeão Elite: Demônio Supremo [Vampírico & Sanguinário]
-          { id: 202, name: 'Demônio de Sangue', gx: 22, gy: 15, hp: 210, maxHp: 210, dmg: 28, icon: '🦇', type: 'demon', isElite: true, affix: 'vampiric', alive: true, animTimer: 1, hasSpoken: false },
-          // O GRANDE CHEFE
-          { id: 203, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 5, gy: 26, hp: 420, maxHp: 420, dmg: 40, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0, hasSpoken: false }
+          // Corredor 1: Tropas de Magma
+          { id: 201, name: 'Esqueleto de Fogo', gx: 11, gy: 5, hp: 110, maxHp: 110, dmg: 20, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 0 },
+          { id: 202, name: 'Esqueleto Vulcânico (Portador da Chave)', gx: 13, gy: 5, hp: 130, maxHp: 130, dmg: 22, icon: '🛡️', type: 'skeleton', dropsKey: !player.hasBossKey, alive: true, animTimer: 1 },
+          { id: 203, name: 'Demônio de Magma', gx: 15, gy: 5, hp: 120, maxHp: 120, dmg: 22, icon: '🦇', type: 'demon', alive: true, animTimer: 2 },
+          { id: 204, name: 'Orc Piromante', gx: 16, gy: 6, hp: 95, maxHp: 95, dmg: 24, icon: '👹', type: 'orc', alive: true, animTimer: 0 },
+
+          // Sala 2: O Pátio da Forja das Trevas
+          { id: 205, name: 'Demônio de Sangue (Elite Vampírico)', gx: 22, gy: 7, hp: 230, maxHp: 230, dmg: 29, icon: '🦇', type: 'demon', isElite: true, affix: 'vampiric', alive: true, animTimer: 0 },
+          { id: 206, name: 'Berserker Vulcânico', gx: 20, gy: 5, hp: 120, maxHp: 120, dmg: 23, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+          { id: 207, name: 'Gárgula de Lava', gx: 24, gy: 6, hp: 115, maxHp: 115, dmg: 21, icon: '🦇', type: 'demon', alive: true, animTimer: 2 },
+          { id: 208, name: 'Gárgula de Lava', gx: 25, gy: 8, hp: 115, maxHp: 115, dmg: 21, icon: '🦇', type: 'demon', alive: true, animTimer: 0 },
+          { id: 209, name: 'Orc de Sangue', gx: 19, gy: 8, hp: 105, maxHp: 105, dmg: 22, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+          { id: 210, name: 'Orc Piromante', gx: 26, gy: 9, hp: 100, maxHp: 100, dmg: 24, icon: '👹', type: 'orc', alive: true, animTimer: 2 },
+          { id: 211, name: 'Demônio Alado', gx: 21, gy: 10, hp: 125, maxHp: 125, dmg: 23, icon: '🦇', type: 'demon', alive: true, animTimer: 0 },
+          { id: 212, name: 'Berserker Vulcânico', gx: 23, gy: 9, hp: 120, maxHp: 120, dmg: 23, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+
+          // Corredor Sul: Guarda de Honra do Warlord
+          { id: 213, name: 'Guarda da Forja', gx: 22, gy: 13, hp: 125, maxHp: 125, dmg: 23, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 0 },
+          { id: 214, name: 'Demônio da Fornalha', gx: 23, gy: 16, hp: 140, maxHp: 140, dmg: 25, icon: '🦇', type: 'demon', alive: true, animTimer: 1 },
+          { id: 215, name: 'Guarda da Forja', gx: 22, gy: 19, hp: 125, maxHp: 125, dmg: 23, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 2 },
+
+          // Sala 3: Antecâmara do Trono
+          { id: 216, name: 'Campeão da Guarda Negra', gx: 18, gy: 23, hp: 160, maxHp: 160, dmg: 26, icon: '👹', type: 'orc', isElite: true, affix: 'fire', alive: true, animTimer: 0 },
+          { id: 217, name: 'Orc Piromante Real', gx: 15, gy: 22, hp: 110, maxHp: 110, dmg: 25, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+          { id: 218, name: 'Berserker de Elite', gx: 20, gy: 24, hp: 130, maxHp: 130, dmg: 25, icon: '👹', type: 'orc', alive: true, animTimer: 2 },
+          { id: 219, name: 'Demônio da Praga', gx: 22, gy: 25, hp: 135, maxHp: 135, dmg: 24, icon: '🦇', type: 'demon', alive: true, animTimer: 0 },
+          { id: 220, name: 'Esqueleto Vulcânico', gx: 14, gy: 25, hp: 115, maxHp: 115, dmg: 21, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1 },
+
+          // Sala 4: O Trono do Warlord Orc
+          { id: 221, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 5, gy: 26, hp: 450, maxHp: 450, dmg: 42, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0 },
+          { id: 222, name: 'Guarda-Costas do Warlord', gx: 3, gy: 25, hp: 135, maxHp: 135, dmg: 25, icon: '👹', type: 'orc', alive: true, animTimer: 1 },
+          { id: 223, name: 'Guarda-Costas do Warlord', gx: 6, gy: 27, hp: 135, maxHp: 135, dmg: 25, icon: '👹', type: 'orc', alive: true, animTimer: 2 }
         ];
 
       } else if (floor === 4) {
@@ -2977,8 +3134,8 @@
       if (e.key.toLowerCase() === 'e') interactUniversal();
       if (e.key.toLowerCase() === 't') castTownPortal();
       if (e.key === ' ') doAttack();
-      if (e.key === '=' || e.key === '+' || e.key === ']') targetCamZoom = Math.min(1.70, targetCamZoom + 0.1);
-      if (e.key === '-' || e.key === '_' || e.key === '[') targetCamZoom = Math.max(1.05, targetCamZoom - 0.1);
+      if (e.key === '=' || e.key === '+' || e.key === ']') targetCamZoom = Math.min(3.2, targetCamZoom + 0.2);
+      if (e.key === '-' || e.key === '_' || e.key === '[') targetCamZoom = Math.max(1.8, targetCamZoom - 0.2);
       if (e.key.toLowerCase() === 'shift') player.blocking = true;
     });
 
@@ -2991,8 +3148,8 @@
       targetCamZoom = Math.max(1.05, Math.min(1.70, targetCamZoom - Math.sign(e.deltaY) * 0.08));
     }, { passive: true });
 
-    let camZoom = 1.34;
-    let targetCamZoom = 1.34;
+    let camZoom = 2.45;
+    let targetCamZoom = 2.45;
     let joyTouchId = null;
     let joyTouch = null;
     let joyDelta = { x: 0, y: 0 };
@@ -3000,12 +3157,12 @@
     const btnZIn = document.getElementById('btnZoomIn');
     const btnZOut = document.getElementById('btnZoomOut');
     if (btnZIn) {
-      const zoomInAction = e => { e.preventDefault(); e.stopPropagation(); targetCamZoom = Math.min(1.70, targetCamZoom + 0.12); };
+      const zoomInAction = e => { e.preventDefault(); e.stopPropagation(); targetCamZoom = Math.min(3.2, targetCamZoom + 0.2); };
       btnZIn.addEventListener('click', zoomInAction);
       btnZIn.addEventListener('touchstart', zoomInAction, { passive: false });
     }
     if (btnZOut) {
-      const zoomOutAction = e => { e.preventDefault(); e.stopPropagation(); targetCamZoom = Math.max(1.05, targetCamZoom - 0.12); };
+      const zoomOutAction = e => { e.preventDefault(); e.stopPropagation(); targetCamZoom = Math.max(1.8, targetCamZoom - 0.2); };
       btnZOut.addEventListener('click', zoomOutAction);
       btnZOut.addEventListener('touchstart', zoomOutAction, { passive: false });
     }
@@ -8434,6 +8591,10 @@
       const manaPct = (player.mana / player.maxMana) * 100;
       document.getElementById('hpLiquid').style.height = `${hpPct}%`;
       document.getElementById('manaLiquid').style.height = `${manaPct}%`;
+      const mHp = document.getElementById('mHpFill');
+      if (mHp) mHp.style.width = `${hpPct}%`;
+      const mMana = document.getElementById('mManaFill');
+      if (mMana) mMana.style.width = `${manaPct}%`;
       document.getElementById('hpText').textContent = `${Math.round(player.hp)} / ${player.maxHp}`;
       document.getElementById('manaText').textContent = `${Math.round(player.mana)} / ${player.maxMana}`;
 
