@@ -3938,13 +3938,24 @@
     }
 
     function spawnDust(gx, gy) {
+      let pColor = 'rgba(160, 140, 120, 0.45)';
+      let size = 3;
+      if (currentBiomeKey === 'lavastorm') {
+        pColor = Math.random() < 0.6 ? 'rgba(255, 90, 20, 0.85)' : 'rgba(255, 180, 40, 0.9)';
+        size = 2.5;
+      } else if (currentBiomeKey === 'catacombs') {
+        pColor = 'rgba(100, 130, 160, 0.45)';
+      } else if (currentBiomeKey === 'faydark') {
+        pColor = Math.random() < 0.5 ? 'rgba(74, 222, 128, 0.45)' : 'rgba(130, 180, 100, 0.5)';
+      }
       particles.push({
-        gx: gx + (Math.random() - 0.5) * 0.2,
-        gy: gy + (Math.random() - 0.5) * 0.2,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
+        gx: gx + (Math.random() - 0.5) * 0.25,
+        gy: gy + (Math.random() - 0.5) * 0.25,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
         life: 0.45,
-        color: 'rgba(160, 140, 120, 0.4)'
+        color: pColor,
+        size
       });
     }
 
@@ -4069,8 +4080,17 @@
       });
     }
 
-    function spawnFloatingText(text, gx, gy, color = '#fff') {
-      floatingTexts.push({ text, gx, gy, offsetY: 0, life: 1.0, color });
+    function spawnFloatingText(text, gx, gy, color = '#fff', isCrit = false) {
+      const driftX = (Math.random() - 0.5) * 0.45;
+      floatingTexts.push({ 
+        text, 
+        gx: gx + driftX, 
+        gy, 
+        offsetY: 0, 
+        life: 1.0, 
+        color, 
+        isCrit: isCrit || (typeof text === 'string' && text.includes('CRÍTICO'))
+      });
     }
 
     // -------------------------------------------------------------
@@ -4423,6 +4443,62 @@
             spawnBlood(m.gx, m.gy, 3);
             spawnFloatingText(`🩸 -${bDmg}`, m.gx, m.gy - 0.35, '#ff2233');
             if (m.hp <= 0) {
+              m.alive = false;
+              m.dying = true;
+              m.deathTimer = 1.0;
+              m.fallDir = Math.random() < 0.5 ? 1 : -1;
+              giveXp(40);
+              spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
+            }
+          }
+        }
+
+        // Efeito de Queimadura / Fogo Contínuo (Burning Status FX)
+        if (m.burningTimer && m.burningTimer > 0) {
+          m.burningTimer -= dt;
+          m.burnTick = (m.burnTick || 0) + dt;
+          if (m.burnTick >= 0.5) {
+            m.burnTick = 0;
+            const burnDmg = Math.max(3, Math.floor((m.maxHp || 100) * 0.025));
+            m.hp -= burnDmg;
+            spawnFloatingText(`🔥 -${burnDmg}`, m.gx, m.gy - 0.45, '#ff6600');
+            particles.push({
+              gx: m.gx + (Math.random() - 0.5) * 0.3,
+              gy: m.gy + (Math.random() - 0.5) * 0.3,
+              vx: (Math.random() - 0.5) * 1.5,
+              vy: -Math.random() * 2 - 1,
+              life: 0.45,
+              color: '#ff4400'
+            });
+            if (m.hp <= 0 && m.alive) {
+              m.alive = false;
+              m.dying = true;
+              m.deathTimer = 1.0;
+              m.fallDir = Math.random() < 0.5 ? 1 : -1;
+              giveXp(40);
+              spawnFlyingLoot(m.gx, m.gy, 'gold', 25);
+            }
+          }
+        }
+
+        // Efeito de Veneno Contínuo (Poison Status FX)
+        if (m.poisonTimer && m.poisonTimer > 0) {
+          m.poisonTimer -= dt;
+          m.poisonTick = (m.poisonTick || 0) + dt;
+          if (m.poisonTick >= 0.7) {
+            m.poisonTick = 0;
+            const pDmg = Math.max(3, Math.floor((m.maxHp || 100) * 0.03));
+            m.hp -= pDmg;
+            spawnFloatingText(`🧪 -${pDmg}`, m.gx, m.gy - 0.45, '#4ade80');
+            particles.push({
+              gx: m.gx + (Math.random() - 0.5) * 0.3,
+              gy: m.gy + (Math.random() - 0.5) * 0.3,
+              vx: (Math.random() - 0.5),
+              vy: -Math.random() * 1.5 - 0.5,
+              life: 0.5,
+              color: '#22c55e'
+            });
+            if (m.hp <= 0 && m.alive) {
               m.alive = false;
               m.dying = true;
               m.deathTimer = 1.0;
@@ -4980,6 +5056,22 @@
         if (ft.life <= 0) floatingTexts.splice(i, 1);
       }
 
+      // Atualização Dinâmica da Barra de Vida do Chefe (Fecha automaticamente na vitória)
+      if (activeBoss) {
+        if (!activeBoss.alive || activeBoss.hp <= 0) {
+          const bb = document.getElementById('bossBarContainer');
+          if (bb) bb.style.display = 'none';
+          activeBoss = null;
+        } else {
+          const bb = document.getElementById('bossBarContainer');
+          if (bb) {
+            bb.style.display = 'block';
+            document.getElementById('bossName').textContent = activeBoss.name;
+            document.getElementById('bossHpFill').style.width = `${Math.max(0, activeBoss.hp / activeBoss.maxHp * 100)}%`;
+          }
+        }
+      }
+
       if (screenShake > 0) screenShake *= 0.86;
     }
 
@@ -5374,13 +5466,21 @@
 
       floatingTexts.forEach(ft => {
         const iso = worldToIso(ft.gx, ft.gy);
-        ctx.fillStyle = ft.color;
-        ctx.font = 'bold 15px "Cinzel", Georgia, serif';
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, Math.min(1, ft.life * 1.4));
+        const scale = ft.isCrit ? Math.min(1.35, 0.9 + (1 - ft.life) * 0.45) : 1.0;
+        ctx.translate(iso.x, iso.y - 32 - ft.offsetY);
+        ctx.scale(scale, scale);
+        ctx.font = ft.isCrit ? '900 17px "Cinzel", Georgia, serif' : 'bold 13.5px "Cinzel", Georgia, serif';
         ctx.textAlign = 'center';
-        ctx.shadowColor = '#000';
-        ctx.shadowBlur = 4;
-        ctx.fillText(ft.text, iso.x, iso.y - 32 - ft.offsetY);
-        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = ft.isCrit ? 3.5 : 2.5;
+        ctx.strokeText(ft.text, 0, 0);
+        ctx.fillStyle = ft.color;
+        ctx.shadowColor = ft.isCrit ? '#ffd700' : '#000';
+        ctx.shadowBlur = ft.isCrit ? 8 : 3;
+        ctx.fillText(ft.text, 0, 0);
+        ctx.restore();
       });
 
       ctx.restore();
@@ -6842,15 +6942,55 @@
         }
       }
 
-      // Barra de Vida Gótica Estilizada
-      const barW = m.isBoss ? 72 : 44;
-      const barH = m.isBoss ? 7 : 5;
+      // Badges de Efeitos de Status (Sangramento, Fogo, Gelo, Veneno, Atordoamento)
+      const statuses = [];
+      if (m.bleedTimer && m.bleedTimer > 0) statuses.push('🩸');
+      if (m.burningTimer && m.burningTimer > 0) statuses.push('🔥');
+      if (m.frozen && m.frozen > 0) statuses.push('❄️');
+      if (m.poisonTimer && m.poisonTimer > 0) statuses.push('🧪');
+      if (m.staggerTimer && m.staggerTimer > 0) statuses.push('💫');
+
+      // Barra de Vida Gótica Estilizada e Segmentada
+      const barW = m.isBoss ? 76 : 46;
+      const barH = m.isBoss ? 8 : 6;
       const pct = Math.max(0, m.hp / m.maxHp);
-      const barY = mFootY - (m.isBoss ? 95 : 55);
-      ctx.fillStyle = '#09090b';
-      ctx.fillRect(mFootX - barW / 2, barY, barW, barH);
-      ctx.fillStyle = m.isBoss ? '#f59e0b' : (m.isElite ? '#eab308' : '#ef4444');
-      ctx.fillRect(mFootX - barW / 2 + 1, barY + 1, (barW - 2) * pct, barH - 2);
+      const barY = mFootY - (m.isBoss ? 96 : 56);
+
+      if (statuses.length > 0) {
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+        ctx.fillText(statuses.join(' '), mFootX, barY - 14);
+        ctx.shadowBlur = 0;
+      }
+
+      // Moldura gótica de ferro e ouro
+      ctx.fillStyle = '#060404';
+      ctx.fillRect(mFootX - barW / 2 - 1, barY - 1, barW + 2, barH + 2);
+      ctx.strokeStyle = m.isBoss ? '#ffd700' : (m.isElite ? '#eab308' : '#4a3625');
+      ctx.lineWidth = 1;
+      ctx.strokeRect(mFootX - barW / 2 - 1, barY - 1, barW + 2, barH + 2);
+
+      // Preenchimento gradiente com cor dinâmica
+      const hpGrad = ctx.createLinearGradient(mFootX - barW / 2, barY, mFootX + barW / 2, barY);
+      if (m.isBoss) {
+        hpGrad.addColorStop(0, '#b45309');
+        hpGrad.addColorStop(1, '#f59e0b');
+      } else if (m.isElite) {
+        hpGrad.addColorStop(0, '#ca8a04');
+        hpGrad.addColorStop(1, '#facc15');
+      } else {
+        hpGrad.addColorStop(0, '#991b1b');
+        hpGrad.addColorStop(1, '#ef4444');
+      }
+      ctx.fillStyle = hpGrad;
+      ctx.fillRect(mFootX - barW / 2, barY, barW * pct, barH);
+
+      // Marcadores de segmentação a cada 25% de vida
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      for (let s = 1; s <= 3; s++) {
+        ctx.fillRect(mFootX - barW / 2 + (barW * s / 4), barY, 1, barH);
+      }
 
       // Título do Campeão Elite
       if (m.isElite || m.affix) {
@@ -6866,7 +7006,7 @@
         ctx.fillStyle = '#fde047';
         ctx.textAlign = 'center';
         ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-        ctx.fillText(`★ ${m.name} [${affLabel}] ★`, mFootX, barY - 7);
+        ctx.fillText(`★ ${m.name} [${affLabel}] ★`, mFootX, barY - 6);
         ctx.shadowBlur = 0;
       }
 
