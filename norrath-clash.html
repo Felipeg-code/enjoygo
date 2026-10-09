@@ -2376,7 +2376,9 @@
       currentFloor: 1,
       hasBossKey: false,
       blocking: false,
-      bestiaryKills: { orc: 0, skeleton: 0, wolf: 0, spider: 0, goblin: 0, demon: 0, warlord_boss: 0 },
+      bestiaryKills: { orc: 0, skeleton: 0, wolf: 0, spider: 0, goblin: 0, demon: 0, warlord_boss: 0, dragon_boss: 0 },
+      talents: { spec1: 0, spec2: 0, spec3: 0 },
+      hasDragonscale: false,
       campfireTick: 0,
       potionsFury: 1,
       potionsIron: 1,
@@ -2545,7 +2547,32 @@
       updatePitHud();
     }
 
+    function enterDragonLair() {
+      audio.playMagicSpell();
+      screenShake = 12;
+      generateDungeon(4);
+      player.gx = 4;
+      player.gy = 4;
+      showNotification('🌋 Bem-vindo ao Covil de Veeshan em Lavastorm!');
+      voices.speak('O calor é ensurdecedor... O Dragão Ancestral aguarda em seu mar de magma!', 'elder');
+      saveGame(false);
+    }
+
     function interactUniversal() {
+      // 0. Verificar Portal Dracônico e Portal de Retorno (Etapa 15)
+      const dNear = props.find(p => (p.type === 'dragon_portal' || p.type === 'portal_return') && Math.hypot(p.gx - player.gx, p.gy - player.gy) < 2.0);
+      if (dNear) {
+        if (dNear.type === 'dragon_portal') {
+          enterDragonLair();
+        } else {
+          audio.playMagicSpell();
+          generateDungeon(3);
+          player.gx = 5; player.gy = 25;
+          showNotification('🌀 Retornando às Cavernas de Lavastorm!');
+          saveGame(false);
+        }
+        return;
+      }
       // 1. Verificar Portal do Abismo
       const pNear = props.find(p => (p.type === 'pit_portal' || p.type === 'pit_exit') && Math.hypot(p.gx - player.gx, p.gy - player.gy) < 1.8);
       if (pNear) {
@@ -2585,6 +2612,10 @@
       else if (floor === 1) currentBiomeKey = 'faydark';
       else if (floor === 2) currentBiomeKey = 'catacombs';
       else currentBiomeKey = 'lavastorm';
+
+      if (floor === 4) {
+        document.getElementById('biomeText').textContent = 'Covil de Veeshan (Lavastorm)';
+      }
 
       document.getElementById('biomeText').textContent = BIOMES[currentBiomeKey].name;
       document.getElementById('bossBarContainer').style.display = 'none';
@@ -2780,9 +2811,9 @@
           { id: 105, name: 'Guarda Esqueleto Lanceiro', gx: 15, gy: 23, hp: 95, maxHp: 95, dmg: 18, icon: '🛡️', type: 'skeleton', alive: true, animTimer: 1, hasSpoken: false }
         ];
 
-      } else {
-        // ANDAR 3: FORJA VULCÂNICA DE LAVASTORM (SALA DO CHEFE FINAL)
-        stairs = null;
+      } else if (floor === 3) {
+        // ANDAR 3: FORJA VULCÂNICA DE LAVASTORM
+        stairs = { gx: 5, gy: 28, icon: '🌋', desc: 'Descer para Andar 4 (Covil de Veeshan)' };
         bossGate = { gx: 5, gy: 23, locked: !player.hasBossKey, icon: '🚪' };
 
         props = [
@@ -2800,6 +2831,49 @@
           { id: 202, name: 'Demônio de Sangue', gx: 22, gy: 15, hp: 210, maxHp: 210, dmg: 28, icon: '🦇', type: 'demon', isElite: true, affix: 'vampiric', alive: true, animTimer: 1, hasSpoken: false },
           // O GRANDE CHEFE
           { id: 203, name: 'Lorde Warlord de Norrath (CHEFE)', gx: 5, gy: 26, hp: 420, maxHp: 420, dmg: 40, icon: '👑', type: 'warlord_boss', isBoss: true, alive: true, animTimer: 0, hasSpoken: false }
+        ];
+
+      } else if (floor === 4) {
+        // ANDAR 4: COVIL DO DRAGÃO ANCESTRAL DE LAVASTORM (RAID BOSS VEESHAN - ETAPA 15)
+        stairs = null;
+        bossGate = null;
+
+        // Reinicializa mapa para arena épica
+        for (let y = 0; y < MAP_SIZE; y++) {
+          for (let x = 0; x < MAP_SIZE; x++) {
+            dungeonMap[y][x] = 1;
+          }
+        }
+        // Plataforma do Santuário Inicial (gx: 2..6, gy: 2..6)
+        carve(2, 2, 5, 5);
+        // Ponte estreita de Obsidiana sobre mar de magma (gx: 4..5, gy: 6..13)
+        carve(4, 6, 2, 8);
+        // A Colossal Arena Dracônica Circular (gx: 2..28, gy: 13..28)
+        carve(2, 13, 27, 16);
+
+        props = [
+          { type: 'portal_return', gx: 3, gy: 3, name: 'Portal para Andar 3', icon: '🌀', alive: true },
+          { type: 'shrine', gx: 4, gy: 2, shrineType: 'protection', used: false, icon: '🏛️', alive: true },
+          { type: 'chest', gx: 26, gy: 15, opened: false, icon: '📦', hasKey: false },
+          { type: 'chest', gx: 3, gy: 27, opened: false, icon: '📦', hasKey: false },
+          { type: 'urn', gx: 26, gy: 27, hp: 1, icon: '🏺', alive: true },
+          { type: 'sarcophagus', gx: 2, gy: 15, hp: 2, icon: '⚰️', alive: true }
+        ];
+
+        torches = [
+          { gx: 2, gy: 14, flame: 0, lit: true },
+          { gx: 27, gy: 14, flame: 1.0, lit: true },
+          { gx: 2, gy: 27, flame: 2.0, lit: true },
+          { gx: 27, gy: 27, flame: 3.0, lit: true },
+          { gx: 14, gy: 13, flame: 1.5, lit: true },
+          { gx: 14, gy: 28, flame: 2.5, lit: true }
+        ];
+
+        monsters = [
+          { id: 401, name: 'Draconiano Piromante', gx: 8, gy: 18, hp: 170, maxHp: 170, dmg: 28, icon: '🦎', type: 'demon', isElite: true, affix: 'fire', alive: true, animTimer: 0, hasSpoken: false },
+          { id: 402, name: 'Golem de Magma Ancestral', gx: 21, gy: 18, hp: 260, maxHp: 260, dmg: 32, icon: '🗿', type: 'orc_boss', isElite: true, affix: 'stone', alive: true, animTimer: 1, hasSpoken: false },
+          // VEESHAN - O RAID BOSS DRACONIANO COLOSSAL
+          { id: 403, name: 'Veeshan, o Dragão Ancestral de Lavastorm (RAID BOSS)', gx: 15, gy: 22, hp: 950, maxHp: 950, dmg: 52, icon: '🐲', type: 'dragon_boss', isBoss: true, isDragon: true, alive: true, animTimer: 0, hasSpoken: false }
         ];
       }
     }
@@ -3112,7 +3186,8 @@
 
         const floorNames = {
           2: 'Catacumbas Esquecidas',
-          3: 'Cavernas de Lavastorm'
+          3: 'Cavernas de Lavastorm',
+          4: 'Covil de Veeshan (Lavastorm)'
         };
         const fname = floorNames[nextFloor] || `Andar ${nextFloor}`;
         showNotification(`🏰 Descendo para as ${fname}!`);
@@ -3146,6 +3221,21 @@
             finalDmg = Math.floor(finalDmg * 1.25);
             m.gx += Math.cos(player.facing) * 0.45;
             m.gy += Math.sin(player.facing) * 0.45;
+            // Especialização 1: Berserker Sanguinário (+12% dano por grau)
+            if (player.talents && player.talents.spec1) {
+              finalDmg = Math.floor(finalDmg * (1 + 0.12 * player.talents.spec1));
+            }
+            // Especialização 3: Fúria Sísmica (Choque na terra em área)
+            if (player.talents && player.talents.spec3) {
+              screenShake = 6;
+              monsters.forEach(otherM => {
+                if (otherM !== m && otherM.alive && Math.hypot(otherM.gx - player.gx, otherM.gy - player.gy) < 2.8) {
+                  const sDmg = 16 + 8 * player.talents.spec3;
+                  otherM.hp -= sDmg;
+                  spawnFloatingText(`💥 -${sDmg} SÍSMICO`, otherM.gx, otherM.gy - 0.4, '#ffd700');
+                }
+              });
+            }
           }
 
           // Clériga da Luz: Bênção curativa no acerto
@@ -3153,13 +3243,70 @@
             const heal = Math.floor(finalDmg * 0.16);
             player.hp = Math.min(player.maxHp, player.hp + heal);
             spawnFloatingText(`+${heal} LUZ`, player.gx, player.gy - 0.5, '#44ffaa');
+            // Especialização 1: Juízo Celestial (+25% dano sagrado puro)
+            if (player.talents && player.talents.spec1) {
+              finalDmg = Math.floor(finalDmg * (1 + 0.25 * player.talents.spec1));
+              if (m.type === 'demon' || m.type === 'skeleton') {
+                m.staggerTimer = 0.8;
+                spawnFloatingText(`✨ PURIFICADO!`, m.gx, m.gy - 0.7, '#ffd700');
+              }
+            }
           }
 
           // Cavaleiro das Trevas: Dreno vampírico de vida
           if (player.clsKey === 'shadowknight') {
-            const leech = Math.floor(finalDmg * 0.18);
+            let leech = Math.floor(finalDmg * 0.18);
+            // Especialização 1: Carnificina Sanguínea (+8% lifesteal extra por grau)
+            if (player.talents && player.talents.spec1) {
+              leech += Math.floor(finalDmg * (0.08 * player.talents.spec1));
+            }
             player.hp = Math.min(player.maxHp, player.hp + leech);
             spawnFloatingText(`+${leech} DRENO`, player.gx, player.gy - 0.5, '#ff2255');
+            // Especialização 3: Execução Sombria (+40% crítico em alvo < 40% HP)
+            if (player.talents && player.talents.spec3 && m.hp < m.maxHp * 0.4) {
+              finalDmg = Math.floor(finalDmg * (1 + 0.4 * player.talents.spec3));
+              spawnFloatingText(`☠️ EXECUÇÃO!`, m.gx, m.gy - 0.8, '#dc2626');
+            }
+          }
+
+          // Elfa Ranger: Especializações
+          if (player.clsKey === 'ranger') {
+            // Especialização 1: Atirador Fantasma (+15% dano perfurante)
+            if (player.talents && player.talents.spec1) {
+              finalDmg = Math.floor(finalDmg * (1 + 0.15 * player.talents.spec1));
+            }
+            // Especialização 2: Mestre de Trampas (Nuvem venenosa)
+            if (player.talents && player.talents.spec2) {
+              m.poisoned = 3.0;
+              spawnFloatingText(`☣️ NUVEM TÓXICA!`, m.gx, m.gy - 0.6, '#22c55e');
+            }
+          }
+
+          // Mago: Especializações
+          if (player.clsKey === 'wizard') {
+            // Especialização 1: Piroclasma (Queimadura)
+            if (player.talents && player.talents.spec1) {
+              m.bleedTimer = 4.0;
+              m.bleedDmg = 10 * player.talents.spec1;
+              spawnFloatingText(`🔥 INCINERAÇÃO!`, m.gx, m.gy - 0.6, '#ff4400');
+            }
+            // Especialização 2: Criomancia (Congelamento)
+            if (player.talents && player.talents.spec2) {
+              m.frozen = 1.5;
+              spawnFloatingText(`❄️ CONGELADO!`, m.gx, m.gy - 0.6, '#00ffff');
+            }
+            // Especialização 3: Tempestade Voltaica (Raio em cadeia)
+            if (player.talents && player.talents.spec3) {
+              let chains = 0;
+              monsters.forEach(otherM => {
+                if (otherM !== m && otherM.alive && chains < (player.talents.spec3 * 2) && Math.hypot(otherM.gx - m.gx, otherM.gy - m.gy) < 3.5) {
+                  chains++;
+                  const cDmg = 18 * player.talents.spec3;
+                  otherM.hp -= cDmg;
+                  spawnFloatingText(`⚡ -${cDmg} RAIO`, otherM.gx, otherM.gy - 0.4, '#38bdf8');
+                }
+              });
+            }
           }
 
           // ELIXIR DE FÚRIA BERSERKER (+40% DANO)
@@ -3294,34 +3441,95 @@
               QUESTS[2].current = 1;
               QUESTS[2].completed = true;
               document.getElementById('bossBarContainer').style.display = 'none';
-              showNotification('🏆 CHEFE DERROTADO! Você conquistou Norrath!');
-              voices.speak('O mal foi derrotado! Você é a verdadeira lenda de Norrath!', 'elder');
-              saveGame(false);
+              if (m.type === 'dragon_boss') {
+                screenShake = 22;
+                audio.playLevelUp();
+                audio.playThunder();
+                showNotification('🏆 VEESHAN DERROTADO! VOCÊ CONQUISTOU NORRATH!');
+                voices.speak('A Chama Ancestral foi extinta! Você é a lenda suprema absoluta de Norrath!', 'elder');
+                saveGame(false);
+
+                // DROPS LENDÁRIOS DE VEESHAN (ETAPA 15)
+                spawnGroundLoot(m.gx, m.gy, {
+                  name: 'Armadura de Escamas de Dragão',
+                  rarity: 'legendary',
+                  type: 'chest',
+                  def: 24,
+                  bonusHp: 70,
+                  fireImmune: true,
+                  color: '#ff4400',
+                  icon: '🥋'
+                });
+                spawnGroundLoot(m.gx + 0.8, m.gy, {
+                  name: 'Montante da Chama Dracônica',
+                  rarity: 'legendary',
+                  type: 'mainhand',
+                  dmg: 45,
+                  bonusDmg: 35,
+                  element: 'fire',
+                  color: '#ff2200',
+                  icon: '🗡️',
+                  sockets: [null, null, null]
+                });
+                spawnGroundLoot(m.gx - 0.8, m.gy, {
+                  name: 'Coração de Veeshan',
+                  rarity: 'legendary',
+                  type: 'amulet',
+                  hp: 120,
+                  mana: 90,
+                  color: '#ffd700',
+                  icon: '💖'
+                });
+                // Três Runas Ancestrais Lendárias Garantidas
+                spawnGroundLoot(m.gx + 0.5, m.gy + 0.5, { name: 'Runa Amn 📜', type: 'rune', runeKey: 'amn', statDesc: '15% Roubo de Vida', color: '#ef4444', rarity: 'epic' });
+                spawnGroundLoot(m.gx - 0.5, m.gy + 0.5, { name: 'Runa Shael 📜', type: 'rune', runeKey: 'shael', statDesc: '+30% Vel. Ataque', color: '#a855f7', rarity: 'epic' });
+                spawnGroundLoot(m.gx, m.gy - 0.6, { name: 'Runa Sol 📜', type: 'rune', runeKey: 'sol', statDesc: '+32 Dano Sagrado', color: '#fbbf24', rarity: 'legendary' });
+
+                spawnFlyingLoot(m.gx, m.gy, 'gold', 450);
+                giveXp(850);
+              } else {
+                showNotification('🏆 CHEFE DERROTADO! Fenda Dracônica aberta!');
+                voices.speak('O Warlord caiu! O portal para o Covil do Dragão de Lavastorm foi aberto!', 'elder');
+                // Spawna Portal Dracônico para o Covil do Dragão (Andar 4)
+                props.push({
+                  type: 'dragon_portal',
+                  gx: 5,
+                  gy: 26,
+                  name: 'Portal Dracônico para o Covil de Veeshan',
+                  icon: '🌋',
+                  alive: true
+                });
+                saveGame(false);
+
+                const xpGained = 320;
+                const goldGained = 180 + Math.floor(Math.random() * 20);
+                giveXp(xpGained);
+                spawnFlyingLoot(m.gx, m.gy, 'gold', goldGained);
+
+                spawnGroundLoot(m.gx, m.gy, {
+                  name: 'Lâmina do Sol de Norrath',
+                  rarity: 'legendary',
+                  type: 'gem',
+                  gemType: 'fire',
+                  bonusDmg: 25,
+                  color: '#ffd700'
+                });
+                spawnGroundLoot(m.gx + 0.6, m.gy, {
+                  name: 'Safira Congelante de Veeshan',
+                  rarity: 'epic',
+                  type: 'gem',
+                  gemType: 'ice',
+                  bonusDmg: 18,
+                  color: '#00ddff'
+                });
+              }
+            } else {
+              const xpGained = 45;
+              const goldGained = 18 + Math.floor(Math.random() * 14);
+              giveXp(xpGained);
+              spawnFlyingLoot(m.gx, m.gy, 'gold', goldGained);
             }
-
-            const xpGained = m.isBoss ? 320 : 45;
-            const goldGained = m.isBoss ? 180 : 18 + Math.floor(Math.random() * 14);
-            giveXp(xpGained);
-            spawnFlyingLoot(m.gx, m.gy, 'gold', goldGained);
-
-            if (m.isBoss) {
-              spawnGroundLoot(m.gx, m.gy, {
-                name: 'Lâmina do Sol de Norrath',
-                rarity: 'legendary',
-                type: 'gem',
-                gemType: 'fire',
-                bonusDmg: 25,
-                color: '#ffd700'
-              });
-              spawnGroundLoot(m.gx + 0.6, m.gy, {
-                name: 'Safira Congelante de Veeshan',
-                rarity: 'epic',
-                type: 'gem',
-                gemType: 'ice',
-                bonusDmg: 18,
-                color: '#00ddff'
-              });
-            } else if (Math.random() < 0.28) {
+            if (!m.isBoss && Math.random() < 0.28) {
               spawnGroundLoot(m.gx, m.gy, {
                 name: 'Gema Esmeralda de Veneno',
                 rarity: 'rare',
@@ -4222,7 +4430,14 @@
         }
 
         // FASE 2 DO CHEFE: ENRAGE (FÚRIA) COM VIDA BAIXA
-        if (m.isBoss && m.hp <= m.maxHp * 0.5 && !m.enraged) {
+        if (m.type === 'dragon_boss' && m.hp <= m.maxHp * 0.5 && !m.enraged) {
+          m.enraged = true;
+          m.dmg = Math.floor(m.dmg * 1.4);
+          screenShake = 18;
+          audio.playThunder();
+          spawnFloatingText("FÚRIA DRACÔNICA DE VEESHAN!", m.gx, m.gy, "#ff2200");
+          voices.speak("SEU DESTINO É TORNAR-SE CINZAS SOB AS MINHAS ASAS!", 'boss', { gx: m.gx, gy: m.gy });
+        } else if (m.isBoss && m.type !== 'dragon_boss' && m.hp <= m.maxHp * 0.5 && !m.enraged) {
           m.enraged = true;
           m.dmg = Math.floor(m.dmg * 1.35);
           screenShake = 12;
@@ -4231,12 +4446,78 @@
           voices.speak("MALDITO! TESTEMUNHE O PODER DO LORD WARLORD!", 'boss', { gx: m.gx, gy: m.gy });
         }
 
-        // ATAQUE ESPECIAL TELEGRAFADO DO CHEFE (ONDA DE CHOQUE COM CÍRCULO VERMELHO)
-        if (m.isBoss) {
+        // ATAQUE ESPECIAL TELEGRAFADO DO CHEFE E IA DE VEESHAN (ETAPA 15)
+        if (m.type === 'dragon_boss') {
+          // IA EXCLUSIVA DO RAID BOSS VEESHAN
+          m.breathCooldown = (m.breathCooldown || 4.5) - dt;
+          m.wingCooldown = (m.wingCooldown || 7.0) - dt;
+
+          // 1. Sopro de Magma Contínuo
+          if (m.breathCooldown <= 0) {
+            m.breathCooldown = 5.5;
+            m.breathTimer = 2.0;
+            audio.playMagicSpell();
+            screenShake = 8;
+            spawnFloatingText("🔥 SOPRO DE MAGMA!", m.gx, m.gy - 1.2, "#ff4400");
+            voices.speak("QUEIME NO MAGMA DE VEESHAN!", 'boss', { gx: m.gx, gy: m.gy });
+          }
+
+          if (m.breathTimer && m.breathTimer > 0) {
+            m.breathTimer -= dt;
+            if (dist < 6.0) {
+              let bDmg = Math.floor(18 * dt * 8);
+              if (player.hasDragonscale) bDmg = Math.floor(bDmg * 0.2);
+              if (bDmg > 0) {
+                player.hp = Math.max(0, player.hp - bDmg);
+                spawnFloatingText(`-${bDmg} 🔥`, player.gx, player.gy - 0.5, "#ff3300");
+                updateHud();
+              }
+            }
+          }
+
+          // 2. Batida de Asas (Wing Buffet)
+          if (m.wingCooldown <= 0 && dist < 4.2) {
+            m.wingCooldown = 8.0;
+            screenShake = 14;
+            audio.playThunder();
+            const pushAng = Math.atan2(player.gy - m.gy, player.gx - m.gx);
+            player.gx += Math.cos(pushAng) * 2.2;
+            player.gy += Math.sin(pushAng) * 2.2;
+            let buffetDmg = 26;
+            if (player.blocking) {
+              buffetDmg = Math.floor(buffetDmg * 0.25);
+              audio.playShieldBlock();
+              spawnFloatingText("IMPACTO BLOQUEADO!", player.gx, player.gy - 0.6, "#55aaff");
+            } else {
+              spawnFloatingText(`-${buffetDmg} 💨 BATIDA DE ASAS!`, player.gx, player.gy - 0.6, "#facc15");
+            }
+            player.hp = Math.max(0, player.hp - buffetDmg);
+            updateHud();
+          }
+
+          // 3. Chuva de Meteoros (Fase Enrage)
+          if (m.enraged) {
+            m.meteorTimer = (m.meteorTimer || 0) + dt;
+            if (m.meteorTimer >= 3.8) {
+              m.meteorTimer = 0;
+              for (let k = 0; k < 3; k++) {
+                telegraphedAttacks.push({
+                  gx: player.gx + (Math.random() - 0.5) * 4.2,
+                  gy: player.gy + (Math.random() - 0.5) * 4.2,
+                  radius: 2.0,
+                  timer: 1.3,
+                  maxTimer: 1.3,
+                  dmg: 36
+                });
+              }
+              audio.playMagicSpell();
+              spawnFloatingText("☄️ CHUVA DE METEOROS!", m.gx, m.gy - 1.0, "#ff2200");
+            }
+          }
+        } else if (m.isBoss) {
           m.specialAttackTimer = (m.specialAttackTimer || 0) + dt;
           if (m.specialAttackTimer >= 4.2) {
             m.specialAttackTimer = 0;
-            // Gera círculo de perigo no piso
             telegraphedAttacks.push({
               gx: player.gx,
               gy: player.gy,
@@ -4400,9 +4681,9 @@
             pet.gy += Math.sin(hang) * 3.4 * dt;
           }
 
-          // 3. COMBATE ASSISTIDO: Ataca monstros em combate próximo
+          // 3. COMBATE ASSISTIDO & EVOLUÇÃO DO MASCOTE (ETAPA 15)
           let targetM = null;
-          let minMDist = 2.4;
+          let minMDist = 4.8;
           monsters.forEach(m => {
             if (!m.alive) return;
             const dm = Math.hypot(m.gx - pet.gx, m.gy - pet.gy);
@@ -4413,18 +4694,65 @@
           });
 
           if (targetM) {
+            // Se aproxima ativamente para atacar
+            if (minMDist > 1.2 && pet.type !== 'fairy') {
+              const petAng = Math.atan2(targetM.gy - pet.gy, targetM.gx - pet.gx);
+              pet.gx += Math.cos(petAng) * 3.6 * dt;
+              pet.gy += Math.sin(petAng) * 3.6 * dt;
+            }
+
             pet.attackCooldown = (pet.attackCooldown || 0) - dt;
             if (pet.attackCooldown <= 0) {
-              pet.attackCooldown = 1.0;
-              const petDmg = 18;
-              targetM.hp -= petDmg;
-              audio.playHitMonster();
-              spawnBlood(targetM.gx, targetM.gy, 5);
-              spawnFloatingText(`-${petDmg} (${pet.name})`, targetM.gx, targetM.gy - 0.4, pet.color);
+              // Bônus da Especialização da Ranger: Companheiro Feroz
+              const beastmasterBonus = (player.clsKey === 'ranger' && player.talents && player.talents.spec3) ? (1 + 0.4 * player.talents.spec3) : 1.0;
+              pet.attackCooldown = Math.max(0.6, 1.1 / beastmasterBonus);
+
+              let petDmg = Math.floor((pet.atk || 22) * beastmasterBonus);
+
+              if (pet.type === 'fairy') {
+                targetM.hp -= petDmg;
+                audio.playMagicSpell();
+                spawnFloatingText(`✨ -${petDmg} (${pet.name})`, targetM.gx, targetM.gy - 0.5, pet.color);
+                if (player.hp < player.maxHp * 0.5) {
+                  const fHeal = 22 + (pet.level || 1) * 4;
+                  player.hp = Math.min(player.maxHp, player.hp + fHeal);
+                  spawnFloatingText(`+${fHeal} 💚 BÊNÇÃO DA FADA`, player.gx, player.gy - 0.8, '#44ff88');
+                }
+              } else if (pet.type === 'cherub') {
+                targetM.hp -= petDmg;
+                audio.playMagicSpell();
+                spawnFloatingText(`⚡ -${petDmg} (${pet.name})`, targetM.gx, targetM.gy - 0.5, pet.color);
+                player.mana = Math.min(player.maxMana, player.mana + 12);
+              } else if (pet.type === 'raven') {
+                targetM.hp -= petDmg;
+                targetM.staggerTimer = 0.8;
+                audio.playHitMonster();
+                spawnFloatingText(`🦅 -${petDmg} (BICADA!)`, targetM.gx, targetM.gy - 0.5, pet.color);
+              } else {
+                targetM.hp -= petDmg;
+                audio.playHitMonster();
+                spawnBlood(targetM.gx, targetM.gy, 6);
+                spawnFloatingText(`🐺 -${petDmg} (MORDIDA!)`, targetM.gx, targetM.gy - 0.5, pet.color);
+              }
+
+              // Mascote ganha XP em combate e sobe de nível
+              pet.xp = (pet.xp || 0) + 15;
+              if (pet.xp >= (pet.maxXp || 100)) {
+                pet.level = (pet.level || 1) + 1;
+                pet.xp -= pet.maxXp;
+                pet.maxXp = Math.floor(pet.maxXp * 1.5);
+                pet.atk = (pet.atk || 22) + 6;
+                pet.maxHp = (pet.maxHp || 100) + 25;
+                pet.hp = pet.maxHp;
+                audio.playLevelUp();
+                spawnFloatingText(`★ LEVEL UP! ${pet.name} Nv.${pet.level} ★`, pet.gx, pet.gy - 0.9, '#ffd700');
+                showNotification(`🌟 Seu Mascote ${pet.name} subiu para o Nível ${pet.level}!`);
+              }
+
               if (targetM.hp <= 0) {
                 targetM.alive = false;
-                giveXp(35);
-                spawnFlyingLoot(targetM.gx, targetM.gy, 'gold', 20);
+                giveXp(40);
+                spawnFlyingLoot(targetM.gx, targetM.gy, 'gold', 25);
               }
             }
           }
@@ -5389,7 +5717,7 @@
       ctx.restore();
     }
 
-    // EMBASS ENGINE ETAPA 11: RENDERIZAÇÃO DO MASCOTE COMPANHEIRO
+    // EMBASS ENGINE ETAPA 11 & 15: RENDERIZAÇÃO DO MASCOTE COMPANHEIRO COM NÍVEL E VIDA
     function drawPet(pet) {
       const iso = worldToIso(pet.gx, pet.gy);
       const footX = iso.x;
@@ -5400,6 +5728,15 @@
 
       // Sombra Dinâmica do Mascote
       drawDynamicProjectedShadow(footX, footY, 11);
+
+      // Nome e Nível do Mascote Flutuante (Etapa 15)
+      ctx.font = 'bold 9px "Cinzel", Georgia, serif';
+      ctx.fillStyle = '#fde047';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 4;
+      ctx.fillText(`${pet.name} [Nv.${pet.level || 1}]`, footX, footY - 26);
+      ctx.shadowBlur = 0;
 
       if (pet.type === 'fairy') {
         // FADA ARCANA DE LUZ (Orbe flutuante com asas translúcidas)
@@ -6308,6 +6645,178 @@
         ctx.beginPath(); ctx.moveTo(17, -54 - bob); ctx.lineTo(17, -14 - bob); ctx.stroke();
 
         ctx.restore();
+
+      } else if (type === 'dragon_boss') {
+        // VEESHAN - O DRAGÃO ANCESTRAL DE LAVASTORM (RAID BOSS TITÂNICO - ESCALA 2.8x)
+        const bob = Math.sin(t * 2.2) * 3;
+        const wingFlap = Math.sin(t * 3.2);
+        ctx.save();
+        ctx.translate(mFootX, mFootY);
+        ctx.scale(2.8, 2.8);
+
+        // 1. Sombra Dracônica
+        ctx.beginPath();
+        ctx.ellipse(0, 4, 32, 14, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+        ctx.fill();
+
+        // 2. Cauda Longa Segmentada com Espinhos e Chama de Magma
+        ctx.save();
+        let tailX = -6;
+        let tailY = -12 - bob * 0.4;
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = '#2b0c04';
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        for (let i = 1; i <= 4; i++) {
+          const sway = Math.sin(t * 2.5 + i * 0.8) * (4 + i * 2.5);
+          tailX -= 7;
+          tailY = -10 - bob * 0.3 + sway;
+          ctx.lineTo(tailX, tailY);
+        }
+        ctx.stroke();
+
+        // Chama na ponta da cauda
+        ctx.fillStyle = '#ff4400';
+        ctx.beginPath();
+        ctx.arc(tailX - 2, tailY, 4 + Math.sin(t * 6) * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffcc00';
+        ctx.beginPath();
+        ctx.arc(tailX - 2, tailY, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // 3. Patas Traseiras e Garras de Obsidiana
+        ctx.fillStyle = '#1c0a06';
+        ctx.fillRect(-14, -14, 8, 14);
+        ctx.fillRect(6, -14, 8, 14);
+        // Garras douradas afiadas
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(-15, -2, 3, 3); ctx.fillRect(-12, -1, 3, 3);
+        ctx.fillRect(5, -2, 3, 3); ctx.fillRect(8, -1, 3, 3);
+
+        // 4. Asas Colossais de Couro Dracônico e Ossatura
+        ctx.save();
+        const wingSpread = 34 + wingFlap * 12;
+        // Asa Esquerda
+        ctx.fillStyle = '#7f1d1d';
+        ctx.beginPath();
+        ctx.moveTo(-10, -28 - bob);
+        ctx.quadraticCurveTo(-26, -52 - wingFlap * 8, -wingSpread, -24 + wingFlap * 10);
+        ctx.quadraticCurveTo(-22, -18, -10, -22 - bob);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 1.8;
+        ctx.stroke();
+        // Nervuras da asa esquerda
+        ctx.strokeStyle = '#220804'; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(-10, -28 - bob); ctx.lineTo(-wingSpread * 0.7, -26);
+        ctx.moveTo(-10, -28 - bob); ctx.lineTo(-wingSpread * 0.9, -18);
+        ctx.stroke();
+
+        // Asa Direita
+        ctx.fillStyle = '#7f1d1d';
+        ctx.beginPath();
+        ctx.moveTo(10, -28 - bob);
+        ctx.quadraticCurveTo(26, -52 - wingFlap * 8, wingSpread, -24 + wingFlap * 10);
+        ctx.quadraticCurveTo(22, -18, 10, -22 - bob);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 1.8;
+        ctx.stroke();
+        // Nervuras da asa direita
+        ctx.strokeStyle = '#220804'; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(10, -28 - bob); ctx.lineTo(wingSpread * 0.7, -26);
+        ctx.moveTo(10, -28 - bob); ctx.lineTo(wingSpread * 0.9, -18);
+        ctx.stroke();
+        ctx.restore();
+
+        // 5. Corpo Colossal e Placas de Magma Incandescente
+        const bodyGrad = ctx.createLinearGradient(-16, -34, 16, -6);
+        bodyGrad.addColorStop(0, '#3f0c08');
+        bodyGrad.addColorStop(0.5, '#7f1d1d');
+        bodyGrad.addColorStop(1, '#1c0a06');
+        ctx.fillStyle = bodyGrad;
+        ctx.beginPath();
+        ctx.ellipse(0, -20 - bob, 15, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Placas de magma pulsantes no peito (coração vulcânico)
+        const pulse = Math.sin(t * 4) * 0.3 + 0.7;
+        ctx.fillStyle = `rgba(249, 115, 22, ${pulse})`;
+        ctx.beginPath();
+        ctx.moveTo(-6, -24 - bob); ctx.lineTo(0, -17 - bob); ctx.lineTo(6, -24 - bob); ctx.lineTo(0, -29 - bob);
+        ctx.closePath();
+        ctx.fill();
+
+        // 6. Pescoço Serpentino e Cabeça Dracônica
+        ctx.fillStyle = '#4a0e08';
+        ctx.beginPath();
+        ctx.moveTo(-5, -28 - bob);
+        ctx.quadraticCurveTo(0, -38 - bob, 4, -36 - bob);
+        ctx.lineTo(8, -44 - bob);
+        ctx.lineTo(-6, -44 - bob);
+        ctx.closePath();
+        ctx.fill();
+
+        // Cabeça
+        ctx.fillStyle = '#2b0804';
+        ctx.beginPath();
+        ctx.ellipse(0, -44 - bob, 9, 6.5, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Focinho e Mandíbula
+        ctx.fillStyle = '#1c0703';
+        ctx.beginPath();
+        ctx.moveTo(-3, -42 - bob);
+        ctx.lineTo(9, -41 - bob);
+        ctx.lineTo(3, -46 - bob);
+        ctx.closePath();
+        ctx.fill();
+
+        // Chifres Ancestrais Dourados Curvados
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-4, -48 - bob); ctx.quadraticCurveTo(-14, -58 - bob, -11, -63 - bob);
+        ctx.moveTo(3, -48 - bob); ctx.quadraticCurveTo(12, -58 - bob, 9, -63 - bob);
+        ctx.stroke();
+
+        // Olhos de Fogo Ancestral
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath(); ctx.arc(2, -45 - bob, 2.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff2200';
+        ctx.fillRect(2.8, -46 - bob, 1.2, 2.2);
+
+        // Brasas e Fumaça pelas ventas
+        if (Math.random() < 0.4) {
+          ctx.fillStyle = 'rgba(255, 68, 0, 0.7)';
+          ctx.fillRect(8 + Math.random() * 4, -43 - bob, 2, 2);
+        }
+
+        ctx.restore();
+
+        // SOPRO DRACÔNICO VISUAL (se ativo)
+        if (m.breathTimer && m.breathTimer > 0) {
+          ctx.save();
+          const headIso = worldToIso(m.gx, m.gy);
+          const pIso = worldToIso(player.gx, player.gy);
+          const bGrad = ctx.createLinearGradient(headIso.x, headIso.y - 75, pIso.x, pIso.y);
+          bGrad.addColorStop(0, '#ffff55');
+          bGrad.addColorStop(0.3, '#ff6600');
+          bGrad.addColorStop(0.8, '#ff1100');
+          bGrad.addColorStop(1, 'rgba(150, 0, 0, 0)');
+          ctx.strokeStyle = bGrad;
+          ctx.lineWidth = 18 + Math.sin(t * 12) * 6;
+          ctx.beginPath();
+          ctx.moveTo(headIso.x, headIso.y - 75);
+          ctx.lineTo(pIso.x + (Math.random() - 0.5) * 16, pIso.y + (Math.random() - 0.5) * 16);
+          ctx.stroke();
+          ctx.restore();
+        }
       }
 
       // Barra de Vida Gótica Estilizada
@@ -7107,10 +7616,47 @@
       if (!isVisible) renderSkillsTree();
     }
 
+    // EMBASS ENGINE ETAPA 15: 3 ESPECIALIZAÇÕES POR CLASSE (ÁRVORE DE TALENTOS AVANÇADA)
+    const CLASS_SPECS = {
+      barbarian: [
+        { id: 'spec1', name: 'Berserker Sanguinário', icon: '🪓', desc: '+12% Dano Físico e +6% de Chance de Acerto Crítico por grau.' },
+        { id: 'spec2', name: 'Colosso Inquebrável', icon: '🛡️', desc: '+30 HP Máximo permanente e reduz todo dano sofrido em 4 por grau.' },
+        { id: 'spec3', name: 'Fúria Sísmica', icon: '🌋', desc: 'Golpes criam ondas de choque na terra atingindo todos os inimigos ao redor (+20 Dano).' }
+      ],
+      ranger: [
+        { id: 'spec1', name: 'Atirador Fantasma', icon: '🎯', desc: '+35% Alcance e flechas perfuram alvos adicionais com +15% de Dano.' },
+        { id: 'spec2', name: 'Mestre de Trampas', icon: '☣️', desc: 'Disparos criam nuvem de veneno mortal no impacto por 3s (14 dano/s).' },
+        { id: 'spec3', name: 'Companheiro Feroz', icon: '🐺', desc: 'Mascote ganha +40% Dano, ataca 30% mais rápido e ganha +40 de Vida.' }
+      ],
+      cleric: [
+        { id: 'spec1', name: 'Juízo Celestial', icon: '✨', desc: '+25% Dano Sagrado puro e purifica demônios e mortos-vivos com atordoamento.' },
+        { id: 'spec2', name: 'Bênção Divina', icon: '💚', desc: 'Prece contínua: regenera 4 HP e 3 Mana por segundo automaticamente.' },
+        { id: 'spec3', name: 'Aegis Sagrado', icon: '🛡️', desc: 'O escudo reflete 30% do dano de volta aos atacantes ao bloquear.' }
+      ],
+      wizard: [
+        { id: 'spec1', name: 'Piroclasma', icon: '🔥', desc: '+20% Dano de Fogo e queima alvos continuamente por 4s.' },
+        { id: 'spec2', name: 'Criomancia', icon: '❄️', desc: 'Magias desaceleram alvos em 50% e congelam completamente por 1.5s.' },
+        { id: 'spec3', name: 'Tempestade Voltaica', icon: '⚡', desc: 'Relâmpagos saltam para até 2 alvos adicionais com dano em cadeia.' }
+      ],
+      shadowknight: [
+        { id: 'spec1', name: 'Carnificina Sanguínea', icon: '🩸', desc: '+8% de Roubo de Vida (Lifesteal) em todos os ataques.' },
+        { id: 'spec2', name: 'Manto da Morte', icon: '💀', desc: 'Aura escura contínua drena 12 de vida por segundo de inimigos a 3 metros.' },
+        { id: 'spec3', name: 'Execução Sombria', icon: '☠️', desc: '+40% Dano Crítico extra contra monstros com menos de 40% de vida.' }
+      ]
+    };
+
     function renderSkillsTree() {
       const container = document.getElementById('skillsList');
       container.innerHTML = '';
       document.getElementById('skillPtsCount').textContent = player.skillPts;
+
+      if (!player.talents) player.talents = { spec1: 0, spec2: 0, spec3: 0 };
+
+      // 1. TÍTULO: HABILIDADES ATIVAS DA CLASSE
+      const actTitle = document.createElement('h3');
+      actTitle.style.cssText = 'color: var(--gold); font-size: 13px; margin: 4px 0; letter-spacing: 1px; border-bottom: 1px solid #4d3a27; padding-bottom: 4px;';
+      actTitle.textContent = '⚡ HABILIDADES ATIVAS DA CLASSE';
+      container.appendChild(actTitle);
 
       const cls = CLASSES[player.clsKey];
       cls.skills.forEach((sk, idx) => {
@@ -7143,6 +7689,85 @@
         }
         container.appendChild(card);
       });
+
+      // 2. TÍTULO: 3 ESPECIALIZAÇÕES EXCLUSIVAS (ÁRVORE DE TALENTOS AVANÇADA)
+      const specTitle = document.createElement('h3');
+      specTitle.style.cssText = 'color: var(--gold); font-size: 13px; margin: 12px 0 4px 0; letter-spacing: 1px; border-bottom: 1px solid #4d3a27; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center;';
+      specTitle.innerHTML = '<span>🔱 3 ESPECIALIZAÇÕES DA CLASSE</span> <span style="font-size:10px; color:#ad9e8e;">(Passivas & Bônus de Combate)</span>';
+      container.appendChild(specTitle);
+
+      const specs = CLASS_SPECS[player.clsKey] || [];
+      specs.forEach(sp => {
+        const curPts = player.talents[sp.id] || 0;
+        const maxPts = 5;
+        const pct = (curPts / maxPts) * 100;
+
+        const specCard = document.createElement('div');
+        specCard.className = 'skill-card';
+        specCard.style.borderColor = curPts > 0 ? 'var(--gold)' : '#4d3a27';
+        specCard.style.background = curPts > 0 ? '#261b14' : '#1e1713';
+        specCard.innerHTML = `
+          <div class="skill-info" style="flex:1;">
+            <div class="skill-icon" style="border-color:${curPts > 0 ? 'var(--gold)' : 'var(--gold-dark)'};">${sp.icon}</div>
+            <div class="skill-desc" style="flex:1; margin-right: 10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="color:${curPts > 0 ? 'var(--gold)' : '#e2d4c0'};">${sp.name} [Nv. ${curPts}/${maxPts}]</h4>
+                <div style="width: 70px; height: 6px; background:#111; border-radius:3px; overflow:hidden; border:1px solid #444;">
+                  <div style="width:${pct}%; height:100%; background:linear-gradient(90deg, #d4a017, #fde047);"></div>
+                </div>
+              </div>
+              <p>${sp.desc}</p>
+            </div>
+          </div>
+          <button class="skill-upgrade-btn" ${player.skillPts <= 0 || curPts >= maxPts ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+            ${curPts >= maxPts ? 'MESTRE' : '+ INVESTIR'}
+          </button>
+        `;
+        const btn = specCard.querySelector('.skill-upgrade-btn');
+        if (player.skillPts > 0 && curPts < maxPts) {
+          btn.onclick = () => {
+            player.skillPts--;
+            player.talents[sp.id] = curPts + 1;
+            if (sp.id === 'spec2' && player.clsKey === 'barbarian') {
+              player.maxHp += 30;
+              player.hp += 30;
+            }
+            audio.playCoin();
+            renderSkillsTree();
+            updateHud();
+            showNotification(`🔱 Especialização ${sp.name} aprimorada para Nv. ${curPts + 1}!`);
+          };
+        }
+        container.appendChild(specCard);
+      });
+
+      // 3. BOTÃO DE RESETAR / REDISTRIBUIR TALENTOS
+      const resetBar = document.createElement('div');
+      resetBar.style.cssText = 'margin-top: 10px; display: flex; justify-content: flex-end;';
+      const resetBtn = document.createElement('button');
+      resetBtn.className = 'dialog-btn';
+      resetBtn.style.cssText = 'padding: 6px 14px; font-size: 11px; background: #3b1111; border-color: #ef4444; color: #ffcccc; cursor: pointer;';
+      resetBtn.textContent = '🔄 Redistribuir Talentos (Resetar Pontos)';
+      resetBtn.onclick = () => {
+        let refunded = 0;
+        if (player.talents) {
+          refunded += (player.talents.spec1 || 0) + (player.talents.spec2 || 0) + (player.talents.spec3 || 0);
+          if (player.clsKey === 'barbarian' && player.talents.spec2) {
+            player.maxHp = Math.max(170, player.maxHp - (30 * player.talents.spec2));
+            player.hp = Math.min(player.hp, player.maxHp);
+          }
+          player.talents.spec1 = 0;
+          player.talents.spec2 = 0;
+          player.talents.spec3 = 0;
+        }
+        player.skillPts += refunded;
+        audio.playCoin();
+        renderSkillsTree();
+        updateHud();
+        showNotification(`🔄 Talentos resetados! +${refunded} pontos recuperados.`);
+      };
+      resetBar.appendChild(resetBtn);
+      container.appendChild(resetBar);
     }
 
     // -------------------------------------------------------------
@@ -7285,6 +7910,14 @@
         weakness: '✨ Sagrado (+40% Dano) & Golpes nas Costas',
         resistance: '🔥 Fúria Ardente < 50% HP',
         lore: 'O terrível campeão orc em armadura titânica de magma que guarda o portal final.'
+      },
+      {
+        id: 'dragon_boss',
+        name: 'Veeshan, o Dragão Ancestral (Raid Boss)',
+        icon: '🐲',
+        weakness: '❄️ Gelo Congelante (+75% Dano) & Eletricidade',
+        resistance: '🔥 Imune a Fogo / Couraça de Escamas',
+        lore: 'A lendária matriarca dracônica que forjou Lavastorm com seu sopro milenar de magma ardente. O maior e mais colossal desafio de Norrath.'
       }
     ];
 
@@ -7305,7 +7938,7 @@
       list.innerHTML = '';
 
       if (!player.bestiaryKills) {
-        player.bestiaryKills = { orc: 0, skeleton: 0, wolf: 0, spider: 0, goblin: 0, demon: 0, warlord_boss: 0 };
+        player.bestiaryKills = { orc: 0, skeleton: 0, wolf: 0, spider: 0, goblin: 0, demon: 0, warlord_boss: 0, dragon_boss: 0 };
       }
 
       BESTIARY_DATA.forEach(b => {
@@ -8251,7 +8884,14 @@
         gy: player.gy - 0.7,
         animTimer: 0,
         attackCooldown: 0,
-        targetLoot: null
+        targetLoot: null,
+        level: 1,
+        xp: 0,
+        maxXp: 100,
+        hp: 100,
+        maxHp: 100,
+        atk: 22,
+        mode: 'aggressive'
       };
     }
 
