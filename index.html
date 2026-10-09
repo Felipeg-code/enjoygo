@@ -481,17 +481,27 @@
     }
 
     .close-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 4px;
-      background: #2a1515;
-      border: 2px solid #802020;
-      color: #ff8888;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: radial-gradient(circle, #3d1414, #1a0808);
+      border: 2px solid #b91c1c;
+      color: #fca5a5;
+      font-size: 20px;
       font-weight: bold;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+    }
+.close-btn:active {
+      transform: scale(0.92);
+      border-color: #ef4444;
     }
 
     /* PAPERDOLL LAYOUT */
@@ -1114,20 +1124,20 @@
         <div style="font-size: 13px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 4px;">
           <span>💰</span> <span id="goldVal">150</span>
         </div>
-        <button id="btnOpenQuests" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
-          📜 MISSÕES [J]
+        <button id="btnOpenQuests" class="touch-nav-btn interactive" title="Missões">
+          📜 <span class="nav-text">MISSÕES</span>
         </button>
-        <button id="btnOpenSkills" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
-          ⚡ TALENTOS [K] <span id="skillPtsBadge" style="display:none; color:#ff4444;">(1)</span>
+        <button id="btnOpenSkills" class="touch-nav-btn interactive" title="Árvore de Talentos">
+          ⚡ <span class="nav-text">TALENTOS</span> <span id="skillPtsBadge" style="display:none; color:#ff4444; font-weight:bold;">(1)</span>
         </button>
-        <button id="btnOpenBestiary" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
-          📖 BESTIÁRIO [B]
+        <button id="btnOpenBestiary" class="touch-nav-btn interactive" title="Bestiário">
+          📖 <span class="nav-text">BESTIÁRIO</span>
         </button>
-        <button id="btnOpenInventory" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);">
-          🎒 ITENS [I]
+        <button id="btnOpenInventory" class="touch-nav-btn interactive" title="Inventário">
+          🎒 <span class="nav-text">ITENS</span>
         </button>
-        <button id="btnToggleMusic" class="interactive close-btn" style="width: auto; padding: 4px 8px; font-size: 11px; background: #261e16; border-color: var(--gold); color: var(--gold);" title="Música Ambiente BGM">
-          🎵 BGM: ON
+        <button id="btnToggleMusic" class="touch-nav-btn interactive" title="Música BGM">
+          🎵
         </button>
       </div>
     </div>
@@ -1218,19 +1228,55 @@
       </div>
     </div>
 
-    <!-- CONTROLES MOBILE TOUCH -->
+    <!-- CONTROLES MOBILE TOUCH ARPG COMPLETO (CHAMPIONS OF NORRATH MOBILE) -->
     <div id="mobileControls">
       <div id="virtualJoystick">
         <div id="joystickStick"></div>
       </div>
-      <div id="mobileActionButtons">
-        <div class="m-btn btn-shield" id="btnShield">
-          🛡️
-          <span class="label">BLOQUEAR</span>
-        </div>
-        <div class="m-btn btn-attack" id="btnAttack">
-          ⚔️
-          <span class="label">ATACAR</span>
+      <div id="mobileActionCluster">
+        <!-- Botão Dinâmico de Interação Contextual (Falar, Loja, Forja, Baú, Alavanca, Portal) -->
+        <button id="btnContextInteract" class="mobile-touch-btn btn-interact-touch" title="Interagir">
+          <span class="btn-icon" id="interactIcon">✋</span>
+          <span class="btn-label" id="interactLabel">INTERAGIR</span>
+        </button>
+
+        <!-- Habilidade Primária (1) -->
+        <button id="btnTouchSkill1" class="mobile-touch-btn btn-skill btn-skill-1" title="Habilidade 1">
+          <span class="btn-icon" id="touchSkill1Icon">⚡</span>
+          <span class="btn-sub">SKILL 1</span>
+        </button>
+
+        <!-- Habilidade Secundária (2) -->
+        <button id="btnTouchSkill2" class="mobile-touch-btn btn-skill btn-skill-2" title="Habilidade 2">
+          <span class="btn-icon" id="touchSkill2Icon">💥</span>
+          <span class="btn-sub">SKILL 2</span>
+        </button>
+
+        <!-- Bloqueio com Escudo -->
+        <button id="btnShield" class="mobile-touch-btn btn-shield-touch" title="Bloquear com Escudo">
+          <span class="btn-icon">🛡️</span>
+          <span class="btn-sub">ESCUDO</span>
+        </button>
+
+        <!-- Golpe Principal de Ataque -->
+        <button id="btnAttack" class="mobile-touch-btn btn-attack-main" title="Atacar">
+          <span class="btn-icon">⚔️</span>
+          <span class="btn-label">ATACAR</span>
+        </button>
+
+        <!-- Acesso Rápido a Poções e Retorno para o Polegar -->
+        <div id="mobileQuickBelt">
+          <button id="btnTouchHp" class="mobile-touch-btn btn-quick-pot hp" title="Poção de Vida">
+            <span class="btn-icon">❤️</span>
+            <span class="pot-badge" id="touchHpCount">3</span>
+          </button>
+          <button id="btnTouchMana" class="mobile-touch-btn btn-quick-pot mana" title="Poção de Mana">
+            <span class="btn-icon">🧪</span>
+            <span class="pot-badge" id="touchManaCount">2</span>
+          </button>
+          <button id="btnTouchPortal" class="mobile-touch-btn btn-quick-pot portal" title="Portal da Cidade">
+            <span class="btn-icon">🌀</span>
+          </button>
         </div>
       </div>
     </div>
@@ -2886,6 +2932,32 @@
     }
 
     // -------------------------------------------------------------
+    // -------------------------------------------------------------
+    // MOTOR DE USABILIDADE MOBILE & FEEDBACK TÁTIL (ANDROID/MOBILE)
+    // -------------------------------------------------------------
+    function triggerHaptic(duration = 20) {
+      if (window.navigator && window.navigator.vibrate) {
+        try { window.navigator.vibrate(duration); } catch(e) {}
+      }
+    }
+
+    function screenToWorld(scrX, scrY) {
+      const rect = canvas.getBoundingClientRect();
+      const normX = (scrX - rect.left) * (canvas.width / rect.width);
+      const normY = (scrY - rect.top) * (canvas.height / rect.height);
+
+      const centeredX = (normX - canvas.width / 2) / camZoom + canvas.width / 2;
+      const centeredY = (normY - canvas.height / 2) / camZoom + canvas.height / 2;
+
+      const isoX = centeredX - camera.x;
+      const isoY = centeredY - camera.y;
+
+      return {
+        gx: (isoX / 32 + isoY / 16) / 2,
+        gy: (isoY / 16 - isoX / 32) / 2
+      };
+    }
+
     // CONTROLES E ENTRADAS
     // -------------------------------------------------------------
     const keys = {};
@@ -3040,32 +3112,137 @@
       joyStick.style.transform = `translate(${joyDelta.x * maxR}px, ${joyDelta.y * maxR}px)`;
     }
 
+    // BOTÕES DE AÇÃO TOUCH MOBILE ARPG
     const btnAtk = document.getElementById('btnAttack');
     const onAttackTrigger = e => {
       if (e) e.preventDefault();
       audio.init();
+      triggerHaptic(22);
       if (!isShieldTouching && !keys['shift']) player.blocking = false;
       doAttack();
     };
-    btnAtk.addEventListener('touchstart', onAttackTrigger, { passive: false });
-    btnAtk.addEventListener('pointerdown', onAttackTrigger);
-    btnAtk.addEventListener('click', onAttackTrigger);
+    if (btnAtk) {
+      btnAtk.addEventListener('touchstart', onAttackTrigger, { passive: false });
+      btnAtk.addEventListener('pointerdown', onAttackTrigger);
+      btnAtk.addEventListener('click', onAttackTrigger);
+    }
 
     const shieldBtn = document.getElementById('btnShield');
-    shieldBtn.addEventListener('touchstart', e => {
-      e.preventDefault();
+    if (shieldBtn) {
+      const startShield = e => {
+        if (e) e.preventDefault();
+        audio.init();
+        triggerHaptic(18);
+        isShieldTouching = true;
+        player.blocking = true;
+        audio.playShieldBlock();
+      };
+      const stopShield = e => {
+        if (e) e.preventDefault();
+        isShieldTouching = false;
+        player.blocking = false;
+      };
+      shieldBtn.addEventListener('touchstart', startShield, { passive: false });
+      shieldBtn.addEventListener('pointerdown', startShield);
+      shieldBtn.addEventListener('touchend', stopShield);
+      shieldBtn.addEventListener('pointerup', stopShield);
+      shieldBtn.addEventListener('touchcancel', stopShield);
+    }
+
+    const bSkill1 = document.getElementById('btnTouchSkill1');
+    if (bSkill1) {
+      const triggerSkill1 = e => { if (e) e.preventDefault(); audio.init(); triggerHaptic(25); castSkill(1); };
+      bSkill1.addEventListener('touchstart', triggerSkill1, { passive: false });
+      bSkill1.addEventListener('pointerdown', triggerSkill1);
+    }
+
+    const bSkill2 = document.getElementById('btnTouchSkill2');
+    if (bSkill2) {
+      const triggerSkill2 = e => { if (e) e.preventDefault(); audio.init(); triggerHaptic(25); castSkill(2); };
+      bSkill2.addEventListener('touchstart', triggerSkill2, { passive: false });
+      bSkill2.addEventListener('pointerdown', triggerSkill2);
+    }
+
+    const bTouchHp = document.getElementById('btnTouchHp');
+    if (bTouchHp) {
+      const triggerHp = e => { if (e) e.preventDefault(); audio.init(); triggerHaptic(18); usePotion('hp'); };
+      bTouchHp.addEventListener('touchstart', triggerHp, { passive: false });
+      bTouchHp.addEventListener('pointerdown', triggerHp);
+    }
+
+    const bTouchMana = document.getElementById('btnTouchMana');
+    if (bTouchMana) {
+      const triggerMana = e => { if (e) e.preventDefault(); audio.init(); triggerHaptic(18); usePotion('mana'); };
+      bTouchMana.addEventListener('touchstart', triggerMana, { passive: false });
+      bTouchMana.addEventListener('pointerdown', triggerMana);
+    }
+
+    const bTouchPortal = document.getElementById('btnTouchPortal');
+    if (bTouchPortal) {
+      const triggerPortal = e => { if (e) e.preventDefault(); audio.init(); triggerHaptic(30); castTownPortal(); };
+      bTouchPortal.addEventListener('touchstart', triggerPortal, { passive: false });
+      bTouchPortal.addEventListener('pointerdown', triggerPortal);
+    }
+
+    // TOQUE DIRETO NO CENÁRIO (TAP-TO-ATTACK & TAP-TO-INTERACT NO CELULAR)
+    canvas.addEventListener('pointerdown', e => {
+      if (e.target !== canvas) return;
       audio.init();
-      isShieldTouching = true;
-      player.blocking = true;
-      audio.playShieldBlock();
-    }, { passive: false });
-    shieldBtn.addEventListener('touchend', () => { 
-      isShieldTouching = false; 
-      player.blocking = false; 
-    });
-    shieldBtn.addEventListener('touchcancel', () => { 
-      isShieldTouching = false; 
-      player.blocking = false; 
+
+      const worldPos = screenToWorld(e.clientX, e.clientY);
+      const wgx = worldPos.gx;
+      const wgy = worldPos.gy;
+
+      // 1. Tocou em um Monstro? Vira na direção e golpeia instantaneamente!
+      let targetMonster = null;
+      let minMDist = 2.4;
+      monsters.forEach(m => {
+        if (!m.alive) return;
+        const d = Math.hypot(m.gx - wgx, m.gy - wgy);
+        if (d < minMDist) {
+          minMDist = d;
+          targetMonster = m;
+        }
+      });
+      if (targetMonster) {
+        player.targetFacing = Math.atan2(targetMonster.gy - player.gy, targetMonster.gx - player.gx);
+        player.facing = player.targetFacing;
+        triggerHaptic(22);
+        doAttack();
+        return;
+      }
+
+      // 2. Tocou em um NPC? Vira e interage!
+      let targetNpc = null;
+      npcs.forEach(npc => {
+        const d = Math.hypot(npc.gx - wgx, npc.gy - wgy);
+        if (d < 2.0) targetNpc = npc;
+      });
+      if (targetNpc) {
+        const pDist = Math.hypot(targetNpc.gx - player.gx, targetNpc.gy - player.gy);
+        if (pDist < 2.4) {
+          triggerHaptic(20);
+          if (targetNpc.type === 'merchant') toggleShop();
+          else if (targetNpc.type === 'blacksmith') toggleForge();
+          else openDialog(targetNpc.name, 'Saudações, Campeão de Norrath! Minhas missões estão abertas para você no Diário!');
+          return;
+        }
+      }
+
+      // 3. Tocou em um Baú de Tesouro?
+      props.forEach(p => {
+        if (p.type === 'chest' && !p.opened && Math.hypot(p.gx - wgx, p.gy - wgy) < 1.9) {
+          const pDist = Math.hypot(p.gx - player.gx, p.gy - player.gy);
+          if (pDist < 2.4) {
+            p.opened = true;
+            audio.playCoin();
+            screenShake = 4;
+            spawnFlyingLoot(p.gx, p.gy, 'gold', 65);
+            showNotification('📦 Baú aberto! Tesouros coletados!');
+            triggerHaptic(30);
+          }
+        }
+      });
     });
 
     // -------------------------------------------------------------
@@ -4279,13 +4456,11 @@
       const friction = 14;
       const accel = 26;
 
-      // MOVIMENTAÇÃO INSTANTÂNEA E DIRETA (ZERO EFEITO DE GELO / ZERO DESLIZAMENTO)
+      // MOVIMENTAÇÃO FLUIDA COM ACELERAÇÃO ÁGIL E CURVA SUAVE (ZERO DESLIZAMENTO)
       if (inputX !== 0 || inputY !== 0) {
         player.isMoving = true;
-        // VELOCIDADE DE ANIMAÇÃO CALIBRADA EM 1x (CADÊNCIA NATURAL DE PASSOS)
-        player.walkTimer = (player.walkTimer || 0) + dt * 4.8;
+        player.walkTimer = (player.walkTimer || 0) + dt * 5.2;
 
-        // Ranger de madeira ao caminhar sobre a ponte suspensa
         if (Math.floor(player.gy) === 24 && Math.floor(player.gx) >= 8 && Math.floor(player.gx) <= 12) {
           player.bridgeCreakTimer = (player.bridgeCreakTimer || 0) + dt;
           if (player.bridgeCreakTimer >= 0.38) {
@@ -4298,13 +4473,20 @@
         inputX /= len;
         inputY /= len;
 
-        // VELOCIDADE DIRETA SEM INÉRCIA LENTA
         const speedMultiplier = (player.speedTimer > 0 ? 1.5 : 1.0);
-        player.vx = inputX * player.speed * speedMultiplier;
-        player.vy = inputY * player.speed * speedMultiplier;
+        const targetVx = inputX * player.speed * speedMultiplier;
+        const targetVy = inputY * player.speed * speedMultiplier;
+
+        // Aceleração ágil e fluida (60 FPS contínuos)
+        const accelFactor = 1 - Math.exp(-22 * dt);
+        player.vx += (targetVx - player.vx) * accelFactor;
+        player.vy += (targetVy - player.vy) * accelFactor;
 
         player.targetFacing = Math.atan2(inputY, inputX);
-        player.facing = player.targetFacing; // Rotação imediata para a direção do movimento
+        let diffFacing = player.targetFacing - player.facing;
+        while (diffFacing > Math.PI) diffFacing -= Math.PI * 2;
+        while (diffFacing < -Math.PI) diffFacing += Math.PI * 2;
+        player.facing += diffFacing * (1 - Math.exp(-18 * dt));
 
         if (Math.random() < 0.2) spawnDust(player.gx, player.gy);
 
@@ -4476,6 +4658,82 @@
             player.gold += 80 + player.pitWave * 20;
             spawnPitWave(player.pitWave);
           }, 1200);
+        }
+      }
+
+      // -------------------------------------------------------------
+      // DETECTOR DE INTERAÇÃO CONTEXTUAL TOUCH (MOBILE BOTÃO INTERAGIR)
+      // -------------------------------------------------------------
+      let nearInteractive = null;
+      for (const npc of npcs) {
+        if (Math.hypot(npc.gx - player.gx, npc.gy - player.gy) < 2.0) {
+          if (npc.type === 'merchant') nearInteractive = { icon: '🛒', label: 'LOJA', action: () => toggleShop() };
+          else if (npc.type === 'blacksmith') nearInteractive = { icon: '🔨', label: 'FORJA', action: () => toggleForge() };
+          else nearInteractive = { icon: '💬', label: 'FALAR', action: () => openDialog(npc.name, 'Saudações, Campeão de Norrath! Minhas missões estão abertas para você no Diário!') };
+          break;
+        }
+      }
+      if (!nearInteractive) {
+        for (const lev of dungeonLevers) {
+          if (!lev.pulled && Math.hypot(lev.gx - player.gx, lev.gy - player.gy) < 1.9) {
+            nearInteractive = { icon: '⚙️', label: 'PUXAR', action: () => {
+              lev.pulled = true; audio.playBreakWood(); screenShake = 8;
+              showNotification('⚙️ Mecanismo acionado! Os portões se abriram!');
+              if (bossGate) bossGate.locked = false; triggerHaptic(30);
+            }};
+            break;
+          }
+        }
+      }
+      if (!nearInteractive) {
+        for (const p of props) {
+          if (p.type === 'chest' && !p.opened && Math.hypot(p.gx - player.gx, p.gy - player.gy) < 2.0) {
+            nearInteractive = { icon: '📦', label: 'ABRIR', action: () => {
+              p.opened = true; audio.playCoin(); screenShake = 4;
+              spawnFlyingLoot(p.gx, p.gy, 'gold', 65);
+              showNotification('📦 Baú aberto! Tesouros coletados!'); triggerHaptic(35);
+            }};
+            break;
+          }
+        }
+      }
+      if (!nearInteractive) {
+        for (const t of torches) {
+          if (Math.hypot(t.gx - player.gx, t.gy - player.gy) < 1.8) {
+            nearInteractive = { icon: '🔥', label: t.lit ? 'APAGAR' : 'ACENDER', action: () => {
+              t.lit = !t.lit;
+              if (t.lit) { audio.playHitMonster(); showNotification('🔥 Fogueira acesa!'); }
+              else { audio.playBreakWood(); showNotification('💨 Fogueira apagada!'); }
+              triggerHaptic(20);
+            }};
+            break;
+          }
+        }
+      }
+      if (!nearInteractive) {
+        for (const p of props) {
+          if ((p.type === 'dragon_portal' || p.type === 'pit_portal' || p.type === 'portal_return' || p.type === 'pit_exit') && Math.hypot(p.gx - player.gx, p.gy - player.gy) < 2.0) {
+            nearInteractive = { icon: '🌀', label: 'ENTRAR', action: () => interactUniversal() };
+            break;
+          }
+        }
+      }
+
+      const btnContextInt = document.getElementById('btnContextInteract');
+      if (btnContextInt) {
+        if (nearInteractive) {
+          btnContextInt.style.display = 'flex';
+          const iconEl = document.getElementById('interactIcon');
+          const labelEl = document.getElementById('interactLabel');
+          if (iconEl) iconEl.textContent = nearInteractive.icon;
+          if (labelEl) labelEl.textContent = nearInteractive.label;
+          btnContextInt.onclick = (e) => {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            triggerHaptic(25);
+            nearInteractive.action();
+          };
+        } else {
+          btnContextInt.style.display = 'none';
         }
       }
 
@@ -5188,30 +5446,34 @@
         }
       }
 
-      // Partículas com Física 3D e Quique (EMBASS Engine Etapa 7)
+      // Partículas com Física Fluida, Arrasto Aerodinâmico Suave e Quique Orgânico
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.gx += p.vx * dt;
         p.gy += p.vy * dt;
+        const pDrag = Math.pow(0.86, dt * 60);
+        p.vx *= pDrag;
+        p.vy *= pDrag;
         if (p.gz !== undefined) {
           p.gz += (p.vz || 0) * dt;
           p.vz = (p.vz || 0) - (p.gravity || 14) * dt;
           if (p.gz <= 0) {
             p.gz = 0;
-            p.vz = -p.vz * 0.4;
-            p.vx *= 0.7;
-            p.vy *= 0.7;
+            p.vz = -p.vz * 0.45;
+            p.vx *= 0.75;
+            p.vy *= 0.75;
           }
           if (p.rot !== undefined) p.rot += (p.vrot || 0) * dt;
         }
-        p.life -= dt * (p.maxLife ? (1 / p.maxLife) : 2.2);
+        p.life -= dt * (p.maxLife ? (1 / p.maxLife) : 1.9);
         if (p.life <= 0) particles.splice(i, 1);
       }
 
       for (let i = floatingTexts.length - 1; i >= 0; i--) {
         const ft = floatingTexts[i];
-        ft.offsetY += dt * 32;
-        ft.life -= dt * 1.5;
+        // Desaceleração suave na subida (Ease-Out)
+        ft.offsetY += dt * 38 * (0.35 + 0.65 * Math.max(0, ft.life));
+        ft.life -= dt * 1.35;
         if (ft.life <= 0) floatingTexts.splice(i, 1);
       }
 
@@ -8190,6 +8452,20 @@
 
       document.getElementById('potionHpCount').textContent = player.potionsHp;
       document.getElementById('potionManaCount').textContent = player.potionsMana;
+
+      // Sincronização dos Botões Touch Mobile
+      const touchHp = document.getElementById('touchHpCount');
+      if (touchHp) touchHp.textContent = player.potionsHp;
+      const touchMana = document.getElementById('touchManaCount');
+      if (touchMana) touchMana.textContent = player.potionsMana;
+
+      const clsInfo = CLASSES[player.clsKey];
+      if (clsInfo && clsInfo.skills) {
+        const sk1 = document.getElementById('touchSkill1Icon');
+        if (sk1 && clsInfo.skills[0]) sk1.textContent = clsInfo.skills[0].icon;
+        const sk2 = document.getElementById('touchSkill2Icon');
+        if (sk2 && clsInfo.skills[1]) sk2.textContent = clsInfo.skills[1].icon;
+      }
       const furyEl = document.getElementById('potionFuryCount');
       if (furyEl) furyEl.textContent = player.potionsFury || 0;
       const ironEl = document.getElementById('potionIronCount');
@@ -9055,8 +9331,11 @@
 
       let wepRot = isFacingRight ? 0.35 : -0.35;
       if (charData.attacking > 0) {
-        const atPct = (14 - charData.attacking) / 14;
-        wepRot = isFacingRight ? (-1.8 + atPct * 3.4) : (1.8 - atPct * 3.4);
+        const atPct = Math.max(0, Math.min(1, (14 - charData.attacking) / 14));
+        // Curva fluida de aceleração e desaceleração (Quintic Easing)
+        const t = atPct;
+        const easeSlash = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        wepRot = isFacingRight ? (-2.0 + easeSlash * 3.8) : (2.0 - easeSlash * 3.8);
       }
       tCtx.rotate(wepRot);
 
