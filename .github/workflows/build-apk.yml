@@ -37,11 +37,6 @@ jobs:
           rm -rf android
           npx expo prebuild --platform android --clean
 
-      - name: Disable Dev Support (Eliminate HMRClient.setup and Metro dependency)
-        run: |
-          find android/app/src/main -name "MainApplication.*" -exec sed -i 's/getUseDeveloperSupport(): Boolean = .*/getUseDeveloperSupport(): Boolean = false/g' {} + || true
-          find android/app/src/main -name "MainApplication.*" -exec sed -i 's/getUseDeveloperSupport() { return .*/getUseDeveloperSupport() { return false; }/g' {} + || true
-          python3 -c "import os; p='android/app/build.gradle'; open(p, 'w').write('project.ext.react = [ devDisabledInDebug: true, bundleInDebug: true ]\n' + open(p).read()) if os.path.exists(p) else None"
 
       - name: Bundle JS NATIVO (fix Metro) - V2
         run: |
