@@ -40,6 +40,12 @@ jobs:
       - name: Bundle JS NATIVO (fix Metro) - V2
         run: |
           mkdir -p android/app/src/main/assets
+          if [ -f champions-of-norrath.html ]; then
+            cp champions-of-norrath.html android/app/src/main/assets/norrath-clash.html
+          elif [ -f norrath-clash.html ]; then
+            cp norrath-clash.html android/app/src/main/assets/norrath-clash.html
+          fi
+          ls -lh android/app/src/main/assets/norrath-clash.html || true
           echo "Tentando expo export:embed..."
           npx expo export:embed --platform android --dev false || echo "embed failed, trying community cli"
           ls -lh android/app/src/main/assets/ || true
@@ -75,14 +81,11 @@ jobs:
           apk='android/app/build/outputs/apk/debug/app-debug.apk'
           with zipfile.ZipFile(apk) as z:
               has='assets/index.android.bundle' in z.namelist()
-              print(f'HAS BUNDLE: {has}')
-              if has:
-                  info=z.getinfo('assets/index.android.bundle')
-                  print(f'Bundle size in APK: {info.file_size/1024/1024:.2f} MB')
-              else:
-                  print('FILES:', [f for f in z.namelist() if 'assets' in f][:20])
-                  hbc=[f for f in z.namelist() if '.hbc' in f]
-                  print(f'HBC files: {hbc[:10]}')
+              has_html='assets/norrath-clash.html' in z.namelist()
+              print(f'HAS BUNDLE: {has}, HAS HTML: {has_html}')
+              if has_html:
+                  info=z.getinfo('assets/norrath-clash.html')
+                  print(f'HTML size in APK: {info.file_size/1024:.1f} KB')
           "
 
       - name: Upload APK NATIVO
@@ -97,18 +100,14 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: vNATIVO-${{ github.run_number }}
-          name: ✅ NORRATH CLASH V2 NATIVO v${{ github.run_number }} - 100% Offline
+          name: ⚔️ CHAMPIONS OF NORRATH NATIVO v${{ github.run_number }} - 100% Offline
           body: |
-            🎮 **NORRATH CLASH V2 - APK 100% NATIVO!**
+            🎮 **CHAMPIONS OF NORRATH - ETAPA 16: APK NATIVO REACT NATIVE**
             
-            ✅ **V2 MELHORIAS:**
-            - Minimapa real-time
-            - Craft de Gemas 3=1 superior até Lendária
-            - Torre 100 andares após Lv20
-            - Save automático
-            - Visual muda com equipamento
-            - Colisão inteligente com deslizamento
-            - 109KB HTML otimizado
+            ✅ **CORRIGIDO:** Carregamento Nativo via Assets (Zero Base64 / Zero Bridge Bloat)!
+            - HTML Champions of Norrath carregado diretamente do asset
+            - Multi-touch joystick com resposta imediata
+            - Física e combate polidos em 60 FPS
             
             ✅ Bundle nativo incluso, 100% offline!
             

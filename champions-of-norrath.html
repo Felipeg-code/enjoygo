@@ -458,6 +458,9 @@
       flex-direction: column;
       z-index: 50;
       overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
 
     .modal-header {
@@ -2906,6 +2909,7 @@
       if (e.key.toLowerCase() === 'shift') player.blocking = false;
     });
 
+    let joyTouchId = null;
     let joyTouch = null;
     let joyDelta = { x: 0, y: 0 };
     const joyBase = document.getElementById('virtualJoystick');
@@ -2914,25 +2918,43 @@
     joyBase.addEventListener('touchstart', e => {
       e.preventDefault();
       audio.init();
-      const t = e.touches[0];
-      const rect = joyBase.getBoundingClientRect();
-      joyTouch = { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 };
-      handleJoyMove(t.clientX, t.clientY);
+      if (joyTouchId === null && e.changedTouches.length > 0) {
+        const t = e.changedTouches[0];
+        joyTouchId = t.identifier;
+        const rect = joyBase.getBoundingClientRect();
+        joyTouch = { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 };
+        handleJoyMove(t.clientX, t.clientY);
+      }
     }, { passive: false });
 
     window.addEventListener('touchmove', e => {
-      if (!joyTouch) return;
-      const t = e.touches[0];
-      handleJoyMove(t.clientX, t.clientY);
+      if (joyTouchId === null || !joyTouch) return;
+      for (let i = 0; i < e.touches.length; i++) {
+        if (e.touches[i].identifier === joyTouchId) {
+          handleJoyMove(e.touches[i].clientX, e.touches[i].clientY);
+          break;
+        }
+      }
     }, { passive: false });
 
-    window.addEventListener('touchend', () => {
-      joyTouch = null;
-      joyDelta = { x: 0, y: 0 };
-      joyStick.style.transform = 'translate(0px, 0px)';
-    });
+    const handleTouchEndOrCancel = e => {
+      if (joyTouchId === null) return;
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === joyTouchId) {
+          joyTouchId = null;
+          joyTouch = null;
+          joyDelta = { x: 0, y: 0 };
+          joyStick.style.transform = 'translate(0px, 0px)';
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('touchend', handleTouchEndOrCancel, { passive: false });
+    window.addEventListener('touchcancel', handleTouchEndOrCancel, { passive: false });
 
     function handleJoyMove(x, y) {
+      if (!joyTouch) return;
       const dx = x - joyTouch.cx;
       const dy = y - joyTouch.cy;
       const dist = Math.hypot(dx, dy);
@@ -2958,6 +2980,7 @@
       audio.playShieldBlock();
     });
     shieldBtn.addEventListener('touchend', () => { player.blocking = false; });
+    shieldBtn.addEventListener('touchcancel', () => { player.blocking = false; });
 
     // -------------------------------------------------------------
     // COMBATE E INTERAÇÕES
@@ -4056,7 +4079,7 @@
     let lastTime = performance.now();
 
     function gameLoop(now) {
-      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
 
       if (hitStopTimer > 0) {
