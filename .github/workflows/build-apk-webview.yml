@@ -194,17 +194,7 @@ jobs:
           else
             gradle assembleDebug --no-daemon --stacktrace
           fi
-          python3 -c '
-import zipfile, os, glob
-apk = "app/build/outputs/apk/debug/app-debug.apk"
-if not os.path.exists(apk):
-    apks = glob.glob("**/*.apk", recursive=True)
-    apk = apks[0] if apks else apk
-print(f"APK: {apk} - {os.path.getsize(apk)} bytes")
-with zipfile.ZipFile(apk) as z:
-    html = z.read("assets/norrath-clash.html")
-    print(f"HTML in APK: {len(html)} bytes")
-'
+          python3 -c "import zipfile, os; apk='app/build/outputs/apk/debug/app-debug.apk'; print('APK size:', os.path.getsize(apk)); print('HTML size:', len(zipfile.ZipFile(apk).read('assets/norrath-clash.html')))"
 
       - name: Upload APK JOGO INTERATIVO
         uses: actions/upload-artifact@v4
