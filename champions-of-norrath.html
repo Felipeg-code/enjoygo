@@ -1175,7 +1175,7 @@
       white-space: nowrap;
     }
 
-  </style></style>
+  </style>
 </head>
 <body>
 
@@ -1870,6 +1870,26 @@
           osc.start(now); osc.stop(now + 0.28);
         });
       }
+      // SINAL MUSICAL DE LEVEL UP / RECOMPENSA IMPORTANTE
+      playLevelUp() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99].forEach((frequency, index) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const start = now + index * 0.09;
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(frequency, start);
+          gain.gain.setValueAtTime(0.001, start);
+          gain.gain.linearRampToValueAtTime(0.22, start + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.28);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(start);
+          osc.stop(start + 0.3);
+        });
+      }
+
       // IMPACTO VISCERAL DE DANO EM MONSTRO (SUBSTITUI O BIPE INFANTIL)
       playHitMonster() {
         if (!this.ctx) return;
@@ -3721,7 +3741,8 @@
             }
             // Especialização 2: Mestre de Trampas (Nuvem venenosa)
             if (player.talents && player.talents.spec2) {
-              m.poisoned = 3.0;
+              m.poisonTimer = 3.0;
+              m.poisonTick = 0;
               spawnFloatingText(`☣️ NUVEM TÓXICA!`, m.gx, m.gy - 0.6, '#22c55e');
             }
           }
@@ -3787,7 +3808,8 @@
             if (monType === 'skeleton' || monType === 'spider') {
               spawnFloatingText(`🛡️ IMUNE A VENENO`, m.gx, m.gy - 0.6, '#94a3b8');
             } else {
-              m.poisoned = 3.0;
+              m.poisonTimer = 3.0;
+              m.poisonTick = 0;
             }
           }
 
@@ -4388,6 +4410,7 @@
     function spawnGroundLoot(gx, gy, item) {
       groundLoot.push({
         id: Date.now() + Math.random(),
+        item: { ...item },
         name: item.name,
         rarity: item.rarity || 'rare',
         type: item.type,
@@ -5334,7 +5357,13 @@
               audio.playCoin();
               spawnFloatingText(`+${gAmt} 💰 (${pet.name})`, pet.gx, pet.gy - 0.45, '#ffd700');
             } else {
-              player.inventory.push(nearestLoot.obj.item);
+              player.inventory.push(nearestLoot.obj.item || {
+                name: nearestLoot.obj.name,
+                type: nearestLoot.obj.type || 'gem',
+                gemType: nearestLoot.obj.gemType || null,
+                bonusDmg: nearestLoot.obj.bonusDmg || 0,
+                color: nearestLoot.obj.color
+              });
               groundLoot.splice(nearestLoot.idx, 1);
               audio.playCoin();
               showNotification(`🎒 ${pet.name} recolheu: ${nearestLoot.obj.item.name}!`);
