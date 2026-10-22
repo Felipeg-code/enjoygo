@@ -30,8 +30,8 @@
       "name": "enjoygo - RPG Vertical"
     },
     "extra": {
-      "eas": {
-        "projectId": "enjoygo-rpg"
+      "game": {
+        "canonicalFile": "champions-of-norrath.html"
       }
     }
   }
