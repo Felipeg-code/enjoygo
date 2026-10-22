@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 
+// URL única publicada pelo workflow do GitHub Pages.
 const GAME_URL = 'https://felipeg-code.github.io/enjoygo/';
 
 export default function App() {
