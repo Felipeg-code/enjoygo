@@ -9,7 +9,12 @@ Esqueleto e motor completo de RPG Hack & Slash 2.5D Isométrico inspirado no cl�
 
 ## 🎮 Jogue Agora Direto no Navegador
 
-👉 **[https://felipeg-code.github.io/enjoygo/](https://felipeg-code.github.io/enjoygo/)**
+👉 **[Abrir o jogo](https://felipeg-code.github.io/enjoygo/)**
+
+Link direto da versão canônica:
+**https://felipeg-code.github.io/enjoygo/game/champions-of-norrath.html**
+
+APK para instalar: abra a aba **Actions** do repositório, entre na execução concluída de **Build APK WebView 100% Offline - JOGO REAL INTERATIVO** e baixe o artefato `NORRATH-CLASH-V2-INTERATIVO-APK`. A release também aparece em **Releases** quando o workflow termina com sucesso.
 
 ---
 
