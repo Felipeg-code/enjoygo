@@ -56,7 +56,7 @@ Esqueleto e motor completo de RPG Hack & Slash 2.5D Isométrico inspirado no cl�
 
 ```
 ├── champions-of-norrath.html  # Motor isométrico principal completo
-├── index.html                 # Página inicial para GitHub Pages
+├── champions-of-norrath.html  # Única fonte do jogo; o deploy gera a página inicial
 ├── App.js                     # Container React Native / Expo WebView
 ├── .github/workflows/
 │   ├── deploy.yml             # Deploy automático no GitHub Pages
