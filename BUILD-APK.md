@@ -104,7 +104,7 @@ adb install android/app/build/outputs/apk/release/app-release.apk
 
 **Transforma versão web em app instalável:**
 
-1. Abra `enjoygo-web.html` no Chrome no celular
+1. Abra `https://felipeg-code.github.io/enjoygo/` no Chrome no celular
 2. Menu (3 pontinhos) → **"Adicionar à tela inicial"** ou **"Instalar app"**
 3. Vira app com ícone, sem Play Store!
 
