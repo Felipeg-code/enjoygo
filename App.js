@@ -11,7 +11,8 @@ import {
 import { WebView } from 'react-native-webview';
 
 // URL única publicada pelo workflow do GitHub Pages.
-const GAME_URL = 'https://felipeg-code.github.io/enjoygo/';
+// O Expo Go usa a página publicada; o APK offline é gerado pelo workflow WebView.
+const GAME_URL = 'https://felipeg-code.github.io/enjoygo/game/champions-of-norrath.html';
 
 export default function App() {
   const [attempt, setAttempt] = useState(0);
